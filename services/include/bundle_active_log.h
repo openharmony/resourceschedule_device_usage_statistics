@@ -1,0 +1,21 @@
+#ifndef BUNDLE_ACTIVE_LOG_H
+#define BUNDLE_ACTIVE_LOG_H
+
+#include "hilog/log.h"
+
+#define LOG_TAG_BUNDLE_ACTIVE "BUNDLE_ACTIVE"
+#define LOG_TAG_DOMAIN_ID_BUNDLE_ACTIVE 0xD001700
+
+static constexpr OHOS::HiviewDFX::HiLogLabel BUNDLE_ACTIVE_LOG_LABEL = {
+    LOG_CORE,
+    LOG_TAG_DOMAIN_ID_BUNDLE_ACTIVE,
+    LOG_TAG_BUNDLE_ACTIVE
+};
+
+#define BUNDLE_ACTIVE_LOGF(...) (void)OHOS::HiviewDFX::HiLog::Fatal(BUNDLE_ACTIVE_LOG_LABEL, __VA_ARGS__)
+#define BUNDLE_ACTIVE_LOGE(...) (void)OHOS::HiviewDFX::HiLog::Error(BUNDLE_ACTIVE_LOG_LABEL, __VA_ARGS__)
+#define BUNDLE_ACTIVE_LOGW(...) (void)OHOS::HiviewDFX::HiLog::Warn(BUNDLE_ACTIVE_LOG_LABEL, __VA_ARGS__)
+#define BUNDLE_ACTIVE_LOGI(...) (void)OHOS::HiviewDFX::HiLog::Info(BUNDLE_ACTIVE_LOG_LABEL, __VA_ARGS__)
+#define BUNDLE_ACTIVE_LOGD(...) (void)OHOS::HiviewDFX::HiLog::Debug(BUNDLE_ACTIVE_LOG_LABEL, __VA_ARGS__)
+
+#endif
