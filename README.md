@@ -10,8 +10,9 @@
 
 ## Introduction<a name="section11660541593"></a>
 
-The **device usage statistics** is used to save and query application usage details, event log data and application grouping.
-The application records (usage history statistics and usage event records) cached by the component will be periodically refreshed to the database for persistent storage.
+The **device usage statistics** includes app usage, notification usage, system usage and other usage statistics. For example, application usage statistics is used to save 
+and query application usage details, event log data and application grouping.The application records (usage history statistics and usage event records) cached by 
+the component will be periodically refreshed to the database for persistent storage.
 
 ## Directory Structure<a name="section161941989596"></a>
 
@@ -34,37 +35,8 @@ The application records (usage history statistics and usage event records) cache
 
 ### Available APIs<a name="section1551164914237"></a>
 
-#### Internal APIs description<a name="section1551164914237"></a>
-
-<a name="table775715438253"></a>
-<table><thead align="left"><tr id="row12757154342519"><th class="cellrowborder" valign="top" width="62%" id="mcps1.1.3.1.1"><p id="p1075794372512"><a name="p1075794372512"></a><a name="p1075794372512"></a>API name</p>
-</th>
-<th class="cellrowborder" valign="top" width="56.81%" id="mcps1.1.3.1.2"><p id="p375844342518"><a name="p375844342518"></a><a name="p375844342518"></a>API description</p>
-</th>
-</tr>
-</thead>
-<tbody><tr id="row1975804332517"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p5758174313255"><a name="p5758174313255"></a><a name="p5758174313255"></a>int ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId);</p>
-</td>
-<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p14758743192519"><a name="p14758743192519"></a><a name="p14758743192519"></a>Collecting data reporting interface.</p>
-</td>
-</tr>
-<tr id="row2758943102514"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p107581438250"><a name="p107581438250"></a><a name="p107581438250"></a>int IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId);</p>
-</td>
-<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p8758743202512"><a name="p8758743202512"></a><a name="p8758743202512"></a>Determines whether the application is inactive.</p>
-</td>
-</tr>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>std::vector<BundleActiveUsageStats> QueryUsageStats(int userId, int intervalType, int64_t beginTime, int64_t endTime);</p>
-</td>
-<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries the usage duration information of the specified user application.</p>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>std::vector<BundleActiveEvent> QueryEvents(int userId, int64_t beginTime, int64_t endTime);</p>
-</td>
-<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries the event information used by the specified user.</p>
-</td>
-</tr>
-</tbody>
-</table>
-
-#### External APIs description<a name="section1551164914237"></a>
+Device usage statistics interfaces include app usage, notification usage, system usage and other interfaces. 
+Taking app usage interface as an example, the main exposed interfaces are as follows.
 
 <a name="table775715438253"></a>
 <table><thead align="left"><tr id="row12757154342519"><th class="cellrowborder" valign="top" width="60%" id="mcps1.1.3.1.1"><p id="p1075794372512"><a name="p1075794372512"></a><a name="p1075794372512"></a>API name</p>
@@ -102,15 +74,20 @@ The application records (usage history statistics and usage event records) cache
 
 ### Usage Guidelines<a name="section129654513264"></a>
 
+There are many interfaces for device usage statistics. Take app usage interface as an example to introduce the interface logic.
+
 - **running process**:The device usage statistics service starts and runs in the foundation process.
-- **reporting event interface**:
->1.  The application framework subsystem reports the ability life cycle events to the device usage statistics component, 
-the component opens a separate thread for asynchronous processing to prevent synchronization from blocking application framework subsystem running logic;
->2.  The power management subsystem reports the system shutdown event to the device usage statistics component, and the component performs synchronous processing;
 - **device usage statistics saving time**:
 >1.  refreshing is triggered every 30 minutes;
 >2.  refreshing is triggered when system time changes;
 >3.  refreshing is triggered from the next day;
+- **app querying interface**:
+>1.  Query the event collection of all applications according to the start and end time;
+>2.  Query the usage duration of the application according to the start and end time;
+>3.  Query the event collection of the current application according to the start and end time;
+>4.  Query the usage duration of the application according to the type of interval (day, week, month, year) and the start and end time;
+>5.  Query the priority group of the caller application;
+>6.  Judge whether the specified application is currently idle;
 
 ## Repositories Involved<a name="section1371113476307"></a>
 
