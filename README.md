@@ -1,39 +1,125 @@
-# resourceschedule_device_usage_statistics
+# Device usage statistics<a name="EN-US_TOPIC_0000001115588558"></a>
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+-   [Introduction](#section11660541593)
+-   [Directory Structure](#section161941989596)
+-   [Instruction](#section1312121216216)
+    -   [Available APIs](#section1551164914237)
+    -   [Usage Guidelines](#section129654513264)
 
-#### 软件架构
-软件架构说明
+-   [Repositories Involved](#section1371113476307)
 
+## Introduction<a name="section11660541593"></a>
 
-#### 安装教程
+The **device usage statistics** is used to save and query application usage details, event log data and application grouping.
+The application records (usage history statistics and usage event records) cached by the component will be periodically refreshed to the database for persistent storage.
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## Directory Structure<a name="section161941989596"></a>
 
-#### 使用说明
+```
+/foundation/resourceschedule/device_usage_statistics
+├── ohos.build                         # Compilation script
+├── BUILD.gn                           # Module compilation script
+├── interfaces
+│   ├── innerkits                      # Internal interface directory
+│   └── kits                           # External interface directory
+├── services                           # Service layer directory
+├── frameworks
+│   ├── JS                             # External JS interface implementation directory
+│   └── native                         # External native interface implementation directory
+├── adapter                            # Adaptation directory
+└── test                               # Testing case directory
+```
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## Instruction<a name="section1312121216216"></a>
 
-#### 参与贡献
+### Available APIs<a name="section1551164914237"></a>
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+#### Internal APIs description<a name="section1551164914237"></a>
 
+<a name="table775715438253"></a>
+<table><thead align="left"><tr id="row12757154342519"><th class="cellrowborder" valign="top" width="62%" id="mcps1.1.3.1.1"><p id="p1075794372512"><a name="p1075794372512"></a><a name="p1075794372512"></a>API name</p>
+</th>
+<th class="cellrowborder" valign="top" width="56.81%" id="mcps1.1.3.1.2"><p id="p375844342518"><a name="p375844342518"></a><a name="p375844342518"></a>API description</p>
+</th>
+</tr>
+</thead>
+<tbody><tr id="row1975804332517"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p5758174313255"><a name="p5758174313255"></a><a name="p5758174313255"></a>int ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId);</p>
+</td>
+<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p14758743192519"><a name="p14758743192519"></a><a name="p14758743192519"></a>Collecting data reporting interface.</p>
+</td>
+</tr>
+<tr id="row2758943102514"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p107581438250"><a name="p107581438250"></a><a name="p107581438250"></a>int IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId);</p>
+</td>
+<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p8758743202512"><a name="p8758743202512"></a><a name="p8758743202512"></a>Determines whether the application is inactive.</p>
+</td>
+</tr>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>std::vector<BundleActiveUsageStats> QueryUsageStats(int userId, int intervalType, int64_t beginTime, int64_t endTime);</p>
+</td>
+<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries the usage duration information of the specified user application.</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>std::vector<BundleActiveEvent> QueryEvents(int userId, int64_t beginTime, int64_t endTime);</p>
+</td>
+<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries the event information used by the specified user.</p>
+</td>
+</tr>
+</tbody>
+</table>
 
-#### 特技
+#### External APIs description<a name="section1551164914237"></a>
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+<a name="table775715438253"></a>
+<table><thead align="left"><tr id="row12757154342519"><th class="cellrowborder" valign="top" width="60%" id="mcps1.1.3.1.1"><p id="p1075794372512"><a name="p1075794372512"></a><a name="p1075794372512"></a>API name</p>
+</th>
+<th class="cellrowborder" valign="top" width="56.81%" id="mcps1.1.3.1.2"><p id="p375844342518"><a name="p375844342518"></a><a name="p375844342518"></a>API description</p>
+</th>
+</tr>
+</thead>
+<tbody><tr id="row1975804332517"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p5758174313255"><a name="p5758174313255"></a><a name="p5758174313255"></a>queryBundleActiveStates(begin::number, end::number, callback:AsyncCallback&lt;Array&lt;BundleActiveState&gt;&gt;):void</p>
+</td>
+<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p14758743192519"><a name="p14758743192519"></a><a name="p14758743192519"></a>Queries the event collection of all applications through time interval.</p>
+</td>
+</tr>
+<tr id="row2758943102514"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p107581438250"><a name="p107581438250"></a><a name="p107581438250"></a>queryBundleStateInfos(begin::number, end::number, callback:AsyncCallback&lt;BundleStateInfoResponse&gt;):void</p>
+</td>
+<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p8758743202512"><a name="p8758743202512"></a><a name="p8758743202512"></a>Uses the start and end time to query the application usage time statistics.</p>
+</td>
+</tr>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryCurrentBundleActiveStates(begin::number, end::number, callback:AsyncCallback&lt;Array&lt;BundleActiveState&gt;&gt;):void</p>
+</td>
+<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries the event collection of the current application through the time interval.</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryBundleStateInfoByInterval(byInterval:intervalType, begin::number, end::number, callback:AsyncCallback&lt;Array&lt;BundleStateInfo&gt;&gt;):void</p>
+</td>
+<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries application usage duration statistics by time interval.</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(callback:AsyncCallback&lt;number&gt;):void</p>
+</td>
+<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries (returns) the priority group used by the current caller application.</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>isIdleState(bundleName:string, callback:AsyncCallback&lt;boolean&gt;):void</p>
+</td>
+<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Judges whether the application of the specified bundle name is currently idle.</p>
+</td>
+</tr>
+</tbody>
+</table>
+
+### Usage Guidelines<a name="section129654513264"></a>
+
+- **running process**:The device usage statistics service starts and runs in the foundation process.
+- **reporting event interface**:
+>1.  The application framework subsystem reports the ability life cycle events to the device usage statistics component, 
+the component opens a separate thread for asynchronous processing to prevent synchronization from blocking application framework subsystem running logic;
+>2.  The power management subsystem reports the system shutdown event to the device usage statistics component, and the component performs synchronous processing;
+- **device usage statistics saving time**:
+>1.  refreshing is triggered every 30 minutes;
+>2.  refreshing is triggered when system time changes;
+>3.  refreshing is triggered from the next day;
+
+## Repositories Involved<a name="section1371113476307"></a>
+
+resource schedule subsystem
+
+**device\_usage\_statistics**
+
+resource_schedule_service
+
+appexecfwk_standard
+
+native_appdatamgr
