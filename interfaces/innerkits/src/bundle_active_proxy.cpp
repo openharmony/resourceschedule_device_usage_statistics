@@ -17,7 +17,6 @@
 
 namespace OHOS{
 namespace BundleActive {
-
 int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId) {
     MessageParcel data;
     MessageParcel reply;
@@ -60,6 +59,5 @@ int BundleActiveProxy::Query(std::string& bundleName, std::string& abilityName, 
     int32_t result = reply.ReadInt32();
     return result;
 }
-
 }
 }

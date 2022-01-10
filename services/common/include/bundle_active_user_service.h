@@ -27,7 +27,6 @@ namespace BundleActive {
 
 class BundleActiveUserService {
 public:
-
     BundleActiveUserService(int userId);//,/*database定义待补充*/ BundleActiveService listener/*刷数据库监听器接口实现类*/);
     virtual void onStatsUpdated() = 0;
     virtual void onstatsReloaded() = 0;
@@ -39,15 +38,11 @@ private:
     std::vector<BundleActiveIntervalStats> m_currentStats;
     bool m_statsChanged;
     std::string m_lastBackgroundBundle;
-    //BundleActiveService m_listener;
     inline static const std::vector<long long> INTERVAL_LENGTH = {BundleActiveIntervalStats::DAY_IN_MILLIS, BundleActiveIntervalStats::WEEK_IN_MILLIS, 
                                                       BundleActiveIntervalStats::MONTH_IN_MILLIS, BundleActiveIntervalStats::YEAR_IN_MILLIS};
     void NotifyStatsChanged();
     void ReportEvent(BundleActiveEvent event);
-
-
 };
-
 }
 }
 #endif

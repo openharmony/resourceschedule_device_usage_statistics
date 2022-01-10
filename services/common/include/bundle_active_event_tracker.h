@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 class BundleActiveEventTracker {
 public:
     long m_curStartTime;
@@ -33,7 +32,6 @@ public:
     void AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, int eventId, long beginTime, long endTime);
     BundleActiveEventTracker() {};
 };
-
 }
 }
 #endif

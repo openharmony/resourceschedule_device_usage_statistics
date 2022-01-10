@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 BundleActiveUsageStats& BundleActiveIntervalStats::GetOrCreateUsageStats(std::string bundleName) {
     std::map<std::string, BundleActiveUsageStats>::iterator it;
     it = m_bundleStats.find(bundleName);

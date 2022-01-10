@@ -18,7 +18,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply, MessageOption &option) {
     switch(code) {
         case REPORT_EVENT: {
@@ -51,6 +50,5 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
 }
-
 }
 }

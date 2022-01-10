@@ -32,7 +32,6 @@ public:
 private:
     std::vector<BundleActiveEvent> m_events;
 };
-
 }
 }
 #endif

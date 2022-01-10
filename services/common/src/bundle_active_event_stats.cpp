@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 BundleActiveEventStats::BundleActiveEventStats(const BundleActiveEventStats& orig) {
     m_eventId = orig.m_eventId;
     m_beginTimeStamp = orig.m_beginTimeStamp;
@@ -30,21 +29,27 @@ BundleActiveEventStats::BundleActiveEventStats(const BundleActiveEventStats& ori
 int BundleActiveEventStats::GetEventId() {
     return m_eventId;
 }
+
 int BundleActiveEventStats::GetFirstTimeStamp() {
     return m_beginTimeStamp;
 }
+
 int BundleActiveEventStats::GetLastTimeStamp() {
     return m_endTimeStamp;
 }
+
 int BundleActiveEventStats::GetLastEventTime() {
     return m_lastEventTime;
 }
+
 int BundleActiveEventStats::GetTotalTime() {
     return m_totalTime;
 }
+
 int BundleActiveEventStats::GetCount() {
     return m_count;
 }
+
 void BundleActiveEventStats::add(const BundleActiveEventStats& right) {
     if (m_eventId != right.m_eventId) {
         return;
@@ -58,6 +63,5 @@ void BundleActiveEventStats::add(const BundleActiveEventStats& right) {
     m_totalTime += right.m_totalTime;
     m_count += right.m_count;
 }
-
 }
 }

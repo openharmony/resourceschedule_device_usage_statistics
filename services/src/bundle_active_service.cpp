@@ -28,13 +28,12 @@ void BundleActiveService::OnStart()
     }
     BUNDLE_ACTIVE_LOGI("[Server] OnStart, Register SystemAbility[1906] SUCCESS.");
 }
-//void BundleActiveService::onStatsUpdated() {}
-//void BundleActiveService::onstatsReloaded() {}
-//void BundleActiveService::onNewUpdate(int userId) {}
+
 void BundleActiveService::OnStop()
 {
     BUNDLE_ACTIVE_LOGI("[Server] OnStop");
 }
+
 int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId) {
     BUNDLE_ACTIVE_LOGI("Report event called");
     return 111;
@@ -49,6 +48,5 @@ int BundleActiveService::Query(std::string& bundleName, std::string& abilityName
     BUNDLE_ACTIVE_LOGI("Query called");
     return 222;
 }
-
 }
 }

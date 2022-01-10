@@ -17,12 +17,12 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 BundleActiveUserService::BundleActiveUserService(int userId){//,/*database定义待补充*/ BundleActiveService listener/*刷数据库监听器接口实现类*/) {
     m_currentStats.reserve(BundleActiveIntervalStats::INTERVAL_COUNT);
     //m_listener = listener;
     m_userId = userId;
 }
+
 void BundleActiveUserService::NotifyStatsChanged() {
     if (!m_statsChanged) {
         m_statsChanged = true;
@@ -65,6 +65,5 @@ void BundleActiveUserService::ReportEvent(BundleActiveEvent event) {
         }
     }
 }
-
 }
 }

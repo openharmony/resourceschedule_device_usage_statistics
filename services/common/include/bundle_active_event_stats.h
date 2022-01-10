@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 class BundleActiveEventStats {
 public:
     int m_eventId;
@@ -39,7 +38,6 @@ public:
     int GetCount();
     void add(const BundleActiveEventStats& right);
 };
-
 }
 }
 #endif

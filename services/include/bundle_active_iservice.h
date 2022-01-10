@@ -50,7 +50,6 @@ public:
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"Resourceschedule.IBundleActiveService");
 };
-
 }
 }
 

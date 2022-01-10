@@ -31,33 +31,43 @@ BundleActiveUsageStats::BundleActiveUsageStats (const BundleActiveUsageStats& or
     m_frontServices = orig.m_frontServices;
     m_lastEvent = orig.m_lastEvent;
 }
+
 std::string BundleActiveUsageStats::GetBundleName() {
     return m_bundleName;
 }
+
 long BundleActiveUsageStats::GetBeginTimeStamp() {
     return m_beginTimeStamp;
 }
+
 long BundleActiveUsageStats::GetEntTimeStamp() {
     return m_endTimeStamp;
 }
+
 long BundleActiveUsageStats::GetLastTimeUsed() {
     return m_lastTimeUsed;
 }
+
 long BundleActiveUsageStats::GetTotalTimeInFront() {
     return m_totalTimeInFront;
 }
+
 long BundleActiveUsageStats::GetLastTimeFrontServiceUsed() {
     return m_lastTimeFrontServiceUsed;
 }
+
 long BundleActiveUsageStats::GetTotalTimeFrontServiceUsed() {
     return m_totalTimeFrontServiceUsed;
 }
+
 int BundleActiveUsageStats::GetLaunchedCount() {
     return m_launchedCount;
 }
+
 int BundleActiveUsageStats::GetBundleLaunchedCount() {
     return m_bundleLaunchedCount;
 }
+
 bool BundleActiveUsageStats::HasFrontAbility() {
     for (auto ability : m_abilities) {
         if (ability.second == BundleActiveEvent::ABILITY_FOREGROUND) {
@@ -66,24 +76,29 @@ bool BundleActiveUsageStats::HasFrontAbility() {
     }
     return false;
 }
+
 bool BundleActiveUsageStats::AnyFrontServiceStarted() {
     return !m_frontServices.empty();
 }
+
 void BundleActiveUsageStats::IncrementTimeUsed(long timeStamp) {
     if (timeStamp > m_lastTimeUsed) {
         m_totalTimeInFront += timeStamp - m_lastTimeUsed;
         m_lastTimeUsed = timeStamp;
     }
 }
+
 void BundleActiveUsageStats::IncrementServiceTimeUsed(long timeStamp) {
     if (timeStamp > m_lastTimeFrontServiceUsed) {
         m_totalTimeFrontServiceUsed += timeStamp - m_lastTimeFrontServiceUsed;
         m_lastTimeFrontServiceUsed = timeStamp;
     }
 }
+
 void BundleActiveUsageStats::IncrementBundleLaunchedCount() {
     m_bundleLaunchedCount += 1;
 }
+
 void BundleActiveUsageStats::UpdateActivity(long timeStamp, int eventId, int abilityId) {
     if (eventId != BundleActiveEvent::ABILITY_FOREGROUND && eventId != BundleActiveEvent::ABILITY_BACKGROUND && 
         eventId != BundleActiveEvent::ABILITY_STOP) {
@@ -119,6 +134,7 @@ void BundleActiveUsageStats::UpdateActivity(long timeStamp, int eventId, int abi
             break;
     }
 }
+
 void BundleActiveUsageStats::UpdateFrontService(std::string frontServiceName, long timeStamp, int eventId) {
     if (eventId != BundleActiveEvent::FRONT_SERVICE_STARTTED && eventId != BundleActiveEvent::FRONT_SERVICE_STOPPED) {
         return;
@@ -150,6 +166,7 @@ void BundleActiveUsageStats::UpdateFrontService(std::string frontServiceName, lo
             break;
     }
 }
+
 void BundleActiveUsageStats::Update(std::string frontServiceName, long timeStamp, int eventId, int abilityId) {
     switch (eventId) {
         case BundleActiveEvent::ABILITY_FOREGROUND:
@@ -182,6 +199,5 @@ void BundleActiveUsageStats::Update(std::string frontServiceName, long timeStamp
         m_launchedCount += 1;
     }
 }
-
 }
 }

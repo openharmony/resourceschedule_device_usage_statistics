@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig) {
     m_bundleName = orig.m_bundleName;
     m_abilityName = orig.m_abilityName;
@@ -55,6 +54,5 @@ int BundleActiveEvent::GetEventId() {
 bool BundleActiveEvent::GetIsIdle() {
     return m_isIdle;
 }
-
 }
 }

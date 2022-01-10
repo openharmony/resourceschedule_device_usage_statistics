@@ -23,6 +23,7 @@ void BundleActiveEventTracker::CommitTime(long timeStamp) {
         m_curStartTime = 0;
     }
 }
+
 void BundleActiveEventTracker::Update(long timeStamp) {
     if (m_curStartTime == 0) {
         m_count++;
@@ -31,6 +32,7 @@ void BundleActiveEventTracker::Update(long timeStamp) {
     m_curStartTime = timeStamp;
     m_lastEventTime = timeStamp;
 }
+
 void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, int eventId, long beginTime, long endTime) {
     if (m_count != 0 || m_duration != 0) {
         BundleActiveEventStats newEvent;
@@ -43,6 +45,5 @@ void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStat
         eventStatsList.emplace_back(newEvent);
     }
 }
-
 }
 }

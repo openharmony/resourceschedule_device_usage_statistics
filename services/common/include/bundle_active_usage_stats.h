@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 //bundles statistics, including activities and frontservices.
 class BundleActiveUsageStats {
 public:
@@ -52,6 +51,7 @@ public:
         void IncrementTimeUsed(long timeStamp);
         void IncrementServiceTimeUsed(long timeStamp);
         void IncrementBundleLaunchedCount();
+
 private:
         bool HasFrontAbility();
         bool AnyFrontServiceStarted();
@@ -60,7 +60,6 @@ private:
 
 
 };
-
 }
 }
 #endif

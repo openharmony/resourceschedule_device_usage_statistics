@@ -20,12 +20,15 @@ namespace BundleActive {
 BundleActiveEventList::BundleActiveEventList() {
 
 }
+
 int BundleActiveEventList::Size() {
     return m_events.size();
 }
+
 void BundleActiveEventList::Clear() {
     m_events.clear();
 }
+
 void BundleActiveEventList::Insert(BundleActiveEvent event) {
     int size = m_events.size();
     if (size == 0 || event.m_timeStamp >= m_events.back().m_timeStamp) {
@@ -35,6 +38,7 @@ void BundleActiveEventList::Insert(BundleActiveEvent event) {
     int insertIdx = FirstIndexOnOrAfter(event.m_timeStamp);
     m_events.insert(m_events.begin() + insertIdx, event);
 }
+
 int BundleActiveEventList::FirstIndexOnOrAfter(long timeStamp) {
     int size = m_events.size();
     int result = size;
@@ -52,12 +56,12 @@ int BundleActiveEventList::FirstIndexOnOrAfter(long timeStamp) {
     }
     return result;
 }
+
 void BundleActiveEventList::Merge(const BundleActiveEventList& right) {
     int size = right.m_events.size();
     for (int i = 0; i < size; i++) {
         Insert(right.m_events[i]);
     }
 }
-
 }
 }

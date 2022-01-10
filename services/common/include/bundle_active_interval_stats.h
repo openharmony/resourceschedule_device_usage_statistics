@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 class BundleActiveIntervalStats {
 public:
     static const int CURRENT_MAJOR_VERSION = 1;
@@ -51,7 +50,6 @@ public:
     BundleActiveEventTracker m_noninteractiveTracker;
     BundleActiveEventTracker m_keyguardShownTracker;
     BundleActiveEventTracker m_keyguardHiddenTracker;
-
     BundleActiveUsageStats& GetOrCreateUsageStats(std::string bundleName);
     BundleActiveEvent BuildEvent(std::string bundleName, std::string serviceName);
     void Update(std::string bundleName, std::string serviceName, long timeStamp, int eventId, int abilityId);
@@ -67,7 +65,6 @@ private:
     std::string GetCachedString(std::string str);
 
 };
-
 }
 }
 #endif
