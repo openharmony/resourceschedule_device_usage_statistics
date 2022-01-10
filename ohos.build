@@ -1,0 +1,31 @@
+{
+  "subsystem": "resourceschedule",
+  "parts": {
+    "bundleactive": {
+      "variants": [
+      ],
+      "module_list": [
+        "//foundation/resourceschedule/bundleactive:bundleactiveinner",
+        "//foundation/resourceschedule/bundleactive:bundleactiveservice",
+        "//foundation/resourceschedule/bundleactive:bundleactive_sa_profile",
+        "//foundation/resourceschedule/bundleactive:bundleactive_service_init"
+      ],
+      "inner_kits": [
+        {
+          "header": {
+            "header_base": "//foundation/resourceschedule/bundleactive/interfaces/innerkits/include",
+            "header_files": [
+              "bundle_active_proxy.h",
+              "bundle_active_client.h"
+            ]
+          },
+          "name": "//foundation/resourceschedule/bundleactive:bundleactiveinner"
+        }
+      ],
+      "system_kits": [
+      ],
+      "test_list":[
+      ]
+    }
+  }
+}

@@ -1,0 +1,110 @@
+# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+import("//build/ohos/sa_profile/sa_profile.gni")
+
+##################################################
+ohos_sa_profile("bundleactive_sa_profile") {
+  sources = [
+    "sa_profile/1906.xml"
+  ]
+  part_name = "bundleactive"
+}
+##################################################
+
+################################################## bundleactiveinner begin
+ohos_shared_library("bundleactiveinner") {
+  sources = [
+      "interfaces/innerkits/src/bundle_active_proxy.cpp",
+      "interfaces/innerkits/src/bundle_active_client.cpp"
+  ]
+  include_dirs = [
+    "services/include",
+    "interfaces/innerkits/include"
+  ]
+
+  deps = [
+    "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
+    "//utils/native/base:utils",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
+    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy"
+  ]
+  part_name = "bundleactive"
+  subsystem_name = "resourceschedule"
+}
+################################################## bundleactiveinner end
+
+##################################################
+ohos_prebuilt_etc("bundleactive_service_init") {
+  if (use_musl) {
+    source = "init/bundleactive_service.cfg"
+  } else {
+    source = "init/bundleactive_service.rc"
+  }
+  relative_install_dir = "init"
+  part_name = "bundleactive"
+  subsystem_name = "resourceschedule"
+}
+##################################################
+
+################################################## bundleactivekit begin
+#ohos_shared_library("bundleactivekit") {
+#  sources = [
+      #"interfaces/kits/xxx.cpp"
+      #"frameworks/xxx.cpp"
+#  ]
+#  include_dirs = [
+#  ]
+
+#  deps = [
+#    "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
+#    "//utils/native/base:utils",
+#    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
+#    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+#    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy"
+#  ]
+#  part_name = "bundleactive"
+#  subsystem_name = "resourceschedule"
+#}
+################################################## bundleactivekit end
+
+################################################## bundleactiveservice begin
+ohos_shared_library("bundleactiveservice") {
+  sources = [
+      "services/src/bundle_active_stub.cpp",
+      "services/src/bundle_active_service.cpp",
+      "services/common/src/bundle_active_event.cpp",
+      "services/common/src/bundle_active_event_list.cpp",
+      "services/common/src/bundle_active_event_stats.cpp",
+      "services/common/src/bundle_active_event_tracker.cpp",
+      "services/common/src/bundle_active_usage_stats.cpp",
+      "services/common/src/bundle_active_interval_stats.cpp",
+      "services/common/src/bundle_active_user_service.cpp"
+  ]
+  include_dirs = [
+    "services/include",
+    "services/common/include"
+  ]
+  deps = [
+    "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
+    "//utils/native/base:utils",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
+    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy"
+  ]
+  part_name = "bundleactive"
+  subsystem_name = "resourceschedule"
+}
+################################################## bundleactiveservice end

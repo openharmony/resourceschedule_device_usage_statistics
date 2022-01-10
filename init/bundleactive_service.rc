@@ -1,0 +1,8 @@
+on post-fs-data
+    start bundleactive_service
+
+service bundleactive_service /system/bin/sa_main /system/profile/bundleactive_service.xml
+    class z_core
+    user root
+    group root shell
+    seclabel u:r:bundleactive_service:s0
