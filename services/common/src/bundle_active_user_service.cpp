@@ -18,48 +18,47 @@
 namespace OHOS {
 namespace BundleActive {
 BundleActiveUserService::BundleActiveUserService(int userId){//,/*database定义待补充*/ BundleActiveService listener/*刷数据库监听器接口实现类*/) {
-    m_currentStats.reserve(BundleActiveIntervalStats::INTERVAL_COUNT);
+    currentStats_.reserve(BundleActivePeriodStats::PERIOD_COUNT);
     //m_listener = listener;
-    m_userId = userId;
+    userId_ = userId;
 }
 
 void BundleActiveUserService::NotifyStatsChanged() {
-    if (!m_statsChanged) {
-        m_statsChanged = true;
-        //m_listener.onStatsUpdated();
+    if (!statsChanged_) {
+        statsChanged_ = true;
     }
 }
 
 void BundleActiveUserService::ReportEvent(BundleActiveEvent event) {
-    BundleActiveIntervalStats currentDailyStats = m_currentStats[BundleActiveIntervalStats::INTERVAL_DAILY];
-    if (event.m_eventId == BundleActiveEvent::ABILITY_FOREGROUND) {
-        if (!event.m_bundleName.empty() && event.m_bundleName != m_lastBackgroundBundle) {
-            m_incrementBundleLaunch = true;
+    BundleActivePeriodStats currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
+    if (event.eventId_ == BundleActiveEvent::ABILITY_FOREGROUND) {
+        if (!event.bundleName_.empty() && event.bundleName_ != lastBackgroundBundle_) {
+            incrementBundleLaunch_ = true;
         }
-    } else if (event.m_eventId == BundleActiveEvent::ABILITY_BACKGROUND) {
-        if (!event.m_bundleName.empty()) {
-            m_lastBackgroundBundle = event.m_bundleName;
+    } else if (event.eventId_ == BundleActiveEvent::ABILITY_BACKGROUND) {
+        if (!event.bundleName_.empty()) {
+            lastBackgroundBundle_ = event.bundleName_;
         }
     }
-    for (int i = 0; i < m_currentStats.size(); i++) {
-        switch (event.m_eventId)
+    for (int i = 0; i < currentStats_.size(); i++) {
+        switch (event.eventId_)
         {
             case BundleActiveEvent::SCREEN_INTERACTIVE:
-                m_currentStats[i].UpdateScreenInteractive(event.m_timeStamp);
+                currentStats_[i].UpdateScreenInteractive(event.timeStamp_);
                 break;
             case BundleActiveEvent::SCREEN_NON_INTERACTIVE:
-                m_currentStats[i].UpdateScreenNonInteractive(event.m_timeStamp);
+                currentStats_[i].UpdateScreenNonInteractive(event.timeStamp_);
                 break;
             case BundleActiveEvent::KEYGUARD_SHOWN:
-                m_currentStats[i].UpdateKeyguardShown(event.m_timeStamp);
+                currentStats_[i].UpdateKeyguardShown(event.timeStamp_);
                 break;
             case BundleActiveEvent::KEYGUARD_HIDDEN:
-                m_currentStats[i].UpdateKeyguardHidden(event.m_timeStamp);
+                currentStats_[i].UpdateKeyguardHidden(event.timeStamp_);
                 break;
             default:
-                m_currentStats[i].Update(event.m_bundleName, event.m_serviceName, event.m_timeStamp, event.m_eventId, event.m_abilityId);
-                if (m_incrementBundleLaunch) {
-                    m_currentStats[i].m_bundleStats[event.m_bundleName].IncrementBundleLaunchedCount();
+                currentStats_[i].Update(event.bundleName_, event.longTimeTaskName_, event.timeStamp_, event.eventId_, event.abilityId_);
+                if (incrementBundleLaunch_) {
+                    currentStats_[i].bundleStats_[event.bundleName_].IncrementBundleLaunchedCount();
                 }
                 break;
         }

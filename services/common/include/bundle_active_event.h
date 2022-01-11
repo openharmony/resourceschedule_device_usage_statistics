@@ -26,8 +26,8 @@ public:
     static const int ABILITY_FOREGROUND = 2;//onForeground() called, ability is in front.
     static const int ABILITY_BACKGROUND = 3;//onBackground() called, ability is in background.
     static const int ABILITY_STOP = 4;//onStop() called, ability is destroyed.
-    static const int FRONT_SERVICE_STARTTED = 5;
-    static const int FRONT_SERVICE_STOPPED = 6;
+    static const int LONG_TIME_TASK_STARTTED = 5;
+    static const int LONG_TIME_TASK_STOPPED = 6;
     static const int SYSTEM_INTERACTIVE = 7;
     static const int USER_INTERACTIVE = 8;
     //internal events 
@@ -40,20 +40,20 @@ public:
     static const int KEYGUARD_SHOWN = 15;
     static const int KEYGUARD_HIDDEN = 16;
     inline static const std::string DEVICE_EVENT_PACKAGE_NAME = "openharmony";
-    std::string m_bundleName;
-    std::string m_serviceName;
-    std::string m_abilityName;
-    int m_abilityId;
-    long m_timeStamp;
-    int m_eventId;
-    bool m_isIdle;
+    std::string bundleName_;
+    std::string longTimeTaskName_;
+    std::string abilityName_;
+    int abilityId_;
+    int64_t timeStamp_;
+    int eventId_;
+    bool isIdle_;
     BundleActiveEvent() {};
     BundleActiveEvent(const BundleActiveEvent& orig);
-    BundleActiveEvent(int eventId, long timeStamp);
+    BundleActiveEvent(const int eventId, const int64_t timeStamp);
     std::string GetBundleName();
     std::string GetAbilityName();
     int GetAbilityId();
-    long GetTimeStamp();
+    int64_t GetTimeStamp();
     int GetEventId();
     bool GetIsIdle();
 };

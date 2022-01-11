@@ -22,31 +22,31 @@ BundleActiveEventList::BundleActiveEventList() {
 }
 
 int BundleActiveEventList::Size() {
-    return m_events.size();
+    return events_.size();
 }
 
 void BundleActiveEventList::Clear() {
-    m_events.clear();
+    events_.clear();
 }
 
 void BundleActiveEventList::Insert(BundleActiveEvent event) {
-    int size = m_events.size();
-    if (size == 0 || event.m_timeStamp >= m_events.back().m_timeStamp) {
-        m_events.push_back(event);
+    int size = events_.size();
+    if (size == 0 || event.timeStamp_ >= events_.back().timeStamp_) {
+        events_.push_back(event);
         return;
     }
-    int insertIdx = FirstIndexOnOrAfter(event.m_timeStamp);
-    m_events.insert(m_events.begin() + insertIdx, event);
+    int insertIdx = FindBestIndex(event.timeStamp_);
+    events_.insert(events_.begin() + insertIdx, event);
 }
 
-int BundleActiveEventList::FirstIndexOnOrAfter(long timeStamp) {
-    int size = m_events.size();
+int BundleActiveEventList::FindBestIndex(int64_t timeStamp) {
+    int size = events_.size();
     int result = size;
     int lo = 0;
     int hi = size - 1;
     while (lo <= hi) {
         int mid = (hi - lo) / 2 + lo;
-        long midTimeStamp = m_events[mid].m_timeStamp;
+        int64_t midTimeStamp = events_[mid].timeStamp_;
         if (midTimeStamp >= timeStamp) {
             hi = mid - 1;
             result = mid;
@@ -58,9 +58,9 @@ int BundleActiveEventList::FirstIndexOnOrAfter(long timeStamp) {
 }
 
 void BundleActiveEventList::Merge(const BundleActiveEventList& right) {
-    int size = right.m_events.size();
+    int size = right.events_.size();
     for (int i = 0; i < size; i++) {
-        Insert(right.m_events[i]);
+        Insert(right.events_[i]);
     }
 }
 }

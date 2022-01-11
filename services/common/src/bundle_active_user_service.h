@@ -29,6 +29,7 @@ class BundleActiveUserService {
 public:
     BundleActiveUserService(int userId);//,/*database定义待补充*/ BundleActiveService listener/*刷数据库监听器接口实现类*/);
 private:
+    //BundleActiveUsageDatabase m_dataBase;
     int incrementBundleLaunch_;
     int userId_;
     std::vector<BundleActivePeriodStats> currentStats_;

@@ -23,13 +23,13 @@ namespace OHOS {
 namespace BundleActive {
 class BundleActiveEventTracker {
 public:
-    long m_curStartTime;
-    long m_lastEventTime;
-    long m_duration;
-    long m_count;
-    void CommitTime(long timeStamp);
-    void Update(long timeStamp);
-    void AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, int eventId, long beginTime, long endTime);
+    int64_t curStartTime_;
+    int64_t lastEventTime_;
+    int64_t duration_;
+    int64_t count_;
+    void CommitTime(const int64_t timeStamp);
+    void Update(int64_t timeStamp);
+    void AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, const int eventId, const int64_t beginTime, const int64_t endTime);
     BundleActiveEventTracker() {};
 };
 }

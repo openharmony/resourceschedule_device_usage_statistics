@@ -18,50 +18,50 @@
 namespace OHOS {
 namespace BundleActive {
 BundleActiveEventStats::BundleActiveEventStats(const BundleActiveEventStats& orig) {
-    m_eventId = orig.m_eventId;
-    m_beginTimeStamp = orig.m_beginTimeStamp;
-    m_endTimeStamp = orig.m_endTimeStamp;
-    m_lastEventTime = orig.m_lastEventTime;
-    m_totalTime = orig.m_totalTime;
-    m_count = orig.m_count;
+    eventId_ = orig.eventId_;
+    beginTimeStamp_ = orig.beginTimeStamp_;
+    endTimeStamp_ = orig.endTimeStamp_;
+    lastEventTime_ = orig.lastEventTime_;
+    totalTime_ = orig.totalTime_;
+    count_ = orig.count_;
 }
 
 int BundleActiveEventStats::GetEventId() {
-    return m_eventId;
+    return eventId_;
 }
 
 int BundleActiveEventStats::GetFirstTimeStamp() {
-    return m_beginTimeStamp;
+    return beginTimeStamp_;
 }
 
 int BundleActiveEventStats::GetLastTimeStamp() {
-    return m_endTimeStamp;
+    return endTimeStamp_;
 }
 
 int BundleActiveEventStats::GetLastEventTime() {
-    return m_lastEventTime;
+    return lastEventTime_;
 }
 
 int BundleActiveEventStats::GetTotalTime() {
-    return m_totalTime;
+    return totalTime_;
 }
 
 int BundleActiveEventStats::GetCount() {
-    return m_count;
+    return count_;
 }
 
 void BundleActiveEventStats::add(const BundleActiveEventStats& right) {
-    if (m_eventId != right.m_eventId) {
+    if (eventId_ != right.eventId_) {
         return;
     }
 
-    if (right.m_beginTimeStamp > m_beginTimeStamp) {
-        m_lastEventTime = std::max(m_lastEventTime, right.m_lastEventTime);
+    if (right.beginTimeStamp_ > beginTimeStamp_) {
+        lastEventTime_ = std::max(lastEventTime_, right.lastEventTime_);
     }
-    m_beginTimeStamp = std::min(m_beginTimeStamp, right.m_beginTimeStamp);
-    m_endTimeStamp = std::max(m_endTimeStamp, right.m_endTimeStamp);
-    m_totalTime += right.m_totalTime;
-    m_count += right.m_count;
+    beginTimeStamp_ = std::min(beginTimeStamp_, right.beginTimeStamp_);
+    endTimeStamp_ = std::max(endTimeStamp_, right.endTimeStamp_);
+    totalTime_ += right.totalTime_;
+    count_ += right.count_;
 }
 }
 }
