@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 class BundleActiveProxy : public IRemoteProxy<IBundleActiveService> {
 public:
     int ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId) override;
@@ -35,7 +34,6 @@ public:
 private:
     static inline BrokerDelegator<BundleActiveProxy> delegator_;
 };
-
 }
 }
 

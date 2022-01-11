@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 class BundleActiveClient {
 public:
     int ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId);
@@ -35,7 +34,6 @@ private:
     bool GetBundleActiveProxy();
     sptr<IBundleActiveService> bundleActiveProxy;
 };
-
 } 
 }
 #endif

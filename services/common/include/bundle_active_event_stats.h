@@ -20,15 +20,14 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 class BundleActiveEventStats {
 public:
-    int m_eventId;
-    long m_beginTimeStamp;
-    long m_endTimeStamp;
-    long m_lastEventTime;
-    long m_totalTime;
-    int m_count;
+    int eventId_;
+    int64_t beginTimeStamp_;
+    int64_t endTimeStamp_;
+    int64_t lastEventTime_;
+    int64_t totalTime_;
+    int count_;
     BundleActiveEventStats() {};
     BundleActiveEventStats(const BundleActiveEventStats& orig);
     int GetEventId();
@@ -39,7 +38,6 @@ public:
     int GetCount();
     void add(const BundleActiveEventStats& right);
 };
-
 }
 }
 #endif

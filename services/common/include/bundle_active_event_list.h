@@ -27,12 +27,11 @@ public:
     int Size();
     void Clear();
     void Insert(BundleActiveEvent event);
-    int FirstIndexOnOrAfter(long timeStamp);
+    int FindBestIndex(int64_t timeStamp);
     void Merge(const BundleActiveEventList& right);
 private:
-    std::vector<BundleActiveEvent> m_events;
+    std::vector<BundleActiveEvent> events_;
 };
-
 }
 }
 #endif

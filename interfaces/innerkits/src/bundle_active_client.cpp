@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 BundleActiveClient& BundleActiveClient::GetInstance() {
     static BundleActiveClient instance;
     return instance;

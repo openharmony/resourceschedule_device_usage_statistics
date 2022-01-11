@@ -17,32 +17,33 @@
 
 namespace OHOS {
 namespace BundleActive {
-void BundleActiveEventTracker::CommitTime(long timeStamp) {
-    if (m_curStartTime != 0) {
-        m_duration += timeStamp - m_curStartTime;
-        m_curStartTime = 0;
-    }
-}
-void BundleActiveEventTracker::Update(long timeStamp) {
-    if (m_curStartTime == 0) {
-        m_count++;
-    }
-    CommitTime(timeStamp);
-    m_curStartTime = timeStamp;
-    m_lastEventTime = timeStamp;
-}
-void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, int eventId, long beginTime, long endTime) {
-    if (m_count != 0 || m_duration != 0) {
-        BundleActiveEventStats newEvent;
-        newEvent.m_eventId = eventId;
-        newEvent.m_count = m_count;
-        newEvent.m_totalTime = m_duration;
-        newEvent.m_lastEventTime = m_lastEventTime;
-        newEvent.m_beginTimeStamp = beginTime;
-        newEvent.m_endTimeStamp = endTime;
-        eventStatsList.emplace_back(newEvent);
+void BundleActiveEventTracker::CommitTime(const int64_t timeStamp) {
+    if (curStartTime_ != 0) {
+        duration_ += timeStamp - curStartTime_;
+        curStartTime_ = 0;
     }
 }
 
+void BundleActiveEventTracker::Update(int64_t timeStamp) {
+    if (curStartTime_ == 0) {
+        count_++;
+    }
+    CommitTime(timeStamp);
+    curStartTime_ = timeStamp;
+    lastEventTime_ = timeStamp;
+}
+
+void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, const int eventId, const int64_t beginTime, const int64_t endTime) {
+    if (count_ != 0 || duration_ != 0) {
+        BundleActiveEventStats newEvent;
+        newEvent.eventId_ = eventId;
+        newEvent.count_ = count_;
+        newEvent.totalTime_ = duration_;
+        newEvent.lastEventTime_ = lastEventTime_;
+        newEvent.beginTimeStamp_ = beginTime;
+        newEvent.endTimeStamp_ = endTime;
+        eventStatsList.emplace_back(newEvent);
+    }
+}
 }
 }
