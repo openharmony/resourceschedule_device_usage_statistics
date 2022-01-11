@@ -21,6 +21,7 @@ BundleActiveUserService::BundleActiveUserService(int userId){//,/*database定义
     currentStats_.reserve(BundleActivePeriodStats::PERIOD_COUNT);
     //m_listener = listener;
     userId_ = userId;
+    statsChanged_ = false;
 }
 
 void BundleActiveUserService::NotifyStatsChanged() {
