@@ -6,7 +6,7 @@ ohos_sa_profile("bundleactive_sa_profile") {
   sources = [
     "sa_profile/1906.xml"
   ]
-  part_name = "bundleactive"
+  part_name = "resourceschedule_device_usage_statistics"
 }
 ##################################################
 
@@ -28,7 +28,7 @@ ohos_shared_library("bundleactiveinner") {
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy"
   ]
-  part_name = "bundleactive"
+  part_name = "resourceschedule_device_usage_statistics"
   subsystem_name = "resourceschedule"
 }
 ################################################## bundleactiveinner end
@@ -41,7 +41,7 @@ ohos_prebuilt_etc("bundleactive_service_init") {
     source = "init/bundleactive_service.rc"
   }
   relative_install_dir = "init"
-  part_name = "bundleactive"
+  part_name = "resourceschedule_device_usage_statistics"
   subsystem_name = "resourceschedule"
 }
 ##################################################
@@ -91,7 +91,7 @@ ohos_shared_library("bundleactiveservice") {
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy"
   ]
-  part_name = "bundleactive"
+  part_name = "resourceschedule_device_usage_statistics"
   subsystem_name = "resourceschedule"
 }
 ################################################## bundleactiveservice end
