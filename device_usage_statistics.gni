@@ -1,0 +1,3 @@
+import("//build/ohos.gni")
+
+device_usage_statistics_part_name = "device_usage_statistics"
