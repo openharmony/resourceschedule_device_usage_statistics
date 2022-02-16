@@ -17,19 +17,23 @@
 
 namespace OHOS {
 namespace BundleActive {
-BundleActiveEventList::BundleActiveEventList() {
+BundleActiveEventList::BundleActiveEventList()
+{
 
 }
 
-int BundleActiveEventList::Size() {
+int BundleActiveEventList::Size()
+{
     return events_.size();
 }
 
-void BundleActiveEventList::Clear() {
+void BundleActiveEventList::Clear()
+{
     events_.clear();
 }
 
-void BundleActiveEventList::Insert(BundleActiveEvent event) {
+void BundleActiveEventList::Insert(BundleActiveEvent event)
+{
     int size = events_.size();
     if (size == 0 || event.timeStamp_ >= events_.back().timeStamp_) {
         events_.push_back(event);
@@ -39,7 +43,8 @@ void BundleActiveEventList::Insert(BundleActiveEvent event) {
     events_.insert(events_.begin() + insertIdx, event);
 }
 
-int BundleActiveEventList::FindBestIndex(int64_t timeStamp) {
+int BundleActiveEventList::FindBestIndex(int64_t timeStamp)
+{
     int size = events_.size();
     int result = size;
     int lo = 0;
@@ -57,7 +62,8 @@ int BundleActiveEventList::FindBestIndex(int64_t timeStamp) {
     return result;
 }
 
-void BundleActiveEventList::Merge(const BundleActiveEventList& right) {
+void BundleActiveEventList::Merge(const BundleActiveEventList& right)
+{
     int size = right.events_.size();
     for (int i = 0; i < size; i++) {
         Insert(right.events_[i]);

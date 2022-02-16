@@ -17,20 +17,22 @@
 
 namespace OHOS {
 namespace BundleActive {
-BundleActiveUserService::BundleActiveUserService(int userId){//,/*database定义待补充*/ BundleActiveService listener/*刷数据库监听器接口实现类*/) {
+BundleActiveUserService::BundleActiveUserService(int userId)
+{
     currentStats_.reserve(BundleActivePeriodStats::PERIOD_COUNT);
-    //m_listener = listener;
     userId_ = userId;
     statsChanged_ = false;
 }
 
-void BundleActiveUserService::NotifyStatsChanged() {
+void BundleActiveUserService::NotifyStatsChanged()
+{
     if (!statsChanged_) {
         statsChanged_ = true;
     }
 }
 
-void BundleActiveUserService::ReportEvent(BundleActiveEvent event) {
+void BundleActiveUserService::ReportEvent(BundleActiveEvent event)
+{
     BundleActivePeriodStats currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (event.eventId_ == BundleActiveEvent::ABILITY_FOREGROUND) {
         if (!event.bundleName_.empty() && event.bundleName_ != lastBackgroundBundle_) {

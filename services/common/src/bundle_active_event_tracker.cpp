@@ -17,14 +17,16 @@
 
 namespace OHOS {
 namespace BundleActive {
-void BundleActiveEventTracker::CommitTime(const int64_t timeStamp) {
+void BundleActiveEventTracker::CommitTime(const int64_t timeStamp)
+{
     if (curStartTime_ != 0) {
         duration_ += timeStamp - curStartTime_;
         curStartTime_ = 0;
     }
 }
 
-void BundleActiveEventTracker::Update(int64_t timeStamp) {
+void BundleActiveEventTracker::Update(int64_t timeStamp)
+{
     if (curStartTime_ == 0) {
         count_++;
     }
@@ -33,7 +35,8 @@ void BundleActiveEventTracker::Update(int64_t timeStamp) {
     lastEventTime_ = timeStamp;
 }
 
-void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, const int eventId, const int64_t beginTime, const int64_t endTime) {
+void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, const int eventId, const int64_t beginTime, const int64_t endTime)
+{
     if (count_ != 0 || duration_ != 0) {
         BundleActiveEventStats newEvent;
         newEvent.eventId_ = eventId;

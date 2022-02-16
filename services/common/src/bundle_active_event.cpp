@@ -17,7 +17,8 @@
 
 namespace OHOS {
 namespace BundleActive {
-BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig) {
+BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig)
+{
     bundleName_ = orig.bundleName_;
     abilityName_ = orig.abilityName_;
     abilityId_ = orig.abilityId_;
@@ -26,32 +27,39 @@ BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig) {
     isIdle_ = orig.isIdle_;
 }
 
-BundleActiveEvent::BundleActiveEvent(const int eventId, const int64_t timeStamp) {
+BundleActiveEvent::BundleActiveEvent(const int eventId, const int64_t timeStamp)
+{
     eventId_ = eventId;
     timeStamp_ = timeStamp;
 }
 
-std::string BundleActiveEvent::GetBundleName() {
+std::string BundleActiveEvent::GetBundleName()
+{
     return bundleName_;
 }
 
-std::string BundleActiveEvent::GetAbilityName() {
+std::string BundleActiveEvent::GetAbilityName()
+{
     return abilityName_;
 }
 
-int BundleActiveEvent::GetAbilityId() {
+int BundleActiveEvent::GetAbilityId()
+{
     return abilityId_;
 }
 
-int64_t BundleActiveEvent::GetTimeStamp() {
+int64_t BundleActiveEvent::GetTimeStamp()
+{
     return timeStamp_;
 }
 
-int BundleActiveEvent::GetEventId() {
+int BundleActiveEvent::GetEventId()
+{
     return eventId_;
 }
 
-bool BundleActiveEvent::GetIsIdle() {
+bool BundleActiveEvent::GetIsIdle()
+{
     return isIdle_;
 }
 }

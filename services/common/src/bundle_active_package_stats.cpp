@@ -17,7 +17,8 @@
 
 namespace OHOS {
 namespace BundleActive {
-BundleActivePackageStats::BundleActivePackageStats (const BundleActivePackageStats& orig) {
+BundleActivePackageStats::BundleActivePackageStats (const BundleActivePackageStats& orig)
+{
     bundleName_ = orig.bundleName_;
     beginTimeStamp_ = orig.beginTimeStamp_;
     endTimeStamp_ = orig.endTimeStamp_;
@@ -32,74 +33,89 @@ BundleActivePackageStats::BundleActivePackageStats (const BundleActivePackageSta
     lastEvent_ = orig.lastEvent_;
 }
 
-std::string BundleActivePackageStats::GetBundleName() {
+std::string BundleActivePackageStats::GetBundleName()
+{
     return bundleName_;
 }
 
-int64_t BundleActivePackageStats::GetBeginTimeStamp() {
+int64_t BundleActivePackageStats::GetBeginTimeStamp()
+{
     return beginTimeStamp_;
 }
 
-int64_t BundleActivePackageStats::GetEntTimeStamp() {
+int64_t BundleActivePackageStats::GetEntTimeStamp()
+{
     return endTimeStamp_;
 }
 
-int64_t BundleActivePackageStats::GetLastTimeUsed() {
+int64_t BundleActivePackageStats::GetLastTimeUsed()
+{
     return lastTimeUsed_;
 }
 
-int64_t BundleActivePackageStats::GetTotalTimeInFront() {
+int64_t BundleActivePackageStats::GetTotalTimeInFront()
+{
     return totalTimeInFront_;
 }
 
-int64_t BundleActivePackageStats::GetLastTimeFrontServiceUsed() {
+int64_t BundleActivePackageStats::GetLastTimeFrontServiceUsed()
+{
     return lastTimeLongTimeTaskUsed_;
 }
 
-int64_t BundleActivePackageStats::GetTotalTimeFrontServiceUsed() {
+int64_t BundleActivePackageStats::GetTotalTimeFrontServiceUsed()
+{
     return totalTimeLongTimeTaskUsed_;
 }
 
-int BundleActivePackageStats::GetLaunchedCount() {
+int BundleActivePackageStats::GetLaunchedCount()
+{
     return launchedCount_;
 }
 
-int BundleActivePackageStats::GetBundleLaunchedCount() {
+int BundleActivePackageStats::GetBundleLaunchedCount()
+{
     return bundleLaunchedCount_;
 }
 
 bool BundleActivePackageStats::HasFrontAbility() {
     for (auto ability : abilities_) {
-        if (ability.second == BundleActiveEvent::ABILITY_FOREGROUND) {
+        if (ability.second == BundleActiveEvent::ABILITY_FOREGROUND)
+        {
             return true;
         }
     }
     return false;
 }
 
-bool BundleActivePackageStats::AnyFrontServiceStarted() {
+bool BundleActivePackageStats::AnyFrontServiceStarted()
+{
     return !frontServices_.empty();
 }
 
-void BundleActivePackageStats::IncrementTimeUsed(const int64_t timeStamp) {
+void BundleActivePackageStats::IncrementTimeUsed(const int64_t timeStamp)
+{
     if (timeStamp > lastTimeUsed_) {
         totalTimeInFront_ += timeStamp - lastTimeUsed_;
         lastTimeUsed_ = timeStamp;
     }
 }
 
-void BundleActivePackageStats::IncrementLongTimeTaskTimeUsed(const int64_t timeStamp) {
+void BundleActivePackageStats::IncrementLongTimeTaskTimeUsed(const int64_t timeStamp)
+{
     if (timeStamp > lastTimeLongTimeTaskUsed_) {
         totalTimeLongTimeTaskUsed_ += timeStamp - lastTimeLongTimeTaskUsed_;
         lastTimeLongTimeTaskUsed_ = timeStamp;
     }
 }
 
-void BundleActivePackageStats::IncrementBundleLaunchedCount() {
+void BundleActivePackageStats::IncrementBundleLaunchedCount()
+{
     bundleLaunchedCount_ += 1;
 }
 
-void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int eventId, const int abilityId) {
+void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int eventId, const int abilityId)
+{
     if (eventId != BundleActiveEvent::ABILITY_FOREGROUND && eventId != BundleActiveEvent::ABILITY_BACKGROUND && 
         eventId != BundleActiveEvent::ABILITY_STOP) {
             return;
@@ -136,7 +152,8 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int 
 }
 
 void BundleActivePackageStats::UpdateLongTimeTask(std::string longTimeTaskName, 
- const int64_t timeStamp, const int eventId) {
+                                                  const int64_t timeStamp, const int eventId)
+ {
     if (eventId != BundleActiveEvent::LONG_TIME_TASK_STARTTED && eventId != BundleActiveEvent::LONG_TIME_TASK_STOPPED) {
         return;
     }
@@ -168,7 +185,8 @@ void BundleActivePackageStats::UpdateLongTimeTask(std::string longTimeTaskName,
     }
 }
 
-void BundleActivePackageStats::Update(std::string longTimeTaskName, const int64_t timeStamp, const int eventId, const int abilityId) {
+void BundleActivePackageStats::Update(std::string longTimeTaskName, const int64_t timeStamp, const int eventId, const int abilityId)
+{
     switch (eventId) {
         case BundleActiveEvent::ABILITY_FOREGROUND:
         case BundleActiveEvent::ABILITY_BACKGROUND:
