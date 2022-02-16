@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 class BundleActiveService : public SystemAbility, public BundleActiveStub {
     DECLARE_SYSTEM_ABILITY(BundleActiveService);
 

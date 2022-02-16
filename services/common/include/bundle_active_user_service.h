@@ -35,7 +35,7 @@ private:
     bool statsChanged_;
     std::string lastBackgroundBundle_;
     inline static const std::vector<int64_t> PERIOD_LENGTH = {BundleActivePeriodStats::DAY_IN_MILLIS, BundleActivePeriodStats::WEEK_IN_MILLIS, 
-                                                      BundleActivePeriodStats::MONTH_IN_MILLIS, BundleActivePeriodStats::YEAR_IN_MILLIS};
+        BundleActivePeriodStats::MONTH_IN_MILLIS, BundleActivePeriodStats::YEAR_IN_MILLIS};
     void NotifyStatsChanged();
     void ReportEvent(BundleActiveEvent event);
 };

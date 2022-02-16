@@ -108,6 +108,5 @@ std::string BundleActivePeriodStats::GetCachedString(std::string str)
     }
     return *it;
 }
-
 }
 }
