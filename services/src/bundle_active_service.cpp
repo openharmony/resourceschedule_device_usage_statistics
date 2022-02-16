@@ -34,19 +34,25 @@ void BundleActiveService::OnStop()
     BUNDLE_ACTIVE_LOGI("[Server] OnStop");
 }
 
-int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId) {
+int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
+    const int& userId, const int& eventId)
+{
     BUNDLE_ACTIVE_LOGI("Report event called");
-    return 111;
+    return 0;
 }
 
-int BundleActiveService::IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId) {
+int BundleActiveService::IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId,
+    const int& userId)
+{
     BUNDLE_ACTIVE_LOGI("Is bundle active called");
     return true;
 }
 
-int BundleActiveService::Query(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId) {
+int BundleActiveService::Query(std::string& bundleName, std::string& abilityName, const int& abilityId,
+    const int& userId)
+{
     BUNDLE_ACTIVE_LOGI("Query called");
-    return 222;
+    return 0;
 }
 }
 }

@@ -17,7 +17,8 @@
 
 namespace OHOS {
 namespace BundleActive {
-BundleActiveEventStats::BundleActiveEventStats(const BundleActiveEventStats& orig) {
+BundleActiveEventStats::BundleActiveEventStats(const BundleActiveEventStats& orig)
+{
     eventId_ = orig.eventId_;
     beginTimeStamp_ = orig.beginTimeStamp_;
     endTimeStamp_ = orig.endTimeStamp_;
@@ -26,31 +27,38 @@ BundleActiveEventStats::BundleActiveEventStats(const BundleActiveEventStats& ori
     count_ = orig.count_;
 }
 
-int BundleActiveEventStats::GetEventId() {
+int BundleActiveEventStats::GetEventId()
+{
     return eventId_;
 }
 
-int BundleActiveEventStats::GetFirstTimeStamp() {
+int BundleActiveEventStats::GetFirstTimeStamp()
+{
     return beginTimeStamp_;
 }
 
-int BundleActiveEventStats::GetLastTimeStamp() {
+int BundleActiveEventStats::GetLastTimeStamp()
+{
     return endTimeStamp_;
 }
 
-int BundleActiveEventStats::GetLastEventTime() {
+int BundleActiveEventStats::GetLastEventTime()
+{
     return lastEventTime_;
 }
 
-int BundleActiveEventStats::GetTotalTime() {
+int BundleActiveEventStats::GetTotalTime()
+{
     return totalTime_;
 }
 
-int BundleActiveEventStats::GetCount() {
+int BundleActiveEventStats::GetCount()
+{
     return count_;
 }
 
-void BundleActiveEventStats::add(const BundleActiveEventStats& right) {
+void BundleActiveEventStats::add(const BundleActiveEventStats& right)
+{
     if (eventId_ != right.eventId_) {
         return;
     }

@@ -17,12 +17,14 @@
 
 namespace OHOS {
 namespace BundleActive {
-BundleActiveClient& BundleActiveClient::GetInstance() {
+BundleActiveClient& BundleActiveClient::GetInstance()
+{
     static BundleActiveClient instance;
     return instance;
 }
 
-bool BundleActiveClient::GetBundleActiveProxy() {
+bool BundleActiveClient::GetBundleActiveProxy()
+{
     sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgr == nullptr) {
         BUNDLE_ACTIVE_LOGE("Failed to get SystemAbilityManager.");
@@ -42,14 +44,18 @@ bool BundleActiveClient::GetBundleActiveProxy() {
     }
     return true;
 }
-int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId) {
+int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
+    const int& userId, const int& eventId)
+{
     if (!GetBundleActiveProxy()) {
         return -1;
     }
     return bundleActiveProxy->ReportEvent(bundleName, abilityName, abilityId, userId, eventId);
 }
 
-int BundleActiveClient::IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId) {
+int BundleActiveClient::IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId,
+    const int& userId)
+{
     if (!GetBundleActiveProxy()) {
         return -1;
     }
@@ -62,6 +68,5 @@ int BundleActiveClient::Query(std::string& bundleName, std::string& abilityName,
     }
     return bundleActiveProxy->Query(bundleName, abilityName, abilityId, userId);
 }
-
 }
 }
