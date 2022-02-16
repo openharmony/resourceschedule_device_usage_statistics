@@ -34,7 +34,8 @@ int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& ability
     return result;
 }
 
-int BundleActiveProxy::IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId)
+int BundleActiveProxy::IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId,
+    const int& userId)
 {
     MessageParcel data;
     MessageParcel reply;
