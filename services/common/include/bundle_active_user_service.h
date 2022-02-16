@@ -27,7 +27,7 @@ namespace BundleActive {
 
 class BundleActiveUserService {
 public:
-    BundleActiveUserService(int userId);//,/*database定义待补充*/ BundleActiveService listener/*刷数据库监听器接口实现类*/);
+    BundleActiveUserService(int userId);
 private:
     int incrementBundleLaunch_;
     int userId_;

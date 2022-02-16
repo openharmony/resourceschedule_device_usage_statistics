@@ -22,15 +22,13 @@ namespace OHOS {
 namespace BundleActive {
 class BundleActiveEvent {
 public:
-    //external events
-    static const int ABILITY_FOREGROUND = 2;//onForeground() called, ability is in front.
-    static const int ABILITY_BACKGROUND = 3;//onBackground() called, ability is in background.
-    static const int ABILITY_STOP = 4;//onStop() called, ability is destroyed.
+    static const int ABILITY_FOREGROUND = 2;
+    static const int ABILITY_BACKGROUND = 3;
+    static const int ABILITY_STOP = 4;
     static const int LONG_TIME_TASK_STARTTED = 5;
     static const int LONG_TIME_TASK_STOPPED = 6;
     static const int SYSTEM_INTERACTIVE = 7;
     static const int USER_INTERACTIVE = 8;
-    //internal events 
     static const int END_OF_THE_DAY = 9; 
     static const int DEVICE_SHUTDOWN = 10;
     static const int DEVICE_STARTUP = 11;

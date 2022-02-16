@@ -20,8 +20,7 @@ namespace OHOS {
 namespace BundleActive {
 BundleActivePackageStats& BundleActivePeriodStats::GetOrCreateUsageStats(std::string bundleName)
 {
-    std::map<std::string, BundleActivePackageStats>::iterator it;
-    it = bundleStats_.find(bundleName);
+    std::map<std::string, BundleActivePackageStats>::iterator it = bundleStats_.find(bundleName);
     if (it == bundleStats_.end()) {
         BundleActivePackageStats newStats;
         newStats.beginTimeStamp_ = beginTime_;

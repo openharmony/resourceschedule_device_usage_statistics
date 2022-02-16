@@ -21,21 +21,20 @@
 
 namespace OHOS {
 namespace BundleActive {
-//bundles statistics, including Abilityies and frontservices.
 class BundleActivePackageStats {
 public:
         std::string bundleName_;
-        int64_t beginTimeStamp_; //start time of counting
-        int64_t endTimeStamp_; //stop time of counting
-        int64_t lastTimeUsed_; //the timestamp of last launch
-        int64_t totalTimeInFront_; // the total time of using the bundle
+        int64_t beginTimeStamp_;
+        int64_t endTimeStamp_;
+        int64_t lastTimeUsed_;
+        int64_t totalTimeInFront_;
         int64_t lastTimeLongTimeTaskUsed_;
         int64_t totalTimeLongTimeTaskUsed_;
         int launchedCount_;
         int bundleLaunchedCount_;
         int lastEvent_;
-        std::map<int, int> abilities_; // key is abilityId, value is the last event of this ability. Restore all abilities' last event of bundle.
-        std::map<std::string, int> frontServices_; // restore the frontservices' names using by bundle.
+        std::map<int, int> abilities_;
+        std::map<std::string, int> frontServices_;
         BundleActivePackageStats() {};
         BundleActivePackageStats(const BundleActivePackageStats& orig);
         std::string GetBundleName();

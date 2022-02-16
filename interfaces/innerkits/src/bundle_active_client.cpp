@@ -44,6 +44,7 @@ bool BundleActiveClient::GetBundleActiveProxy()
     }
     return true;
 }
+
 int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
     const int& userId, const int& eventId)
 {
