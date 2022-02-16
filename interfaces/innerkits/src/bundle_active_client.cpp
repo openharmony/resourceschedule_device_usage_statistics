@@ -44,7 +44,8 @@ bool BundleActiveClient::GetBundleActiveProxy()
     }
     return true;
 }
-int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId)
+int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
+    const int& userId, const int& eventId)
 {
     if (!GetBundleActiveProxy()) {
         return -1;
@@ -52,7 +53,8 @@ int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilit
     return bundleActiveProxy->ReportEvent(bundleName, abilityName, abilityId, userId, eventId);
 }
 
-int BundleActiveClient::IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId)
+int BundleActiveClient::IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId,
+    const int& userId)
 {
     if (!GetBundleActiveProxy()) {
         return -1;

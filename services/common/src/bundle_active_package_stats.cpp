@@ -80,8 +80,7 @@ int BundleActivePackageStats::GetBundleLaunchedCount()
 
 bool BundleActivePackageStats::HasFrontAbility() {
     for (auto ability : abilities_) {
-        if (ability.second == BundleActiveEvent::ABILITY_FOREGROUND)
-        {
+        if (ability.second == BundleActiveEvent::ABILITY_FOREGROUND) {
             return true;
         }
     }
@@ -152,8 +151,8 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int 
 }
 
 void BundleActivePackageStats::UpdateLongTimeTask(std::string longTimeTaskName, 
-                                                  const int64_t timeStamp, const int eventId)
- {
+    const int64_t timeStamp, const int eventId)
+{
     if (eventId != BundleActiveEvent::LONG_TIME_TASK_STARTTED && eventId != BundleActiveEvent::LONG_TIME_TASK_STOPPED) {
         return;
     }
@@ -185,7 +184,8 @@ void BundleActivePackageStats::UpdateLongTimeTask(std::string longTimeTaskName,
     }
 }
 
-void BundleActivePackageStats::Update(std::string longTimeTaskName, const int64_t timeStamp, const int eventId, const int abilityId)
+void BundleActivePackageStats::Update(std::string longTimeTaskName, const int64_t timeStamp, const int eventId,
+    const int abilityId)
 {
     switch (eventId) {
         case BundleActiveEvent::ABILITY_FOREGROUND:

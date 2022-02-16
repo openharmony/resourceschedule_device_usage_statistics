@@ -32,7 +32,8 @@ BundleActivePackageStats& BundleActivePeriodStats::GetOrCreateUsageStats(std::st
     return bundleStats_[bundleName];
 }
 
-void BundleActivePeriodStats::Update(std::string bundleName, std::string longTimeTaskName, const int64_t timeStamp, const int eventId,  const int abilityId)
+void BundleActivePeriodStats::Update(std::string bundleName, std::string longTimeTaskName, const int64_t timeStamp,
+    const int eventId, const int abilityId)
 {
     if (eventId == BundleActiveEvent::DEVICE_SHUTDOWN || eventId == BundleActiveEvent::FLUSH_TO_DISK) {
         for (auto usageStatsPair : bundleStats_) {

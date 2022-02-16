@@ -25,7 +25,8 @@ class BundleActiveService : public SystemAbility, public BundleActiveStub {
     DECLARE_SYSTEM_ABILITY(BundleActiveService);
 
 public:
-    int ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId) override;
+    int ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
+        const int& userId, const int& eventId) override;
     int IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId) override;
     int Query(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId) override;
     BundleActiveService(int32_t systemAbilityId, int runOnCreate)

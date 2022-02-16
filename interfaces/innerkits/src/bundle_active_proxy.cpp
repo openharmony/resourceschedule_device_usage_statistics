@@ -17,7 +17,8 @@
 
 namespace OHOS{
 namespace BundleActive {
-int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId)
+int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
+    const int& userId, const int& eventId)
 {
     MessageParcel data;
     MessageParcel reply;

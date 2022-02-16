@@ -35,7 +35,8 @@ void BundleActiveEventTracker::Update(int64_t timeStamp)
     lastEventTime_ = timeStamp;
 }
 
-void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, const int eventId, const int64_t beginTime, const int64_t endTime)
+void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, const int eventId,
+    const int64_t beginTime, const int64_t endTime)
 {
     if (count_ != 0 || duration_ != 0) {
         BundleActiveEventStats newEvent;
