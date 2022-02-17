@@ -91,17 +91,18 @@ void BundleActivePeriodStats::UpdateKeyguardHidden(const int64_t timeStamp)
     keyguardShownTracker_.CommitTime(timeStamp);
 }
 
-void BundleActivePeriodStats::AddEventStatsTo(std::vector<BundleActiveEventStats>& eventStatsList) {
+void BundleActivePeriodStats::AddEventStatsTo(std::vector<BundleActiveEventStats>& eventStatsList)
+{
     interactiveTracker_.AddToEventStats(eventStatsList, BundleActiveEvent::SCREEN_INTERACTIVE, beginTime_, endTime_);
-    noninteractiveTracker_.AddToEventStats(eventStatsList, BundleActiveEvent::SCREEN_NON_INTERACTIVE, beginTime_, endTime_);
+    noninteractiveTracker_.AddToEventStats(eventStatsList, BundleActiveEvent::SCREEN_NON_INTERACTIVE,
+        beginTime_, endTime_);
     keyguardShownTracker_.AddToEventStats(eventStatsList, BundleActiveEvent::KEYGUARD_SHOWN, beginTime_, endTime_);
     keyguardHiddenTracker_.AddToEventStats(eventStatsList, BundleActiveEvent::KEYGUARD_HIDDEN, beginTime_, endTime_);
 }
 
 std::string BundleActivePeriodStats::GetCachedString(std::string str)
 {
-    std::set<std::string>::iterator it;
-    it = packetNamesCache_.find(str);
+    std::set<std::string>::iterator it = packetNamesCache_.find(str);
     if (it == packetNamesCache_.end()) {
         packetNamesCache_.insert(str);
         return str;

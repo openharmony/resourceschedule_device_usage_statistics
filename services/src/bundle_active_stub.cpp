@@ -21,7 +21,7 @@ namespace BundleActive {
 int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
     MessageOption &option)
 {
-    switch(code) {
+    switch (code) {
         case REPORT_EVENT: {
             std::string bundleName = data.ReadString();
             std::string ablityName = data.ReadString();
@@ -45,7 +45,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int abilityId = data.ReadInt32();
             int userId = data.ReadInt32();
             int result = Query(bundleName, ablityName, abilityId, userId);
-            return reply.WriteInt32(result);           
+            return reply.WriteInt32(result);
         }
 
         default:

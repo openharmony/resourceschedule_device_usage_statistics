@@ -16,7 +16,7 @@
 #ifndef BUNDLE_ACTIVE_USER_SERVICE_H
 #define BUNDLE_ACTIVE_USER_SERVICE_H
 
-#include "bundle_active_iservice.h"
+#include "ibundle_active_service.h"
 #include "bundle_active_event.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_period_stats.h"
@@ -24,7 +24,6 @@
 
 namespace OHOS {
 namespace BundleActive {
-
 class BundleActiveUserService {
 public:
     BundleActiveUserService(int userId);
@@ -34,8 +33,9 @@ private:
     std::vector<BundleActivePeriodStats> currentStats_;
     bool statsChanged_;
     std::string lastBackgroundBundle_;
-    inline static const std::vector<int64_t> PERIOD_LENGTH = {BundleActivePeriodStats::DAY_IN_MILLIS, BundleActivePeriodStats::WEEK_IN_MILLIS, 
-        BundleActivePeriodStats::MONTH_IN_MILLIS, BundleActivePeriodStats::YEAR_IN_MILLIS};
+    inline static const std::vector<int64_t> PERIOD_LENGTH = {BundleActivePeriodStats::DAY_IN_MILLIS,
+        BundleActivePeriodStats::WEEK_IN_MILLIS, BundleActivePeriodStats::MONTH_IN_MILLIS,
+        BundleActivePeriodStats::YEAR_IN_MILLIS};
     void NotifyStatsChanged();
     void ReportEvent(BundleActiveEvent event);
 };

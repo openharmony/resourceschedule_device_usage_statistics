@@ -16,7 +16,7 @@
 #ifndef BUNDLE_ACTIVE_EVENT_H
 #define BUNDLE_ACTIVE_EVENT_H
 
-#include "bundle_active_iservice.h"
+#include "ibundle_active_service.h"
 
 namespace OHOS {
 namespace BundleActive {
@@ -29,7 +29,7 @@ public:
     static const int LONG_TIME_TASK_STOPPED = 6;
     static const int SYSTEM_INTERACTIVE = 7;
     static const int USER_INTERACTIVE = 8;
-    static const int END_OF_THE_DAY = 9; 
+    static const int END_OF_THE_DAY = 9;
     static const int DEVICE_SHUTDOWN = 10;
     static const int DEVICE_STARTUP = 11;
     static const int FLUSH_TO_DISK = 12;

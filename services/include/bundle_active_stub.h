@@ -16,7 +16,7 @@
 #ifndef BUNDLE_ACTIVE_STUB_H
 #define BUNDLE_ACTIVE_STUB_H
 
-#include "bundle_active_iservice.h"
+#include "ibundle_active_service.h"
 
 namespace OHOS {
 namespace BundleActive {

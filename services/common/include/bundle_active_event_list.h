@@ -16,7 +16,7 @@
 #ifndef BUNDLE_ACTIVE_EVENT_LIST_H
 #define BUNDLE_ACTIVE_EVENT_LIST_H
 
-#include "bundle_active_iservice.h"
+#include "ibundle_active_service.h"
 #include "bundle_active_event.h"
 
 namespace OHOS {

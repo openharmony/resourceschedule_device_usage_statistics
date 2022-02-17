@@ -16,7 +16,7 @@
 #ifndef bundle_active_package_stats_H
 #define bundle_active_package_stats_H
 
-#include "bundle_active_iservice.h"
+#include "ibundle_active_service.h"
 #include "bundle_active_event.h"
 
 namespace OHOS {
@@ -55,10 +55,8 @@ private:
         bool HasFrontAbility();
         bool AnyFrontServiceStarted();
         void UpdateAbility(const int64_t timeStamp, const int eventId, const int abilityId);
-        void UpdateLongTimeTask(std::string longTimeTaskName, 
+        void UpdateLongTimeTask(std::string longTimeTaskName,
                                 const int64_t timeStamp, const int eventId);
-
-
 };
 }
 }

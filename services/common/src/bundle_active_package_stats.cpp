@@ -78,7 +78,8 @@ int BundleActivePackageStats::GetBundleLaunchedCount()
     return bundleLaunchedCount_;
 }
 
-bool BundleActivePackageStats::HasFrontAbility() {
+bool BundleActivePackageStats::HasFrontAbility()
+{
     for (auto ability : abilities_) {
         if (ability.second == BundleActiveEvent::ABILITY_FOREGROUND) {
             return true;
@@ -115,12 +116,11 @@ void BundleActivePackageStats::IncrementBundleLaunchedCount()
 
 void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int eventId, const int abilityId)
 {
-    if (eventId != BundleActiveEvent::ABILITY_FOREGROUND && eventId != BundleActiveEvent::ABILITY_BACKGROUND && 
+    if (eventId != BundleActiveEvent::ABILITY_FOREGROUND && eventId != BundleActiveEvent::ABILITY_BACKGROUND &&
         eventId != BundleActiveEvent::ABILITY_STOP) {
             return;
         }
-    std::map<int, int>::iterator it;
-    it = abilities_.find(abilityId);
+    std::map<int, int>::iterator it = abilities_.find(abilityId);
     if (it != abilities_.end()) {
         int lastEventId = it->second;
         switch (lastEventId) {
@@ -149,14 +149,13 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int 
     }
 }
 
-void BundleActivePackageStats::UpdateLongTimeTask(std::string longTimeTaskName, 
+void BundleActivePackageStats::UpdateLongTimeTask(std::string longTimeTaskName,
     const int64_t timeStamp, const int eventId)
 {
     if (eventId != BundleActiveEvent::LONG_TIME_TASK_STARTTED && eventId != BundleActiveEvent::LONG_TIME_TASK_STOPPED) {
         return;
     }
-    std::map<std::string, int>::iterator it;
-    it = frontServices_.find(longTimeTaskName);
+    std::map<std::string, int>::iterator it = frontServices_.find(longTimeTaskName);
     if (it != frontServices_.end()) {
         int lastEventId = it->second;
         switch (lastEventId) {
@@ -169,7 +168,7 @@ void BundleActivePackageStats::UpdateLongTimeTask(std::string longTimeTaskName,
 
     switch (eventId) {
         case BundleActiveEvent::LONG_TIME_TASK_STARTTED:
-            if(!AnyFrontServiceStarted()) {
+            if (!AnyFrontServiceStarted()) {
                 lastTimeLongTimeTaskUsed_ = timeStamp;
             }
             frontServices_[longTimeTaskName] = eventId;

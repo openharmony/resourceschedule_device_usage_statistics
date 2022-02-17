@@ -16,7 +16,7 @@
 #ifndef BUNDLE_ACTIVE_EVENT_TRACKER_H
 #define BUNDLE_ACTIVE_EVENT_TRACKER_H
 
-#include "bundle_active_iservice.h"
+#include "ibundle_active_service.h"
 #include "bundle_active_event_stats.h"
 
 namespace OHOS {
@@ -29,7 +29,8 @@ public:
     int64_t count_;
     void CommitTime(const int64_t timeStamp);
     void Update(int64_t timeStamp);
-    void AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, const int eventId, const int64_t beginTime, const int64_t endTime);
+    void AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, const int eventId,
+        const int64_t beginTime, const int64_t endTime);
     BundleActiveEventTracker() {};
 };
 }
