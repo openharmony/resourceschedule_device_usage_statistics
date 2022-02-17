@@ -34,11 +34,12 @@
 
 namespace OHOS {
 namespace BundleActive {
-    
 class IBundleActiveService : public IRemoteBroker {
 public:
-    virtual int ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId, const int& eventId) = 0;
-    virtual int IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId) = 0;
+    virtual int ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
+        const int& userId, const int& eventId) = 0;
+    virtual int IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId,
+        const int& userId) = 0;
     virtual int Query(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId) = 0;
 
 public:

@@ -15,7 +15,7 @@
 
 #include "bundle_active_proxy.h"
 
-namespace OHOS{
+namespace OHOS {
 namespace BundleActive {
 int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
     const int& userId, const int& eventId)

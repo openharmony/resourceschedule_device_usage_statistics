@@ -44,6 +44,7 @@ bool BundleActiveClient::GetBundleActiveProxy()
     }
     return true;
 }
+
 int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
     const int& userId, const int& eventId)
 {
@@ -62,7 +63,9 @@ int BundleActiveClient::IsBundleIdle(std::string& bundleName, std::string& abili
     return bundleActiveProxy->IsBundleIdle(bundleName, abilityName, abilityId, userId);
 }
 
-int BundleActiveClient::Query(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId) {
+int BundleActiveClient::Query(std::string& bundleName, std::string& abilityName, const int& abilityId,
+    const int& userId)
+{
     if (!GetBundleActiveProxy()) {
         return -1;
     }

@@ -16,7 +16,7 @@
 #ifndef BUNDLE_ACTIVE_SERVICE_H
 #define BUNDLE_ACTIVE_SERVICE_H
 
-#include "bundle_active_iservice.h"
+#include "ibundle_active_service.h"
 #include "bundle_active_stub.h"
 
 namespace OHOS {
@@ -37,6 +37,6 @@ protected:
     void OnStart() override;
     void OnStop() override;
 };
-} 
+}
 }
 #endif

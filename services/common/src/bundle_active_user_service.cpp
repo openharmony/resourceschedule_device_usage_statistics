@@ -44,8 +44,7 @@ void BundleActiveUserService::ReportEvent(BundleActiveEvent event)
         }
     }
     for (int i = 0; i < currentStats_.size(); i++) {
-        switch (event.eventId_)
-        {
+        switch (event.eventId_) {
             case BundleActiveEvent::SCREEN_INTERACTIVE:
                 currentStats_[i].UpdateScreenInteractive(event.timeStamp_);
                 break;
@@ -59,7 +58,8 @@ void BundleActiveUserService::ReportEvent(BundleActiveEvent event)
                 currentStats_[i].UpdateKeyguardHidden(event.timeStamp_);
                 break;
             default:
-                currentStats_[i].Update(event.bundleName_, event.longTimeTaskName_, event.timeStamp_, event.eventId_, event.abilityId_);
+                currentStats_[i].Update(event.bundleName_, event.longTimeTaskName_, event.timeStamp_,
+                    event.eventId_, event.abilityId_);
                 if (incrementBundleLaunch_) {
                     currentStats_[i].bundleStats_[event.bundleName_].IncrementBundleLaunchedCount();
                 }

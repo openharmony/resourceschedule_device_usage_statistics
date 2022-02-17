@@ -16,7 +16,7 @@
 #ifndef bundle_active_period_stats_H
 #define bundle_active_period_stats_H
 
-#include "bundle_active_iservice.h"
+#include "ibundle_active_service.h"
 #include "bundle_active_event.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_event_list.h"
@@ -48,7 +48,8 @@ public:
     BundleActiveEventTracker keyguardHiddenTracker_;
     BundleActivePackageStats& GetOrCreateUsageStats(std::string bundleName);
     BundleActiveEvent BuildEvent(std::string bundleName, std::string longTimeTaskName);
-    void Update(std::string bundleName, std::string longTimeTaskName, const int64_t timeStamp, const int eventId,  const int abilityId);
+    void Update(std::string bundleName, std::string longTimeTaskName, const int64_t timeStamp, const int eventId,
+        const int abilityId);
     void AddEvent(BundleActiveEvent event);
     void UpdateScreenInteractive(const int64_t timeStamp);
     void UpdateScreenNonInteractive(const int64_t timeStamp);
@@ -59,7 +60,6 @@ private:
     void CommitTime(const int64_t timeStamp);
     void AddEventStatsTo(std::vector<BundleActiveEventStats>& eventStatsList);
     std::string GetCachedString(std::string str);
-
 };
 }
 }

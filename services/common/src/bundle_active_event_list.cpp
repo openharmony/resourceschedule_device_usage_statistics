@@ -19,7 +19,6 @@ namespace OHOS {
 namespace BundleActive {
 BundleActiveEventList::BundleActiveEventList()
 {
-
 }
 
 int BundleActiveEventList::Size()
