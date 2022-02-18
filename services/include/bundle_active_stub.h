@@ -22,7 +22,8 @@ namespace OHOS {
 namespace BundleActive {
 class BundleActiveStub : public IRemoteStub<IBundleActiveService> {
 public:
-    virtual int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply, MessageOption &option) override;
+    virtual int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
+        MessageOption &option) override;
 
 public:
     BundleActiveStub() {};

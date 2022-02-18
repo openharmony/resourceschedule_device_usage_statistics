@@ -24,14 +24,15 @@ class BundleActiveProxy : public IRemoteProxy<IBundleActiveService> {
 public:
     int ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
         const int& userId, const int& eventId) override;
-    int IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId) override;
+    int IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId,
+        const int& userId) override;
     int Query(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId) override;
 
 public:
     explicit BundleActiveProxy(const sptr<IRemoteObject>& impl)
         : IRemoteProxy<IBundleActiveService>(impl) {}
     virtual ~BundleActiveProxy() {}
-    
+
 private:
     static inline BrokerDelegator<BundleActiveProxy> delegator_;
 };
