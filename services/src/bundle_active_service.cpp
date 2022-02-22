@@ -17,7 +17,7 @@
 
 namespace OHOS {
 namespace BundleActive {
-REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_UASAGE_STATISTICS_SYS_ABILITY_ID, true);
+REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 
 void BundleActiveService::OnStart()
 {
