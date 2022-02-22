@@ -17,16 +17,16 @@
 
 namespace OHOS {
 namespace BundleActive {
-REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, BUNDLE_ACTIVE_SYS_ABILITY_ID, true);
+REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_UASAGE_STATISTICS_SYS_ABILITY_ID, true);
 
 void BundleActiveService::OnStart()
 {
     int ret = Publish(this);
     if (!ret) {
-        BUNDLE_ACTIVE_LOGE("[Server] OnStart, Register SystemAbility[1906] FAIL.");
+        BUNDLE_ACTIVE_LOGE("[Server] OnStart, Register SystemAbility[1907] FAIL.");
         return;
     }
-    BUNDLE_ACTIVE_LOGI("[Server] OnStart, Register SystemAbility[1906] SUCCESS.");
+    BUNDLE_ACTIVE_LOGI("[Server] OnStart, Register SystemAbility[1907] SUCCESS.");
 }
 
 void BundleActiveService::OnStop()

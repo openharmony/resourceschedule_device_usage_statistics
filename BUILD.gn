@@ -15,7 +15,7 @@ import("//build/ohos/sa_profile/sa_profile.gni")
 import("device_usage_statistics.gni")
 
 ohos_sa_profile("bundleactive_sa_profile") {
-  sources = [ "sa_profile/1906.xml" ]
+  sources = [ "sa_profile/1907.xml" ]
   part_name = "device_usage_statistics"
 }
 
