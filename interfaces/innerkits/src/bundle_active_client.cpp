@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,9 +14,10 @@
  */
 
 #include "bundle_active_client.h"
+#include "bundle_active_package_stats.h"
 
 namespace OHOS {
-namespace BundleActive {
+namespace DeviceUsageStats {
 BundleActiveClient& BundleActiveClient::GetInstance()
 {
     static BundleActiveClient instance;
@@ -33,43 +34,85 @@ bool BundleActiveClient::GetBundleActiveProxy()
 
     sptr<IRemoteObject> object = samgr->GetSystemAbility(DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID);
     if (object == nullptr) {
-        BUNDLE_ACTIVE_LOGE("Failed to get SystemAbility[1907] .");
+        BUNDLE_ACTIVE_LOGE("Failed to get SystemAbility[1920] .");
         return false;
     }
 
-    bundleActiveProxy = iface_cast<IBundleActiveService>(object);
-    if (bundleActiveProxy == nullptr) {
+    bundleActiveProxy_ = iface_cast<IBundleActiveService>(object);
+    if (bundleActiveProxy_ == nullptr) {
         BUNDLE_ACTIVE_LOGE("Failed to get BundleActiveClient.");
         return false;
     }
     return true;
 }
 
-int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
-    const int& userId, const int& eventId)
+int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
+    const std::string& continuousTask, const int& userId, const int& eventId)
 {
+    BUNDLE_ACTIVE_LOGI("BundleActiveClient::ReportEvent called");
     if (!GetBundleActiveProxy()) {
         return -1;
     }
-    return bundleActiveProxy->ReportEvent(bundleName, abilityName, abilityId, userId, eventId);
+    return bundleActiveProxy_->ReportEvent(bundleName, abilityName, abilityId, continuousTask, userId, eventId);
 }
 
-int BundleActiveClient::IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId,
-    const int& userId)
+bool BundleActiveClient::IsBundleIdle(const std::string& bundleName)
 {
     if (!GetBundleActiveProxy()) {
         return -1;
     }
-    return bundleActiveProxy->IsBundleIdle(bundleName, abilityName, abilityId, userId);
+    return bundleActiveProxy_->IsBundleIdle(bundleName);
 }
 
-int BundleActiveClient::Query(std::string& bundleName, std::string& abilityName, const int& abilityId,
-    const int& userId)
+std::vector<BundleActivePackageStats> BundleActiveClient::QueryPackageStats(const int& intervalType,
+    const int64_t& beginTime, const int64_t& endTime)
+{
+    if (!GetBundleActiveProxy()) {
+        return std::vector<BundleActivePackageStats>(0);
+    }
+    return bundleActiveProxy_->QueryPackageStats(intervalType, beginTime, endTime);
+}
+
+std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t& beginTime, const int64_t& endTime)
+{
+    if (!GetBundleActiveProxy()) {
+        return std::vector<BundleActiveEvent>(0);
+    }
+    return bundleActiveProxy_->QueryEvents(beginTime, endTime);
+}
+
+void BundleActiveClient::SetBundleGroup(std::string bundleName, const int newGroup, const int& userId)
+{
+    if (!GetBundleActiveProxy()) {
+        return;
+    }
+    bundleActiveProxy_->SetBundleGroup(bundleName, newGroup, userId);
+    return;
+}
+
+std::vector<BundleActivePackageStats> BundleActiveClient::QueryCurrentPackageStats(const int& intervalType,
+    const int64_t& beginTime, const int64_t& endTime)
+{
+    if (!GetBundleActiveProxy()) {
+        return std::vector<BundleActivePackageStats>(0);
+    }
+    return bundleActiveProxy_->QueryCurrentPackageStats(intervalType, beginTime, endTime);
+}
+
+std::vector<BundleActiveEvent> BundleActiveClient::QueryCurrentEvents(const int64_t& beginTime, const int64_t& endTime)
+{
+    if (!GetBundleActiveProxy()) {
+        return std::vector<BundleActiveEvent>(0);
+    }
+    return bundleActiveProxy_->QueryCurrentEvents(beginTime, endTime);
+}
+
+int BundleActiveClient::QueryPackageGroup()
 {
     if (!GetBundleActiveProxy()) {
         return -1;
     }
-    return bundleActiveProxy->Query(bundleName, abilityName, abilityId, userId);
+    return bundleActiveProxy_->QueryPackageGroup();
 }
 }
 }

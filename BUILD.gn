@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2022  Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,18 +14,22 @@
 import("//build/ohos/sa_profile/sa_profile.gni")
 import("device_usage_statistics.gni")
 
-ohos_sa_profile("bundleactive_sa_profile") {
+ohos_sa_profile("device_usage_statistics_sa_profile") {
   sources = [ "sa_profile/1907.xml" ]
-  part_name = "device_usage_statistics"
+  part_name = "${device_usage_statistics_part_name}"
 }
 
-ohos_shared_library("bundleactiveinner") {
+ohos_shared_library("usagestatsinner") {
   sources = [
     "interfaces/innerkits/src/bundle_active_client.cpp",
     "interfaces/innerkits/src/bundle_active_proxy.cpp",
+    "services/packageusage/src/bundle_active_event.cpp",
+    "services/packageusage/src/bundle_active_package_stats.cpp",
   ]
   include_dirs = [
-    "services/include",
+    "services/common/include",
+    "services/packageusage/include",
+    "services/packagegroup/include",
     "interfaces/innerkits/include",
   ]
 
@@ -40,40 +44,104 @@ ohos_shared_library("bundleactiveinner") {
   subsystem_name = "resourceschedule"
 }
 
-ohos_prebuilt_etc("bundleactive_service_init") {
-  if (use_musl) {
-    source = "init/bundleactive_service.cfg"
-  } else {
-    source = "init/bundleactive_service.rc"
-  }
+ohos_prebuilt_etc("device_usage_statistics_service_init") {
+  source = "init/device_usage_statistics_service.cfg"
   relative_install_dir = "init"
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
 }
 
-ohos_shared_library("bundleactiveservice") {
+ohos_shared_library("usagestatskit") {
   sources = [
-    "services/common/src/bundle_active_event.cpp",
-    "services/common/src/bundle_active_event_list.cpp",
-    "services/common/src/bundle_active_event_stats.cpp",
-    "services/common/src/bundle_active_event_tracker.cpp",
-    "services/common/src/bundle_active_package_stats.cpp",
-    "services/common/src/bundle_active_period_stats.cpp",
-    "services/common/src/bundle_active_user_service.cpp",
-    "services/src/bundle_active_service.cpp",
-    "services/src/bundle_active_stub.cpp",
+    "frameworks/src/bundle_state_common.cpp",
+    "frameworks/src/bundle_state_init.cpp",
+    "frameworks/src/bundle_state_query.cpp",
   ]
   include_dirs = [
-    "services/include",
+    "interfaces/kits/bundlestats/napi/include",
     "services/common/include",
+    "interfaces/innerkits/include",
+    "services/packageusage/include",
   ]
+
   deps = [
     "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
+    "//foundation/ace/napi:ace_napi",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//foundation/resourceschedule/${device_usage_statistics_part_name}:usagestatsinner",
     "//utils/native/base:utils",
+  ]
+  relative_install_dir = "module"
+  part_name = "${device_usage_statistics_part_name}"
+  subsystem_name = "resourceschedule"
+}
+
+ohos_shared_library("usagestatservice") {
+  sources = [
+    "services/common/src/bundle_active_app_state_obsever.cpp",
+    "services/common/src/bundle_active_binary_search.cpp",
+    "services/common/src/bundle_active_continuous_task_observer.cpp",
+    "services/common/src/bundle_active_core.cpp",
+    "services/common/src/bundle_active_open_callback.cpp",
+    "services/common/src/bundle_active_service.cpp",
+    "services/common/src/bundle_active_shutdown_callback_proxy.cpp",
+    "services/common/src/bundle_active_shutdown_callback_service.cpp",
+    "services/common/src/bundle_active_shutdown_callback_stub.cpp",
+    "services/common/src/bundle_active_stub.cpp",
+    "services/common/src/bundle_active_usage_database.cpp",
+    "services/packagegroup/src/bundle_active_group_controller.cpp",
+    "services/packagegroup/src/bundle_active_group_handler.cpp",
+    "services/packagegroup/src/bundle_active_user_history.cpp",
+    "services/packageusage/src/bundle_active_calendar.cpp",
+    "services/packageusage/src/bundle_active_event.cpp",
+    "services/packageusage/src/bundle_active_event_list.cpp",
+    "services/packageusage/src/bundle_active_event_stats.cpp",
+    "services/packageusage/src/bundle_active_event_tracker.cpp",
+    "services/packageusage/src/bundle_active_package_stats.cpp",
+    "services/packageusage/src/bundle_active_period_stats.cpp",
+    "services/packageusage/src/bundle_active_report_handler.cpp",
+    "services/packageusage/src/bundle_active_stats_combiner.cpp",
+    "services/packageusage/src/bundle_active_user_service.cpp",
+  ]
+  include_dirs = [
+    ":bundle_active_config",
+    "services/common/include",
+    "services/packageusage/include",
+    "services/packagegroup/include",
+  ]
+
+  deps = [
+    "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
+    "//base/miscservices/time/services:time_service",
+    "//base/notification/ces_standard/frameworks/native:cesfwk_innerkits",
+    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
+    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
+    "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
+    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
+    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
+    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
+    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
+    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
+    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
+    "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_fwk",
+    "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits:bgtaskmgr_innerkits",
+    "//utils/native/base:utils",
+  ]
+
+  external_deps = [
+    "ability_runtime:app_manager",
+    "access_token:libaccesstoken_sdk",
+    "eventhandler:libeventhandler",
+    "native_appdatamgr:native_rdb",
+    "os_account_standard:os_account_innerkits",
   ]
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
 }
+
