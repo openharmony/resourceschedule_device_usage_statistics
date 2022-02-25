@@ -33,12 +33,13 @@ ohos_shared_library("usagestatsinner") {
     "interfaces/innerkits/include",
   ]
 
-  deps = [
-    "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//utils/native/base:utils",
+  external_deps = [
+    "dmsfwk_standard:zuri",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
@@ -64,15 +65,16 @@ ohos_shared_library("usagestatskit") {
     "services/packageusage/include",
   ]
 
-  deps = [
-    "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
-    "//foundation/ace/napi:ace_napi",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/resourceschedule/${device_usage_statistics_part_name}:usagestatsinner",
-    "//utils/native/base:utils",
+  deps = [ "//foundation/resourceschedule/${device_usage_statistics_part_name}:usagestatsinner" ]
+
+  external_deps = [
+    "dmsfwk_standard:zuri",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "napi:ace_napi",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
   relative_install_dir = "module"
   part_name = "${device_usage_statistics_part_name}"
@@ -113,35 +115,28 @@ ohos_shared_library("usagestatservice") {
     "services/packagegroup/include",
   ]
 
-  deps = [
-    "//base/hiviewdfx/hilog/interfaces/native/innerkits:libhilog",
-    "//base/miscservices/time/services:time_service",
-    "//base/notification/ces_standard/frameworks/native:cesfwk_innerkits",
-    "//base/powermgr/power_manager/interfaces/innerkits:powermgr_client",
-    "//base/security/permission/interfaces/innerkits/permission_standard/permissionsdk:libpermissionsdk_standard",
-    "//foundation/aafwk/standard/frameworks/kits/wantagent:wantagent_innerkits",
-    "//foundation/aafwk/standard/interfaces/innerkits/base:base",
-    "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_base:appexecfwk_base",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/appexecfwk_core:appexecfwk_core",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core:ipc_core",
-    "//foundation/distributedschedule/dmsfwk/interfaces/innerkits/uri:zuri",
-    "//foundation/distributedschedule/dmsfwk/services/dtbschedmgr:distributedschedsvr",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//foundation/distributedschedule/samgr/interfaces/innerkits/samgr_proxy:samgr_proxy",
-    "//foundation/resourceschedule/background_task_mgr/frameworks:bgtaskmgr_fwk",
-    "//foundation/resourceschedule/background_task_mgr/interfaces/innerkits:bgtaskmgr_innerkits",
-    "//utils/native/base:utils",
-  ]
-
   external_deps = [
+    "ability_base:want",
     "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
+    "background_task_mgr:bgtaskmgr_innerkits",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "ces_standard:cesfwk_innerkits",
+    "dmsfwk_standard:zuri",
     "eventhandler:libeventhandler",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
     "native_appdatamgr:native_rdb",
     "os_account_standard:os_account_innerkits",
+    "permission_standard:libpermissionsdk_standard",
+    "power_manager_native:powermgr_client",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "time_native:time_service",
+    "utils_base:utils",
   ]
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
 }
-
