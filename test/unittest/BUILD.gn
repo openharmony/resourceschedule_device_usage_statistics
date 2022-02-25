@@ -35,7 +35,6 @@ ohos_unittest("DeviceUsageStatsTest") {
 
   deps = [
     "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
-    #"//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
