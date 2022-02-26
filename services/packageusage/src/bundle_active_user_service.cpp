@@ -150,7 +150,8 @@ void BundleActiveUserService::ReportForFlushAndShutdown(const BundleActiveEvent&
         RenewStatsInMemory(event.timeStamp_);
     }
     for (auto it : currentStats_) {
-        it->Update(event.bundleName_, event.ContinuousTaskAbilityName_, event.timeStamp_, event.eventId_, event.abilityId_);
+        it->Update(event.bundleName_, event.ContinuousTaskAbilityName_, event.timeStamp_, event.eventId_,
+        event.abilityId_);
     }
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::ReportForFlushAndShutdown called notify");
     NotifyStatsChanged();

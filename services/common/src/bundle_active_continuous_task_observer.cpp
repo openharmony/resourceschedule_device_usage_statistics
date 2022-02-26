@@ -71,7 +71,8 @@ bool BundleActiveContinuousTaskObserver::GetBundleMgr()
 }
 
 void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
-        const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>& continuousTaskCallbackInfo, const bool isStart)
+    const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>& continuousTaskCallbackInfo,
+    const bool isStart)
 {
     int uid = continuousTaskCallbackInfo->GetCreatorUid();
     int pid = continuousTaskCallbackInfo->GetCreatorPid();
