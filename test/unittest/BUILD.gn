@@ -1,0 +1,53 @@
+# Copyright (c) 2022  Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/test.gni")
+
+module_output_path = "device_usage_statistics/deviceusagestatisticstest"
+
+config("module_private_config") {
+  visibility = [ ":*" ]
+
+  include_dirs = [
+    "//foundation/resourceschedule/device_usage_statistics/interfaces/innerkits/include",
+    "//foundation/resourceschedule/device_usage_statistics/services/common/include",
+    "//foundation/resourceschedule/device_usage_statistics/services/packageusage/include",
+    "//foundation/resourceschedule/device_usage_statistics/services/packagegroup/include",
+  ]
+}
+
+ohos_unittest("DeviceUsageStatsTest") {
+  module_out_path = module_output_path
+
+  sources = [ "device_usage_statistics_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+  ]
+
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "power_manager_native:powermgr_client",
+    "safwk:system_ability_fwk",
+    "samgr_standard:samgr_proxy",
+    "utils_base:utils",
+  ]
+}
+
+group("unittest") {
+  testonly = true
+  deps = [ ":DeviceUsageStatsTest" ]
+}

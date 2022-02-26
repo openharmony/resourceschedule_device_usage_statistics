@@ -1,0 +1,74 @@
+{
+  "name": "@ohos/device_usage_statistics",
+  "description": "device usage statistics",
+  "version": "3.1",
+  "license": "Apache License 2.0",
+  "publishAs": "code-segment",
+  "segment": {
+    "destPath" : "foundation/resourceschedule/device_usage_statistics"
+  },
+  "dirs": {},
+  "scripts": {},
+  "component": {
+    "name": "device_usage_statistics",
+    "subsystem": "resourceschedule",
+    "syscap": [ "SystemCapability.ResourceSchedule.UsageStatistics.AppGroup",
+                "SystemCapability.ResourceSchedule.UsageStatistics.App"
+              ],
+    "features": [],
+    "adapted_system_type": [
+      "standard"
+    ],
+    "rom": "11264KB",
+    "ram": "10240KB",
+    "deps": {
+      "components": [
+        "libhilog",
+        "libpermissionsdk_standard",
+        "powermgr_client",
+        "cesfwk_innerkits",
+        "wantagent_innerkits",
+        "want",
+        "appexecfwk_base",
+        "appexecfwk_core",
+        "zuri",
+        "base",
+        "time_service",
+        "utils",
+        "ipc_core",
+        "system_ability_fwk",
+        "samgr_proxy",
+        "distributedschedsvr",
+        "libeventhandler",
+        "native_rdb",
+        "os_account_innerkits",
+        "libaccesstoken_sdk"
+      ],
+      "third_party": [ "googletest" ]
+    },
+    "build": {
+      "sub_component": [
+        "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+        "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
+        "//foundation/resourceschedule/device_usage_statistics:device_usage_statistics_sa_profile",
+        "//foundation/resourceschedule/device_usage_statistics:device_usage_statistics_service_init",
+        "//foundation/resourceschedule/device_usage_statistics:usagestatskit"
+      ],
+      "inner_kits": [
+        {
+          "header": {
+            "header_base": "//foundation/resourceschedule/device_usage_statistics/interfaces/innerkits/include",
+            "header_files": [
+              "bundle_active_proxy.h",
+              "bundle_active_client.h"
+            ]
+          },
+          "name": "//foundation/resourceschedule/device_usage_statistics:usagestatsinner"
+        }
+      ],
+      "test": [
+        "//foundation/resourceschedule/device_usage_statistics/test/unittest:unittest"
+      ]
+    }
+  }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,18 +14,21 @@
  */
 
 #include "bundle_active_proxy.h"
+#include "bundle_active_package_stats.h"
+#include "bundle_active_package_stats.h"
 
 namespace OHOS {
-namespace BundleActive {
-int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& abilityName, const int& abilityId,
-    const int& userId, const int& eventId)
+namespace DeviceUsageStats {
+int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
+    const std::string& continuousTask, const int userId, const int eventId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     data.WriteString(bundleName);
     data.WriteString(abilityName);
-    data.WriteInt32(abilityId);
+    data.WriteString(abilityId);
+    data.WriteString(continuousTask);
     data.WriteInt32(userId);
     data.WriteInt32(eventId);
     Remote() -> SendRequest(REPORT_EVENT, data, reply, option);
@@ -34,35 +37,148 @@ int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& ability
     return result;
 }
 
-int BundleActiveProxy::IsBundleIdle(std::string& bundleName, std::string& abilityName, const int& abilityId,
-    const int& userId)
+bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     data.WriteString(bundleName);
-    data.WriteString(abilityName);
-    data.WriteInt32(abilityId);
-    data.WriteInt32(userId);
     Remote() -> SendRequest(IS_BUNDLE_IDLE, data, reply, option);
-
     int32_t result = reply.ReadInt32();
+    BUNDLE_ACTIVE_LOGI("BundleActiveProxy::IsBundleIdle result is %{public}d", result);
     return result;
 }
 
-int BundleActiveProxy::Query(std::string& bundleName, std::string& abilityName, const int& abilityId, const int& userId)
+std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const int intervalType,
+    const int64_t beginTime, const int64_t endTime)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInt32(intervalType);
+    data.WriteInt64(beginTime);
+    data.WriteInt64(endTime);
+    Remote() -> SendRequest(QUERY_USAGE_STATS, data, reply, option);
+    int32_t size = reply.ReadInt32();
+    std::vector<BundleActivePackageStats> result;
+    std::shared_ptr<BundleActivePackageStats> tmp;
+    for (int i = 0; i < size; i++) {
+        tmp = tmp->Unmarshalling(reply);
+        if (tmp == nullptr) {
+            continue;
+        }
+        result.push_back(*tmp);
+    }
+    for (int i = 0; i < result.size(); i++) {
+        BUNDLE_ACTIVE_LOGI("BundleActiveProxy::QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
+            "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
+            "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
+            i + 1, result[i].bundleName_.c_str(), result[i].lastTimeUsed_, result[i].lastContiniousTaskUsed_,
+            result[i].totalInFrontTime_, result[i].totalContiniousTaskUsedTime_);
+    }
+    return result;
+}
+
+std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t beginTime, const int64_t endTime)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInt64(beginTime);
+    data.WriteInt64(endTime);
+    Remote() -> SendRequest(QUERY_EVENTS, data, reply, option);
+    int32_t size = reply.ReadInt32();
+    std::vector<BundleActiveEvent> result;
+    std::shared_ptr<BundleActiveEvent> tmp;
+    for (int i = 0; i < size; i++) {
+        tmp = tmp->Unmarshalling(reply);
+        if (tmp == nullptr) {
+            continue;
+        }
+        result.push_back(*tmp);
+    }
+    for (int i = 0; i < result.size(); i++) {
+        BUNDLE_ACTIVE_LOGI("BundleActiveProxy::QueryEvents event id is %{public}d, bundle name is %{public}s, "
+            "time stamp is %{public}lld", result[i].eventId_, result[i].bundleName_.c_str(), result[i].timeStamp_);
+    }
+    return result;
+}
+
+void BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int newGroup, int userId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     data.WriteString(bundleName);
-    data.WriteString(abilityName);
-    data.WriteInt32(abilityId);
+    data.WriteInt32(newGroup);
     data.WriteInt32(userId);
-    Remote() -> SendRequest(QUERY, data, reply, option);
+    Remote() -> SendRequest(SET_BUNDLE_GROUP, data, reply, option);
+}
 
-    int32_t result = reply.ReadInt32();
+std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStats(const int intervalType,
+    const int64_t beginTime, const int64_t endTime)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInt32(intervalType);
+    data.WriteInt64(beginTime);
+    data.WriteInt64(endTime);
+    Remote() -> SendRequest(QUERY_CURRENT_USAGE_STATS, data, reply, option);
+    int32_t size = reply.ReadInt32();
+    std::vector<BundleActivePackageStats> result;
+    std::shared_ptr<BundleActivePackageStats> tmp;
+    for (int i = 0; i < size; i++) {
+        tmp = tmp->Unmarshalling(reply);
+        if (tmp == nullptr) {
+            continue;
+        }
+        result.push_back(*tmp);
+    }
+    for (int i = 0; i < result.size(); i++) {
+        BUNDLE_ACTIVE_LOGI("BundleActiveProxy::QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
+            "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
+            "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
+            i + 1, result[i].bundleName_.c_str(), result[i].lastTimeUsed_, result[i].lastContiniousTaskUsed_,
+            result[i].totalInFrontTime_, result[i].totalContiniousTaskUsedTime_);
+    }
     return result;
+}
+
+std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64_t beginTime, const int64_t endTime)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    data.WriteInt64(beginTime);
+    data.WriteInt64(endTime);
+    Remote() -> SendRequest(QUERY_CURRENT_EVENTS, data, reply, option);
+    int32_t size = reply.ReadInt32();
+    std::vector<BundleActiveEvent> result;
+    std::shared_ptr<BundleActiveEvent> tmp;
+    for (int i = 0; i < size; i++) {
+        tmp = tmp->Unmarshalling(reply);
+        if (tmp == nullptr) {
+            continue;
+        }
+        result.push_back(*tmp);
+    }
+    for (int i = 0; i < result.size(); i++) {
+        BUNDLE_ACTIVE_LOGI("event id is %{public}d, bundle name is %{public}s, time stamp is %{public}lld",
+            result[i].eventId_, result[i].bundleName_.c_str(), result[i].timeStamp_);
+    }
+    return result;
+}
+
+int BundleActiveProxy::QueryPackageGroup()
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    Remote() -> SendRequest(QUERY_BUNDLE_GROUP, data, reply, option);
+    int32_t packageGroup = reply.ReadInt32();
+    BUNDLE_ACTIVE_LOGI("BundleActiveProxy::QueryPackageGroup result is %{public}d", packageGroup);
+    return packageGroup;
 }
 }
 }
