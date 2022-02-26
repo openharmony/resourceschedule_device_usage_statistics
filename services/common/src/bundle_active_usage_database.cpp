@@ -44,8 +44,7 @@ BundleActiveUsageDatabase::BundleActiveUsageDatabase()
 {
     currentVersion_ = BUNDLE_ACTIVE_CURRENT_VERSION;
     versionDirectoryPath_ = BUNDLE_ACTIVE_DATABASE_DIR + BUNDLE_ACTIVE_VERSION_FILE;
-    for (int i = 0; i < sizeof(DATABASE_TYPE)/sizeof(DATABASE_TYPE[0]); i++)
-    {
+    for (int i = 0; i < sizeof(DATABASE_TYPE)/sizeof(DATABASE_TYPE[0]); i++) {
         databaseFiles_.push_back(DATABASE_TYPE[i]);
     }
     eventTableName_ = UNKNOWN_TABLE_NAME;
@@ -347,7 +346,7 @@ int32_t BundleActiveUsageDatabase::DeleteInvalidTable(unsigned int databaseType,
         string deletePackageTableSql = "drop table " + packageTable;
         int32_t deletePackageTable = rdbStore->ExecuteSql(deletePackageTableSql);
         if (deletePackageTable != NativeRdb::E_OK) {
-             BUNDLE_ACTIVE_LOGE("deletePackageTable is %{public}d", deletePackageTable);
+            BUNDLE_ACTIVE_LOGE("deletePackageTable is %{public}d", deletePackageTable);
             return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == EVENT_DATABASE_INDEX) {
@@ -435,7 +434,6 @@ int32_t BundleActiveUsageDatabase::CreateEventLogTable(unsigned int databaseType
                                            + BUNDLE_ACTIVE_DB_ABILITY_ID + " TEXT NOT NULL);";
     int32_t createEventTable = rdbStore->ExecuteSql(createEventTableSql);
     if (createEventTable != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("create eventLog table failed");
         return createEventTable;
     }
     string createEventTableIndex = GetTableIndexSql(EVENT_DATABASE_INDEX, currentTimeMillis, true);
@@ -819,7 +817,6 @@ int32_t BundleActiveUsageDatabase::RenameTableName(unsigned int databaseType, in
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
@@ -829,20 +826,17 @@ int32_t BundleActiveUsageDatabase::RenameTableName(unsigned int databaseType, in
             newPackageTableName;
         int32_t renamePackageTableName = rdbStore->ExecuteSql(renamePackageTableNameSql);
         if (renamePackageTableName != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("rename package table name failed");
-            return renamePackageTableName;
+            return BUNDLE_ACTIVE_FAIL;
         }
         string deleteOldPackageTableIndex = GetTableIndexSql(databaseType, tableOldTime, false);
         int32_t deleteResult = rdbStore->ExecuteSql(deleteOldPackageTableIndex);
         if (deleteResult != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("delete old package table index failed");
-            return deleteResult;
+            return BUNDLE_ACTIVE_FAIL;
         }
         string createNewPackageTableIndex = GetTableIndexSql(databaseType, tableNewTime, true);
         int32_t createResult = rdbStore->ExecuteSql(createNewPackageTableIndex);
         if (createResult != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("create new package table index failed");
-            return createResult;
+            return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == EVENT_DATABASE_INDEX) {
         string oldEventTableName = EVENT_LOG_TABLE + to_string(tableOldTime);
@@ -850,20 +844,17 @@ int32_t BundleActiveUsageDatabase::RenameTableName(unsigned int databaseType, in
         string renameEventTableNameSql = "alter table " + oldEventTableName + " rename to " + newEventTableName;
         int32_t renameEventTableName = rdbStore->ExecuteSql(renameEventTableNameSql);
         if (renameEventTableName != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("rename event table name failed");
-            return renameEventTableName;
+            return BUNDLE_ACTIVE_FAIL;
         }
         string deleteOldEventTableIndex = GetTableIndexSql(databaseType, tableOldTime, false);
         int32_t deleteResult = rdbStore->ExecuteSql(deleteOldEventTableIndex);
         if (deleteResult != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("delete old event table index failed");
-            return deleteResult;
+            return BUNDLE_ACTIVE_FAIL;
         }
         string createNewEventTableIndex = GetTableIndexSql(databaseType, tableNewTime, true);
         int32_t createResult = rdbStore->ExecuteSql(createNewEventTableIndex);
         if (createResult != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("create new event table index failed");
-            return createResult;
+            return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == APP_GROUP_DATABASE_INDEX) {
     }
@@ -903,8 +894,8 @@ void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
     }
     calendar_->SetMilliseconds(currentTime);
     calendar_->IncreaseMonths(-1 * MAX_FILES_EVERY_INTERVAL_TYPE[MONTHLY_DATABASE_INDEX]);
-    std::unique_ptr<std::vector<int64_t>> overdueMonthsTableCreateTime = GetOverdueTableCreateTime(MONTHLY_DATABASE_INDEX,
-        calendar_->GetMilliseconds());
+    std::unique_ptr<std::vector<int64_t>> overdueMonthsTableCreateTime
+        = GetOverdueTableCreateTime(MONTHLY_DATABASE_INDEX, calendar_->GetMilliseconds());
     if (overdueMonthsTableCreateTime != nullptr) {
         for (unsigned int i = 0; i < overdueMonthsTableCreateTime->size(); i++) {
             DeleteInvalidTable(MONTHLY_DATABASE_INDEX, overdueMonthsTableCreateTime->at(i));
@@ -1022,13 +1013,11 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
     }
     int32_t endIndex = NearIndexOnOrBeforeCurrentTime(endTime, sortedTableArray_.at(databaseType));
     if (endIndex < 0) {
-        BUNDLE_ACTIVE_LOGE("no usage stats data");
         return databaseUsageStats;
     }
     if (sortedTableArray_.at(databaseType).at(endIndex) == endTime) {
         endIndex--;
         if (endIndex < 0) {
-        BUNDLE_ACTIVE_LOGE("no usage stats data");
         return databaseUsageStats;
         }
     }
