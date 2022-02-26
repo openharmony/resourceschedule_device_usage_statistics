@@ -173,7 +173,7 @@ void BundleActiveService::OnStop()
 }
 
 int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
-    const std::string& continuousTask, const int& userId, const int& eventId)
+    const std::string& continuousTask, const int userId, const int eventId)
 {
     BUNDLE_ACTIVE_LOGI("report event called123123");
     BundleActiveReportHandlerObject tmpHandlerObject;
@@ -181,7 +181,7 @@ int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abili
     tmpHandlerObject.event_.abilityName_ = abilityName;
     tmpHandlerObject.event_.abilityId_ = abilityId;
     tmpHandlerObject.event_.eventId_ = eventId;
-    tmpHandlerObject.event_.longTimeTaskName_ = continuousTask;
+    tmpHandlerObject.event_.ContinuousTaskAbilityName_ = continuousTask;
     tmpHandlerObject.userId_ = userId;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
@@ -215,8 +215,8 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
     return true;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(const int& intervalType,
-    const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(const int intervalType,
+    const int64_t beginTime, const int64_t endTime)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryPackageStats stats called, intervaltype is %{public}d",
         intervalType);
@@ -235,11 +235,10 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
             result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime, "");
         }
     }
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryPackageStats result size is %{public}d", result.size());
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t beginTime, const int64_t endTime)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryEvents stats called");
     std::vector<BundleActiveEvent> result;
@@ -265,8 +264,8 @@ void BundleActiveService::SetBundleGroup(const std::string& bundleName, int newG
 }
 
 
-std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageStats(const int& intervalType,
-    const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageStats(const int intervalType,
+    const int64_t beginTime, const int64_t endTime)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryCurrentPackageStats stats called");
     std::vector<BundleActivePackageStats> result;
@@ -295,8 +294,8 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveService::QueryCurrentEvents(const int64_t& beginTime,
-    const int64_t& endTime)
+std::vector<BundleActiveEvent> BundleActiveService::QueryCurrentEvents(const int64_t beginTime,
+    const int64_t endTime)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryCurrentEvents stats called");
     std::vector<BundleActiveEvent> result;
@@ -376,7 +375,7 @@ bool BundleActiveService::GetBundleMgrProxy()
     return true;
 }
 
-int BundleActiveService::ConvertIntervalType(const int& intervalType)
+int BundleActiveService::ConvertIntervalType(const int intervalType)
 {
     if (intervalType == PERIOD_BEST_JS) {
         return PERIOD_BEST_SERVICE;
@@ -386,7 +385,7 @@ int BundleActiveService::ConvertIntervalType(const int& intervalType)
     return -1;
 }
 
-bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int& uid, const int& userId)
+bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, const int userId)
 {
     if (!GetBundleMgrProxy()) {
             BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");

@@ -39,7 +39,6 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             return reply.WriteInt32(result);
         }
         case QUERY_USAGE_STATS: {
-            BUNDLE_ACTIVE_LOGI("BundleActiveStub::OnRemoteRequest QUERY_USAGE_STATS called");
             std::vector<BundleActivePackageStats> result;
             int size = 0;
             int intervalType = data.ReadInt32();
@@ -83,7 +82,6 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             return 0;
         }
         case QUERY_CURRENT_USAGE_STATS: {
-            BUNDLE_ACTIVE_LOGI("BundleActiveStub::OnRemoteRequest QUERY_CURRENT_USAGE_STATS called");
             std::vector<BundleActivePackageStats> result;
             int size = 0;
             int intervalType = data.ReadInt32();

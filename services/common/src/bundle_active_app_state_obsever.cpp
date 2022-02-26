@@ -32,7 +32,7 @@ void BundleActiveAppStateObserver::Init(const std::shared_ptr<BundleActiveReport
 void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData &abilityStateData)
 {
     if (!ValidateAbilityStateData(abilityStateData)) {
-        BUNDLE_ACTIVE_LOGI("%{public}s : validate ability state data failed!", __func__);
+        BUNDLE_ACTIVE_LOGE("%{public}s : validate ability state data failed!", __func__);
         return;
     }
     if (abilityStateData.abilityType != 1) {
@@ -48,7 +48,7 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         tmpHandlerObject.event_.bundleName_ = abilityStateData.bundleName;
         tmpHandlerObject.event_.abilityName_ = abilityStateData.abilityName;
         tmpHandlerObject.event_.abilityId_ = abilityStateData.abilityName;
-        tmpHandlerObject.event_.longTimeTaskName_ = "";
+        tmpHandlerObject.event_.ContinuousTaskAbilityName_ = "";
         tmpHandlerObject.userId_ = userId;
         sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
@@ -72,7 +72,8 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
             tmpHandlerObject.event_.abilityName_.c_str(), abilityId.c_str(), tmpHandlerObject.event_.eventId_,
             abilityStateData.uid, abilityStateData.pid);
         if (reportHandler_ != nullptr) {
-            BUNDLE_ACTIVE_LOGI("BundleActiveAppStateObserver::OnAbilityStateChanged handler not null, SEND");
+            BUNDLE_ACTIVE_LOGI("BundleActiveAppStateObserver::OnAbilityStateChanged handler not null, "
+                "send report event msg");
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
             auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);

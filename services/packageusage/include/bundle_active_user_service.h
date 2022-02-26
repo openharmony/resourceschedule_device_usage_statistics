@@ -42,20 +42,20 @@ public:
         dailyExpiryDate_.SetMilliseconds(0);
         statsChanged_ = false;
     }
-    void Init(const int64_t& timeStamp);
+    void Init(const int64_t timeStamp);
     ~BundleActiveUserService() {};
     void ReportForFlushAndShutdown(const BundleActiveEvent& event);
     void ReportEvent(const BundleActiveEvent& event);
     void RestoreStats();
-    void RenewStatsInMemory(const int64_t& timeStamp);
+    void RenewStatsInMemory(const int64_t timeStamp);
     void RenewTableTime(int64_t oldTime, int64_t newTime);
     void OnUserRemoved();
     void DeleteUninstalledBundleStats(const std::string& bundleName);
     int userId_;
     BundleActiveCalendar dailyExpiryDate_;
-    std::vector<BundleActivePackageStats> QueryPackageStats(int intervalType, const int64_t& beginTime,
-        const int64_t& endTime, const int& userId, const std::string& bundleName);
-    std::vector<BundleActiveEvent> QueryEvents(const int64_t& beginTime, const int64_t& endTime, const int& userId,
+    std::vector<BundleActivePackageStats> QueryPackageStats(int intervalType, const int64_t beginTime,
+        const int64_t endTime, const int userId, const std::string& bundleName);
+    std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, const int userId,
         const std::string& bundleName);
 
 private:
@@ -68,7 +68,7 @@ private:
     inline static const std::vector<int64_t> PERIOD_LENGTH = {BundleActiveCalendar::DAY_MILLISECONDS,
         BundleActiveCalendar::WEEK_MILLISECONDS, BundleActiveCalendar::MONTH_MILLISECONDS,
         BundleActiveCalendar::YEAR_MILLISECONDS};
-    void LoadActiveStats(const int64_t& timeStamp, const bool& force);
+    void LoadActiveStats(const int64_t timeStamp, const bool& force);
     void NotifyStatsChanged();
     void NotifyNewUpdate();
     void printstat();

@@ -55,7 +55,7 @@ public:
         std::shared_ptr<BundleActivePackageHistory>>> userHistory);
     std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>
         GetBundleHistoryData(int userId);
-    void OnPackageUninstalled(const int& userId, const std::string& bundleName);
+    void OnPackageUninstalled(const int userId, const std::string& bundleName);
 
 private:
     void CheckDatabaseVersion();
@@ -77,7 +77,7 @@ private:
     int32_t CreateBundleHistoryTable(unsigned int databaseType);
     std::unique_ptr<NativeRdb::ResultSet> QueryStatsInfoByStep(unsigned int databaseType,
         const std::string &sql, const std::vector<std::string> &selectionArgs);
-    void DeleteUninstalledInfo(const int& userId, const std::string& bundleName, const std::string& tableName,
+    void DeleteUninstalledInfo(const int userId, const std::string& bundleName, const std::string& tableName,
         unsigned int databaseType);
 
 private:

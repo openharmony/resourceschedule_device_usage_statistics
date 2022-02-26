@@ -46,7 +46,6 @@ BundleActiveCore::~BundleActiveCore()
 void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    BUNDLE_ACTIVE_LOGI("BundleActiveCommonEventSubscriber::OnReceiveEvent called");
     std::string action = data.GetWant().GetAction();
     BUNDLE_ACTIVE_LOGI("BundleActiveCommonEventSubscriber::OnReceiveEvent action is %{public}s", action.c_str());
     auto want = data.GetWant();
@@ -124,7 +123,6 @@ void BundleActiveCore::UnRegisterSubscriber()
 
 void BundleActiveCore::Init()
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveCore::Init called");
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     do {
         realTimeShot_ = timer->GetBootTimeMs();
@@ -133,7 +131,7 @@ void BundleActiveCore::Init()
     realTimeShot_ = timer->GetBootTimeMs();
     systemTimeShot_ = timer->GetWallTimeMs();
     bundleGroupController_ = std::make_shared<BundleActiveGroupController>();
-    BUNDLE_ACTIVE_LOGI("GGG, system time shot is %{public}lld", systemTimeShot_);
+    BUNDLE_ACTIVE_LOGI("system time shot is %{public}lld", systemTimeShot_);
 }
 
 void BundleActiveCore::InitBundleGroupController()
@@ -168,8 +166,8 @@ void BundleActiveCore::SetHandler(const std::shared_ptr<BundleActiveReportHandle
     handler_ = reportHandler;
 }
 
-std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitializeIfNeeded(const int& userId,
-    const int64_t& timeStamp)
+std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitializeIfNeeded(const int userId,
+    const int64_t timeStamp)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveCore::GetUserDataAndInitializeIfNeeded called");
     std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.find(userId);
@@ -179,14 +177,15 @@ std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitial
         service->Init(timeStamp);
         userStatServices_[userId] = service;
         if (service == nullptr) {
-            BUNDLE_ACTIVE_LOGI("service is null");
+            BUNDLE_ACTIVE_LOGE("service is null");
+            return nullptr;
         }
         BUNDLE_ACTIVE_LOGI("service is not null");
         return service;
     }
     return it->second;
 }
-void BundleActiveCore::OnBundleUninstalled(const int& userId, const std::string& bundleName)
+void BundleActiveCore::OnBundleUninstalled(const int userId, const std::string& bundleName)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveCore::OnBundleUninstalled CALLED");
     std::lock_guard<std::mutex> lock(mutex_);
@@ -200,7 +199,6 @@ void BundleActiveCore::OnBundleUninstalled(const int& userId, const std::string&
 
 void BundleActiveCore::OnStatsChanged()
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveCore::OnStatsChanged called");
     auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
     if (!handler_.expired()) {
         BUNDLE_ACTIVE_LOGI("BundleActiveCore::OnStatsChanged send flush to disk event");
@@ -297,7 +295,7 @@ void BundleActiveCore::ConvertToSystemTimeLocked(BundleActiveEvent& event)
     event.timeStamp_ = std::max((int64_t)0, event.timeStamp_ - realTimeShot_) + systemTimeShot_;
 }
 
-void BundleActiveCore::OnUserRemoved(const int& userId)
+void BundleActiveCore::OnUserRemoved(const int userId)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveCore::OnUserRemoved called");
     std::lock_guard<std::mutex> lock(mutex_);
@@ -311,7 +309,7 @@ void BundleActiveCore::OnUserRemoved(const int& userId)
     bundleGroupController_->OnUserRemoved(userId);
 }
 
-int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int& userId)
+int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     BUNDLE_ACTIVE_LOGI("BundleActiveCore::ReportEvent called");
@@ -354,8 +352,8 @@ int BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
     return 0;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const int& userId, const int& intervalType,
-    const int64_t& beginTime, const int64_t& endTime, std::string bundleName)
+std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const int userId, const int intervalType,
+    const int64_t beginTime, const int64_t endTime, std::string bundleName)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveCore::QueryPackageStats called");
     std::lock_guard<std::mutex> lock(mutex_);
@@ -373,12 +371,11 @@ std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const 
         return result;
     }
     result = service->QueryPackageStats(intervalType, beginTime, endTime, userId, bundleName);
-    BUNDLE_ACTIVE_LOGI("BundleActiveCore::QueryPackageStats result size is %{public}d", result.size());
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int& userId, const int64_t& beginTime,
-    const int64_t& endTime, std::string bundleName)
+std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int userId, const int64_t beginTime,
+    const int64_t endTime, std::string bundleName)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveCore::QueryEvents called");
     std::vector<BundleActiveEvent> result;
@@ -395,7 +392,7 @@ std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int& userId, 
     return result;
 }
 
-void BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int& newGroup, const int& userId)
+void BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int newGroup, const int userId)
 {
     int newReason = GROUP_CONTROL_REASON_FORCED;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
@@ -403,12 +400,12 @@ void BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int& 
     bundleGroupController_->SetBundleGroup(bundleName, userId, newGroup, newReason, bootBasedTimeStamp, false);
 }
 
-int BundleActiveCore::QueryPackageGroup(const int& userId, const std::string bundleName)
+int BundleActiveCore::QueryPackageGroup(const int userId, const std::string bundleName)
 {
     return bundleGroupController_->QueryPackageGroup(userId, bundleName);
 }
 
-int BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int& userId)
+int BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int userId)
 {
     return bundleGroupController_->IsBundleIdle(bundleName, userId);
 }

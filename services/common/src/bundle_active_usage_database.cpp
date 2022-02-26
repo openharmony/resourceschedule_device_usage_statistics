@@ -1186,7 +1186,7 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
     return databaseEvents;
 }
 
-void BundleActiveUsageDatabase::OnPackageUninstalled(const int& userId, const string& bundleName)
+void BundleActiveUsageDatabase::OnPackageUninstalled(const int userId, const string& bundleName)
 {
     lock_guard<mutex> lock(databaseMutex_);
     for (uint32_t i = 0; i < sortedTableArray_.size(); i++) {
@@ -1206,7 +1206,7 @@ void BundleActiveUsageDatabase::OnPackageUninstalled(const int& userId, const st
     }
 }
 
-void BundleActiveUsageDatabase::DeleteUninstalledInfo(const int& userId, const string& bundleName,
+void BundleActiveUsageDatabase::DeleteUninstalledInfo(const int userId, const string& bundleName,
     const string& tableName, unsigned int databaseType)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);

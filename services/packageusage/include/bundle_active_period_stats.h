@@ -52,11 +52,11 @@ public:
     void Update(const std::string bundleName, const std::string longTimeTaskName, const int64_t timeStamp,
         const int eventId, const std::string abilityId);
     void AddEvent(BundleActiveEvent event);
-    void UpdateScreenInteractive(const int64_t& timeStamp);
-    void UpdateScreenNonInteractive(const int64_t& timeStamp);
-    void UpdateKeyguardShown(const int64_t& timeStamp);
-    void UpdateKeyguardHidden(const int64_t& timeStamp);
-    void CommitTime(const int64_t& timeStamp);
+    void UpdateScreenInteractive(const int64_t timeStamp);
+    void UpdateScreenNonInteractive(const int64_t timeStamp);
+    void UpdateKeyguardShown(const int64_t timeStamp);
+    void UpdateKeyguardHidden(const int64_t timeStamp);
+    void CommitTime(const int64_t timeStamp);
     void AddEventStatsTo(std::vector<BundleActiveEventStats>& eventStatsList);
     std::string GetCachedString(std::string str);
 };

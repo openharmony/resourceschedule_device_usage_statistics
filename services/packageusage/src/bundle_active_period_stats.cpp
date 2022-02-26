@@ -47,7 +47,7 @@ BundleActiveEvent BundleActivePeriodStats::BuildEvent(std::string bundleName, st
     BundleActiveEvent newEvent;
     newEvent.bundleName_ = bundleName;
     if (!timeTaskName.empty()) {
-        newEvent.longTimeTaskName_ = timeTaskName;
+        newEvent.ContinuousTaskAbilityName_ = timeTaskName;
     }
     return newEvent;
 }
@@ -75,8 +75,8 @@ void BundleActivePeriodStats::Update(const std::string bundleName, const std::st
 void BundleActivePeriodStats::AddEvent(BundleActiveEvent event)
 {
     event.bundleName_ = GetCachedString(event.bundleName_);
-    if (!event.longTimeTaskName_.empty()) {
-        event.longTimeTaskName_ = GetCachedString(event.longTimeTaskName_);
+    if (!event.ContinuousTaskAbilityName_.empty()) {
+        event.ContinuousTaskAbilityName_ = GetCachedString(event.ContinuousTaskAbilityName_);
     }
     events_.Insert(event);
     if (event.timeStamp_ > endTime_) {
@@ -84,7 +84,7 @@ void BundleActivePeriodStats::AddEvent(BundleActiveEvent event)
     }
 }
 
-void BundleActivePeriodStats::CommitTime(const int64_t& timeStamp)
+void BundleActivePeriodStats::CommitTime(const int64_t timeStamp)
 {
     interactiveTracker_.CommitTime(timeStamp);
     noninteractiveTracker_.CommitTime(timeStamp);
@@ -92,25 +92,25 @@ void BundleActivePeriodStats::CommitTime(const int64_t& timeStamp)
     keyguardHiddenTracker_.CommitTime(timeStamp);
 }
 
-void BundleActivePeriodStats::UpdateScreenInteractive(const int64_t& timeStamp)
+void BundleActivePeriodStats::UpdateScreenInteractive(const int64_t timeStamp)
 {
     interactiveTracker_.Update(timeStamp);
     noninteractiveTracker_.CommitTime(timeStamp);
 }
 
-void BundleActivePeriodStats::UpdateScreenNonInteractive(const int64_t& timeStamp)
+void BundleActivePeriodStats::UpdateScreenNonInteractive(const int64_t timeStamp)
 {
     noninteractiveTracker_.Update(timeStamp);
     interactiveTracker_.CommitTime(timeStamp);
 }
 
-void BundleActivePeriodStats::UpdateKeyguardShown(const int64_t& timeStamp)
+void BundleActivePeriodStats::UpdateKeyguardShown(const int64_t timeStamp)
 {
     keyguardShownTracker_.Update(timeStamp);
     keyguardHiddenTracker_.CommitTime(timeStamp);
 }
 
-void BundleActivePeriodStats::UpdateKeyguardHidden(const int64_t& timeStamp)
+void BundleActivePeriodStats::UpdateKeyguardHidden(const int64_t timeStamp)
 {
     keyguardHiddenTracker_.Update(timeStamp);
     keyguardShownTracker_.CommitTime(timeStamp);

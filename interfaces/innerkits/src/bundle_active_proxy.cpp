@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
-    const std::string& continuousTask, const int& userId, const int& eventId)
+    const std::string& continuousTask, const int userId, const int eventId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -49,8 +49,8 @@ bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName)
     return result;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const int& intervalType,
-    const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const int intervalType,
+    const int64_t beginTime, const int64_t endTime)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -79,7 +79,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t beginTime, const int64_t endTime)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -115,8 +115,8 @@ void BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int newGro
     Remote() -> SendRequest(SET_BUNDLE_GROUP, data, reply, option);
 }
 
-std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStats(const int& intervalType,
-    const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStats(const int intervalType,
+    const int64_t beginTime, const int64_t endTime)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -145,7 +145,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStat
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64_t beginTime, const int64_t endTime)
 {
     MessageParcel data;
     MessageParcel reply;

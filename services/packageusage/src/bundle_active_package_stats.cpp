@@ -107,7 +107,7 @@ bool BundleActivePackageStats::AnyLongTimeTaskStarted()
     return !longTimeTasks_.empty();
 }
 
-void BundleActivePackageStats::IncrementTimeUsed(const int64_t& timeStamp)
+void BundleActivePackageStats::IncrementTimeUsed(const int64_t timeStamp)
 {
     if (timeStamp > lastTimeUsed_) {
         totalInFrontTime_ += timeStamp - lastTimeUsed_;
@@ -115,7 +115,7 @@ void BundleActivePackageStats::IncrementTimeUsed(const int64_t& timeStamp)
     }
 }
 
-void BundleActivePackageStats::IncrementServiceTimeUsed(const int64_t& timeStamp)
+void BundleActivePackageStats::IncrementServiceTimeUsed(const int64_t timeStamp)
 {
     if (timeStamp > lastContiniousTaskUsed_) {
         totalContiniousTaskUsedTime_ += timeStamp - lastContiniousTaskUsed_;
@@ -128,7 +128,7 @@ void BundleActivePackageStats::IncrementBundleLaunchedCount()
     bundleStartedCount_ += 1;
 }
 
-void BundleActivePackageStats::UpdateAbility(const int64_t& timeStamp, const int& eventId,
+void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int eventId,
     const std::string& abilityId)
 {
     if (eventId != BundleActiveEvent::ABILITY_FOREGROUND && eventId != BundleActiveEvent::ABILITY_BACKGROUND &&
@@ -168,8 +168,8 @@ void BundleActivePackageStats::UpdateAbility(const int64_t& timeStamp, const int
     }
 }
 
-void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTaskName, const int64_t& timeStamp,
-    const int& eventId)
+void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTaskName, const int64_t timeStamp,
+    const int eventId)
 {
     if (eventId != BundleActiveEvent::LONG_TIME_TASK_STARTTED && eventId != BundleActiveEvent::LONG_TIME_TASK_ENDED) {
         return;
@@ -201,8 +201,8 @@ void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTas
     }
 }
 
-void BundleActivePackageStats::Update(const std::string& longTimeTaskName, const int64_t& timeStamp,
-    const int& eventId, const std::string& abilityId)
+void BundleActivePackageStats::Update(const std::string& longTimeTaskName, const int64_t timeStamp,
+    const int eventId, const std::string& abilityId)
 {
     switch (eventId) {
         case BundleActiveEvent::ABILITY_FOREGROUND:

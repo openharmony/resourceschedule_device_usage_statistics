@@ -64,7 +64,7 @@ void DeviceUsageStatisticsTest::TearDown(void)
  * @tc.name: DeviceUsageStatisticsTest_GetServiceObject_001
  * @tc.desc: get service object
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: SR000GGTO8 AR000GH6PK
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_GetServiceObject_001, Function | MediumTest | Level0)
 {
@@ -81,7 +81,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_GetServiceObject_0
  * @tc.name: DeviceUsageStatisticsTest_ReportEvent_001
  * @tc.desc: report a mock event
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: SR000GGTO7 AR000GH6PJ
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, Function | MediumTest | Level0)
 {
@@ -97,7 +97,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, F
  * @tc.name: DeviceUsageStatisticsTest_QueryEvents_001
  * @tc.desc: queryevents
  * @tc.type: FUNC
- * @tc.require: SR000GGTO6
+ * @tc.require: SR000GGTO6 AR000GH6PH
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEvents_001, Function | MediumTest | Level0)
 {
@@ -109,7 +109,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEvents_001, F
  * @tc.name: DeviceUsageStatisticsTest_QueryCurrentEvents_001
  * @tc.desc: querycurrentevents
  * @tc.type: FUNC
- * @tc.require: SR000GGTO4
+ * @tc.require: SR000GGTO4 AR000GH6PF
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentEvents_001, Function | MediumTest | Level0)
 {
@@ -121,7 +121,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentEvents
  * @tc.name: DeviceUsageStatisticsTest_QueryPackagesStats_001
  * @tc.desc: querypackagestats
  * @tc.type: FUNC
- * @tc.require: SR000GGTO3
+ * @tc.require: SR000GGTO3 AR000GH6PD
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackagesStats_001, Function | MediumTest | Level0)
 {
@@ -134,7 +134,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackagesStats
  * @tc.name: DeviceUsageStatisticsTest_IsBundleIdle_001
  * @tc.desc: isbundleidle
  * @tc.type: FUNC
- * @tc.require: SR000GGTO5
+ * @tc.require: SR000GGTO5 AR000GH6PG
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleIdle_001, Function | MediumTest | Level0)
 {

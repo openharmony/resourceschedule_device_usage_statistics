@@ -25,7 +25,7 @@ BundleActiveEventTracker::BundleActiveEventTracker()
     count_ =0;
 }
 
-void BundleActiveEventTracker::CommitTime(const int64_t& timeStamp)
+void BundleActiveEventTracker::CommitTime(const int64_t timeStamp)
 {
     if (curStartTime_ != 0) {
         duration_ += timeStamp - curStartTime_;

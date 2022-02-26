@@ -30,26 +30,26 @@ void BundleActiveGroupController::RestoreDurationToDatabase()
     bundleUserHistory_->WriteDeviceDuration();
 }
 
-void BundleActiveGroupController::RestoreToDatabase(const int& userId)
+void BundleActiveGroupController::RestoreToDatabase(const int userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     bundleUserHistory_->WriteBundleUsage(userId);
 }
 
-void BundleActiveGroupController::OnUserRemoved(const int& userId)
+void BundleActiveGroupController::OnUserRemoved(const int userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     bundleUserHistory_->userHistory_.erase(userId);
 }
 
-void BundleActiveGroupController::OnScreenChanged(const bool& isScreenOn, const int64_t& bootFromTimeStamp)
+void BundleActiveGroupController::OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     bundleUserHistory_->UpdateBootBasedAndScreenTime(isScreenOn, bootFromTimeStamp);
 }
 
 void BundleActiveGroupController::SetHandlerAndCreateUserHistory(
-    const std::shared_ptr<BundleActiveGroupHandler>& groupHandler, const int64_t& bootFromTimeStamp)
+    const std::shared_ptr<BundleActiveGroupHandler>& groupHandler, const int64_t bootFromTimeStamp)
 {
     if (bundleUserHistory_ == nullptr) {
         BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::SetHandlerAndCreateUserHistory bundleUserHistory_ is null, "
@@ -83,7 +83,7 @@ bool BundleActiveGroupController::GetBundleMgrProxy()
     return true;
 }
 
-void BundleActiveGroupController::PeriodCheckBundleState(const int& userId)
+void BundleActiveGroupController::PeriodCheckBundleState(const int userId)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::PeriodCheckBundleState called");
     if (!activeGroupHandler_.expired()) {
@@ -97,7 +97,7 @@ void BundleActiveGroupController::PeriodCheckBundleState(const int& userId)
     }
 }
 
-bool BundleActiveGroupController::CheckEachBundleState(const int& userId)
+bool BundleActiveGroupController::CheckEachBundleState(const int userId)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::CheckEachBundleState called, userid is %{public}d", userId);
     std::vector<ApplicationInfo> allBundlesForUser;
@@ -128,8 +128,8 @@ void BundleActiveGroupController::CheckIdleStatsOneTime()
     }
 }
 
-int BundleActiveGroupController::GetNewGroup(const std::string& bundleName, const int& userId,
-    const int64_t& bootBasedTimeStamp)
+int BundleActiveGroupController::GetNewGroup(const std::string& bundleName, const int userId,
+    const int64_t bootBasedTimeStamp)
 {
     int groupIndex = bundleUserHistory_->GetLevelIndex(bundleName, userId, bootBasedTimeStamp, SCREEN_TIME_LEVEL,
         BOOT_TIME_LEVEL);
@@ -140,7 +140,7 @@ int BundleActiveGroupController::GetNewGroup(const std::string& bundleName, cons
 }
 
 bool BundleActiveGroupController::calculationTimeOut(
-    const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory, const int64_t& bootBasedTimeStamp)
+    const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory, const int64_t bootBasedTimeStamp)
 {
     if (oneBundleHistory == nullptr) {
         return false;
@@ -150,7 +150,7 @@ bool BundleActiveGroupController::calculationTimeOut(
         - lastGroupCalculatedTimeStamp > timeoutCalculated_;
 }
 
-int BundleActiveGroupController::EventToGroupReason(const int& eventId)
+int BundleActiveGroupController::EventToGroupReason(const int eventId)
 {
     switch (eventId) {
         case BundleActiveEvent::ABILITY_FOREGROUND:
@@ -170,8 +170,8 @@ int BundleActiveGroupController::EventToGroupReason(const int& eventId)
     }
 }
 
-void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, const int64_t& bootBasedTimeStamp,
-    const int& userId)
+void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp,
+    const int userId)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::ReportEvent called");
     if (bundleGroupEnable_ == false) {
@@ -225,8 +225,8 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
     }
 }
 
-void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleName, const int& userId,
-    const int64_t& bootBasedTimeStamp)
+void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleName, const int userId,
+    const int64_t bootBasedTimeStamp)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName, userId, bootBasedTimeStamp, true);
@@ -266,8 +266,8 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     }
 }
 
-void BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int& userId, int newGroup,
-    int reason, const int64_t& bootBasedTimeStamp, const bool& resetTimeout)
+void BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int userId, int newGroup,
+    int reason, const int64_t bootBasedTimeStamp, const bool& resetTimeout)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (IsBundleInstalled(bundleName, userId) == false) {
@@ -294,7 +294,7 @@ void BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, 
     bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, reason, false);
 }
 
-int BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, const int& userId)
+int BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, const int userId)
 {
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     if (IsBundleInstalled(bundleName, userId) == false) {
@@ -316,7 +316,7 @@ int BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, con
     }
 }
 
-int BundleActiveGroupController::QueryPackageGroup(const int& userId, const std::string& bundleName)
+int BundleActiveGroupController::QueryPackageGroup(const int userId, const std::string& bundleName)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::QueryPackageGroup called");
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();

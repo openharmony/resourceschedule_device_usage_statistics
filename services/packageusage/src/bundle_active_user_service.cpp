@@ -18,7 +18,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-void BundleActiveUserService::Init(const int64_t& timeStamp)
+void BundleActiveUserService::Init(const int64_t timeStamp)
 {
     database_.InitDatabaseTableInfo(timeStamp);
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::Init called");
@@ -123,7 +123,7 @@ void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
                 it->UpdateKeyguardHidden(event.timeStamp_);
                 break;
             default:
-                it->Update(event.bundleName_, event.longTimeTaskName_, event.timeStamp_, event.eventId_,
+                it->Update(event.bundleName_, event.ContinuousTaskAbilityName_, event.timeStamp_, event.eventId_,
                     event.abilityId_);
                 if (incrementBundleLaunch) {
                     BUNDLE_ACTIVE_LOGI(" BundleActiveUserService::ReportEvent increase bundle started count");
@@ -150,7 +150,7 @@ void BundleActiveUserService::ReportForFlushAndShutdown(const BundleActiveEvent&
         RenewStatsInMemory(event.timeStamp_);
     }
     for (auto it : currentStats_) {
-        it->Update(event.bundleName_, event.longTimeTaskName_, event.timeStamp_, event.eventId_, event.abilityId_);
+        it->Update(event.bundleName_, event.ContinuousTaskAbilityName_, event.timeStamp_, event.eventId_, event.abilityId_);
     }
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::ReportForFlushAndShutdown called notify");
     NotifyStatsChanged();
@@ -169,7 +169,7 @@ void BundleActiveUserService::RestoreStats()
     }
 }
 
-void BundleActiveUserService::LoadActiveStats(const int64_t& timeStamp, const bool& force)
+void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const bool& force)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::LoadActiveStats called");
     BundleActiveCalendar tmpCalendar(0);
@@ -212,7 +212,7 @@ void BundleActiveUserService::LoadActiveStats(const int64_t& timeStamp, const bo
         "begin time is %{public}lld", dailyExpiryDate_.GetMilliseconds(), tmpCalendar.GetMilliseconds());
 }
 
-void BundleActiveUserService::RenewStatsInMemory(const int64_t& timeStamp)
+void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
 {
     std::set<std::string> continueBundles;
     std::map<std::string, std::map<std::string, int>> continueAbilities;
@@ -266,7 +266,7 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t& timeStamp)
 }
 
 std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats(int intervalType,
-    const int64_t& beginTime, const int64_t& endTime, const int& userId, const std::string& bundleName)
+    const int64_t beginTime, const int64_t endTime, const int userId, const std::string& bundleName)
 {
     std::vector<BundleActivePackageStats> result;
     if (intervalType == BundleActivePeriodStats::PERIOD_BEST) {
@@ -323,8 +323,8 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_t& beginTime, const int64_t& endTime,
-    const int& userId, const std::string& bundleName)
+std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_t beginTime, const int64_t endTime,
+    const int userId, const std::string& bundleName)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryEvents called");
     std::vector<BundleActiveEvent> result;

@@ -33,85 +33,13 @@ void BundleActiveContinuousTaskObserver::Init(const std::shared_ptr<BundleActive
 void BundleActiveContinuousTaskObserver::OnContinuousTaskStart(
     const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>& continuousTaskCallbackInfo)
 {
-    int uid = continuousTaskCallbackInfo->GetCreatorUid();
-    int pid = continuousTaskCallbackInfo->GetCreatorPid();
-    std::string abiliytName = continuousTaskCallbackInfo->GetAbilityName();
-    std::string abilityId = "";
-    int userId = -1;
-    std::string bundleName = "";
-    if (GetBundleMgr()) {
-        bundleMgr_->GetBundleNameForUid(uid, bundleName);
-    } else {
-        return;
-    }
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);
-    if (ret == ERR_OK && userId != -1 && !bundleName.empty()) {
-        std::stringstream stream;
-        BundleActiveReportHandlerObject tmpHandlerObject;
-        tmpHandlerObject.event_.bundleName_ = bundleName;
-        tmpHandlerObject.event_.abilityName_ = "";
-        tmpHandlerObject.event_.abilityId_ = abilityId;
-        tmpHandlerObject.event_.longTimeTaskName_ = abiliytName;
-        tmpHandlerObject.userId_ = userId;
-        sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-        tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
-        tmpHandlerObject.event_.eventId_ = BundleActiveEvent::LONG_TIME_TASK_STARTTED;
-        BUNDLE_ACTIVE_LOGI("OnContinuousTaskStart id is %{public}d, bundle name is %{public}s, "
-            "ability name is %{public}s, ability id is %{public}s, event id is %{public}d,"
-            "uid is %{public}d, pid is %{public}d",
-            tmpHandlerObject.userId_, tmpHandlerObject.event_.bundleName_.c_str(),
-            tmpHandlerObject.event_.abilityName_.c_str(), abilityId.c_str(), tmpHandlerObject.event_.eventId_,
-            uid, pid);
-        if (reportHandler_ != nullptr) {
-            BUNDLE_ACTIVE_LOGI("BundleActiveAppStateObserver::OnAbilityStateChanged handler not null, SEND");
-            std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
-            reportHandler_->SendEvent(event);
-        }
-    }
+    ReportContinuousTaskEvent(continuousTaskCallbackInfo, true);
 }
 
 void BundleActiveContinuousTaskObserver::OnContinuousTaskStop(
     const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo> &continuousTaskCallbackInfo)
 {
-    int uid = continuousTaskCallbackInfo->GetCreatorUid();
-    int pid = continuousTaskCallbackInfo->GetCreatorPid();
-    std::string abiliytName = continuousTaskCallbackInfo->GetAbilityName();
-    std::string abilityId = "";
-    int userId = -1;
-    std::string bundleName = "";
-    if (GetBundleMgr()) {
-        bundleMgr_->GetBundleNameForUid(uid, bundleName);
-    } else {
-        return;
-    }
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);
-    if (ret == ERR_OK && userId != -1 && !bundleName.empty()) {
-        std::stringstream stream;
-        BundleActiveReportHandlerObject tmpHandlerObject;
-        tmpHandlerObject.event_.bundleName_ = bundleName;
-        tmpHandlerObject.event_.abilityName_ = "";
-        tmpHandlerObject.event_.abilityId_ = abilityId;
-        tmpHandlerObject.event_.longTimeTaskName_ = abiliytName;
-        tmpHandlerObject.userId_ = userId;
-        sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-        tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
-        tmpHandlerObject.event_.eventId_ = BundleActiveEvent::LONG_TIME_TASK_ENDED;
-        BUNDLE_ACTIVE_LOGI("OnContinuousTaskStart id is %{public}d, bundle name is %{public}s, "
-            "ability name is %{public}s, ability id is %{public}s, event id is %{public}d,"
-            "uid is %{public}d, pid is %{public}d",
-            tmpHandlerObject.userId_, tmpHandlerObject.event_.bundleName_.c_str(),
-            tmpHandlerObject.event_.abilityName_.c_str(), abilityId.c_str(), tmpHandlerObject.event_.eventId_,
-            uid, pid);
-        if (reportHandler_ != nullptr) {
-            BUNDLE_ACTIVE_LOGI("BundleActiveAppStateObserver::OnAbilityStateChanged handler not null, SEND");
-            std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
-            reportHandler_->SendEvent(event);
-        }
-    }
+    ReportContinuousTaskEvent(continuousTaskCallbackInfo, false);
 }
 
 void BundleActiveContinuousTaskObserver::OnRemoteDied(const wptr<IRemoteObject> &object)
@@ -140,6 +68,52 @@ bool BundleActiveContinuousTaskObserver::GetBundleMgr()
         }
     }
     return true;
+}
+
+void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
+        const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>& continuousTaskCallbackInfo, const bool isStart)
+{
+    int uid = continuousTaskCallbackInfo->GetCreatorUid();
+    int pid = continuousTaskCallbackInfo->GetCreatorPid();
+    std::string abiliytName = continuousTaskCallbackInfo->GetAbilityName();
+    std::string abilityId = "";
+    int userId = -1;
+    std::string bundleName = "";
+    if (GetBundleMgr()) {
+        bundleMgr_->GetBundleNameForUid(uid, bundleName);
+    } else {
+        return;
+    }
+    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);
+    if (ret == ERR_OK && userId != -1 && !bundleName.empty()) {
+        std::stringstream stream;
+        BundleActiveReportHandlerObject tmpHandlerObject;
+        tmpHandlerObject.event_.bundleName_ = bundleName;
+        tmpHandlerObject.event_.abilityName_ = "";
+        tmpHandlerObject.event_.abilityId_ = abilityId;
+        tmpHandlerObject.event_.ContinuousTaskAbilityName_ = abiliytName;
+        tmpHandlerObject.userId_ = userId;
+        sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+        tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
+        if (isStart) {
+            tmpHandlerObject.event_.eventId_ = BundleActiveEvent::LONG_TIME_TASK_STARTTED;
+        } else {
+            tmpHandlerObject.event_.eventId_ = BundleActiveEvent::LONG_TIME_TASK_ENDED;
+        }
+        BUNDLE_ACTIVE_LOGI("OnContinuousTaskStart id is %{public}d, bundle name is %{public}s, "
+            "ability name is %{public}s, ability id is %{public}s, event id is %{public}d,"
+            "uid is %{public}d, pid is %{public}d",
+            tmpHandlerObject.userId_, tmpHandlerObject.event_.bundleName_.c_str(),
+            tmpHandlerObject.event_.abilityName_.c_str(), abilityId.c_str(), tmpHandlerObject.event_.eventId_,
+            uid, pid);
+        if (reportHandler_ != nullptr) {
+            BUNDLE_ACTIVE_LOGI("BundleActiveAppStateObserver::OnAbilityStateChanged handler not null, SEND");
+            std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+            auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
+            reportHandler_->SendEvent(event);
+        }
+    }
 }
 }
 }

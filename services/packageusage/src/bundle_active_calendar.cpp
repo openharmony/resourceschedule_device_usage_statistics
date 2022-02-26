@@ -18,7 +18,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-BundleActiveCalendar::BundleActiveCalendar(const int64_t& timeStamp)
+BundleActiveCalendar::BundleActiveCalendar(const int64_t timeStamp)
 {
     time_ = timeStamp;
 }
@@ -43,27 +43,27 @@ void BundleActiveCalendar::TruncateToYear()
     time_ -= time_ % YEAR_MILLISECONDS;
 }
 
-void BundleActiveCalendar::IncreaseDays(const int& val)
+void BundleActiveCalendar::IncreaseDays(const int val)
 {
     time_ += val * DAY_MILLISECONDS;
 }
 
-void BundleActiveCalendar::IncreaseWeeks(const int& val)
+void BundleActiveCalendar::IncreaseWeeks(const int val)
 {
     time_ += val* WEEK_MILLISECONDS;
 }
 
-void BundleActiveCalendar::IncreaseMonths(const int& val)
+void BundleActiveCalendar::IncreaseMonths(const int val)
 {
     time_ += val * MONTH_MILLISECONDS;
 }
 
-void BundleActiveCalendar::IncreaseYears(const int& val)
+void BundleActiveCalendar::IncreaseYears(const int val)
 {
     time_ += val * YEAR_MILLISECONDS;
 }
 
-void BundleActiveCalendar::SetMilliseconds(const int64_t& timeStamp)
+void BundleActiveCalendar::SetMilliseconds(const int64_t timeStamp)
 {
     time_ = timeStamp;
 }

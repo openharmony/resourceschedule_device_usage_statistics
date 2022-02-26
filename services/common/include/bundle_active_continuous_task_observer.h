@@ -42,6 +42,8 @@ private:
     sptr<IBundleMgr> bundleMgr_;
     std::shared_ptr<BundleActiveReportHandler> reportHandler_;
     bool GetBundleMgr();
+    void ReportContinuousTaskEvent(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>&
+        continuousTaskCallbackInfo, const bool isStart);
 };
 }
 }

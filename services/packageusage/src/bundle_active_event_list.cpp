@@ -42,7 +42,7 @@ void BundleActiveEventList::Insert(BundleActiveEvent event)
     events_.insert(events_.begin() + insertIdx, event);
 }
 
-int BundleActiveEventList::FindBestIndex(const int64_t& timeStamp)
+int BundleActiveEventList::FindBestIndex(const int64_t timeStamp)
 {
     int size = events_.size();
     int result = size;

@@ -27,7 +27,7 @@ void BundleActiveUserHistory::WriteDeviceDuration()
     database_.PutDurationData(bootBasedDuration_, ScreenOnDuration_);
 }
 
-void BundleActiveUserHistory::WriteBundleUsage(const int& userId)
+void BundleActiveUserHistory::WriteBundleUsage(const int userId)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveUserHistory::WriteBundleUsage called");
     auto userHistory = GetUserHistory(userId, false);
@@ -38,7 +38,7 @@ void BundleActiveUserHistory::WriteBundleUsage(const int& userId)
     database_.PutBundleHistoryData(userId, userHistory);
 }
 
-BundleActiveUserHistory::BundleActiveUserHistory(const int64_t& bootBasedTimeStamp)
+BundleActiveUserHistory::BundleActiveUserHistory(const int64_t bootBasedTimeStamp)
 {
     bootBasedTimeStamp_ = bootBasedTimeStamp;
     screenOnTimeStamp_ = bootBasedTimeStamp;
@@ -49,8 +49,8 @@ BundleActiveUserHistory::BundleActiveUserHistory(const int64_t& bootBasedTimeSta
     isScreenOn_ = false;
 }
 
-int BundleActiveUserHistory::GetLevelIndex(const string& bundleName, const int& userId,
-    const int64_t& bootBasedTimeStamp, const int64_t screenTimeLevel[4], const int64_t bootFromTimeLevel[4])
+int BundleActiveUserHistory::GetLevelIndex(const string& bundleName, const int userId,
+    const int64_t bootBasedTimeStamp, const int64_t screenTimeLevel[4], const int64_t bootFromTimeLevel[4])
 {
     auto oneUserHistory = GetUserHistory(userId, false);
     if (oneUserHistory == nullptr) {
@@ -85,7 +85,7 @@ int64_t BundleActiveUserHistory::GetScreenOnTimeStamp(int64_t bootBasedTimeStamp
 }
 
 shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUserHistory::GetUserHistory(
-    const int& userId, const bool& create)
+    const int userId, const bool& create)
 {
     auto it = userHistory_.find(userId);
     if (it == userHistory_.end() && create) {
@@ -125,7 +125,7 @@ shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryI
 }
 
 shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryForBundle(
-    const string& bundleName, const int& userId, const int64_t& bootBasedTimeStamp, const bool& create)
+    const string& bundleName, const int userId, const int64_t bootBasedTimeStamp, const bool& create)
 {
     auto oneUserHistory = GetUserHistory(userId, create);
     if (oneUserHistory == nullptr) {
@@ -139,8 +139,8 @@ shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryF
 }
 
 void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory,
-    const string& bundleName, const int& newGroup, const int& groupReason, const int64_t& bootBasedTimeStamp,
-    const int64_t& timeUntilNextCheck)
+    const string& bundleName, const int newGroup, const int groupReason, const int64_t bootBasedTimeStamp,
+    const int64_t timeUntilNextCheck)
 {
     if (timeUntilNextCheck > bootBasedTimeStamp) {
         int64_t nextCheckTimeStamp = bootBasedDuration_ + (timeUntilNextCheck - bootBasedTimeStamp_);
@@ -165,8 +165,8 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     oneBundleUsageHistory->reasonInGroup_ = GROUP_CONTROL_REASON_USAGE | groupReason;
 }
 
-void BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int& userId,
-    const int64_t& bootBasedTimeStamp, int newGroup, int groupReason, const bool& resetTimeout)
+void BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int userId,
+    const int64_t bootBasedTimeStamp, int newGroup, int groupReason, const bool& resetTimeout)
 {
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userBundleHistory =
         GetUserHistory(userId, false);
@@ -187,7 +187,7 @@ void BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int
     }
 }
 
-void BundleActiveUserHistory::UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t& bootBasedTimeStamp,
+void BundleActiveUserHistory::UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t bootBasedTimeStamp,
     const bool& isShutdown)
 {
     if (isScreenOn_ == isScreenOn && isShutdown == false) {

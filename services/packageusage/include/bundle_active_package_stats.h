@@ -49,10 +49,10 @@ public:
         int64_t GetTotalTimeFrontServiceUsed();
         int GetLaunchedCount();
         int GetBundleLaunchedCount();
-        void Update(const std::string& longTimeTaskName, const int64_t& timeStamp, const int& eventId,
+        void Update(const std::string& longTimeTaskName, const int64_t timeStamp, const int eventId,
                 const std::string& abilityId);
-        void IncrementTimeUsed(const int64_t& timeStamp);
-        void IncrementServiceTimeUsed(const int64_t& timeStamp);
+        void IncrementTimeUsed(const int64_t timeStamp);
+        void IncrementServiceTimeUsed(const int64_t timeStamp);
         void IncrementBundleLaunchedCount();
         virtual bool Marshalling(Parcel &parcel) const override;
         std::shared_ptr<BundleActivePackageStats> Unmarshalling(Parcel &parcel);
@@ -61,8 +61,8 @@ public:
 private:
         bool HasFrontAbility();
         bool AnyLongTimeTaskStarted();
-        void UpdateAbility(const int64_t& timeStamp, const int& eventId, const std::string& abilityId);
-        void UpdateLongTimeTask(const std::string& longTimeTaskName, const int64_t& timeStamp, const int& eventId);
+        void UpdateAbility(const int64_t timeStamp, const int eventId, const std::string& abilityId);
+        void UpdateLongTimeTask(const std::string& longTimeTaskName, const int64_t timeStamp, const int eventId);
 };
 }
 }

@@ -47,7 +47,7 @@ bool BundleActiveClient::GetBundleActiveProxy()
 }
 
 int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
-    const std::string& continuousTask, const int& userId, const int& eventId)
+    const std::string& continuousTask, const int userId, const int eventId)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveClient::ReportEvent called");
     if (!GetBundleActiveProxy()) {
@@ -64,8 +64,8 @@ bool BundleActiveClient::IsBundleIdle(const std::string& bundleName)
     return bundleActiveProxy_->IsBundleIdle(bundleName);
 }
 
-std::vector<BundleActivePackageStats> BundleActiveClient::QueryPackageStats(const int& intervalType,
-    const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActivePackageStats> BundleActiveClient::QueryPackageStats(const int intervalType,
+    const int64_t beginTime, const int64_t endTime)
 {
     if (!GetBundleActiveProxy()) {
         return std::vector<BundleActivePackageStats>(0);
@@ -73,7 +73,7 @@ std::vector<BundleActivePackageStats> BundleActiveClient::QueryPackageStats(cons
     return bundleActiveProxy_->QueryPackageStats(intervalType, beginTime, endTime);
 }
 
-std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t beginTime, const int64_t endTime)
 {
     if (!GetBundleActiveProxy()) {
         return std::vector<BundleActiveEvent>(0);
@@ -81,7 +81,7 @@ std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t& be
     return bundleActiveProxy_->QueryEvents(beginTime, endTime);
 }
 
-void BundleActiveClient::SetBundleGroup(std::string bundleName, const int newGroup, const int& userId)
+void BundleActiveClient::SetBundleGroup(std::string bundleName, const int newGroup, const int userId)
 {
     if (!GetBundleActiveProxy()) {
         return;
@@ -90,8 +90,8 @@ void BundleActiveClient::SetBundleGroup(std::string bundleName, const int newGro
     return;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveClient::QueryCurrentPackageStats(const int& intervalType,
-    const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActivePackageStats> BundleActiveClient::QueryCurrentPackageStats(const int intervalType,
+    const int64_t beginTime, const int64_t endTime)
 {
     if (!GetBundleActiveProxy()) {
         return std::vector<BundleActivePackageStats>(0);
@@ -99,7 +99,7 @@ std::vector<BundleActivePackageStats> BundleActiveClient::QueryCurrentPackageSta
     return bundleActiveProxy_->QueryCurrentPackageStats(intervalType, beginTime, endTime);
 }
 
-std::vector<BundleActiveEvent> BundleActiveClient::QueryCurrentEvents(const int64_t& beginTime, const int64_t& endTime)
+std::vector<BundleActiveEvent> BundleActiveClient::QueryCurrentEvents(const int64_t beginTime, const int64_t endTime)
 {
     if (!GetBundleActiveProxy()) {
         return std::vector<BundleActiveEvent>(0);

@@ -47,35 +47,84 @@ class BundleActiveCore : public BundleActiveStatsUpdateListener {
 public:
     BundleActiveCore();
     virtual ~BundleActiveCore();
-    int ReportEvent(BundleActiveEvent& event, const int& userId);
+    /*
+    * function: ReportEvent, used to report ability fourground/background/destroy event.
+    * parameters: event, userId
+    */
+    int ReportEvent(BundleActiveEvent& event, const int userId);
+    /*
+    * function: ReportEventToAllUserId, report flush to disk, end_of_day event to service.
+    * parameters: event
+    */
     int ReportEventToAllUserId(BundleActiveEvent& event);
+    /*
+    * function: OnStatsChanged, report flush to disk, end_of_day event to service.
+    */
     void OnStatsChanged() override;
+    /*
+    * function: OnStatsChanged, when device reboot after more than one day, BundleActiveUserService
+    * will use it to flush group info.
+    */
     void OnStatsReload() override;
+    /*
+    * function: OnSystemUpdate, now is emtpy, later will called when system is updated.
+    */
     void OnSystemUpdate(int userId) override;
-    void OnBundleUninstalled(const int& userId, const std::string& bundleName);
+    /*
+    * function: OnBundleUninstalled when received a PACKATE_REMOVED commen event,
+    * BundleActiveCommonEventSubscriber call it to remove data.
+    * parameter: userId, Bundlename.
+    */
+    void OnBundleUninstalled(const int userId, const std::string& bundleName);
+    /*
+    * function: Init, BundleAciveService call it to init systemTimeShot_, realTimeShot_,
+    * create bundleGroupController_ object.
+    */
     void Init();
+    /*
+    * function: InitBundleGroupController, BundleAciveService call it to init bundleGroupController_ object,
+    * set its handler and subscribe needed common event.
+    * create bundleGroupController_ object.
+    */
     void InitBundleGroupController();
+    /*
+    * function: SetHandler, BundleActiveService call it to set event report handler
+    */
     void SetHandler(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
+    // flush database.
     void RestoreToDatabase();
-    void ShutDown();
-    std::vector<BundleActivePackageStats> QueryPackageStats(const int& userId, const int& intervalType,
-        const int64_t& beginTime, const int64_t& endTime, std::string bundleName);
-    std::vector<BundleActiveEvent> QueryEvents(const int& userId, const int64_t& beginTime,
-        const int64_t& endTime, std::string bundleName);
-    int IsBundleIdle(const std::string& bundleName, const int& userId);
-    int QueryPackageGroup(const int& userId, const std::string bundleName);
-    int64_t CheckTimeChangeAndGetWallTime();
-    void ConvertToSystemTimeLocked(BundleActiveEvent& event);
-    std::shared_ptr<BundleActiveUserService> GetUserDataAndInitializeIfNeeded(const int& userId,
-        const int64_t& timeStamp);
-    void OnUserRemoved(const int& userId);
+    // flush database
     void RestoreToDatabaseLocked();
-    void SetBundleGroup(const std::string& bundleName, const int& newGroup, const int& userId);
+    // called when device shutdown, update the in-memory stat and flush the database.
+    void ShutDown();
+    // query the package stat for calling user.
+    std::vector<BundleActivePackageStats> QueryPackageStats(const int userId, const int intervalType,
+        const int64_t beginTime, const int64_t endTime, std::string bundleName);
+    // query the event stat for calling user.
+    std::vector<BundleActiveEvent> QueryEvents(const int userId, const int64_t beginTime,
+        const int64_t endTime, std::string bundleName);
+    // check the app idle state for calling user.
+    int IsBundleIdle(const std::string& bundleName, const int userId);
+    // query the app group for calling app.
+    int QueryPackageGroup(const int userId, const std::string bundleName);
+    // get the wall time and check if the wall time is changed.
+    int64_t CheckTimeChangeAndGetWallTime();
+    // convert event timestamp from boot based time to wall time.
+    void ConvertToSystemTimeLocked(BundleActiveEvent& event);
+    // get or create BundleActiveUserService object for specifice user.
+    std::shared_ptr<BundleActiveUserService> GetUserDataAndInitializeIfNeeded(const int userId,
+        const int64_t timeStamp);
+    // when received a USER_REMOVED commen event, call it to remove data.
+    void OnUserRemoved(const int userId);
+    // force set app group.
+    void SetBundleGroup(const std::string& bundleName, const int newGroup, const int userId);
+    // get all user in device
     void GetAllActiveUser(std::vector<OHOS::AccountSA::OsAccountInfo> &osAccountInfos);
+    // when service stop, call it to unregister commen event and shutdown call back.
     void UnRegisterSubscriber();
 
 private:
-    static const int64_t FLUSH_INTERVAL = THIRTY_MINUTES;
+    static const int64_t FLUSH_INTERVAL = TWO_MINUTE;
     static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TWO_SECONDS;
     const int DEFAULT_USER_ID = -1;
     std::map<int, std::string> visibleActivities_;
