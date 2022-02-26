@@ -337,14 +337,8 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     if (beginTime >= currentStats->endTime_) {
         return result;
     }
-    int64_t truncatedEndTime = 0;
-    if (currentStats->events_.events_.empty()) {
-        truncatedEndTime = endTime;
-    } else {
-        truncatedEndTime = std::min(currentStats->beginTime_, endTime);
-    }
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryEvents bundle name is %{public}s", bundleName.c_str());
-    result = database_.QueryDatabaseEvents(beginTime, truncatedEndTime, userId, bundleName);
+    result = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryEvents need in memory stats");
