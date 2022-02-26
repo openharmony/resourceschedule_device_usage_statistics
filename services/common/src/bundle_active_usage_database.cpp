@@ -44,12 +44,9 @@ BundleActiveUsageDatabase::BundleActiveUsageDatabase()
 {
     currentVersion_ = BUNDLE_ACTIVE_CURRENT_VERSION;
     versionDirectoryPath_ = BUNDLE_ACTIVE_DATABASE_DIR + BUNDLE_ACTIVE_VERSION_FILE;
-    databaseFiles_.push_back(DAILY_DATABASE);
-    databaseFiles_.push_back(WEEKLY_DATABASE);
-    databaseFiles_.push_back(MONTHLY_DATABASE);
-    databaseFiles_.push_back(YEARLY_DATABASE);
-    databaseFiles_.push_back(EVENT_DATABASE);
-    databaseFiles_.push_back(USAGE_GROUP_DATABASE);
+    for (int i = 0; i < sizeof(DATABASE_TYPE)/sizeof(DATABASE_TYPE[0]); i++) {
+        databaseFiles_.push_back(DATABASE_TYPE[i]);
+    }
     eventTableName_ = UNKNOWN_TABLE_NAME;
     durationTableName_ = UNKNOWN_TABLE_NAME;
     bundleHistoryTableName_ = UNKNOWN_TABLE_NAME;
@@ -66,17 +63,12 @@ BundleActiveUsageDatabase::~BundleActiveUsageDatabase()
 void BundleActiveUsageDatabase::InitUsageGroupInfo(int32_t databaseType)
 {
     lock_guard<mutex> lock(databaseMutex_);
-    if (access(BUNDLE_ACTIVE_DATABASE_DIR.c_str(), F_OK) != 0) {
-        int createDir = mkdir(BUNDLE_ACTIVE_DATABASE_DIR.c_str(), S_IRWXU);
-        if (createDir != 0) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase InitDatabaseTableInfo Failed to create directory %{public}s",
-                BUNDLE_ACTIVE_DATABASE_DIR.c_str());
-            return;
-        }
+    if (CreateDatabasePath() == BUNDLE_ACTIVE_FAIL) {
+        BUNDLE_ACTIVE_LOGE("database path is not exist");
+        return;
     }
     if (databaseType != APP_GROUP_DATABASE_INDEX) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase InitUsageGroupInfo databaseType is invalid, "
-            "databaseType = %{public}d", databaseType);
+        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
         return;
     }
     string queryDatabaseTableNames = "select * from sqlite_master where type = ?";
@@ -85,13 +77,13 @@ void BundleActiveUsageDatabase::InitUsageGroupInfo(int32_t databaseType)
     unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(databaseType,
         queryDatabaseTableNames, queryCondition);
     if (bundleActiveResult == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase InitUsageGroupInfo bundleActiveResult is invalid");
+        BUNDLE_ACTIVE_LOGE("bundleActiveResult is invalid");
         return;
     }
     int32_t tableNumber;
     bundleActiveResult->GetRowCount(tableNumber);
     if (tableNumber == TABLE_NOT_EXIST) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase InitUsageGroupInfo table not exist");
+        BUNDLE_ACTIVE_LOGE("table not exist");
         return;
     }
     int32_t tableNameIndex;
@@ -110,18 +102,25 @@ void BundleActiveUsageDatabase::InitUsageGroupInfo(int32_t databaseType)
     }
 }
 
-void BundleActiveUsageDatabase::InitDatabaseTableInfo(int64_t currentTime)
+int32_t BundleActiveUsageDatabase::CreateDatabasePath()
 {
-    lock_guard<mutex> lock(databaseMutex_);
     if (access(BUNDLE_ACTIVE_DATABASE_DIR.c_str(), F_OK) != 0) {
         int createDir = mkdir(BUNDLE_ACTIVE_DATABASE_DIR.c_str(), S_IRWXU);
         if (createDir != 0) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase InitDatabaseTableInfo Failed to create directory %{public}s",
-                BUNDLE_ACTIVE_DATABASE_DIR.c_str());
-            return;
+            BUNDLE_ACTIVE_LOGE("failed to create directory %{public}s", BUNDLE_ACTIVE_DATABASE_DIR.c_str());
+            return BUNDLE_ACTIVE_FAIL;
         }
     }
+    return BUNDLE_ACTIVE_SUCCESS;
+}
 
+void BundleActiveUsageDatabase::InitDatabaseTableInfo(int64_t currentTime)
+{
+    lock_guard<mutex> lock(databaseMutex_);
+    if (CreateDatabasePath() == BUNDLE_ACTIVE_FAIL) {
+        BUNDLE_ACTIVE_LOGE("database path is not exist");
+        return;
+    }
     CheckDatabaseVersion();
     for (unsigned int i = 0; i < databaseFiles_.size(); i++) {
         HandleTableInfo(i);
@@ -137,12 +136,6 @@ void BundleActiveUsageDatabase::InitDatabaseTableInfo(int64_t currentTime)
             DeleteInvalidTable(i, sortedTableArray_.at(i).at(startIndex));
             sortedTableArray_.at(i).erase(sortedTableArray_.at(i).begin() + startIndex);
         }
-        if (!sortedTableArray_.at(i).empty()) {
-            for (unsigned int k = 0; k < sortedTableArray_.at(i).size(); k++) {
-                BUNDLE_ACTIVE_LOGI("BundleActiveUsageDatabase InitDatabaseTableInfo tableCreateTime = %{public}lld",
-                    sortedTableArray_.at(i).at(k));
-            }
-        }
     }
     if (eventTableName_ != UNKNOWN_TABLE_NAME) {
         int64_t eventTableTime = ParseStartTime(eventTableName_);
@@ -153,7 +146,7 @@ void BundleActiveUsageDatabase::InitDatabaseTableInfo(int64_t currentTime)
 }
 
 int32_t BundleActiveUsageDatabase::NearIndexOnOrAfterCurrentTime(int64_t currentTime,
-    vector<int64_t> sortedTableArray)
+    vector<int64_t> &sortedTableArray)
 {
     int32_t low = 0;
     int32_t high = sortedTableArray.size() - 1;
@@ -180,7 +173,7 @@ int32_t BundleActiveUsageDatabase::NearIndexOnOrAfterCurrentTime(int64_t current
 }
 
 int32_t BundleActiveUsageDatabase::NearIndexOnOrBeforeCurrentTime(int64_t currentTime,
-    vector<int64_t> sortedTableArray)
+    vector<int64_t> &sortedTableArray)
 {
     int32_t index = NearIndexOnOrAfterCurrentTime(currentTime, sortedTableArray);
     if (index < 0) {
@@ -197,7 +190,7 @@ unique_ptr<NativeRdb::ResultSet> BundleActiveUsageDatabase::QueryStatsInfoByStep
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase QueryStatsInfoByStep is failed");
+        BUNDLE_ACTIVE_LOGE("queryStatsInfoByStep is failed");
         return nullptr;
     }
     unique_ptr<NativeRdb::ResultSet> result;
@@ -217,13 +210,13 @@ void BundleActiveUsageDatabase::HandleTableInfo(unsigned int databaseType)
     unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(databaseType,
         queryDatabaseTableNames, queryCondition);
     if (bundleActiveResult == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase HandleTableInfo bundleActiveResult is invalid");
+        BUNDLE_ACTIVE_LOGE("bundleActiveResult is invalid");
         return;
     }
     int32_t tableNumber;
     bundleActiveResult->GetRowCount(tableNumber);
     if (tableNumber == TABLE_NOT_EXIST) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase HandleTableInfo table not exist");
+        BUNDLE_ACTIVE_LOGE("table not exist");
         return;
     }
     int32_t tableNameIndex;
@@ -262,7 +255,7 @@ void BundleActiveUsageDatabase::DeleteExcessiveTableData(unsigned int databaseTy
 {
     if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
         if (sortedTableArray_.at(databaseType).empty()) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase DeleteExcessiveTableData database table not exist");
+            BUNDLE_ACTIVE_LOGE("database table not exist");
             return;
         }
         int32_t deleteNumber = sortedTableArray_.at(databaseType).size() - MAX_FILES_EVERY_INTERVAL_TYPE[databaseType];
@@ -304,14 +297,14 @@ void BundleActiveUsageDatabase::DeleteExcessiveTableData(unsigned int databaseTy
     }
 }
 
-vector<int64_t> BundleActiveUsageDatabase::GetOverdueTableCreateTime(unsigned int databaseType,
+std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTableCreateTime(unsigned int databaseType,
     int64_t currentTimeMillis)
 {
-    vector<int64_t> overdueTableCreateTime;
+    std::unique_ptr<std::vector<int64_t>> overdueTableCreateTime = std::make_unique<std::vector<int64_t>>();
     if (databaseType < 0 || databaseType >= sortedTableArray_.size()) {
         BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetOverdueTableCreateTime databaseType is invalid, databaseType "
             "= %{public}d", databaseType);
-        return overdueTableCreateTime;
+        return nullptr;
     }
     string queryDatabaseTableNames = "select * from sqlite_master where type = ?";
     vector<string> queryCondition;
@@ -320,13 +313,13 @@ vector<int64_t> BundleActiveUsageDatabase::GetOverdueTableCreateTime(unsigned in
         queryDatabaseTableNames, queryCondition);
     if (bundleActiveResult == nullptr) {
         BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetOverdueTableCreateTime bundleActiveResult is invalid");
-        return overdueTableCreateTime;
+        return nullptr;
     }
     int32_t tableNumber;
     bundleActiveResult->GetRowCount(tableNumber);
     if (tableNumber == 0) {
         BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetOverdueTableCreateTime table does not exist");
-        return overdueTableCreateTime;
+        return nullptr;
     }
     int32_t tableNameIndex;
     bundleActiveResult->GetColumnIndex(SQLITE_MASTER_NAME, tableNameIndex);
@@ -335,7 +328,7 @@ vector<int64_t> BundleActiveUsageDatabase::GetOverdueTableCreateTime(unsigned in
         bundleActiveResult->GoToRow(i);
         bundleActiveResult->GetString(tableNameIndex, tableName);
         if (ParseStartTime(tableName) < currentTimeMillis) {
-            overdueTableCreateTime.push_back(ParseStartTime(tableName));
+            overdueTableCreateTime->push_back(ParseStartTime(tableName));
         }
     }
     return overdueTableCreateTime;
@@ -345,28 +338,24 @@ int32_t BundleActiveUsageDatabase::DeleteInvalidTable(unsigned int databaseType,
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase DeleteInvalidTable is failed");
+        BUNDLE_ACTIVE_LOGE("get rdbStore failed");
         return BUNDLE_ACTIVE_FAIL;
     }
     if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
         string packageTable = PACKAGE_LOG_TABLE + to_string(tableTimeMillis);
         string deletePackageTableSql = "drop table " + packageTable;
         int32_t deletePackageTable = rdbStore->ExecuteSql(deletePackageTableSql);
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase DeleteInvalidTable deletePackageTable is failed, "
-            "%{public}d", deletePackageTable);
         if (deletePackageTable != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase DeleteInvalidTable deletePackageTable is failed");
-            return deletePackageTable;
+            BUNDLE_ACTIVE_LOGE("deletePackageTable is %{public}d", deletePackageTable);
+            return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == EVENT_DATABASE_INDEX) {
         string eventTable = EVENT_LOG_TABLE + to_string(tableTimeMillis);
         string deleteEventTableSql = "drop table " + eventTable;
         int32_t deleteEventTable = rdbStore->ExecuteSql(deleteEventTableSql);
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase DeleteInvalidTable deleteEventTable is failed, "
-            "%{public}d", deleteEventTable);
         if (deleteEventTable != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase DeleteInvalidTable deleteEventTable is failed");
-            return deleteEventTable;
+            BUNDLE_ACTIVE_LOGE("deleteEventTable is %{public}d", deleteEventTable);
+            return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == APP_GROUP_DATABASE_INDEX) {
     }
@@ -386,8 +375,7 @@ int64_t BundleActiveUsageDatabase::ParseStartTime(const string &tableName)
             break;
         }
     }
-    int64_t time = atoll(tableTime.c_str());
-    return time;
+    return atoll(tableTime.c_str());
 }
 
 void BundleActiveUsageDatabase::CheckDatabaseVersion()
@@ -413,7 +401,7 @@ shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbSto
         BundleActiveOpenCallback rdbDataCallBack;
         rdbStore = RdbHelper::GetRdbStore(config, BUNDLE_ACTIVE_RDB_VERSION, rdbDataCallBack, errCode);
         if ((rdbStore == nullptr)) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetBundleActiveRdbStore fail to open RdbStore");
+            BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
             return nullptr;
         }
         bundleActiveRdbStoreCache_.insert(pair {file, rdbStore});
@@ -421,7 +409,7 @@ shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbSto
         rdbStore = bundleActiveRdbStoreCache_[file];
     }
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetBundleActiveRdbStore is failed");
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return nullptr;
     }
     return rdbStore;
@@ -431,7 +419,7 @@ int32_t BundleActiveUsageDatabase::CreateEventLogTable(unsigned int databaseType
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreateEventLogTable is failed");
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string eventTable = EVENT_LOG_TABLE + to_string(currentTimeMillis);
@@ -446,14 +434,13 @@ int32_t BundleActiveUsageDatabase::CreateEventLogTable(unsigned int databaseType
                                            + BUNDLE_ACTIVE_DB_ABILITY_ID + " TEXT NOT NULL);";
     int32_t createEventTable = rdbStore->ExecuteSql(createEventTableSql);
     if (createEventTable != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreateEventLogTable is failed");
         return createEventTable;
     }
     string createEventTableIndex = GetTableIndexSql(EVENT_DATABASE_INDEX, currentTimeMillis, true);
     int32_t createResult = rdbStore->ExecuteSql(createEventTableIndex);
     if (createResult != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreateEventLogTable createEventTableIndex is failed");
-        return createResult;
+        BUNDLE_ACTIVE_LOGE("create event table index failed");
+        return BUNDLE_ACTIVE_FAIL;
     }
     return BUNDLE_ACTIVE_SUCCESS;
 }
@@ -462,7 +449,7 @@ int32_t BundleActiveUsageDatabase::CreatePackageLogTable(unsigned int databaseTy
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreatePackageLogTable is failed");
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string packageTable = PACKAGE_LOG_TABLE + to_string(currentTimeMillis);
@@ -478,14 +465,14 @@ int32_t BundleActiveUsageDatabase::CreatePackageLogTable(unsigned int databaseTy
                                         + BUNDLE_ACTIVE_DB_TOTAL_TIME_CONTINUOUS_TASK + " INTEGER NOT NULL);";
     int32_t createPackageTable = rdbStore->ExecuteSql(createPackageTableSql);
     if (createPackageTable != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreatePackageLogTable is failed");
-        return createPackageTable;
+        BUNDLE_ACTIVE_LOGE("create packageLog table failed");
+        return BUNDLE_ACTIVE_FAIL;
     }
     string createPackageTableIndex = GetTableIndexSql(databaseType, currentTimeMillis, true);
     int32_t createResult = rdbStore->ExecuteSql(createPackageTableIndex);
     if (createResult != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreatePackageLogTable createNewPackageTableIndex is failed");
-        return createResult;
+        BUNDLE_ACTIVE_LOGE("create package table index failed");
+        return BUNDLE_ACTIVE_FAIL;
     }
     return BUNDLE_ACTIVE_SUCCESS;
 }
@@ -494,7 +481,7 @@ int32_t BundleActiveUsageDatabase::CreateDurationTable(unsigned int databaseType
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreateDurationTable is failed");
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string createDurationTableSql = "CREATE TABLE IF NOT EXISTS "
@@ -504,8 +491,8 @@ int32_t BundleActiveUsageDatabase::CreateDurationTable(unsigned int databaseType
                                         + BUNDLE_ACTIVE_DB_SCREEN_ON_DURATION + " INTEGER NOT NULL);";
     int32_t createDurationTable = rdbStore->ExecuteSql(createDurationTableSql);
     if (createDurationTable != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreateDurationTable is failed");
-        return createDurationTable;
+        BUNDLE_ACTIVE_LOGE("create duration table failed");
+        return BUNDLE_ACTIVE_FAIL;
     }
     return BUNDLE_ACTIVE_SUCCESS;
 }
@@ -514,7 +501,7 @@ int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(unsigned int databas
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreateBundleHistoryTable is failed");
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string createBundleHistoryTableSql = "CREATE TABLE IF NOT EXISTS "
@@ -530,15 +517,15 @@ int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(unsigned int databas
                                         + BUNDLE_ACTIVE_DB_BUNDLE_DAILY_TIMEOUT_TIME + " INTEGER NOT NULL);";
     int32_t createBundleHistoryTable = rdbStore->ExecuteSql(createBundleHistoryTableSql);
     if (createBundleHistoryTable != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreateBundleHistoryTable is failed");
+        BUNDLE_ACTIVE_LOGE("create bundleHistory table failed");
         return createBundleHistoryTable;
     }
     int32_t time = 0;
     string createBundleHistoryTableIndex = GetTableIndexSql(databaseType, time, true);
     int32_t createResult = rdbStore->ExecuteSql(createBundleHistoryTableIndex);
     if (createResult != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase CreateBundleHistoryTable createNewPackageTableIndex is failed");
-        return createResult;
+        BUNDLE_ACTIVE_LOGE("create bundleHistory table index failed");
+        return BUNDLE_ACTIVE_FAIL;
     }
     return BUNDLE_ACTIVE_SUCCESS;
 }
@@ -547,10 +534,8 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userHistory)
 {
     lock_guard<mutex> lock(databaseMutex_);
-    BUNDLE_ACTIVE_LOGI("BundleActiveUsageDatabase::PutBundleHistoryData num of handler is %{public}d, "
-        "cache size is %{public}d", databaseFiles_.size(), bundleActiveRdbStoreCache_.size());
     if (userHistory == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase PutBundleHistoryData bundleHistoryData is empty");
+        BUNDLE_ACTIVE_LOGE("userHistory is nullptr");
         return;
     }
     if (bundleHistoryTableName_ == UNKNOWN_TABLE_NAME) {
@@ -559,7 +544,7 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
     }
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase PutBundleHistoryData cannot get rdbStore!");
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return;
     }
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
@@ -606,7 +591,6 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
     unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX,
         queryHistoryDataSql, queryCondition);
     if (bundleActiveResult == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetBundleHistoryData bundleActiveResult is invalid");
         return nullptr;
     }
     int32_t tableRowNumber;
@@ -645,7 +629,6 @@ void BundleActiveUsageDatabase::PutDurationData(int64_t bootBasedDuration, int64
     }
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase PutDurationData cannot get rdbStore!");
         return;
     }
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
@@ -656,11 +639,6 @@ void BundleActiveUsageDatabase::PutDurationData(int64_t bootBasedDuration, int64
     rdbStore->Update(changeRow, DURATION_LOG_TABLE, valuesBucket);
     if (changeRow == NO_UPDATE_ROW) {
         rdbStore->Insert(outRowId, DURATION_LOG_TABLE, valuesBucket);
-        BUNDLE_ACTIVE_LOGI("BundleActiveUsageDatabase PutDurationData Insert SUCCESS, outRowId = %{public}lld",
-            outRowId);
-    } else {
-        BUNDLE_ACTIVE_LOGI("BundleActiveUsageDatabase PutDurationData Update SUCCESS, changeRow = %{public}d",
-            changeRow);
     }
 }
 
@@ -676,7 +654,6 @@ pair<int64_t, int64_t> BundleActiveUsageDatabase::GetDurationData()
         queryDurationDataSql,
         vector<string> {});
     if (bundleActiveResult == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetDurationData bundleActiveResult is invalid");
         return durationData;
     }
     int32_t tableRowNumber;
@@ -729,8 +706,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
 {
     lock_guard<mutex> lock(databaseMutex_);
     if (databaseType < 0 || databaseType >= sortedTableArray_.size()) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetCurrentUsageData databaseType is invalid, databaseType = "
-            "%{public}d", databaseType);
+        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
         return nullptr;
     }
 
@@ -749,7 +725,6 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
     unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
         queryCondition);
     if (bundleActiveResult == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetCurrentUsageData bundleActiveResult is invalid");
         return nullptr;
     }
     int32_t tableRowNumber;
@@ -832,8 +807,7 @@ string BundleActiveUsageDatabase::GetTableIndexSql(unsigned int databaseType, in
             tableIndexSql = "DROP INDEX " + BUNDLE_HISTORY_LOG_TABLE_INDEX_PREFIX;
         }
     } else {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetTableIndexSql databaseType is invalid, databaseType = "
-            "%{public}d", databaseType);
+        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
     }
     return tableIndexSql;
 }
@@ -843,7 +817,6 @@ int32_t BundleActiveUsageDatabase::RenameTableName(unsigned int databaseType, in
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase RenameTableName get rdbStore failed");
         return BUNDLE_ACTIVE_FAIL;
     }
     if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
@@ -853,20 +826,17 @@ int32_t BundleActiveUsageDatabase::RenameTableName(unsigned int databaseType, in
             newPackageTableName;
         int32_t renamePackageTableName = rdbStore->ExecuteSql(renamePackageTableNameSql);
         if (renamePackageTableName != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase RenameTableName renamePackageTableName is failed");
-            return renamePackageTableName;
+            return BUNDLE_ACTIVE_FAIL;
         }
         string deleteOldPackageTableIndex = GetTableIndexSql(databaseType, tableOldTime, false);
         int32_t deleteResult = rdbStore->ExecuteSql(deleteOldPackageTableIndex);
         if (deleteResult != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase RenameTableName deleteOldPackageTableIndex is failed");
-            return deleteResult;
+            return BUNDLE_ACTIVE_FAIL;
         }
         string createNewPackageTableIndex = GetTableIndexSql(databaseType, tableNewTime, true);
         int32_t createResult = rdbStore->ExecuteSql(createNewPackageTableIndex);
         if (createResult != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase RenameTableName createNewPackageTableIndex is failed");
-            return createResult;
+            return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == EVENT_DATABASE_INDEX) {
         string oldEventTableName = EVENT_LOG_TABLE + to_string(tableOldTime);
@@ -874,20 +844,17 @@ int32_t BundleActiveUsageDatabase::RenameTableName(unsigned int databaseType, in
         string renameEventTableNameSql = "alter table " + oldEventTableName + " rename to " + newEventTableName;
         int32_t renameEventTableName = rdbStore->ExecuteSql(renameEventTableNameSql);
         if (renameEventTableName != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase RenameTableName renameEventTableName is failed");
-            return renameEventTableName;
+            return BUNDLE_ACTIVE_FAIL;
         }
         string deleteOldEventTableIndex = GetTableIndexSql(databaseType, tableOldTime, false);
         int32_t deleteResult = rdbStore->ExecuteSql(deleteOldEventTableIndex);
         if (deleteResult != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase RenameTableName deleteOldEventTableIndex is failed");
-            return deleteResult;
+            return BUNDLE_ACTIVE_FAIL;
         }
         string createNewEventTableIndex = GetTableIndexSql(databaseType, tableNewTime, true);
         int32_t createResult = rdbStore->ExecuteSql(createNewEventTableIndex);
         if (createResult != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase RenameTableName createNewEventTableIndex is failed");
-            return createResult;
+            return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == APP_GROUP_DATABASE_INDEX) {
     }
@@ -918,38 +885,38 @@ void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
     lock_guard<mutex> lock(databaseMutex_);
     calendar_->SetMilliseconds(currentTime);
     calendar_->IncreaseYears(-1 * MAX_FILES_EVERY_INTERVAL_TYPE[YEARLY_DATABASE_INDEX]);
-    vector<int64_t> overdueYearsTableCreateTime = GetOverdueTableCreateTime(YEARLY_DATABASE_INDEX,
+    std::unique_ptr<std::vector<int64_t>> overdueYearsTableCreateTime = GetOverdueTableCreateTime(YEARLY_DATABASE_INDEX,
         calendar_->GetMilliseconds());
-    if (!overdueYearsTableCreateTime.empty()) {
-        for (unsigned int i = 0; i < overdueYearsTableCreateTime.size(); i++) {
-            DeleteInvalidTable(YEARLY_DATABASE_INDEX, overdueYearsTableCreateTime.at(i));
+    if (overdueYearsTableCreateTime != nullptr) {
+        for (unsigned int i = 0; i < overdueYearsTableCreateTime->size(); i++) {
+            DeleteInvalidTable(YEARLY_DATABASE_INDEX, overdueYearsTableCreateTime->at(i));
         }
     }
     calendar_->SetMilliseconds(currentTime);
     calendar_->IncreaseMonths(-1 * MAX_FILES_EVERY_INTERVAL_TYPE[MONTHLY_DATABASE_INDEX]);
-    vector<int64_t> overdueMonthsTableCreateTime = GetOverdueTableCreateTime(MONTHLY_DATABASE_INDEX,
-        calendar_->GetMilliseconds());
-    if (!overdueMonthsTableCreateTime.empty()) {
-        for (unsigned int i = 0; i < overdueMonthsTableCreateTime.size(); i++) {
-            DeleteInvalidTable(MONTHLY_DATABASE_INDEX, overdueMonthsTableCreateTime.at(i));
+    std::unique_ptr<std::vector<int64_t>> overdueMonthsTableCreateTime
+        = GetOverdueTableCreateTime(MONTHLY_DATABASE_INDEX, calendar_->GetMilliseconds());
+    if (overdueMonthsTableCreateTime != nullptr) {
+        for (unsigned int i = 0; i < overdueMonthsTableCreateTime->size(); i++) {
+            DeleteInvalidTable(MONTHLY_DATABASE_INDEX, overdueMonthsTableCreateTime->at(i));
         }
     }
     calendar_->SetMilliseconds(currentTime);
     calendar_->IncreaseWeeks(-1 * MAX_FILES_EVERY_INTERVAL_TYPE[WEEKLY_DATABASE_INDEX]);
-    vector<int64_t> overdueWeeksTableCreateTime = GetOverdueTableCreateTime(WEEKLY_DATABASE_INDEX,
+    std::unique_ptr<std::vector<int64_t>> overdueWeeksTableCreateTime = GetOverdueTableCreateTime(WEEKLY_DATABASE_INDEX,
         calendar_->GetMilliseconds());
-    if (!overdueWeeksTableCreateTime.empty()) {
-        for (unsigned int i = 0; i < overdueWeeksTableCreateTime.size(); i++) {
-            DeleteInvalidTable(WEEKLY_DATABASE_INDEX, overdueWeeksTableCreateTime.at(i));
+    if (overdueWeeksTableCreateTime != nullptr) {
+        for (unsigned int i = 0; i < overdueWeeksTableCreateTime->size(); i++) {
+            DeleteInvalidTable(WEEKLY_DATABASE_INDEX, overdueWeeksTableCreateTime->at(i));
         }
     }
     calendar_->SetMilliseconds(currentTime);
     calendar_->IncreaseDays(-1 * MAX_FILES_EVERY_INTERVAL_TYPE[DAILY_DATABASE_INDEX]);
-    vector<int64_t> overdueDaysTableCreateTime = GetOverdueTableCreateTime(DAILY_DATABASE_INDEX,
+    std::unique_ptr<std::vector<int64_t>> overdueDaysTableCreateTime = GetOverdueTableCreateTime(DAILY_DATABASE_INDEX,
         calendar_->GetMilliseconds());
-    if (!overdueDaysTableCreateTime.empty()) {
-        for (unsigned int i = 0; i < overdueDaysTableCreateTime.size(); i++) {
-            DeleteInvalidTable(DAILY_DATABASE_INDEX, overdueDaysTableCreateTime.at(i));
+    if (overdueDaysTableCreateTime != nullptr) {
+        for (unsigned int i = 0; i < overdueDaysTableCreateTime->size(); i++) {
+            DeleteInvalidTable(DAILY_DATABASE_INDEX, overdueDaysTableCreateTime->at(i));
         }
     }
     for (unsigned int i = 0; i < sortedTableArray_.size(); i++) {
@@ -1000,8 +967,7 @@ void BundleActiveUsageDatabase::UpdateUsageData(int32_t databaseType, BundleActi
 {
     lock_guard<mutex> lock(databaseMutex_);
     if (databaseType < 0 || databaseType >= EVENT_DATABASE_INDEX) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase UpdateUsageData databaseType is invalid : %{public}d",
-            databaseType);
+        BUNDLE_ACTIVE_LOGE("databaseType is invalid : %{public}d", databaseType);
         return;
     }
     if (databaseType == DAILY_DATABASE_INDEX) {
@@ -1031,18 +997,14 @@ void BundleActiveUsageDatabase::UpdateUsageData(int32_t databaseType, BundleActi
 vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageStats(int32_t databaseType,
     int64_t beginTime, int64_t endTime, int userId)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveUsageDatabase::QueryDatabaseUsageStats called, begin time is %{public}lld, "
-        "end time is %{public}lld", beginTime, endTime);
     lock_guard<mutex> lock(databaseMutex_);
     vector<BundleActivePackageStats> databaseUsageStats;
     if (databaseType < 0 || databaseType >= sortedTableArray_.size()) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase QueryDatabaseUsageStats databaseType is invalid, databaseType = "
-            "%{public}d", databaseType);
+        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
         return databaseUsageStats;
     }
     if (endTime <= beginTime) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase QueryDatabaseUsageStats endTime(%{public}lld) <= "
-            "beginTime(%{public}lld)", endTime, beginTime);
+        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= beginTime(%{public}lld)", endTime, beginTime);
         return databaseUsageStats;
     }
     int32_t startIndex = NearIndexOnOrBeforeCurrentTime(beginTime, sortedTableArray_.at(databaseType));
@@ -1051,13 +1013,11 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
     }
     int32_t endIndex = NearIndexOnOrBeforeCurrentTime(endTime, sortedTableArray_.at(databaseType));
     if (endIndex < 0) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase QueryDatabaseUsageStats no usage stats data");
         return databaseUsageStats;
     }
     if (sortedTableArray_.at(databaseType).at(endIndex) == endTime) {
         endIndex--;
         if (endIndex < 0) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase QueryDatabaseUsageStats no usage stats data");
         return databaseUsageStats;
         }
     }
@@ -1098,7 +1058,6 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
         unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
             queryCondition);
         if (bundleActiveResult == nullptr) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase QueryDatabaseUsageStats bundleActiveResult is invalid");
             return databaseUsageStats;
         }
         int32_t tableRowNumber;
@@ -1122,7 +1081,6 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
         }
         queryCondition.clear();
     }
-    BUNDLE_ACTIVE_LOGI("BundleActiveUsageDatabase::QueryDatabaseUsageStats normally end");
     return databaseUsageStats;
 }
 
@@ -1132,18 +1090,16 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
     lock_guard<mutex> lock(databaseMutex_);
     vector<BundleActiveEvent> databaseEvents;
     if (eventTableName_ == UNKNOWN_TABLE_NAME) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase QueryDatabaseEvents eventTable does not exist");
+        BUNDLE_ACTIVE_LOGE("eventTable does not exist");
         return databaseEvents;
     }
     if (endTime <= beginTime) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase QueryDatabaseEvents endTime(%{public}lld) <= "
-            "beginTime(%{public}lld)", endTime, beginTime);
+        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= beginTime(%{public}lld)", endTime, beginTime);
         return databaseEvents;
     }
     int64_t eventTableTime = ParseStartTime(eventTableName_);
     if (endTime < eventTableTime) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase QueryDatabaseEvents endTime(%{public}lld) <= "
-            "eventTableTime(%{public}lld)", endTime, eventTableTime);
+        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= eventTableTime(%{public}lld)", endTime, eventTableTime);
         return databaseEvents;
     }
     vector<string> queryCondition;
@@ -1166,7 +1122,6 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
     unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(EVENT_DATABASE_INDEX,
         queryEventSql, queryCondition);
     if (bundleActiveResult == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase QueryDatabaseEvents bundleActiveResult is invalid");
         return databaseEvents;
     }
     int32_t tableRowNumber;
@@ -1211,7 +1166,7 @@ void BundleActiveUsageDatabase::DeleteUninstalledInfo(const int userId, const st
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase DeleteUninstalledInfo get rdbStore failed");
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return;
     }
     int32_t deletedRows = BUNDLE_ACTIVE_FAIL;

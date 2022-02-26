@@ -62,15 +62,16 @@ private:
     void HandleTableInfo(unsigned int databaseType);
     std::shared_ptr<NativeRdb::RdbStore> GetBundleActiveRdbStore(unsigned int databaseType);
     int64_t ParseStartTime(const std::string &tableName);
-    int32_t NearIndexOnOrAfterCurrentTime(int64_t currentTime, std::vector<int64_t> sortedTableArray);
-    int32_t NearIndexOnOrBeforeCurrentTime(int64_t currentTime, std::vector<int64_t> sortedTableArray);
+    int32_t NearIndexOnOrAfterCurrentTime(int64_t currentTime, std::vector<int64_t> &sortedTableArray);
+    int32_t NearIndexOnOrBeforeCurrentTime(int64_t currentTime, std::vector<int64_t> &sortedTableArray);
     int32_t RenameTableName(unsigned int databaseType, int64_t tableOldTime, int64_t tableNewTime);
     std::string GetTableIndexSql(unsigned int databaseType, int64_t tableTime, bool createFlag);
     void FlushPackageInfo(unsigned int databaseType, const BundleActivePeriodStats &stats);
     void FlushEventInfo(unsigned int databaseType, BundleActivePeriodStats &stats);
     void DeleteExcessiveTableData(unsigned int databaseType);
     int32_t DeleteInvalidTable(unsigned int databaseType, int64_t tableTimeMillis);
-    std::vector<int64_t> GetOverdueTableCreateTime(unsigned int databaseType, int64_t currentTimeMillis);
+    std::unique_ptr<std::vector<int64_t>> GetOverdueTableCreateTime(unsigned int databaseType,
+        int64_t currentTimeMillis);
     int32_t CreatePackageLogTable(unsigned int databaseType, int64_t currentTimeMillis);
     int32_t CreateEventLogTable(unsigned int databaseType, int64_t currentTimeMillis);
     int32_t CreateDurationTable(unsigned int databaseType);
@@ -79,6 +80,7 @@ private:
         const std::string &sql, const std::vector<std::string> &selectionArgs);
     void DeleteUninstalledInfo(const int userId, const std::string& bundleName, const std::string& tableName,
         unsigned int databaseType);
+    int32_t CreateDatabasePath();
 
 private:
     std::vector<std::string> databaseFiles_;
