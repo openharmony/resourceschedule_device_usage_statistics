@@ -25,6 +25,9 @@ int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& ability
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return -1;
+    }
     data.WriteString(bundleName);
     data.WriteString(abilityName);
     data.WriteString(abilityId);
@@ -42,6 +45,9 @@ bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName)
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return false;
+    }
     data.WriteString(bundleName);
     Remote() -> SendRequest(IS_BUNDLE_IDLE, data, reply, option);
     int32_t result = reply.ReadInt32();
@@ -55,12 +61,15 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
+    std::vector<BundleActivePackageStats> result;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return result;
+    }
     data.WriteInt32(intervalType);
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
     Remote() -> SendRequest(QUERY_USAGE_STATS, data, reply, option);
     int32_t size = reply.ReadInt32();
-    std::vector<BundleActivePackageStats> result;
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int i = 0; i < size; i++) {
         tmp = tmp->Unmarshalling(reply);
@@ -84,11 +93,14 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
+    std::vector<BundleActiveEvent> result;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return result;
+    }
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
     Remote() -> SendRequest(QUERY_EVENTS, data, reply, option);
     int32_t size = reply.ReadInt32();
-    std::vector<BundleActiveEvent> result;
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int i = 0; i < size; i++) {
         tmp = tmp->Unmarshalling(reply);
@@ -109,6 +121,9 @@ void BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int newGro
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return;
+    }
     data.WriteString(bundleName);
     data.WriteInt32(newGroup);
     data.WriteInt32(userId);
@@ -121,12 +136,15 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStat
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
+    std::vector<BundleActivePackageStats> result;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return result;
+    }
     data.WriteInt32(intervalType);
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
     Remote() -> SendRequest(QUERY_CURRENT_USAGE_STATS, data, reply, option);
     int32_t size = reply.ReadInt32();
-    std::vector<BundleActivePackageStats> result;
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int i = 0; i < size; i++) {
         tmp = tmp->Unmarshalling(reply);
@@ -150,11 +168,14 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
+    std::vector<BundleActiveEvent> result;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return result;
+    }
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
     Remote() -> SendRequest(QUERY_CURRENT_EVENTS, data, reply, option);
     int32_t size = reply.ReadInt32();
-    std::vector<BundleActiveEvent> result;
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int i = 0; i < size; i++) {
         tmp = tmp->Unmarshalling(reply);
@@ -175,6 +196,9 @@ int BundleActiveProxy::QueryPackageGroup()
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return -1;
+    }
     Remote() -> SendRequest(QUERY_BUNDLE_GROUP, data, reply, option);
     int32_t packageGroup = reply.ReadInt32();
     BUNDLE_ACTIVE_LOGI("BundleActiveProxy::QueryPackageGroup result is %{public}d", packageGroup);
