@@ -42,7 +42,7 @@ public:
     static const int NOTIFICATION_SEEN = 17;
     inline static const std::string DEVICE_EVENT_PACKAGE_NAME = "openharmony";
     std::string bundleName_;
-    std::string ContinuousTaskAbilityName_;
+    std::string continuousTaskAbilityName_;
     std::string abilityName_;
     std::string abilityId_;
     int64_t timeStamp_;

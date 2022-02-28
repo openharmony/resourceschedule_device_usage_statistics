@@ -60,6 +60,17 @@ void BundleActiveGroupController::SetHandlerAndCreateUserHistory(
     activeGroupHandler_ = groupHandler;
 }
 
+void BundleActiveGroupController::OnBundleUninstalled(const int userId, const std::string bundleName)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto oneUserHistory = bundleUserHistory_->GetUserHistory(userId, false);
+    if (oneUserHistory == nullptr) {
+        return;
+    }
+    oneUserHistory->erase(bundleName);
+    bundleUserHistory_->WriteBundleUsage(userId);
+}
+
 bool BundleActiveGroupController::GetBundleMgrProxy()
 {
     if (!sptrBundleMgr_) {

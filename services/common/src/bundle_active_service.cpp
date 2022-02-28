@@ -181,7 +181,7 @@ int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abili
     tmpHandlerObject.event_.abilityName_ = abilityName;
     tmpHandlerObject.event_.abilityId_ = abilityId;
     tmpHandlerObject.event_.eventId_ = eventId;
-    tmpHandlerObject.event_.ContinuousTaskAbilityName_ = continuousTask;
+    tmpHandlerObject.event_.continuousTaskAbilityName_ = continuousTask;
     tmpHandlerObject.userId_ = userId;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();

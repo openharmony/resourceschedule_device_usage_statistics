@@ -92,7 +92,7 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
         tmpHandlerObject.event_.bundleName_ = bundleName;
         tmpHandlerObject.event_.abilityName_ = "";
         tmpHandlerObject.event_.abilityId_ = abilityId;
-        tmpHandlerObject.event_.ContinuousTaskAbilityName_ = abiliytName;
+        tmpHandlerObject.event_.continuousTaskAbilityName_ = abiliytName;
         tmpHandlerObject.userId_ = userId;
         sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();

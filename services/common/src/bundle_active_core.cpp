@@ -31,6 +31,7 @@ BundleActiveReportHandlerObject::BundleActiveReportHandlerObject(const BundleAct
     event_.timeStamp_ = orig.event_.timeStamp_;
     event_.eventId_ = orig.event_.eventId_;
     event_.isidle_ = orig.event_.isidle_;
+    event_.continuousTaskAbilityName_ = orig.event_.continuousTaskAbilityName_;
     userId_ = orig.userId_;
     bundleName_ = orig.bundleName_;
 }
@@ -195,6 +196,7 @@ void BundleActiveCore::OnBundleUninstalled(const int userId, const std::string& 
         return;
     }
     service->DeleteUninstalledBundleStats(bundleName);
+    bundleGroupController_->OnBundleUninstalled(userId, bundleName);
 }
 
 void BundleActiveCore::OnStatsChanged()
