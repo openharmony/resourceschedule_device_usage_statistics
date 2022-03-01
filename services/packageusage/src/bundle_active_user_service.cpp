@@ -123,7 +123,7 @@ void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
                 it->UpdateKeyguardHidden(event.timeStamp_);
                 break;
             default:
-                it->Update(event.bundleName_, event.ContinuousTaskAbilityName_, event.timeStamp_, event.eventId_,
+                it->Update(event.bundleName_, event.continuousTaskAbilityName_, event.timeStamp_, event.eventId_,
                     event.abilityId_);
                 if (incrementBundleLaunch) {
                     BUNDLE_ACTIVE_LOGI(" BundleActiveUserService::ReportEvent increase bundle started count");
@@ -150,7 +150,7 @@ void BundleActiveUserService::ReportForFlushAndShutdown(const BundleActiveEvent&
         RenewStatsInMemory(event.timeStamp_);
     }
     for (auto it : currentStats_) {
-        it->Update(event.bundleName_, event.ContinuousTaskAbilityName_, event.timeStamp_, event.eventId_,
+        it->Update(event.bundleName_, event.continuousTaskAbilityName_, event.timeStamp_, event.eventId_,
             event.abilityId_);
     }
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::ReportForFlushAndShutdown called notify");
@@ -257,7 +257,7 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
             if (continueServices.find(continueBundleName) != continueServices.end()) {
                 for (std::map<std::string, int>::iterator it = continueServices[continueBundleName].begin();
                     it != continueServices[continueBundleName].end(); it++) {
-                    (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, 0);
+                    (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
                 }
             }
             NotifyStatsChanged();

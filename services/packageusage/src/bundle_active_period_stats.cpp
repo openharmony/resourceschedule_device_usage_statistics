@@ -47,7 +47,7 @@ BundleActiveEvent BundleActivePeriodStats::BuildEvent(std::string bundleName, st
     BundleActiveEvent newEvent;
     newEvent.bundleName_ = bundleName;
     if (!timeTaskName.empty()) {
-        newEvent.ContinuousTaskAbilityName_ = timeTaskName;
+        newEvent.continuousTaskAbilityName_ = timeTaskName;
     }
     return newEvent;
 }
@@ -75,8 +75,8 @@ void BundleActivePeriodStats::Update(const std::string bundleName, const std::st
 void BundleActivePeriodStats::AddEvent(BundleActiveEvent event)
 {
     event.bundleName_ = GetCachedString(event.bundleName_);
-    if (!event.ContinuousTaskAbilityName_.empty()) {
-        event.ContinuousTaskAbilityName_ = GetCachedString(event.ContinuousTaskAbilityName_);
+    if (!event.continuousTaskAbilityName_.empty()) {
+        event.continuousTaskAbilityName_ = GetCachedString(event.continuousTaskAbilityName_);
     }
     events_.Insert(event);
     if (event.timeStamp_ > endTime_) {
