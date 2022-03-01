@@ -68,7 +68,7 @@ void BundleActiveService::InitNecessaryState()
         || systemAbilityManager->CheckSystemAbility(POWER_MANAGER_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
         || systemAbilityManager->CheckSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbiligy(TIME_SERVICE_ID) == nullptr) {
+        || systemAbilityManager->CheckSystemAbility(TIME_SERVICE_ID) == nullptr) {
         BUNDLE_ACTIVE_LOGI("request system service is not ready yet!");
         auto task = [this]() { this->InitNecessaryState(); };
         handler_->PostTask(task, DELAY_TIME);
