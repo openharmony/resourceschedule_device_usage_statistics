@@ -81,6 +81,7 @@ void BundleActiveService::OnAddSystemAbility(int32_t systemAbilityId, const std:
         powerManagerClient.RegisterShutdownCallback(shutdownCallback_);
         InitAppStateSubscriber(reportHandler_);
         InitContinuousSubscriber(reportHandler_);
+        bundleActiveCore_->InitBundleGroupController();
     }
     if (systemAbilityId == APP_MGR_SERVICE_ID) {
         if (reportHandler_ != nullptr) {
@@ -91,9 +92,6 @@ void BundleActiveService::OnAddSystemAbility(int32_t systemAbilityId, const std:
         if (reportHandler_ != nullptr) {
             SubscribeContinuousTask();
         }
-    }
-    if (systemAbilityId == BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) {
-        bundleActiveCore_->InitBundleGroupController();
     }
 }
 
