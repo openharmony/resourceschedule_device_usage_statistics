@@ -54,8 +54,6 @@ public:
 protected:
     void OnStart() override;
     void OnStop() override;
-    void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
-    void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
 
 private:
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;
@@ -64,7 +62,10 @@ private:
     std::shared_ptr<BundleActiveContinuousTaskObserver> continuousTaskObserver_;
     sptr<IBundleMgr> sptrBundleMgr_;
     sptr<BundleActiveShutdownCallbackService> shutdownCallback_;
+    std::shared_ptr<AppExecFwk::EventRunner> runner_;
+    std::shared_ptr<AppExecFwk::EventHandler> handler_;
     int ConvertIntervalType(const int intervalType);
+    void InitNecessaryState();
     bool GetBundleMgrProxy();
     bool CheckBundleIsSystemAppAndHasPermission(const int uid, const int userId);
     void InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
