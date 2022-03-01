@@ -73,6 +73,7 @@ public:
     void CheckIdleStatsOneTime();
     void PeriodCheckBundleState(const int userId);
     void OnUserRemoved(const int userId);
+    void OnBundleUninstalled(const int userId, const std::string bundleName);
     void OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp);
     void SetBundleGroup(const std::string& bundleName, const int userId, int newGroup, int reason,
         const int64_t bootBasedTimeStamp, const bool& resetTimeout);

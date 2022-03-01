@@ -28,6 +28,7 @@ namespace DeviceUsageStats {
 static const int PERIOD_BEST_JS = 0;
 static const int PERIOD_YEARLY_JS = 4;
 static const int PERIOD_BEST_SERVICE = 4;
+static const int DELAY_TIME = 2000;
 REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 using namespace OHOS::Security::AccessToken;
 using AccessTokenKit = OHOS::Security::AccessToken::AccessTokenKit;
@@ -36,67 +37,76 @@ const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 void BundleActiveService::OnStart()
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveService::OnStart() called");
+    runner_ = AppExecFwk::EventRunner::Create("device_usage_stats_init_handler");
+    if (runner_ == nullptr) {
+        BUNDLE_ACTIVE_LOGI("BundleActiveService runner create failed!");
+        return;
+    }
+    handler_ = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner_);
+    if (handler_ == nullptr) {
+        BUNDLE_ACTIVE_LOGI("BundleActiveService handler create failed!");
+        return;
+    }
+
+    InitNecessaryState();
     int ret = Publish(this);
     if (!ret) {
         BUNDLE_ACTIVE_LOGE("[Server] OnStart, Register SystemAbility[1907] FAIL.");
         return;
     }
-    AddSystemAbilityListener(POWER_MANAGER_SERVICE_ID);
-    AddSystemAbilityListener(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-    AddSystemAbilityListener(APP_MGR_SERVICE_ID);
-    AddSystemAbilityListener(BACKGROUND_TASK_MANAGER_SERVICE_ID);
     BUNDLE_ACTIVE_LOGI("[Server] OnStart, Register SystemAbility[1907] SUCCESS.");
     return;
 }
 
-void BundleActiveService::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+void BundleActiveService::InitNecessaryState()
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::OnAddSystemAbility called, SAID is %{public}d", systemAbilityId);
-    if (systemAbilityId == POWER_MANAGER_SERVICE_ID) {
-        if (bundleActiveCore_ == nullptr) {
-            bundleActiveCore_ = std::make_shared<BundleActiveCore>();
-            bundleActiveCore_->Init();
-        }
-        if (reportHandler_ == nullptr) {
-            std::string threadName = "bundle_active_report_handler";
-            auto runner = AppExecFwk::EventRunner::Create(threadName);
-            if (runner == nullptr) {
-                BUNDLE_ACTIVE_LOGE("report handler is null");
-                return;
-            }
-            reportHandler_ = std::make_shared<BundleActiveReportHandler>(runner);
-            if (reportHandler_ == nullptr) {
-                return;
-            }
-            reportHandler_->Init(bundleActiveCore_);
-        }
-        if (reportHandler_ != nullptr && bundleActiveCore_ != nullptr) {
-            BUNDLE_ACTIVE_LOGI("core and handler is not null");
-            bundleActiveCore_->SetHandler(reportHandler_);
-        } else {
+    sptr<ISystemAbilityManager> systemAbilityManager
+        = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityManager == nullptr
+        || systemAbilityManager->CheckSystemAbility(APP_MGR_SERVICE_ID) == nullptr
+        || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
+        || systemAbilityManager->CheckSystemAbility(POWER_MANAGER_SERVICE_ID) == nullptr
+        || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
+        || systemAbilityManager->CheckSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID) == nullptr
+        || systemAbilityManager->CheckSystemAbility(TIME_SERVICE_ID) == nullptr) {
+        BUNDLE_ACTIVE_LOGI("request system service is not ready yet!");
+        auto task = [this]() { this->InitNecessaryState(); };
+        handler_->PostTask(task, DELAY_TIME);
+        return;
+    }
+
+    if (bundleActiveCore_ == nullptr) {
+        bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+        bundleActiveCore_->Init();
+    }
+    if (reportHandler_ == nullptr) {
+        std::string threadName = "bundle_active_report_handler";
+        auto runner = AppExecFwk::EventRunner::Create(threadName);
+        if (runner == nullptr) {
+            BUNDLE_ACTIVE_LOGE("report handler is null");
             return;
         }
-        shutdownCallback_ = new BundleActiveShutdownCallbackService(bundleActiveCore_);
-        auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
-        powerManagerClient.RegisterShutdownCallback(shutdownCallback_);
-        InitAppStateSubscriber(reportHandler_);
-        InitContinuousSubscriber(reportHandler_);
-    }
-    if (systemAbilityId == APP_MGR_SERVICE_ID) {
-        if (reportHandler_ != nullptr) {
-            SubscribeAppState();
+        reportHandler_ = std::make_shared<BundleActiveReportHandler>(runner);
+        if (reportHandler_ == nullptr) {
+            return;
         }
+        reportHandler_->Init(bundleActiveCore_);
     }
-    if (systemAbilityId == BACKGROUND_TASK_MANAGER_SERVICE_ID) {
-        if (reportHandler_ != nullptr) {
-            SubscribeContinuousTask();
-        }
+    if (reportHandler_ != nullptr && bundleActiveCore_ != nullptr) {
+        BUNDLE_ACTIVE_LOGI("core and handler is not null");
+        bundleActiveCore_->SetHandler(reportHandler_);
+    } else {
+        return;
     }
-    if (systemAbilityId == BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) {
-        bundleActiveCore_->InitBundleGroupController();
-    }
+    shutdownCallback_ = new BundleActiveShutdownCallbackService(bundleActiveCore_);
+    auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
+    powerManagerClient.RegisterShutdownCallback(shutdownCallback_);
+    InitAppStateSubscriber(reportHandler_);
+    InitContinuousSubscriber(reportHandler_);
+    bundleActiveCore_->InitBundleGroupController();
+    SubscribeAppState();
+    SubscribeContinuousTask();
 }
-
 
 OHOS::sptr<OHOS::AppExecFwk::IAppMgr> BundleActiveService::GetAppManagerInstance()
 {
@@ -154,10 +164,6 @@ bool BundleActiveService::SubscribeContinuousTask()
     return true;
 }
 
-void BundleActiveService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
-{
-}
-
 void BundleActiveService::OnStop()
 {
     if (shutdownCallback_ != nullptr) {
@@ -181,7 +187,7 @@ int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abili
     tmpHandlerObject.event_.abilityName_ = abilityName;
     tmpHandlerObject.event_.abilityId_ = abilityId;
     tmpHandlerObject.event_.eventId_ = eventId;
-    tmpHandlerObject.event_.ContinuousTaskAbilityName_ = continuousTask;
+    tmpHandlerObject.event_.continuousTaskAbilityName_ = continuousTask;
     tmpHandlerObject.userId_ = userId;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
@@ -204,8 +210,12 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
         BUNDLE_ACTIVE_LOGI("BundleActiveService::IsBundleIdle user id is %{public}d", userId);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId);
-        if (isSystemAppAndHasPermission == true) {
+        if (!GetBundleMgrProxy()) {
+            BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");
+            return true;
+        }
+        bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(callingUid);
+        if (bundleIsSystemApp == true) {
             result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
         }
     }

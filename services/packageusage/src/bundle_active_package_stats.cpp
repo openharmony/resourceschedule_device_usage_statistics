@@ -189,7 +189,7 @@ void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTas
 
     switch (eventId) {
         case BundleActiveEvent::LONG_TIME_TASK_STARTTED:
-            if (AnyLongTimeTaskStarted()) {
+            if (!AnyLongTimeTaskStarted()) {
                 lastContiniousTaskUsed_ = timeStamp;
             }
             longTimeTasks_[longTimeTaskName] = eventId;

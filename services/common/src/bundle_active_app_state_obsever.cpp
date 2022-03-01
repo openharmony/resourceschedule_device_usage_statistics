@@ -48,7 +48,7 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         tmpHandlerObject.event_.bundleName_ = abilityStateData.bundleName;
         tmpHandlerObject.event_.abilityName_ = abilityStateData.abilityName;
         tmpHandlerObject.event_.abilityId_ = abilityStateData.abilityName;
-        tmpHandlerObject.event_.ContinuousTaskAbilityName_ = "";
+        tmpHandlerObject.event_.continuousTaskAbilityName_ = "";
         tmpHandlerObject.userId_ = userId;
         sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
