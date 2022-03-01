@@ -19,7 +19,7 @@
 #include "hilog/log.h"
 
 #define LOG_TAG_BUNDLE_ACTIVE "BUNDLE_ACTIVE"
-#define LOG_TAG_DOMAIN_ID_BUNDLE_ACTIVE 0xD001700
+#define LOG_TAG_DOMAIN_ID_BUNDLE_ACTIVE 0xD001701
 
 static constexpr OHOS::HiviewDFX::HiLogLabel BUNDLE_ACTIVE_LOG_LABEL = {
     LOG_CORE,
