@@ -202,8 +202,12 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
         BUNDLE_ACTIVE_LOGI("BundleActiveService::IsBundleIdle user id is %{public}d", userId);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId);
-        if (isSystemAppAndHasPermission == true) {
+        if (!GetBundleMgrProxy()) {
+            BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");
+            return true;
+        }
+        bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(callingUid);
+        if (bundleIsSystemApp == true) {
             result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
         }
     }
