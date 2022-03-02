@@ -25,14 +25,12 @@ import { AsyncCallback } from './basic';
  * then returns it to you.
  * 
  * @since 7
- * @devices phone, tablet, tv, wearable, car
  */
 declare namespace bundleState {
 
     /**
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
-     * @devices phone, tablet, tv, wearable, car.
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
      * @systemapi Hide this for inner system use.
      */
@@ -86,7 +84,6 @@ declare namespace bundleState {
          * 
          * @since 7
          * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
-         * @devices phone, tablet, tv, wearable, car.
          * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
          * @systemapi Hide this for inner system use.
          * @param toMerge Indicates the {@link BundleActiveInfo} object to merge.
@@ -98,7 +95,6 @@ declare namespace bundleState {
     /**
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
-     * @devices phone, tablet, tv, wearable, car.
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
      * @systemapi Hide this for inner system use.
      */
@@ -134,7 +130,6 @@ declare namespace bundleState {
      *
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup.
-     * @devices phone, tablet, tv, wearable, car.
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
      * @systemapi Hide this for inner system use.
      * @param bundleName Indicates the bundle name of the application to query.
@@ -153,7 +148,6 @@ declare namespace bundleState {
      *
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup.
-     * @devices phone, tablet, tv, wearable, car.
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
      * @systemapi Hide this for inner system use.
      * @return Returns the usage priority group of the calling application.
@@ -164,7 +158,6 @@ declare namespace bundleState {
     /**
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
-     * @devices phone, tablet, tv, wearable, car.
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
      * @systemapi Hide this for inner system use.
      */
@@ -179,7 +172,6 @@ declare namespace bundleState {
      *
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
-     * @devices phone, tablet, tv, wearable, car.
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
      * @systemapi Hide this for inner system use.
      * @param begin Indicates the start time of the query period, in milliseconds.
@@ -194,7 +186,6 @@ declare namespace bundleState {
      * 
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
-     * @devices phone, tablet, tv, wearable, car.
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
      * @systemapi Hide this for inner system use.
      */
@@ -230,7 +221,6 @@ declare namespace bundleState {
      *
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
-     * @devices phone, tablet, tv, wearable, car.
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
      * @systemapi Hide this for inner system use.
      * @param byInterval Indicates the interval at which the usage statistics are queried.
@@ -248,7 +238,6 @@ declare namespace bundleState {
      *
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
-     * @devices phone, tablet, tv, wearable, car.
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
      * @systemapi Hide this for inner system use.
      * @param begin Indicates the start time of the query period, in milliseconds.
@@ -263,7 +252,6 @@ declare namespace bundleState {
      *
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
-     * @devices phone, tablet, tv, wearable, car.
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
      * @systemapi Hide this for inner system use.
      * @param begin Indicates the start time of the query period, in milliseconds.
