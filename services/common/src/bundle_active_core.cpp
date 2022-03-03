@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 
-#include <chrono>
-#include <time.h>
-
 #include "time_service_client.h"
 
 #include "bundle_active_event.h"
@@ -215,7 +212,8 @@ void BundleActiveCore::OnStatsChanged(const int userId)
     }
 }
 
-void BundleActiveCore::RestoreAllData() {
+void BundleActiveCore::RestoreAllData()
+{
     for (std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.begin();
         it != userStatServices_.end(); it++) {
         std::shared_ptr<BundleActiveUserService> service = it->second;

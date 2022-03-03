@@ -64,7 +64,8 @@ void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bu
 void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RenewTableTime called");
-    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RenewTableTime called current event size is %{public}d", currentStats_[0]->events_.Size());
+    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RenewTableTime called current event size is %{public}d"
+         currentStats_[0]->events_.Size());
     database_.RenewTableTime(newTime - oldTime);
 }
 
@@ -164,7 +165,8 @@ void BundleActiveUserService::RestoreStats(bool forced)
         for (int i = 0; i < currentStats_.size(); i++) {
             database_.UpdateUsageData(i, *(currentStats_[i]));
             if (i == 0) {
-                BUNDLE_ACTIVE_LOGI("RESOTRE EVENT SIZE IS %{public}d, USER ID IS %{public}d", currentStats_[i]->events_.Size(), userId_);
+                BUNDLE_ACTIVE_LOGI("RESOTRE EVENT SIZE IS %{public}d, USER ID IS %{public}d",
+                    currentStats_[i]->events_.Size(), userId_);
             }
         }
         currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Clear();
@@ -304,7 +306,9 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
 
-    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryPackageStats bundle name is %{public}s, truncatedEndTime IS %{public}lld, begin time is %{public}lld", bundleName.c_str(), truncatedEndTime, currentStats->beginTime_);
+    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryPackageStats bundle name is %{public}s, "
+        "truncatedEndTime IS %{public}lld, begin time is %{public}lld",
+        bundleName.c_str(), truncatedEndTime, currentStats->beginTime_);
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryPackageStats is %{public}d", result.size());
     // if we need a in-memory stats, combine current stats with result from database.
