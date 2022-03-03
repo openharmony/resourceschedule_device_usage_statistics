@@ -81,6 +81,7 @@ private:
     void DeleteUninstalledInfo(const int userId, const std::string& bundleName, const std::string& tableName,
         unsigned int databaseType);
     int32_t CreateDatabasePath();
+    int64_t GetSystemTimeMs();
 
 private:
     std::vector<std::string> databaseFiles_;

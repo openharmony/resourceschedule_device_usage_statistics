@@ -64,9 +64,8 @@ void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bu
 void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RenewTableTime called");
-    RestoreStats();
+    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RenewTableTime called current event size is %{public}d", currentStats_[0]->events_.Size());
     database_.RenewTableTime(newTime - oldTime);
-    LoadActiveStats(newTime, true);
 }
 
 void BundleActiveUserService::NotifyStatsChanged()
@@ -74,7 +73,7 @@ void BundleActiveUserService::NotifyStatsChanged()
     if (!statsChanged_) {
         BUNDLE_ACTIVE_LOGI("BundleActiveUserService::NotifyStatsChanged() set stats changed to true");
         statsChanged_ = true;
-        listener_.OnStatsChanged();
+        listener_.OnStatsChanged(userId_);
     }
 }
 
@@ -136,10 +135,10 @@ void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
     NotifyStatsChanged();
 }
 
-void BundleActiveUserService::ReportForFlushAndShutdown(const BundleActiveEvent& event)
+void BundleActiveUserService::ReportForShutdown(const BundleActiveEvent& event)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::ReportForFlushAndShutdown() called");
-    if (event.eventId_ != BundleActiveEvent::FLUSH && event.eventId_ != BundleActiveEvent::SHUTDOWN) {
+    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::ReportForShutdown() called");
+    if (event.eventId_ != BundleActiveEvent::SHUTDOWN) {
         return;
     }
     if (event.eventId_ == BundleActiveEvent::SHUTDOWN) {
@@ -153,17 +152,20 @@ void BundleActiveUserService::ReportForFlushAndShutdown(const BundleActiveEvent&
         it->Update(event.bundleName_, event.continuousTaskAbilityName_, event.timeStamp_, event.eventId_,
             event.abilityId_);
     }
-    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::ReportForFlushAndShutdown called notify");
+    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::ReportForShutdown called notify");
     NotifyStatsChanged();
 }
 
-void BundleActiveUserService::RestoreStats()
+void BundleActiveUserService::RestoreStats(bool forced)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RestoreStats() called");
-    if (statsChanged_) {
+    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RestoreStats() called, userId is %{public}d", userId_);
+    if (statsChanged_ || forced) {
         BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RestoreStats() stat changed is true");
         for (int i = 0; i < currentStats_.size(); i++) {
             database_.UpdateUsageData(i, *(currentStats_[i]));
+            if (i == 0) {
+                BUNDLE_ACTIVE_LOGI("RESOTRE EVENT SIZE IS %{public}d, USER ID IS %{public}d", currentStats_[i]->events_.Size(), userId_);
+            }
         }
         currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Clear();
         statsChanged_ = false;
@@ -203,6 +205,9 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
         currentStats_[intervalType]->beginTime_ = tmpCalendar.GetMilliseconds();
         currentStats_[intervalType]->endTime_ = timeStamp;
     }
+    for (auto it : currentStats_) {
+        BUNDLE_ACTIVE_LOGI("loadactive current begin time is %{public}lld", it->beginTime_);
+    }
     statsChanged_ = false;
     // 延长统计时间到第二天0点
     dailyExpiryDate_.SetMilliseconds(timeStamp);
@@ -241,7 +246,7 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
         }
         (*it)->CommitTime(dailyExpiryDate_.GetMilliseconds() - 1);
     }
-    RestoreStats();
+    RestoreStats(true);
     database_.RemoveOldData(timeStamp);
     LoadActiveStats(timeStamp, false); // 新建intervalstat或加载当前数据库数据
     for (std::string continueBundleName : continueBundles) { // 更新所有事件的时间戳到新的begintime
@@ -260,10 +265,9 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
                     (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
                 }
             }
-            NotifyStatsChanged();
         }
     }
-    RestoreStats();
+    RestoreStats(true);
 }
 
 std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats(int intervalType,
@@ -300,7 +304,7 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
 
-    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryPackageStats bundle name is %{public}s", bundleName.c_str());
+    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryPackageStats bundle name is %{public}s, truncatedEndTime IS %{public}lld, begin time is %{public}lld", bundleName.c_str(), truncatedEndTime, currentStats->beginTime_);
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryPackageStats is %{public}d", result.size());
     // if we need a in-memory stats, combine current stats with result from database.
@@ -339,6 +343,7 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     }
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryEvents bundle name is %{public}s", bundleName.c_str());
     result = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
+    BUNDLE_ACTIVE_LOGI("event database query size is %{public}d", result.size());
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryEvents need in memory stats");

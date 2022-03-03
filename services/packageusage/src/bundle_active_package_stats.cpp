@@ -24,7 +24,7 @@ BundleActivePackageStats::BundleActivePackageStats()
     endTimeStamp_ = 0; // stop time of counting
     lastTimeUsed_ = 0; // the timestamp of last launch
     totalInFrontTime_ = 0; // the total time of bundle in front.
-    lastContiniousTaskUsed_ = 0; // the timestamp of bundle calling a continuous task.
+    lastContiniousTaskUsed_ = -1; // the timestamp of bundle calling a continuous task.
     totalContiniousTaskUsedTime_ = 0; // the total time of bundle use continuous tasks.
     startCount_ = 0;
     bundleStartedCount_ = 0;
