@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-#include <algorithm>
 #include "securec.h"
 
 #include "bundle_active_log.h"

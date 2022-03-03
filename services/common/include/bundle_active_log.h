@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-
 #ifndef LOG_TAG_DOMAIN_ID_BUNDLE_ACTIVE
 #define LOG_TAG_DOMAIN_ID_BUNDLE_ACTIVE 0xD001701
 #endif
@@ -75,7 +74,6 @@ private:
 #define BUNDLE_ACTIVE_LOGW(fmt, ...) PRINT_LOG(WARN, Warn, fmt, ##__VA_ARGS__)
 #define BUNDLE_ACTIVE_LOGE(fmt, ...) PRINT_LOG(ERROR, Error, fmt, ##__VA_ARGS__)
 #define BUNDLE_ACTIVE_LOGF(fmt, ...) PRINT_LOG(FATAL, Fatal, fmt, ##__VA_ARGS__)
-
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 
