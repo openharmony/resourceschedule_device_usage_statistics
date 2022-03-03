@@ -190,7 +190,7 @@ unique_ptr<NativeRdb::ResultSet> BundleActiveUsageDatabase::QueryStatsInfoByStep
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("queryStatsInfoByStep is failed");
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return nullptr;
     }
     unique_ptr<NativeRdb::ResultSet> result;
@@ -280,20 +280,19 @@ void BundleActiveUsageDatabase::DeleteExcessiveTableData(unsigned int databaseTy
         }
         shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
         if (rdbStore == nullptr) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase DeleteExcessiveTableData is failed");
+            BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
             return;
         }
         string deleteEventDataSql = "delete from " + eventTableName_ + " where timeStamp <= " +
             to_string(deleteTimePoint);
         int32_t deleteResult = rdbStore->ExecuteSql(deleteEventDataSql);
         if (deleteResult != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase DeleteExcessiveTableData deleteEventData is failed");
+            BUNDLE_ACTIVE_LOGE("delete event data failed, rdb error number: %{public}d", deleteResult);
         }
     } else if (databaseType == APP_GROUP_DATABASE_INDEX) {
         // 无数据删除
     } else {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase DeleteExcessiveTableData databaseType is invalid, databaseType = "
-            "%{public}d", databaseType);
+        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
     }
 }
 
@@ -302,8 +301,7 @@ std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTable
 {
     std::unique_ptr<std::vector<int64_t>> overdueTableCreateTime = std::make_unique<std::vector<int64_t>>();
     if (databaseType < 0 || databaseType >= sortedTableArray_.size()) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetOverdueTableCreateTime databaseType is invalid, databaseType "
-            "= %{public}d", databaseType);
+        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
         return nullptr;
     }
     string queryDatabaseTableNames = "select * from sqlite_master where type = ?";
@@ -312,13 +310,13 @@ std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTable
     unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(databaseType,
         queryDatabaseTableNames, queryCondition);
     if (bundleActiveResult == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetOverdueTableCreateTime bundleActiveResult is invalid");
+        BUNDLE_ACTIVE_LOGE("bundleActiveResult is invalid");
         return nullptr;
     }
     int32_t tableNumber;
     bundleActiveResult->GetRowCount(tableNumber);
     if (tableNumber == 0) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveUsageDatabase GetOverdueTableCreateTime table does not exist");
+        BUNDLE_ACTIVE_LOGE("table does not exist");
         return nullptr;
     }
     int32_t tableNameIndex;
@@ -338,7 +336,7 @@ int32_t BundleActiveUsageDatabase::DeleteInvalidTable(unsigned int databaseType,
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("get rdbStore failed");
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
@@ -346,7 +344,7 @@ int32_t BundleActiveUsageDatabase::DeleteInvalidTable(unsigned int databaseType,
         string deletePackageTableSql = "drop table " + packageTable;
         int32_t deletePackageTable = rdbStore->ExecuteSql(deletePackageTableSql);
         if (deletePackageTable != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("deletePackageTable is %{public}d", deletePackageTable);
+            BUNDLE_ACTIVE_LOGE("delete package table failed, rdb error number: %{public}d", deletePackageTable);
             return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == EVENT_DATABASE_INDEX) {
@@ -354,7 +352,7 @@ int32_t BundleActiveUsageDatabase::DeleteInvalidTable(unsigned int databaseType,
         string deleteEventTableSql = "drop table " + eventTable;
         int32_t deleteEventTable = rdbStore->ExecuteSql(deleteEventTableSql);
         if (deleteEventTable != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("deleteEventTable is %{public}d", deleteEventTable);
+            BUNDLE_ACTIVE_LOGE("delete event table failed, rdb error number: %{public}d", deleteEventTable);
             return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == APP_GROUP_DATABASE_INDEX) {
@@ -434,12 +432,13 @@ int32_t BundleActiveUsageDatabase::CreateEventLogTable(unsigned int databaseType
                                            + BUNDLE_ACTIVE_DB_ABILITY_ID + " TEXT NOT NULL);";
     int32_t createEventTable = rdbStore->ExecuteSql(createEventTableSql);
     if (createEventTable != NativeRdb::E_OK) {
+        BUNDLE_ACTIVE_LOGE("create event table failed, rdb error number: %{public}d", createEventTable);
         return createEventTable;
     }
     string createEventTableIndex = GetTableIndexSql(EVENT_DATABASE_INDEX, currentTimeMillis, true);
     int32_t createResult = rdbStore->ExecuteSql(createEventTableIndex);
     if (createResult != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("create event table index failed");
+        BUNDLE_ACTIVE_LOGE("create event table index failed, rdb error number: %{public}d", createResult);
         return BUNDLE_ACTIVE_FAIL;
     }
     return BUNDLE_ACTIVE_SUCCESS;
@@ -465,13 +464,13 @@ int32_t BundleActiveUsageDatabase::CreatePackageLogTable(unsigned int databaseTy
                                         + BUNDLE_ACTIVE_DB_TOTAL_TIME_CONTINUOUS_TASK + " INTEGER NOT NULL);";
     int32_t createPackageTable = rdbStore->ExecuteSql(createPackageTableSql);
     if (createPackageTable != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("create packageLog table failed");
+        BUNDLE_ACTIVE_LOGE("create packageLog table failed, rdb error number: %{public}d", createPackageTable);
         return BUNDLE_ACTIVE_FAIL;
     }
     string createPackageTableIndex = GetTableIndexSql(databaseType, currentTimeMillis, true);
     int32_t createResult = rdbStore->ExecuteSql(createPackageTableIndex);
     if (createResult != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("create package table index failed");
+        BUNDLE_ACTIVE_LOGE("create package table index failed, rdb error number: %{public}d", createResult);
         return BUNDLE_ACTIVE_FAIL;
     }
     return BUNDLE_ACTIVE_SUCCESS;
@@ -491,7 +490,7 @@ int32_t BundleActiveUsageDatabase::CreateDurationTable(unsigned int databaseType
                                         + BUNDLE_ACTIVE_DB_SCREEN_ON_DURATION + " INTEGER NOT NULL);";
     int32_t createDurationTable = rdbStore->ExecuteSql(createDurationTableSql);
     if (createDurationTable != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("create duration table failed");
+        BUNDLE_ACTIVE_LOGE("create duration table failed, rdb error number: %{public}d", createDurationTable);
         return BUNDLE_ACTIVE_FAIL;
     }
     return BUNDLE_ACTIVE_SUCCESS;
@@ -517,14 +516,14 @@ int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(unsigned int databas
                                         + BUNDLE_ACTIVE_DB_BUNDLE_DAILY_TIMEOUT_TIME + " INTEGER NOT NULL);";
     int32_t createBundleHistoryTable = rdbStore->ExecuteSql(createBundleHistoryTableSql);
     if (createBundleHistoryTable != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("create bundleHistory table failed");
+        BUNDLE_ACTIVE_LOGE("create bundleHistory table failed, rdb error number: %{public}d", createBundleHistoryTable);
         return createBundleHistoryTable;
     }
     int32_t time = 0;
     string createBundleHistoryTableIndex = GetTableIndexSql(databaseType, time, true);
     int32_t createResult = rdbStore->ExecuteSql(createBundleHistoryTableIndex);
     if (createResult != NativeRdb::E_OK) {
-        BUNDLE_ACTIVE_LOGE("create bundleHistory table index failed");
+        BUNDLE_ACTIVE_LOGE("create bundleHistory table index failed, rdb error number: %{public}d", createResult);
         return BUNDLE_ACTIVE_FAIL;
     }
     return BUNDLE_ACTIVE_SUCCESS;

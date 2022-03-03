@@ -13,30 +13,31 @@
  * limitations under the License.
  */
 
-#include "bundle_active_open_callback.h"
 #include "bundle_active_log.h"
-#include "bundle_active_constant.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-BundleActiveOpenCallback::BundleActiveOpenCallback() : NativeRdb::RdbOpenCallback()
+BundleActiveLogLevel BundleActiveLog::logLevel_ = {BundleActiveLogLevel::DEBUG};
+bool BundleActiveLog::JudgeValidLevel(const BundleActiveLogLevel &level)
 {
-};
+    const BundleActiveLogLevel &currLevel = BundleActiveLog::GetLogLevel();
+    if (level < currLevel) {
+        return false;
+    }
+    return true;
+}
 
-BundleActiveOpenCallback::~BundleActiveOpenCallback()
+std::string BundleActiveLog::GetCurrFileName(const char *str)
 {
-};
-
-int32_t BundleActiveOpenCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
-{
-    BUNDLE_ACTIVE_LOGI("Create success.");
-    return NativeRdb::E_OK;
-};
-
-int32_t BundleActiveOpenCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion)
-{
-    BUNDLE_ACTIVE_LOGI("Upgrade success.");
-    return NativeRdb::E_OK;
-};
+    if (!str) {
+        return std::string();
+    }
+    std::string fullPath(str);
+    size_t pos = fullPath.find_last_of("/");
+    if (pos == std::string::npos) {
+        return std::string();
+    }
+    return fullPath.substr(pos + 1);
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
