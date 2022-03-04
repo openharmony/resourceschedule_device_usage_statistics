@@ -126,7 +126,6 @@ bool BundleActiveGroupController::CheckEachBundleState(const int userId)
     for (auto oneBundleName : bundleNamesOfUser) {
         CheckAndUpdateGroup(oneBundleName, userId, bootBasedTimeStamp);
     }
-    bundleUserHistory_->printdata(userId);
     return true;
 }
 
