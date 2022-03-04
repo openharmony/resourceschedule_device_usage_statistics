@@ -287,11 +287,7 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
     if (intervalType < 0 || intervalType >= currentStats_.size()) {
         return result;
     }
-
     auto currentStats = currentStats_[intervalType];
-    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryPackageStats, intervaltype is %{public}d, "
-        "current begin time is %{public}lld, current end time is %{public}lld",
-        intervalType, currentStats->beginTime_, currentStats->endTime_);
     if (currentStats == nullptr) {
         BUNDLE_ACTIVE_LOGE("current interval stat is null!");
         return result;
@@ -307,12 +303,7 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
         return result;
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
-
-    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryPackageStats bundle name is %{public}s, "
-        "truncatedEndTime IS %{public}lld, begin time is %{public}lld",
-        bundleName.c_str(), truncatedEndTime, currentStats->beginTime_);
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
-    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryPackageStats is %{public}d", result.size());
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("BundleActiveUserService::QueryPackageStats need in memory stats");
