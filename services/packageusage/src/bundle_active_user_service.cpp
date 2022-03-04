@@ -22,7 +22,7 @@ void BundleActiveUserService::Init(const int64_t timeStamp)
 {
     database_.InitDatabaseTableInfo(timeStamp);
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::Init called");
-    LoadActiveStats(timeStamp, false);
+    LoadActiveStats(timeStamp, false, false);
     std::shared_ptr<BundleActivePeriodStats> currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentDailyStats != nullptr) {
         BundleActiveEvent startupEvent(BundleActiveEvent::STARTUP, timeStamp - ONE_SECOND_MILLISECONDS);
@@ -175,7 +175,7 @@ void BundleActiveUserService::RestoreStats(bool forced)
     }
 }
 
-void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const bool& force)
+void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const bool& force, const bool& timeChanged)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::LoadActiveStats called");
     BundleActiveCalendar tmpCalendar(0);
@@ -208,12 +208,13 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
         currentStats_[intervalType]->beginTime_ = tmpCalendar.GetMilliseconds();
         currentStats_[intervalType]->endTime_ = timeStamp;
     }
-    for (auto it : currentStats_) {
-        BUNDLE_ACTIVE_LOGI("loadactive current begin time is %{public}lld", it->beginTime_);
-    }
     statsChanged_ = false;
     // 延长统计时间到第二天0点
-    dailyExpiryDate_.SetMilliseconds(timeStamp);
+    if (timeChanged) {
+        dailyExpiryDate_.SetMilliseconds(currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_);
+    } else {
+        dailyExpiryDate_.SetMilliseconds(timeStamp);
+    }
     dailyExpiryDate_.IncreaseDays(1);
     dailyExpiryDate_.TruncateToDay();
     listener_.OnStatsReload();
@@ -251,7 +252,7 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
     }
     RestoreStats(true);
     database_.RemoveOldData(timeStamp);
-    LoadActiveStats(timeStamp, false); // 新建intervalstat或加载当前数据库数据
+    LoadActiveStats(timeStamp, false, false); // 新建intervalstat或加载当前数据库数据
     for (std::string continueBundleName : continueBundles) { // 更新所有事件的时间戳到新的begintime
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();

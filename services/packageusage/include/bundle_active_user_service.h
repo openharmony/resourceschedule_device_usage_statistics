@@ -57,7 +57,7 @@ public:
         const int64_t endTime, const int userId, const std::string& bundleName);
     std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, const int userId,
         const std::string& bundleName);
-    void LoadActiveStats(const int64_t timeStamp, const bool& force);
+    void LoadActiveStats(const int64_t timeStamp, const bool& force, const bool& timeChanged);
 
 private:
     static const int64_t ONE_SECOND_MILLISECONDS = 1000;
