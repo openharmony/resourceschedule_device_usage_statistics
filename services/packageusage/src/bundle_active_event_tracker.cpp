@@ -27,7 +27,7 @@ BundleActiveEventTracker::BundleActiveEventTracker()
 
 void BundleActiveEventTracker::CommitTime(const int64_t timeStamp)
 {
-    if (curStartTime_ != 0) {
+    if (curStartTime_) {
         duration_ += timeStamp - curStartTime_;
         curStartTime_ = 0;
     }
@@ -35,7 +35,7 @@ void BundleActiveEventTracker::CommitTime(const int64_t timeStamp)
 
 void BundleActiveEventTracker::Update(int64_t timeStamp)
 {
-    if (curStartTime_ == 0) {
+    if (!curStartTime_) {
         count_++;
     }
     CommitTime(timeStamp);
@@ -46,7 +46,7 @@ void BundleActiveEventTracker::Update(int64_t timeStamp)
 void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, int eventId,
     int64_t beginTime, int64_t endTime)
 {
-    if (count_ != 0 || duration_ != 0) {
+    if (count_ || duration_) {
         BundleActiveEventStats newEvent;
         newEvent.eventId_ = eventId;
         newEvent.count_ = count_;

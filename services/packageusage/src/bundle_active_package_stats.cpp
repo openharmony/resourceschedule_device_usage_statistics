@@ -141,7 +141,7 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int 
     std::map<std::string, int>::iterator it = abilities_.find(abilityId);
     if (it != abilities_.end()) {
         int lastEventId = it->second;
-        // When we recieve a new event, first update the time stats according to the last event in map.
+        // When we receive a new event, first update the time stats according to the last event in map.
         switch (lastEventId) {
             case BundleActiveEvent::ABILITY_FOREGROUND:
                 IncrementTimeUsed(timeStamp);
@@ -175,7 +175,7 @@ void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTas
         return;
     }
 
-    // When we recieve a new event, first update the time stats according to the last service event in map.
+    // When we receive a new event, first update the time stats according to the last service event in map.
     std::map<std::string, int>::iterator it = longTimeTasks_.find(longTimeTaskName);
     if (it != longTimeTasks_.end()) {
         int lastEventId = it->second;
