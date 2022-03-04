@@ -313,7 +313,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
             it->second->ReportEvent(event);
             it->second->RestoreStats(true);
             it->second->RenewTableTime(expectedSystemTime, actualSystemTime);
-            it->second->LoadActiveStats(actualSystemTime, false);
+            it->second->LoadActiveStats(actualSystemTime, true);
             if (!handler_.expired()) {
                 BUNDLE_ACTIVE_LOGI("BundleActiveCore::RestoreToDatabaseLocked remove flush to disk event");
                 handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
