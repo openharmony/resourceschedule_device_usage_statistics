@@ -109,28 +109,28 @@ void BundleStateCommon::GetBundleStateInfoByIntervalForResult(
     }
 }
 
-void BundleStateCommon::GetBundleStateInfoForResult(
-    napi_env env, const std::vector<BundleActivePackageStats> &packageStats, napi_value result)
+void BundleStateCommon::GetBundleStateInfoForResult(napi_env env,
+    const std::shared_ptr<std::map<std::string, BundleActivePackageStats>> &packageStats, napi_value result)
 {
-    for (const auto &item : packageStats) {
+    for (const auto &item : *packageStats) {
         napi_value packageObject = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &packageObject));
         napi_value bundleName = nullptr;
         NAPI_CALL_RETURN_VOID(
-            env, napi_create_string_utf8(env, item.bundleName_.c_str(), NAPI_AUTO_LENGTH, &bundleName));
+            env, napi_create_string_utf8(env, item.second.bundleName_.c_str(), NAPI_AUTO_LENGTH, &bundleName));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "bundleName", bundleName));
 
         napi_value abilityPrevAccessTime = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.lastTimeUsed_, &abilityPrevAccessTime));
+        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.second.lastTimeUsed_, &abilityPrevAccessTime));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "abilityPrevAccessTime",
             abilityPrevAccessTime));
 
         napi_value abilityInFgTotalTime = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.totalInFrontTime_, &abilityInFgTotalTime));
+        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.second.totalInFrontTime_, &abilityInFgTotalTime));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "abilityInFgTotalTime",
             abilityInFgTotalTime));
 
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, item.bundleName_.c_str(), packageObject));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, item.first.c_str(), packageObject));
     }
 }
 
@@ -235,6 +235,43 @@ void BundleStateCommon::SettingCallbackPromiseInfo(
         info.deferred = deferred;
         info.isCallback = false;
     }
+}
+
+std::shared_ptr<std::map<std::string, BundleActivePackageStats>> BundleStateCommon::GetPackageStats(
+    int64_t &beginTime, int64_t &endTime)
+{
+    std::vector<BundleActivePackageStats> packageStats =
+        BundleActiveClient::GetInstance().QueryPackageStats(INTERVAL_TYPE_DEFAULT, beginTime, endTime);
+    std::shared_ptr<std::map<std::string, BundleActivePackageStats>> mergedPackageStats =
+        std::make_shared<std::map<std::string, BundleActivePackageStats>>();
+    if (packageStats.empty()) {
+        return nullptr;
+    }
+    for (auto packageStat : packageStats) {
+        std::map<std::string, BundleActivePackageStats>::iterator iter =
+            mergedPackageStats->find(packageStat.bundleName_);
+        if (iter != mergedPackageStats->end()) {
+            MergePackageStats(iter->second, packageStat);
+        } else {
+            mergedPackageStats->
+                insert(std::pair<std::string, BundleActivePackageStats>(packageStat.bundleName_, packageStat));
+        }
+    }
+    return mergedPackageStats;
+}
+
+void BundleStateCommon::MergePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right)
+{
+    if (left.bundleName_ != right.bundleName_) {
+        BUNDLE_ACTIVE_LOGE("Merge package stats failed, existing packageName : %{public}s,"
+            " new packageName : %{public}s,", left.bundleName_.c_str(), right.bundleName_.c_str());
+        return;
+    }
+    left.lastTimeUsed_ = std::max(left.lastTimeUsed_, right.lastTimeUsed_);
+    left.lastContiniousTaskUsed_ = std::max(left.lastContiniousTaskUsed_, right.lastContiniousTaskUsed_);
+    left.totalInFrontTime_ += right.totalInFrontTime_;
+    left.totalContiniousTaskUsedTime_ += right.totalContiniousTaskUsedTime_;
+    left.bundleStartedCount_ += right.bundleStartedCount_;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
