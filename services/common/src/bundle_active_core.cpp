@@ -301,7 +301,8 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
     int64_t expectedSystemTime = (actualRealTime - realTimeShot_) + systemTimeShot_;
     int64_t diffSystemTime = actualSystemTime - expectedSystemTime;
     BUNDLE_ACTIVE_LOGI("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, "
-        "diff is %{public}lld", actualSystemTime, actualRealTime, expectedSystemTime, diffSystemTime);
+        "diff is %{public}lld",
+        actualSystemTime, actualRealTime, expectedSystemTime, diffSystemTime);
     if (std::abs(diffSystemTime) > TIME_CHANGE_THRESHOLD_MILLIS) {
         // 时区变换逻辑
         auto it = userStatServices_.find(userId);
