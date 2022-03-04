@@ -164,19 +164,25 @@ bool BundleActiveService::SubscribeContinuousTask()
     return true;
 }
 
+
 void BundleActiveService::OnStop()
 {
     if (shutdownCallback_ != nullptr) {
         auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
         powerManagerClient.UnRegisterShutdownCallback(shutdownCallback_);
+        delete shutdownCallback_;
+        shutdownCallback_ = nullptr;
     } else {
         shutdownCallback_ = new BundleActiveShutdownCallbackService(bundleActiveCore_);
     }
     auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
     powerManagerClient.UnRegisterShutdownCallback(shutdownCallback_);
     bundleActiveCore_->UnRegisterSubscriber();
+    delete shutdownCallback_;
+    shutdownCallback_ = nullptr;
     BUNDLE_ACTIVE_LOGI("[Server] OnStop");
 }
+
 
 int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
     const std::string& continuousTask, const int userId, const int eventId)
