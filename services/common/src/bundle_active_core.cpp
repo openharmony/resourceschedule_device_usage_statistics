@@ -312,7 +312,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
         if (it != userStatServices_.end()) {
             BundleActiveEvent event;
             event.eventId_ = BundleActiveEvent::FLUSH;
-            event.timeStamp_ = GetSystemTimeMs();
+            event.timeStamp_ = expectedSystemTime;
             event.abilityId_ = "";
             it->second->ReportEvent(event);
             it->second->RestoreStats(true);
