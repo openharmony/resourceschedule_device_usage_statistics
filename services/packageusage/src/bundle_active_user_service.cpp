@@ -64,8 +64,8 @@ void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bu
 void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RenewTableTime called");
-    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RenewTableTime called current event size is %{public}d"
-         currentStats_[0]->events_.Size());
+    BUNDLE_ACTIVE_LOGI("BundleActiveUserService::RenewTableTime called current event size is %{public}d",
+        currentStats_[0]->events_.Size());
     database_.RenewTableTime(newTime - oldTime);
 }
 
