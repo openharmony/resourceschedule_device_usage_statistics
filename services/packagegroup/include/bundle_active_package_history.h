@@ -30,15 +30,7 @@ public:
     uint32_t reasonInGroup_;
     int64_t bundleAliveTimeoutTimeStamp_;
     int64_t bundleDailyTimeoutTimeStamp_;
-    BundleActivePackageHistory() {
-        lastBootFromUsedTimeStamp_ = 0;
-        lastScreenUsedTimeStamp_ = 0;
-        lastGroupCalculatedTimeStamp_ = 0;
-        currentGroup_ = DeviceUsageStatsGroupConst::ACTIVE_GROUP_NEVER;
-        reasonInGroup_ = DeviceUsageStatsGroupConst::GROUP_CONTROL_REASON_DEFAULT;
-        bundleAliveTimeoutTimeStamp_ = 0;
-        bundleDailyTimeoutTimeStamp_ = 0;
-    };
+    BundleActivePackageHistory();
     ~BundleActivePackageHistory() {};
 };
 }

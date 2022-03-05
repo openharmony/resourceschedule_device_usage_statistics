@@ -49,14 +49,7 @@ public:
     int eventId_;
 
 public:
-    BundleActiveEvent() {
-        bundleName_ = "";
-        continuousTaskAbilityName_ = "";
-        abilityName_ = "";
-        abilityId_ = "";
-        timeStamp_ = 0;
-        eventId_ = 0;
-    };
+    BundleActiveEvent();
     BundleActiveEvent(const BundleActiveEvent& orig);
     BundleActiveEvent(int eventId, int64_t timeStamp);
     std::string GetBundleName();

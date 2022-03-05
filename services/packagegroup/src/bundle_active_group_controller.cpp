@@ -23,6 +23,11 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
+BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject()
+{
+        bundleName_ = "";
+        userId_ = -1;
+}
 
 void BundleActiveGroupController::RestoreDurationToDatabase()
 {
@@ -126,7 +131,6 @@ bool BundleActiveGroupController::CheckEachBundleState(const int userId)
     for (auto oneBundleName : bundleNamesOfUser) {
         CheckAndUpdateGroup(oneBundleName, userId, bootBasedTimeStamp);
     }
-    //bundleUserHistory_->printdata(userId);
     return true;
 }
 

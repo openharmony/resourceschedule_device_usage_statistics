@@ -17,6 +17,16 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+BundleActiveEvent::BundleActiveEvent()
+{
+    bundleName_ = "";
+    continuousTaskAbilityName_ = "";
+    abilityName_ = "";
+    abilityId_ = "";
+    timeStamp_ = 0;
+    eventId_ = 0;
+}
+
 BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig)
 {
     bundleName_ = orig.bundleName_;

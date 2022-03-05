@@ -22,6 +22,17 @@ namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
 using namespace std;
 
+BundleActivePackageHistory::BundleActivePackageHistory()
+{
+    lastBootFromUsedTimeStamp_ = 0;
+    lastScreenUsedTimeStamp_ = 0;
+    lastGroupCalculatedTimeStamp_ = 0;
+    currentGroup_ = DeviceUsageStatsGroupConst::ACTIVE_GROUP_NEVER;
+    reasonInGroup_ = DeviceUsageStatsGroupConst::GROUP_CONTROL_REASON_DEFAULT;
+    bundleAliveTimeoutTimeStamp_ = 0;
+    bundleDailyTimeoutTimeStamp_ = 0;
+};
+
 void BundleActiveUserHistory::WriteDeviceDuration()
 {
     database_.PutDurationData(bootBasedDuration_, ScreenOnDuration_);

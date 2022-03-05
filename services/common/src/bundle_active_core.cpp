@@ -23,6 +23,12 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
+{
+        userId_ = -1;
+        bundleName_ = "";
+}
+
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject(const BundleActiveReportHandlerObject& orig)
 {
     event_.bundleName_ = orig.event_.bundleName_;

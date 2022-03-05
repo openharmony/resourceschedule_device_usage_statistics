@@ -29,10 +29,7 @@ class BundleActiveGroupHandlerObject {
 public:
     std::string bundleName_;
     int userId_;
-    BundleActiveGroupHandlerObject() {
-        bundleName_ = "";
-        userId_ = -1;
-    };
+    BundleActiveGroupHandlerObject();
     BundleActiveGroupHandlerObject(const BundleActiveGroupHandlerObject& orig);
     ~BundleActiveGroupHandlerObject() {};
 };
