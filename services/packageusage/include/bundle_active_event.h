@@ -47,10 +47,9 @@ public:
     std::string abilityId_;
     int64_t timeStamp_;
     int eventId_;
-    bool isidle_;
 
 public:
-    BundleActiveEvent() {};
+    BundleActiveEvent();
     BundleActiveEvent(const BundleActiveEvent& orig);
     BundleActiveEvent(int eventId, int64_t timeStamp);
     std::string GetBundleName();
@@ -58,7 +57,6 @@ public:
     std::string GetAbilityId();
     int64_t GetTimeStamp();
     int GetEventId();
-    bool GetIsIdle();
     virtual bool Marshalling(Parcel &parcel) const override;
     std::shared_ptr<BundleActiveEvent> Unmarshalling(Parcel &parcel);
 };

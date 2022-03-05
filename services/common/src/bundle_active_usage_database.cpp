@@ -561,7 +561,7 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_BOOT_FROM_USED_TIME, iter->second->lastBootFromUsedTimeStamp_);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_SCREEN_USED_TIME, iter->second->lastScreenUsedTimeStamp_);
         valuesBucket.PutInt(BUNDLE_ACTIVE_DB_CURRENT_GROUP, iter->second->currentGroup_);
-        valuesBucket.PutInt(BUNDLE_ACTIVE_DB_REASON_IN_GROUP, iter->second->reasonInGroup_);
+        valuesBucket.PutInt(BUNDLE_ACTIVE_DB_REASON_IN_GROUP, static_cast<int>(iter->second->reasonInGroup_));
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_ALIVE_TIMEOUT_TIME, iter->second->bundleAliveTimeoutTimeStamp_);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_DAILY_TIMEOUT_TIME, iter->second->bundleDailyTimeoutTimeStamp_);
         rdbStore->Update(changeRow, BUNDLE_HISTORY_LOG_TABLE, valuesBucket, "userId = ? and bundleName = ?",
@@ -603,6 +603,7 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userUsageHistory =
         make_shared<map<string, shared_ptr<BundleActivePackageHistory>>>();
     shared_ptr<BundleActivePackageHistory> usageHistory;
+    int currentBundleGroupReason = 0;
     for (int32_t i = 0; i < tableRowNumber; i++) {
         bundleActiveResult->GoToRow(i);
         bundleActiveResult->GetString(BUNDLE_NAME_COLUMN_INDEX, bundleName);
@@ -610,7 +611,8 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
         bundleActiveResult->GetLong(LAST_BOOT_FROM_USED_TIME_COLUMN_INDEX, usageHistory->lastBootFromUsedTimeStamp_);
         bundleActiveResult->GetLong(LAST_SCREEN_USED_TIME_COLUMN_INDEX, usageHistory->lastScreenUsedTimeStamp_);
         bundleActiveResult->GetInt(CURRENT_GROUP_COLUMN_INDEX, usageHistory->currentGroup_);
-        bundleActiveResult->GetInt(REASON_IN_GROUP_COLUMN_INDEX, usageHistory->reasonInGroup_);
+        bundleActiveResult->GetInt(REASON_IN_GROUP_COLUMN_INDEX, currentBundleGroupReason);
+        usageHistory->reasonInGroup_ = static_cast<uint32_t>(currentBundleGroupReason);
         bundleActiveResult->GetLong(BUNDLE_ALIVE_TIMEOUT_TIME_COLUMN_INDEX,
             usageHistory->bundleAliveTimeoutTimeStamp_);
         bundleActiveResult->GetLong(BUNDLE_DAILY_TIMEOUT_TIME_COLUMN_INDEX,

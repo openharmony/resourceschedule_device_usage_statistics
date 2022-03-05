@@ -42,7 +42,7 @@ public:
     using BundleFlag = OHOS::AppExecFwk::BundleFlag;
     using ApplicationFlag = OHOS::AppExecFwk::ApplicationFlag;
     OHOS::AppExecFwk::ApplicationFlag flag = OHOS::AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO;
-    bool bundleGroupEnable_;
+    bool bundleGroupEnable_ = true;
     bool debug_ = true;
     const int LEVEL_GROUP[4] = {
         ACTIVE_GROUP_ALIVE,
@@ -75,7 +75,7 @@ public:
     void OnUserRemoved(const int userId);
     void OnBundleUninstalled(const int userId, const std::string bundleName);
     void OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp);
-    void SetBundleGroup(const std::string& bundleName, const int userId, int newGroup, int reason,
+    void SetBundleGroup(const std::string& bundleName, const int userId, int newGroup, uint32_t reason,
         const int64_t bootBasedTimeStamp, const bool& resetTimeout);
     void RestoreToDatabase(const int userId);
     void RestoreDurationToDatabase();
@@ -89,8 +89,8 @@ private:
     std::mutex mutex_;
     bool GetBundleMgrProxy();
     std::weak_ptr<BundleActiveGroupHandler> activeGroupHandler_;
-    int EventToGroupReason(const int eventId);
-    int64_t timeoutForDirectlyUse_ = debug_ ?  ONE_MINUTE : ONE_HOUR;
+    uint32_t EventToGroupReason(const int eventId);
+    int64_t timeoutForDirectlyUse_ = debug_ ? THREE_MINUTE : ONE_HOUR;
     int64_t timeoutForNotifySeen_ = debug_ ? ONE_MINUTE : TWELVE_HOUR;
     int64_t timeoutForSystemInteraction_ = debug_ ? ONE_MINUTE : TEN_MINUTE;
     int64_t timeoutCalculated_;

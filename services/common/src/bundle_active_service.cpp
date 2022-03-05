@@ -36,7 +36,7 @@ const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 
 void BundleActiveService::OnStart()
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::OnStart() called");
+    BUNDLE_ACTIVE_LOGI("OnStart() called");
     runner_ = AppExecFwk::EventRunner::Create("device_usage_stats_init_handler");
     if (runner_ == nullptr) {
         BUNDLE_ACTIVE_LOGI("BundleActiveService runner create failed!");
@@ -98,7 +98,12 @@ void BundleActiveService::InitNecessaryState()
     } else {
         return;
     }
-    shutdownCallback_ = new BundleActiveShutdownCallbackService(bundleActiveCore_);
+    try {
+        shutdownCallback_ = new BundleActiveShutdownCallbackService(bundleActiveCore_);
+    } catch(const std::bad_alloc &e) {
+        BUNDLE_ACTIVE_LOGE("Memory allocation failed");
+        return;
+    }
     auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
     powerManagerClient.RegisterShutdownCallback(shutdownCallback_);
     InitAppStateSubscriber(reportHandler_);
@@ -134,10 +139,10 @@ void BundleActiveService::InitContinuousSubscriber(const std::shared_ptr<BundleA
 
 bool BundleActiveService::SubscribeAppState()
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::SubscribeAppState called");
+    BUNDLE_ACTIVE_LOGI("SubscribeAppState called");
     sptr<OHOS::AppExecFwk::IAppMgr> appManager = GetAppManagerInstance();
     if (appStateObserver_ == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveService::SubscribeAppState appstateobserver is null, return");
+        BUNDLE_ACTIVE_LOGE("SubscribeAppState appstateobserver is null, return");
         return false;
     }
     int32_t err = appManager->RegisterApplicationStateObserver(appStateObserver_.get());
@@ -153,7 +158,7 @@ bool BundleActiveService::SubscribeAppState()
 bool BundleActiveService::SubscribeContinuousTask()
 {
     if (continuousTaskObserver_ == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveService::SubscribeContinuousTask continuousTaskObserver_ is null, return");
+        BUNDLE_ACTIVE_LOGE("SubscribeContinuousTask continuousTaskObserver_ is null, return");
         return false;
     }
     if (OHOS::BackgroundTaskMgr::BackgroundTaskMgrHelper::SubscribeBackgroundTask(*continuousTaskObserver_)
@@ -172,14 +177,8 @@ void BundleActiveService::OnStop()
         powerManagerClient.UnRegisterShutdownCallback(shutdownCallback_);
         delete shutdownCallback_;
         shutdownCallback_ = nullptr;
-    } else {
-        shutdownCallback_ = new BundleActiveShutdownCallbackService(bundleActiveCore_);
+        return;
     }
-    auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
-    powerManagerClient.UnRegisterShutdownCallback(shutdownCallback_);
-    bundleActiveCore_->UnRegisterSubscriber();
-    delete shutdownCallback_;
-    shutdownCallback_ = nullptr;
     BUNDLE_ACTIVE_LOGI("[Server] OnStop");
 }
 
@@ -215,7 +214,7 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
     int result = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveService::IsBundleIdle user id is %{public}d", userId);
+        BUNDLE_ACTIVE_LOGI("IsBundleIdle user id is %{public}d", userId);
         if (!GetBundleMgrProxy()) {
             BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");
             return true;
@@ -234,17 +233,17 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
 std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(const int intervalType,
     const int64_t beginTime, const int64_t endTime)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryPackageStats stats called, intervaltype is %{public}d",
+    BUNDLE_ACTIVE_LOGI("QueryPackageStats stats called, intervaltype is %{public}d",
         intervalType);
     std::vector<BundleActivePackageStats> result;
     // get uid
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryPackageStats UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGI("QueryPackageStats UID is %{public}d", callingUid);
     // get userid
     int userId = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryPackageStats user id is %{public}d", userId);
+        BUNDLE_ACTIVE_LOGI("QueryPackageStats user id is %{public}d", userId);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId);
         if (isSystemAppAndHasPermission == true) {
             int convertedIntervalType = ConvertIntervalType(intervalType);
@@ -256,16 +255,16 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
 
 std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t beginTime, const int64_t endTime)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryEvents stats called");
+    BUNDLE_ACTIVE_LOGI("QueryEvents stats called");
     std::vector<BundleActiveEvent> result;
     // get uid
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryEvents UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGI("QueryEvents UID is %{public}d", callingUid);
     // get userid
     int userId = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryEvents userid is %{public}d", userId);
+        BUNDLE_ACTIVE_LOGI("QueryEvents userid is %{public}d", userId);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId);
         if (isSystemAppAndHasPermission == true) {
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, "");
@@ -283,7 +282,7 @@ void BundleActiveService::SetBundleGroup(const std::string& bundleName, int newG
 std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageStats(const int intervalType,
     const int64_t beginTime, const int64_t endTime)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryCurrentPackageStats stats called");
+    BUNDLE_ACTIVE_LOGI("QueryCurrentPackageStats stats called");
     std::vector<BundleActivePackageStats> result;
     // get uid
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
@@ -292,7 +291,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
     int userId = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryCurrentPackageStats userid is %{public}d", userId);
+        BUNDLE_ACTIVE_LOGI("QueryCurrentPackageStats userid is %{public}d", userId);
         if (!GetBundleMgrProxy()) {
             BUNDLE_ACTIVE_LOGE("BundleActiveGroupController::CheckEachBundleState get bundle manager proxy failed!");
             return result;
@@ -306,51 +305,51 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
                 bundleName);
         }
     }
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryCurrentPackageStats result size is %{public}d", result.size());
+    BUNDLE_ACTIVE_LOGI("QueryCurrentPackageStats result size is %{public}d", result.size());
     return result;
 }
 
 std::vector<BundleActiveEvent> BundleActiveService::QueryCurrentEvents(const int64_t beginTime,
     const int64_t endTime)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryCurrentEvents stats called");
+    BUNDLE_ACTIVE_LOGI("QueryCurrentEvents stats called");
     std::vector<BundleActiveEvent> result;
     // get uid
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryCurrentEvents UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGI("QueryCurrentEvents UID is %{public}d", callingUid);
     // get userid
     int userId = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryCurrentEvents userid is %{public}d", userId);
+        BUNDLE_ACTIVE_LOGI("QueryCurrentEvents userid is %{public}d", userId);
         if (!GetBundleMgrProxy()) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveService::QueryCurrentEvents get bundle manager proxy failed!");
+            BUNDLE_ACTIVE_LOGE("QueryCurrentEvents get bundle manager proxy failed!");
             return result;
         }
         std::string bundleName = "";
         sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId);
         if (!bundleName.empty() && isSystemAppAndHasPermission == true) {
-            BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryCurrentEvents buindle name is %{public}s",
+            BUNDLE_ACTIVE_LOGI("QueryCurrentEvents buindle name is %{public}s",
                 bundleName.c_str());
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, bundleName);
         }
     }
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryCurrentEvents result size is %{public}d", result.size());
+    BUNDLE_ACTIVE_LOGI("QueryCurrentEvents result size is %{public}d", result.size());
     return result;
 }
 
 int BundleActiveService::QueryPackageGroup()
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryPackageGroup stats called");
+    BUNDLE_ACTIVE_LOGI("QueryPackageGroup stats called");
     // get uid
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryPackageGroup UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGI("QueryPackageGroup UID is %{public}d", callingUid);
     // get userid
     int userId = -1;
     int result = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryPackageGroup user id is %{public}d", userId);
+    BUNDLE_ACTIVE_LOGI("QueryPackageGroup user id is %{public}d", userId);
     if (ret == ERR_OK && userId != -1) {
         if (!GetBundleMgrProxy()) {
             BUNDLE_ACTIVE_LOGE("BundleActiveGroupController::CheckEachBundleState get bundle manager proxy failed!");
@@ -359,12 +358,12 @@ int BundleActiveService::QueryPackageGroup()
         std::string bundleName = "";
         // get bundle name
         sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
-        BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryPackageGroup bundlename is %{public}s", bundleName.c_str());
+        BUNDLE_ACTIVE_LOGI("QueryPackageGroup bundlename is %{public}s", bundleName.c_str());
         if (!bundleName.empty()) {
             result = bundleActiveCore_->QueryPackageGroup(userId, bundleName);
         }
     }
-    BUNDLE_ACTIVE_LOGI("BundleActiveService::QueryPackageGroup result is %{public}d", result);
+    BUNDLE_ACTIVE_LOGI("QueryPackageGroup result is %{public}d", result);
     return result;
 }
 

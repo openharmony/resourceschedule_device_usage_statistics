@@ -23,6 +23,11 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
+BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject()
+{
+        bundleName_ = "";
+        userId_ = -1;
+}
 
 void BundleActiveGroupController::RestoreDurationToDatabase()
 {
@@ -52,7 +57,7 @@ void BundleActiveGroupController::SetHandlerAndCreateUserHistory(
     const std::shared_ptr<BundleActiveGroupHandler>& groupHandler, const int64_t bootFromTimeStamp)
 {
     if (bundleUserHistory_ == nullptr) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::SetHandlerAndCreateUserHistory bundleUserHistory_ is null, "
+        BUNDLE_ACTIVE_LOGI("SetHandlerAndCreateUserHistory bundleUserHistory_ is null, "
             "called constructor, bootstamp is %{public}lld", bootFromTimeStamp);
         bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootFromTimeStamp);
     }
@@ -96,7 +101,7 @@ bool BundleActiveGroupController::GetBundleMgrProxy()
 
 void BundleActiveGroupController::PeriodCheckBundleState(const int userId)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::PeriodCheckBundleState called");
+    BUNDLE_ACTIVE_LOGI("PeriodCheckBundleState called");
     if (!activeGroupHandler_.expired()) {
         BundleActiveGroupHandlerObject tmpGroupHandlerObj;
         tmpGroupHandlerObj.userId_ = userId;
@@ -110,10 +115,10 @@ void BundleActiveGroupController::PeriodCheckBundleState(const int userId)
 
 bool BundleActiveGroupController::CheckEachBundleState(const int userId)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::CheckEachBundleState called, userid is %{public}d", userId);
+    BUNDLE_ACTIVE_LOGI("CheckEachBundleState called, userid is %{public}d", userId);
     std::vector<ApplicationInfo> allBundlesForUser;
     if (!GetBundleMgrProxy()) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveGroupController::CheckEachBundleState get bundle manager proxy failed!");
+        BUNDLE_ACTIVE_LOGE("CheckEachBundleState get bundle manager proxy failed!");
         return false;
     }
     sptrBundleMgr_->GetApplicationInfos(flag, userId, allBundlesForUser);
@@ -160,7 +165,7 @@ bool BundleActiveGroupController::calculationTimeOut(
         - lastGroupCalculatedTimeStamp > timeoutCalculated_;
 }
 
-int BundleActiveGroupController::EventToGroupReason(const int eventId)
+uint32_t BundleActiveGroupController::EventToGroupReason(const int eventId)
 {
     switch (eventId) {
         case BundleActiveEvent::ABILITY_FOREGROUND:
@@ -183,7 +188,7 @@ int BundleActiveGroupController::EventToGroupReason(const int eventId)
 void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp,
     const int userId)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::ReportEvent called");
+    BUNDLE_ACTIVE_LOGI("ReportEvent called");
     if (bundleGroupEnable_ == false) {
         return;
     }
@@ -243,8 +248,8 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     if (oneBundleHistory == nullptr) {
         return;
     }
-    int groupReason = oneBundleHistory->reasonInGroup_;
-    int oldGroupControlReason = groupReason & GROUP_CONTROL_REASON_MASK;
+    uint32_t groupReason = oneBundleHistory->reasonInGroup_;
+    uint32_t oldGroupControlReason = groupReason & GROUP_CONTROL_REASON_MASK;
     if (oldGroupControlReason == GROUP_CONTROL_REASON_FORCED) {
         return;
     }
@@ -271,13 +276,13 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
             GROUP_EVENT_REASON_ALIVE_TIMEOUT;
     }
     if (oldGroup < newGroup) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::CheckAndUpdateGroup called SetBundleGroup");
+        BUNDLE_ACTIVE_LOGI("CheckAndUpdateGroup called SetBundleGroup");
         bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, groupReason, false);
     }
 }
 
 void BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int userId, int newGroup,
-    int reason, const int64_t bootBasedTimeStamp, const bool& resetTimeout)
+    uint32_t reason, const int64_t bootBasedTimeStamp, const bool& resetTimeout)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (IsBundleInstalled(bundleName, userId) == false) {
@@ -290,6 +295,9 @@ void BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, 
     int64_t bootBasedTimeStampAdjusted = bundleUserHistory_->GetBootBasedTimeStamp(bootBasedTimeStamp);
     if (newGroup > ACTIVE_GROUP_ALIVE && oneBundleHistory->bundleAliveTimeoutTimeStamp_ >
         bootBasedTimeStampAdjusted) {
+        BUNDLE_ACTIVE_LOGI("%{public}s should be decreased, but time out in alive is not expire! now is %{public}lld,"
+            "timeout is %{public}lld",
+            bundleName.c_str(), bootBasedTimeStampAdjusted, oneBundleHistory->bundleAliveTimeoutTimeStamp_);
         newGroup = ACTIVE_GROUP_ALIVE;
         reason = oneBundleHistory->reasonInGroup_;
     } else if (newGroup > ACTIVE_GROUP_DAILY && oneBundleHistory->bundleDailyTimeoutTimeStamp_ >
@@ -316,11 +324,11 @@ int BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, con
     if (oneBundleHistory == nullptr) {
         return 1;
     } else if (oneBundleHistory->currentGroup_ >= ACTIVE_GROUP_RARE) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::IsBundleIdle, bundle group is %{public}d",
+        BUNDLE_ACTIVE_LOGI("IsBundleIdle, bundle group is %{public}d",
             oneBundleHistory->currentGroup_);
         return 1;
     } else {
-        BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::IsBundleIdle, bundle group is %{public}d",
+        BUNDLE_ACTIVE_LOGI("IsBundleIdle, bundle group is %{public}d",
             oneBundleHistory->currentGroup_);
         return 0;
     }
@@ -328,7 +336,7 @@ int BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, con
 
 int BundleActiveGroupController::QueryPackageGroup(const int userId, const std::string& bundleName)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::QueryPackageGroup called");
+    BUNDLE_ACTIVE_LOGI("QueryPackageGroup called");
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     if (IsBundleInstalled(bundleName, userId) == false) {
         return -1;
@@ -348,7 +356,7 @@ bool BundleActiveGroupController::IsBundleInstalled(const std::string& bundleNam
     ApplicationInfo bundleInfo;
     if (sptrBundleMgr_ != nullptr && sptrBundleMgr_->GetApplicationInfo(
         bundleName, ApplicationFlag::GET_BASIC_APPLICATION_INFO, userId, bundleInfo) == false) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveGroupController::IsBundleInstalled bundle is not installed!");
+        BUNDLE_ACTIVE_LOGE("IsBundleInstalled bundle is not installed!");
         return false;
     }
     return true;
@@ -356,14 +364,14 @@ bool BundleActiveGroupController::IsBundleInstalled(const std::string& bundleNam
 
 void BundleActiveGroupController::ShutDown(const int64_t bootBasedTimeStamp)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::ShutDown called");
+    BUNDLE_ACTIVE_LOGI("ShutDown called");
     bundleUserHistory_->UpdateBootBasedAndScreenTime(false, bootBasedTimeStamp, true);
 }
 
 bool BundleActiveGroupController::IsScreenOn()
 {
     bool result = PowerMgrClient::GetInstance().IsScreenOn();
-    BUNDLE_ACTIVE_LOGI("BundleActiveGroupController::IsScreenOn() is %{public}d", result);
+    BUNDLE_ACTIVE_LOGI("IsScreenOn() is %{public}d", result);
     return result;
 }
 }

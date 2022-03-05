@@ -33,7 +33,7 @@ void BundleActiveEventList::Clear()
 
 void BundleActiveEventList::Insert(BundleActiveEvent event)
 {
-    int size = events_.size();
+    uint32_t size = events_.size();
     if (size == 0 || event.timeStamp_ >= events_.back().timeStamp_) {
         events_.push_back(event);
         return;
@@ -44,7 +44,7 @@ void BundleActiveEventList::Insert(BundleActiveEvent event)
 
 int BundleActiveEventList::FindBestIndex(const int64_t timeStamp)
 {
-    int size = events_.size();
+    int size = static_cast<int>(events_.size());
     int result = size;
     int lo = 0;
     int hi = size - 1;
@@ -63,7 +63,7 @@ int BundleActiveEventList::FindBestIndex(const int64_t timeStamp)
 
 void BundleActiveEventList::Merge(const BundleActiveEventList& right)
 {
-    int size = right.events_.size();
+    int size = static_cast<int>(right.events_.size());
     for (int i = 0; i < size; i++) {
         Insert(right.events_[i]);
     }

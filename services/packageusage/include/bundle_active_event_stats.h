@@ -28,7 +28,7 @@ public:
     int64_t lastEventTime_;
     int64_t totalTime_;
     int count_;
-    BundleActiveEventStats() {};
+    BundleActiveEventStats();
     BundleActiveEventStats(const BundleActiveEventStats& orig);
     int GetEventId();
     int GetFirstTimeStamp();

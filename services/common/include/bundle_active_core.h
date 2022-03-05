@@ -36,7 +36,7 @@ public:
     BundleActiveEvent event_;
     int userId_;
     std::string bundleName_;
-    BundleActiveReportHandlerObject() {};
+    BundleActiveReportHandlerObject();
     BundleActiveReportHandlerObject(const BundleActiveReportHandlerObject& orig);
     ~BundleActiveReportHandlerObject() {};
 };

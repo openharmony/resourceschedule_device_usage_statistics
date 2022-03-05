@@ -51,7 +51,7 @@ bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName)
     data.WriteString(bundleName);
     Remote() -> SendRequest(IS_BUNDLE_IDLE, data, reply, option);
     int32_t result = reply.ReadInt32();
-    BUNDLE_ACTIVE_LOGI("BundleActiveProxy::IsBundleIdle result is %{public}d", result);
+    BUNDLE_ACTIVE_LOGI("result is %{public}d", result);
     return result;
 }
 
@@ -78,8 +78,8 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
         }
         result.push_back(*tmp);
     }
-    for (int i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveProxy::QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
+    for (uint32_t i = 0; i < result.size(); i++) {
+        BUNDLE_ACTIVE_LOGI("QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
             i + 1, result[i].bundleName_.c_str(), result[i].lastTimeUsed_, result[i].lastContiniousTaskUsed_,
@@ -109,8 +109,8 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
         }
         result.push_back(*tmp);
     }
-    for (int i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveProxy::QueryEvents event id is %{public}d, bundle name is %{public}s, "
+    for (uint32_t i = 0; i < result.size(); i++) {
+        BUNDLE_ACTIVE_LOGI("QueryEvents event id is %{public}d, bundle name is %{public}s, "
             "time stamp is %{public}lld", result[i].eventId_, result[i].bundleName_.c_str(), result[i].timeStamp_);
     }
     return result;
@@ -153,8 +153,8 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStat
         }
         result.push_back(*tmp);
     }
-    for (int i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveProxy::QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
+    for (uint32_t i = 0; i < result.size(); i++) {
+        BUNDLE_ACTIVE_LOGI("QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
             i + 1, result[i].bundleName_.c_str(), result[i].lastTimeUsed_, result[i].lastContiniousTaskUsed_,
@@ -184,8 +184,9 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64
         }
         result.push_back(*tmp);
     }
-    for (int i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGI("event id is %{public}d, bundle name is %{public}s, time stamp is %{public}lld",
+    for (uint32_t i = 0; i < result.size(); i++) {
+        BUNDLE_ACTIVE_LOGI("QueryCurrentEvents event id is %{public}d, bundle name is %{public}s,"
+            "time stamp is %{public}lld",
             result[i].eventId_, result[i].bundleName_.c_str(), result[i].timeStamp_);
     }
     return result;
@@ -201,7 +202,7 @@ int BundleActiveProxy::QueryPackageGroup()
     }
     Remote() -> SendRequest(QUERY_BUNDLE_GROUP, data, reply, option);
     int32_t packageGroup = reply.ReadInt32();
-    BUNDLE_ACTIVE_LOGI("BundleActiveProxy::QueryPackageGroup result is %{public}d", packageGroup);
+    BUNDLE_ACTIVE_LOGI("QueryPackageGroup result is %{public}d", packageGroup);
     return packageGroup;
 }
 }
