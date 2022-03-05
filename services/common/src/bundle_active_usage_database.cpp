@@ -44,7 +44,7 @@ BundleActiveUsageDatabase::BundleActiveUsageDatabase()
 {
     currentVersion_ = BUNDLE_ACTIVE_CURRENT_VERSION;
     versionDirectoryPath_ = BUNDLE_ACTIVE_DATABASE_DIR + BUNDLE_ACTIVE_VERSION_FILE;
-    for (int i = 0; i < sizeof(DATABASE_TYPE)/sizeof(DATABASE_TYPE[0]); i++) {
+    for (uint32_t i = 0; i < sizeof(DATABASE_TYPE)/sizeof(DATABASE_TYPE[0]); i++) {
         databaseFiles_.push_back(DATABASE_TYPE[i]);
     }
     eventTableName_ = UNKNOWN_TABLE_NAME;
@@ -131,7 +131,7 @@ void BundleActiveUsageDatabase::InitDatabaseTableInfo(int64_t currentTime)
         if (startIndex < BUNDLE_ACTIVE_SUCCESS) {
             continue;
         }
-        int32_t tableNumber = sortedTableArray_.at(i).size();
+        int32_t tableNumber = static_cast<int32_t>(sortedTableArray_.at(i).size());
         for (int32_t j = startIndex; j < tableNumber; j++) {
             DeleteInvalidTable(i, sortedTableArray_.at(i).at(startIndex));
             sortedTableArray_.at(i).erase(sortedTableArray_.at(i).begin() + startIndex);
@@ -149,11 +149,12 @@ int32_t BundleActiveUsageDatabase::NearIndexOnOrAfterCurrentTime(int64_t current
     vector<int64_t> &sortedTableArray)
 {
     int32_t low = 0;
-    int32_t high = sortedTableArray.size() - 1;
+    int32_t high = static_cast<int32_t>(sortedTableArray.size() - 1);
     int32_t mid = -1;
     int64_t tableTime = -1;
+    int32_t divisor = 2;
     while (low <= high) {
-        mid = (low + high) >> 1;
+        mid = (high - low) / divisor + low;
         tableTime = sortedTableArray.at(mid);
         if (currentTime > tableTime) {
             low = mid + 1;
@@ -165,7 +166,7 @@ int32_t BundleActiveUsageDatabase::NearIndexOnOrAfterCurrentTime(int64_t current
     }
     if (currentTime < tableTime) {
         return mid;
-    } else if (currentTime > tableTime && low < sortedTableArray.size()) {
+    } else if (currentTime > tableTime && low < static_cast<int32_t>(sortedTableArray.size())) {
         return low;
     } else {
         return BUNDLE_ACTIVE_FAIL;
@@ -235,7 +236,7 @@ void BundleActiveUsageDatabase::HandleTableInfo(unsigned int databaseType)
             sort(sortedTableArray_.at(databaseType).begin(), sortedTableArray_.at(databaseType).end());
         }
         if ((databaseType == DAILY_DATABASE_INDEX) && !sortedTableArray_.at(databaseType).empty()) {
-            int lastTableIndex = sortedTableArray_.at(databaseType).size() - 1;
+            size_t lastTableIndex = sortedTableArray_.at(databaseType).size() - 1;
             eventBeginTime_ = sortedTableArray_.at(databaseType).at(lastTableIndex);
         }
     } else if (databaseType == EVENT_DATABASE_INDEX) {
@@ -258,7 +259,8 @@ void BundleActiveUsageDatabase::DeleteExcessiveTableData(unsigned int databaseTy
             BUNDLE_ACTIVE_LOGE("database table not exist");
             return;
         }
-        int32_t deleteNumber = sortedTableArray_.at(databaseType).size() - MAX_FILES_EVERY_INTERVAL_TYPE[databaseType];
+        int32_t existingNumber = static_cast<int32_t>(sortedTableArray_.at(databaseType).size());
+        int32_t deleteNumber = existingNumber - MAX_FILES_EVERY_INTERVAL_TYPE[databaseType];
         if (deleteNumber > 0) {
             for (int32_t i = 0; i < deleteNumber; i++) {
                 // 删除多余文件
@@ -708,12 +710,12 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
     int userId)
 {
     lock_guard<mutex> lock(databaseMutex_);
-    if (databaseType < 0 || databaseType >= sortedTableArray_.size()) {
+    if (databaseType < 0 || databaseType >= static_cast<int32_t>(sortedTableArray_.size())) {
         BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
         return nullptr;
     }
 
-    int tableNumber = sortedTableArray_.at(databaseType).size();
+    int tableNumber = static_cast<int>(sortedTableArray_.at(databaseType).size());
     if (tableNumber == TABLE_NOT_EXIST) {
         return nullptr;
     }
@@ -873,9 +875,9 @@ int32_t BundleActiveUsageDatabase::GetOptimalIntervalType(int64_t beginTime, int
     lock_guard<mutex> lock(databaseMutex_);
     int32_t optimalIntervalType = -1;
     int64_t leastTimeDiff = numeric_limits<int64_t>::max();
-    for (int32_t i = sortedTableArray_.size() - 1; i >= 0; i--) {
+    for (int32_t i = static_cast<int32_t>(sortedTableArray_.size() - 1); i >= 0; i--) {
         int32_t index = NearIndexOnOrBeforeCurrentTime(beginTime, sortedTableArray_.at(i));
-        int32_t size = sortedTableArray_.at(i).size();
+        int32_t size = static_cast<int32_t>(sortedTableArray_.at(i).size());
         if (index >= 0 && index < size) {
             int64_t diff = abs(sortedTableArray_.at(i).at(index) - beginTime);
             if (diff < leastTimeDiff) {
@@ -991,9 +993,8 @@ void BundleActiveUsageDatabase::UpdateUsageData(int32_t databaseType, BundleActi
             eventBeginTime_ = stats.beginTime_;
             DeleteExcessiveTableData(EVENT_DATABASE_INDEX);
         }
-        packageTableIndex = ~packageTableIndex;
-        sortedTableArray_.at(databaseType).insert(sortedTableArray_.at(databaseType).begin() + packageTableIndex,
-            stats.beginTime_);
+        sortedTableArray_.at(databaseType).push_back(stats.beginTime_);
+        sort(sortedTableArray_.at(databaseType).begin(), sortedTableArray_.at(databaseType).end());
         DeleteExcessiveTableData(databaseType);
     }
     FlushPackageInfo(databaseType, stats);
@@ -1007,7 +1008,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
 {
     lock_guard<mutex> lock(databaseMutex_);
     vector<BundleActivePackageStats> databaseUsageStats;
-    if (databaseType < 0 || databaseType >= sortedTableArray_.size()) {
+    if (databaseType < 0 || databaseType >= static_cast<int32_t>(sortedTableArray_.size())) {
         BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
         return databaseUsageStats;
     }
