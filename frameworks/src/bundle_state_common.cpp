@@ -113,7 +113,7 @@ void BundleStateCommon::GetBundleStateInfoForResult(napi_env env,
     const std::shared_ptr<std::map<std::string, BundleActivePackageStats>> &packageStats, napi_value result)
 {
     if (packageStats == nullptr) {
-        BUNDLE_ACTIVE_LOGE("wangyuanchao packageStats is invalid");
+        BUNDLE_ACTIVE_LOGE("PackageStats is invalid");
         return;
     }
     for (const auto &item : *packageStats) {
