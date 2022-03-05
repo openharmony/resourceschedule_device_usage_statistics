@@ -993,9 +993,8 @@ void BundleActiveUsageDatabase::UpdateUsageData(int32_t databaseType, BundleActi
             eventBeginTime_ = stats.beginTime_;
             DeleteExcessiveTableData(EVENT_DATABASE_INDEX);
         }
-        packageTableIndex = ~packageTableIndex;
-        sortedTableArray_.at(databaseType).insert(sortedTableArray_.at(databaseType).begin() + packageTableIndex,
-            stats.beginTime_);
+        sortedTableArray_.at(databaseType).push_back(stats.beginTime_);
+        sort(sortedTableArray_.at(databaseType).begin(), sortedTableArray_.at(databaseType).end());
         DeleteExcessiveTableData(databaseType);
     }
     FlushPackageInfo(databaseType, stats);
