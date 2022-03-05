@@ -50,7 +50,9 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
         }
         case MSG_FLUSH_TO_DISK: {
             BUNDLE_ACTIVE_LOGI("FLUSH TO DISK HANDLE");
-            bundleActiveCore_->RestoreToDatabase();
+            auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
+            BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
+            bundleActiveCore_->RestoreToDatabase(tmpHandlerobj.userId_);
             break;
         }
         case MSG_REMOVE_USER: {

@@ -682,8 +682,12 @@ void BundleActiveUsageDatabase::FlushPackageInfo(unsigned int databaseType, cons
         queryCondition.push_back(iter->first);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_STARTED_COUNT, iter->second->bundleStartedCount_);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, (iter->second->lastTimeUsed_ - stats.beginTime_));
-        valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME_CONTINUOUS_TASK, (iter->second->lastContiniousTaskUsed_ -
-            stats.beginTime_));
+        if (iter->second->lastContiniousTaskUsed_ == -1) {
+            valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME_CONTINUOUS_TASK, (iter->second->lastContiniousTaskUsed_));
+        } else {
+            valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME_CONTINUOUS_TASK, (iter->second->lastContiniousTaskUsed_ -
+                stats.beginTime_));
+        }
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_TOTAL_TIME, iter->second->totalInFrontTime_);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_TOTAL_TIME_CONTINUOUS_TASK, iter->second->totalContiniousTaskUsedTime_);
         rdbStore->Update(changeRow, tableName, valuesBucket, "userId = ? and bundleName = ?", queryCondition);
@@ -740,7 +744,11 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, relativeLastTimeUsed);
         usageStats->lastTimeUsed_ = relativeLastTimeUsed + currentPackageTime;
         bundleActiveResult->GetLong(LAST_TIME_CONTINUOUS_TASK_COLUMN_INDEX, relativeLastTimeFrontServiceUsed);
-        usageStats->lastContiniousTaskUsed_ = relativeLastTimeFrontServiceUsed + currentPackageTime;
+        if (relativeLastTimeFrontServiceUsed == -1) {
+            usageStats->lastContiniousTaskUsed_ = -1;
+        } else {
+            usageStats->lastContiniousTaskUsed_ = relativeLastTimeFrontServiceUsed + currentPackageTime;
+        }
         bundleActiveResult->GetLong(TOTAL_TIME_COLUMN_INDEX, usageStats->totalInFrontTime_);
         bundleActiveResult->GetLong(TOTAL_TIME_CONTINUOUS_TASK_COLUMN_INDEX, usageStats->totalContiniousTaskUsedTime_);
         bundleStats.insert(pair<string, shared_ptr<BundleActivePackageStats>>(usageStats->bundleName_,
@@ -752,7 +760,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         eventBeginTime_ = currentPackageTime;
     }
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-    int64_t systemTime = timer->GetWallTimeMs();
+    int64_t systemTime = GetSystemTimeMs();
     intervalStats->lastTimeSaved_ = systemTime;
     return intervalStats;
 }
@@ -935,6 +943,7 @@ void BundleActiveUsageDatabase::RenewTableTime(int64_t changedTime)
         vector<int64_t> tableArray = sortedTableArray_.at(i);
         for (unsigned int j = 0; j < tableArray.size(); j++) {
             int64_t newTime = tableArray.at(j) + changedTime;
+            BUNDLE_ACTIVE_LOGI("new table time is %{public}lld", newTime);
             if (newTime < 0) {
                 DeleteInvalidTable(i, tableArray.at(j));
             } else {
@@ -989,7 +998,7 @@ void BundleActiveUsageDatabase::UpdateUsageData(int32_t databaseType, BundleActi
     }
     FlushPackageInfo(databaseType, stats);
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-    int64_t systemTime = timer->GetWallTimeMs();
+    int64_t systemTime = GetSystemTimeMs();
     stats.lastTimeSaved_ = systemTime;
 }
 
@@ -1072,7 +1081,11 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
             bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, relativeLastTimeUsed);
             usageStats.lastTimeUsed_ = relativeLastTimeUsed + packageTableTime;
             bundleActiveResult->GetLong(LAST_TIME_CONTINUOUS_TASK_COLUMN_INDEX, relativeLastTimeFrontServiceUsed);
-            usageStats.lastContiniousTaskUsed_ = relativeLastTimeFrontServiceUsed + packageTableTime;
+            if (relativeLastTimeFrontServiceUsed == -1) {
+                usageStats.lastContiniousTaskUsed_ = -1;
+            } else {
+                usageStats.lastContiniousTaskUsed_ = relativeLastTimeFrontServiceUsed + packageTableTime;
+            }
             bundleActiveResult->GetLong(TOTAL_TIME_COLUMN_INDEX, usageStats.totalInFrontTime_);
             bundleActiveResult->GetLong(TOTAL_TIME_CONTINUOUS_TASK_COLUMN_INDEX,
                 usageStats.totalContiniousTaskUsedTime_);
@@ -1177,6 +1190,24 @@ void BundleActiveUsageDatabase::DeleteUninstalledInfo(const int userId, const st
         queryCondition.push_back(bundleName);
         rdbStore->Delete(deletedRows, tableName, "userId = ? and bundleName = ?", queryCondition);
     }
+}
+
+int64_t BundleActiveUsageDatabase::GetSystemTimeMs()
+{
+    time_t now;
+    (void)time(&now);  // unit is seconds.
+    if (static_cast<int64_t>(now) < 0) {
+        BUNDLE_ACTIVE_LOGE("Get now time error");
+        return 0;
+    }
+    auto tarEndTimePoint = std::chrono::system_clock::from_time_t(now);
+    auto tarDuration = std::chrono::duration_cast<std::chrono::milliseconds>(tarEndTimePoint.time_since_epoch());
+    int64_t tarDate = tarDuration.count();
+    if (tarDate < 0) {
+        BUNDLE_ACTIVE_LOGE("tarDuration is less than 0.");
+        return -1;
+    }
+    return static_cast<int64_t>(tarDate);
 }
 }
 }
