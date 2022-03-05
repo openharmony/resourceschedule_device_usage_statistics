@@ -24,7 +24,7 @@ namespace DeviceUsageStats {
 void BundleActiveAppStateObserver::Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
 {
     if (reportHandler != nullptr) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveAppStateObserver::Init report handler is not null, init success");
+        BUNDLE_ACTIVE_LOGI("Init report handler is not null, init success");
         reportHandler_ = reportHandler;
     }
 }

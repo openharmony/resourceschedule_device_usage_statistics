@@ -24,7 +24,6 @@ BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig)
     abilityId_ = orig.abilityId_;
     timeStamp_ = orig.timeStamp_;
     eventId_ = orig.eventId_;
-    isidle_ = orig.isidle_;
 }
 
 BundleActiveEvent::BundleActiveEvent(int eventId, int64_t timeStamp)
@@ -59,11 +58,6 @@ int64_t BundleActiveEvent::GetTimeStamp()
 int BundleActiveEvent::GetEventId()
 {
     return eventId_;
-}
-
-bool BundleActiveEvent::GetIsIdle()
-{
-    return isidle_;
 }
 
 bool BundleActiveEvent::Marshalling(Parcel &parcel) const

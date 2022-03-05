@@ -28,7 +28,13 @@ public:
     int64_t lastEventTime_;
     int64_t totalTime_;
     int count_;
-    BundleActiveEventStats() {};
+    BundleActiveEventStats() {
+        beginTimeStamp_ = 0;
+        endTimeStamp_ = 0;
+        lastEventTime_ = 0;
+        totalTime_ = 0;
+        count_ = 0;
+    };
     BundleActiveEventStats(const BundleActiveEventStats& orig);
     int GetEventId();
     int GetFirstTimeStamp();

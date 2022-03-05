@@ -45,13 +45,13 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             std::vector<BundleActivePackageStats> result;
             int size = 0;
             int intervalType = data.ReadInt32();
-            BUNDLE_ACTIVE_LOGI("BundleActiveStub::OnRemoteRequest QUERY_USAGE_STATS intervaltype is %{public}d",
+            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_USAGE_STATS intervaltype is %{public}d",
                 intervalType);
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             result = QueryPackageStats(intervalType, beginTime, endTime);
-            size = result.size();
-            BUNDLE_ACTIVE_LOGI("BundleActiveStub::OnRemoteRequest QUERY_USAGE_STATS result size is %{public}d", size);
+            size = static_cast<int>(result.size());
+            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_USAGE_STATS result size is %{public}d", size);
             reply.WriteInt32(size);
             for (int i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
@@ -67,7 +67,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             result = QueryEvents(beginTime, endTime);
-            size = result.size();
+            size = static_cast<int>(result.size());
             reply.WriteInt32(size);
             for (int i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
@@ -88,13 +88,13 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             std::vector<BundleActivePackageStats> result;
             int size = 0;
             int intervalType = data.ReadInt32();
-            BUNDLE_ACTIVE_LOGI("BundleActiveStub::OnRemoteRequest QUERY_CURRENT_USAGE_STATS intervaltype "
+            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_CURRENT_USAGE_STATS intervaltype "
                 "is %{public}d", intervalType);
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             result = QueryPackageStats(intervalType, beginTime, endTime);
-            size = result.size();
-            BUNDLE_ACTIVE_LOGI("BundleActiveStub::OnRemoteRequest QUERY_CURRENT_USAGE_STATS result size "
+            size = static_cast<int>(result.size());
+            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_CURRENT_USAGE_STATS result size "
                 "is %{public}d", size);
             reply.WriteInt32(size);
             for (int i = 0; i < size; i++) {
@@ -111,7 +111,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             result = QueryCurrentEvents(beginTime, endTime);
-            size = result.size();
+            size = static_cast<int>(result.size());
             reply.WriteInt32(size);
             for (int i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
