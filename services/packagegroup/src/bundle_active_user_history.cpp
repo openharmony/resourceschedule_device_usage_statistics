@@ -73,8 +73,9 @@ int BundleActiveUserHistory::GetLevelIndex(const string& bundleName, const int u
     }
     int64_t screenDiff = GetScreenOnTimeStamp(bootBasedTimeStamp) - oneBundleHistory->lastScreenUsedTimeStamp_;
     int64_t bootFromDiff = GetBootBasedTimeStamp(bootBasedTimeStamp) - oneBundleHistory->lastBootFromUsedTimeStamp_;
-    BUNDLE_ACTIVE_LOGI("screendiff is %{public}lld, bootfromdiff is %{public}lld, bundle name is %{public}s",
-        screenDiff, bootFromDiff, bundleName.c_str());
+    BUNDLE_ACTIVE_LOGI("screendiff is %{public}lld, bootfromdiff is %{public}lld, bundle name is %{public}s,"
+        "userid is %{public}d",
+        screenDiff, bootFromDiff, bundleName.c_str(), userId);
     for (int i = 3; i >= 0; i--) {
         if (screenDiff >= screenTimeLevel[i] && bootFromDiff >= bootFromTimeLevel[i]) {
             return i;
@@ -181,8 +182,8 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
 void BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int userId,
     const int64_t bootBasedTimeStamp, int newGroup, uint32_t groupReason, const bool& resetTimeout)
 {
-    BUNDLE_ACTIVE_LOGI("set %{public}s to group %{public}d, reason is %{public}d",
-        bundleName.c_str(), newGroup, groupReason);
+    BUNDLE_ACTIVE_LOGI("set %{public}s to group %{public}d, reason is %{public}d, userId is %{public}d",
+        bundleName.c_str(), newGroup, groupReason, userId);
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userBundleHistory =
         GetUserHistory(userId, false);
     if (userBundleHistory == nullptr) {

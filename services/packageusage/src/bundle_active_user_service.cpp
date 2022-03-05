@@ -85,11 +85,10 @@ void BundleActiveUserService::NotifyNewUpdate()
 
 void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
 {
-    BUNDLE_ACTIVE_LOGI(" BundleActiveUserService::ReportEvent later than daily expire, B time is %{public}lld,"
-        "E time is %{public}lld",
+    BUNDLE_ACTIVE_LOGI("ReportEvent, B time is %{public}lld, E time is %{public}lld",
         currentStats_[0]->beginTime_, dailyExpiryDate_.GetMilliseconds());
     if (event.timeStamp_ >= dailyExpiryDate_.GetMilliseconds()) {
-        BUNDLE_ACTIVE_LOGI(" BundleActiveUserService::ReportEvent later than daily expire, renew data in memory");
+        BUNDLE_ACTIVE_LOGI("ReportEvent later than daily expire, renew data in memory");
         RenewStatsInMemory(event.timeStamp_);
     }
     std::shared_ptr<BundleActivePeriodStats> currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
