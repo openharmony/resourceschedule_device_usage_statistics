@@ -268,6 +268,7 @@ void BundleActiveCore::RestoreToDatabaseLocked(const int userId)
 
 void BundleActiveCore::ShutDown()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     BUNDLE_ACTIVE_LOGI("ShutDown called");
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t timeStamp = timer->GetBootTimeMs();
