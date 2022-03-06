@@ -35,19 +35,19 @@ enum : int {
     DEVICE_USAGE_STATS_MODULE_COMMON = 0x01,
 };
 
-// Offset of device usage stats sub-system's errcode base.
+// Offset of device usage stats sub-system's errcode base, number : 39911424.
 constexpr ErrCode DEVICE_USAGE_STATS_COMMON_ERR_OFFSET =
     ErrCodeOffset(SUBSYS_IAWARE, DEVICE_USAGE_STATS_MODULE_COMMON);
 // Device Usage Stats Common Error Code Defined.
 enum : int {
-    ERR_USAGE_STATS_BUNDLENAME_EMPTY = DEVICE_USAGE_STATS_COMMON_ERR_OFFSET + 1,     //39911425
-    ERR_USAGE_STATS_BUNDLENAME_TYPE,                                                 //39911426
-    ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR,                                          //39911427
-    ERR_USAGE_STATS_BEGIN_TIME_INVALID,                                              //39911428
-    ERR_USAGE_STATS_END_TIME_INVALID,                                                //39911429
-    ERR_USAGE_STATS_TIME_INTERVAL,                                                   //39911430
-    ERR_USAGE_STATS_INTERVAL_TYPE,                                                   //39911431
-    ERR_USAGE_STATS_INTERVAL_NUMBER,                                                 //39911432
+    ERR_USAGE_STATS_BUNDLENAME_EMPTY = DEVICE_USAGE_STATS_COMMON_ERR_OFFSET + 1,
+    ERR_USAGE_STATS_BUNDLENAME_TYPE,
+    ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR,
+    ERR_USAGE_STATS_BEGIN_TIME_INVALID,
+    ERR_USAGE_STATS_END_TIME_INVALID,
+    ERR_USAGE_STATS_TIME_INTERVAL,
+    ERR_USAGE_STATS_INTERVAL_TYPE,
+    ERR_USAGE_STATS_INTERVAL_NUMBER,
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

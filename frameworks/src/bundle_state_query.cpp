@@ -227,7 +227,8 @@ napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
-        BUNDLE_ACTIVE_LOGE("ParseStatesParameters endTime(%{public}lld) <= beginTime(%{public}lld)", params.endTime, params.beginTime);
+        BUNDLE_ACTIVE_LOGE("ParseStatesParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
+            params.endTime, params.beginTime);
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
 
@@ -387,7 +388,7 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, intervalType is invalid.");
         params.errorCode = ERR_USAGE_STATS_INTERVAL_TYPE;
     }
-    if((params.errorCode == ERR_OK) && ((params.intervalType < INTERVAL_NUMBER_MIN)
+    if ((params.errorCode == ERR_OK) && ((params.intervalType < INTERVAL_NUMBER_MIN)
         || (params.intervalType > INTERVAL_NUMBER_MAX))) {
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, intervalType number is invalid.");
         params.errorCode = ERR_USAGE_STATS_INTERVAL_NUMBER;
@@ -531,7 +532,8 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters endTime(%{public}lld) <= beginTime(%{public}lld)", params.endTime, params.beginTime);
+        BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
+            params.endTime, params.beginTime);
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
 
