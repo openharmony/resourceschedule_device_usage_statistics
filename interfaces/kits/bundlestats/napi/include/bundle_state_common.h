@@ -33,7 +33,7 @@ public:
 
     static napi_value NapiGetUndefined(napi_env env);
 
-    static napi_value GetCallbackErrorValue(napi_env env, int errCode);
+    static napi_value GetErrorValue(napi_env env, int errCode);
 
     static void SettingCallbackPromiseInfo(
         const napi_env &env, const napi_ref &callback, CallbackPromiseInfo &info, napi_value &promise);
@@ -53,9 +53,10 @@ public:
     static void GetBundleStateInfoForResult(napi_env env,
         const std::shared_ptr<std::map<std::string, BundleActivePackageStats>> &packageStats, napi_value result);
 
-    static void SetPromiseInfo(const napi_env &env, const napi_deferred &deferred, const napi_value &result);
+    static void SetPromiseInfo(const napi_env &env, const napi_deferred &deferred,
+        const napi_value &result, const int &errorCode);
 
-    static napi_value JSParaError(const napi_env &env, const napi_ref &callback);
+    static napi_value JSParaError(const napi_env &env, const napi_ref &callback, const int &errorCode);
 
     static std::string GetTypeStringValue(napi_env env, napi_value param, const std::string &result);
 

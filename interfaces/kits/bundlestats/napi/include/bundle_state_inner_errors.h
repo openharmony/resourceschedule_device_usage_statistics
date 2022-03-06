@@ -1,0 +1,54 @@
+/*
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_INNER_ERRORS_H
+#define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_INNER_ERRORS_H
+
+#include "errors.h"
+
+namespace OHOS {
+namespace DeviceUsageStats {
+/**
+ * ErrCode layout
+ *
+ * +-----+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+ * | Bit |31|30|29|28|27|26|25|24|23|22|21|20|19|18|17|16|15|14|13|12|11|10|09|08|07|06|05|04|03|02|01|00|
+ * +-----+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+ * |Field|Reserved|        Subsystem      |  Module      |                              Code             |
+ * +-----+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+ */
+
+// DeviceUsageStats's module const defined.
+enum : int {
+    DEVICE_USAGE_STATS_MODULE_COMMON = 0x01,
+};
+
+// Offset of device usage stats sub-system's errcode base.
+constexpr ErrCode DEVICE_USAGE_STATS_COMMON_ERR_OFFSET =
+    ErrCodeOffset(SUBSYS_IAWARE, DEVICE_USAGE_STATS_MODULE_COMMON);
+// Device Usage Stats Common Error Code Defined.
+enum : int {
+    ERR_USAGE_STATS_BUNDLENAME_EMPTY = DEVICE_USAGE_STATS_COMMON_ERR_OFFSET + 1,     //39911425
+    ERR_USAGE_STATS_BUNDLENAME_TYPE,                                                 //39911426
+    ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR,                                          //39911427
+    ERR_USAGE_STATS_BEGIN_TIME_INVALID,                                              //39911428
+    ERR_USAGE_STATS_END_TIME_INVALID,                                                //39911429
+    ERR_USAGE_STATS_TIME_INTERVAL,                                                   //39911430
+    ERR_USAGE_STATS_INTERVAL_TYPE,                                                   //39911431
+    ERR_USAGE_STATS_INTERVAL_NUMBER,                                                 //39911432
+};
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_INNER_ERRORS_H

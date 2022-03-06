@@ -154,7 +154,7 @@ int32_t BundleActiveUsageDatabase::NearIndexOnOrAfterCurrentTime(int64_t current
     int64_t tableTime = -1;
     int32_t divisor = 2;
     while (low <= high) {
-        mid = (high - low) / divisor + low;
+        mid = (high + low) / divisor;
         tableTime = sortedTableArray.at(mid);
         if (currentTime > tableTime) {
             low = mid + 1;
