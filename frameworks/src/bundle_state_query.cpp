@@ -21,16 +21,16 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-const u_int32_t Is_Idle_State_MIN_PARAMS = 1;
-const u_int32_t Is_Idle_State_PARAMS = 2;
-const u_int32_t Priority_Group_MIN_PARAMS = 0;
-const u_int32_t Priority_Group_PARAMS = 1;
-const u_int32_t States_MIN_PARAMS = 2;
-const u_int32_t States_PARAMS = 3;
-const u_int32_t App_Usage_MIN_PARAMS_BY_INTERVAL = 3;
-const u_int32_t App_Usage_PARAMS_BY_INTERVAL = 4;
-const u_int32_t App_Usage_MIN_PARAMS = 2;
-const u_int32_t App_Usage_PARAMS = 3;
+const u_int32_t IS_IDLE_STATE_MIN_PARAMS = 1;
+const u_int32_t IS_IDLE_STATE_PARAMS = 2;
+const u_int32_t PRIORITY_GROUP_MIN_PARAMS = 0;
+const u_int32_t PRIORITY_GROUP_PARAMS = 1;
+const u_int32_t STATES_MIN_PARAMS = 2;
+const u_int32_t STATES_PARAMS = 3;
+const u_int32_t APP_USAGE_MIN_PARAMS_BY_INTERVAL = 3;
+const u_int32_t APP_USAGE_PARAMS_BY_INTERVAL = 4;
+const u_int32_t APP_USAGE_MIN_PARAMS = 2;
+const u_int32_t APP_USAGE_PARAMS = 3;
 const u_int32_t SECOND_ARG = 2;
 const u_int32_t THIRD_ARG = 3;
 
