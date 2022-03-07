@@ -17,7 +17,7 @@
 #define BUNDLE_ACTIVE_USAGE_HISTORY_H
 
 #include "ibundle_active_service.h"
-
+#include "bundle_active_group_common.h"
 namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActivePackageHistory {
@@ -27,10 +27,10 @@ public:
     int64_t lastGroupCalculatedTimeStamp_;
     int lastCalculatedGroup_;
     int currentGroup_;
-    int reasonInGroup_;
+    uint32_t reasonInGroup_;
     int64_t bundleAliveTimeoutTimeStamp_;
     int64_t bundleDailyTimeoutTimeStamp_;
-    BundleActivePackageHistory() {};
+    BundleActivePackageHistory();
     ~BundleActivePackageHistory() {};
 };
 }

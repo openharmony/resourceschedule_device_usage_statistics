@@ -16,6 +16,7 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_DATA_H
 #define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_DATA_H
 
+#include <map>
 #include <string>
 
 #include "napi/native_api.h"
@@ -85,7 +86,7 @@ struct AsyncCallbackInfoAppUsage {
     napi_async_work asyncWork = nullptr;
     int64_t beginTime;
     int64_t endTime;
-    std::vector<BundleActivePackageStats> packageStats;
+    std::shared_ptr<std::map<std::string, BundleActivePackageStats>> packageStats;
     CallbackPromiseInfo info;
 };
 

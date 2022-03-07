@@ -25,14 +25,14 @@ import { AsyncCallback } from './basic';
  * then returns it to you.
  * 
  * @since 7
- * @devices phone, tablet, tv, wearable, car
  */
 declare namespace bundleState {
 
     /**
      * @since 7
-     * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.App
-     * @devices phone, tablet, tv, wearable, car
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+     * @systemapi Hide this for inner system use.
      */
     interface BundleStateInfo {
         /**
@@ -83,8 +83,9 @@ declare namespace bundleState {
          * The bundle name of both objects must be the same.
          * 
          * @since 7
-         * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.App
-         * @devices phone, tablet, tv, wearable, car
+         * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
+         * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+         * @systemapi Hide this for inner system use.
          * @param toMerge Indicates the {@link BundleActiveInfo} object to merge.
          * if the bundle names of the two {@link BundleActiveInfo} objects are different.
          */
@@ -93,8 +94,9 @@ declare namespace bundleState {
 
     /**
      * @since 7
-     * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.App
-     * @devices phone, tablet, tv, wearable, car
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+     * @systemapi Hide this for inner system use.
      */
      interface BundleActiveState {
         /**
@@ -127,8 +129,9 @@ declare namespace bundleState {
      * Checks whether the application with a specified bundle name is in the idle state.
      *
      * @since 7
-     * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
-     * @devices phone, tablet, tv, wearable, car
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup.
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+     * @systemapi Hide this for inner system use.
      * @param bundleName Indicates the bundle name of the application to query.
      * @return Returns {@code true} if the application is idle in a particular period;
      * returns {@code false} otherwise. The time range of the particular period is defined by the system,
@@ -144,8 +147,9 @@ declare namespace bundleState {
      * for example, restricting the running of background tasks. </p>
      *
      * @since 7
-     * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
-     * @devices phone, tablet, tv, wearable, car
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup.
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+     * @systemapi Hide this for inner system use.
      * @return Returns the usage priority group of the calling application.
      */
     function queryAppUsagePriorityGroup(callback: AsyncCallback<number>): void;
@@ -153,8 +157,9 @@ declare namespace bundleState {
 
     /**
      * @since 7
-     * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.App
-     * @devices phone, tablet, tv, wearable, car
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+     * @systemapi Hide this for inner system use.
      */
      interface BundleActiveInfoResponse {
         [key: string]: BundleStateInfo;
@@ -166,8 +171,9 @@ declare namespace bundleState {
      * <p>This method queries usage information at the {@link #BY_OPTIMIZED} interval by default.</p>
      *
      * @since 7
-     * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.App
-     * @devices phone, tablet, tv, wearable, car
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+     * @systemapi Hide this for inner system use.
      * @param begin Indicates the start time of the query period, in milliseconds.
      * @param end Indicates the end time of the query period, in milliseconds.
      * @return Returns the {@link BundleActiveInfoResponse} objects containing the usage information about each bundle.
@@ -179,8 +185,9 @@ declare namespace bundleState {
      * Declares interval type.
      * 
      * @since 7
-     * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.App
-     * @devices phone, tablet, tv, wearable, car
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+     * @systemapi Hide this for inner system use.
      */
     export enum IntervalType {
         /**
@@ -213,8 +220,9 @@ declare namespace bundleState {
      * Queries usage information about each bundle within a specified period at a specified interval.
      *
      * @since 7
-     * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.App
-     * @devices phone, tablet, tv, wearable, car
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+     * @systemapi Hide this for inner system use.
      * @param byInterval Indicates the interval at which the usage statistics are queried.
      * The value can be {@link #BY_OPTIMIZED}, {@link #BY_DAILY},
      * {@link #BY_WEEKLY}, {@link #BY_MONTHLY}, or {@link #BY_ANNUALLY}.
@@ -229,8 +237,9 @@ declare namespace bundleState {
      * Queries state data of all bundles within a specified period identified by the start and end time.
      *
      * @since 7
-     * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.App
-     * @devices phone, tablet, tv, wearable, car
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+     * @systemapi Hide this for inner system use.
      * @param begin Indicates the start time of the query period, in milliseconds.
      * @param end Indicates the end time of the query period, in milliseconds.
      * @return Returns the list of {@link BundleActiveState} objects containing the state data of all bundles.
@@ -242,8 +251,9 @@ declare namespace bundleState {
      * Queries state data of the current bundle within a specified period.
      *
      * @since 7
-     * @sysCap SystemCapability.ResourceSchedule.UsageStatistics.App
-     * @devices phone, tablet, tv, wearable, car
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App.
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO.
+     * @systemapi Hide this for inner system use.
      * @param begin Indicates the start time of the query period, in milliseconds.
      * @param end Indicates the end time of the query period, in milliseconds.
      * @return Returns the {@link BundleActiveState} object Array containing the state data of the current bundle.

@@ -17,32 +17,30 @@
 
 #include "bundle_state_common.h"
 #include "bundle_active_log.h"
-#include "bundle_active_client.h"
 #include "bundle_state_data.h"
-#include "bundle_state_query.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-static const int32_t Is_Idle_State_MIN_PARAMS = 1;
-static const int32_t Is_Idle_State_PARAMS = 2;
-static const int32_t Priority_Group_MIN_PARAMS = 0;
-static const int32_t Priority_Group_PARAMS = 1;
-static const int32_t States_MIN_PARAMS = 2;
-static const int32_t States_PARAMS = 3;
-static const int32_t App_Usage_MIN_PARAMS_BY_INTERVAL = 3;
-static const int32_t App_Usage_PARAMS_BY_INTERVAL = 4;
-static const int32_t App_Usage_MIN_PARAMS = 2;
-static const int32_t App_Usage_PARAMS = 3;
-static const int32_t SECOND_ARG = 2;
-static const int32_t THIRD_ARG = 3;
+const u_int32_t IS_IDLE_STATE_MIN_PARAMS = 1;
+const u_int32_t IS_IDLE_STATE_PARAMS = 2;
+const u_int32_t PRIORITY_GROUP_MIN_PARAMS = 0;
+const u_int32_t PRIORITY_GROUP_PARAMS = 1;
+const u_int32_t STATES_MIN_PARAMS = 2;
+const u_int32_t STATES_PARAMS = 3;
+const u_int32_t APP_USAGE_MIN_PARAMS_BY_INTERVAL = 3;
+const u_int32_t APP_USAGE_PARAMS_BY_INTERVAL = 4;
+const u_int32_t APP_USAGE_MIN_PARAMS = 2;
+const u_int32_t APP_USAGE_PARAMS = 3;
+const u_int32_t SECOND_ARG = 2;
+const u_int32_t THIRD_ARG = 3;
 
 napi_value ParseIsIdleStateParameters(const napi_env &env, const napi_callback_info &info,
     IsIdleStateParamsInfo &params)
 {
-    size_t argc = Is_Idle_State_PARAMS;
-    napi_value argv[Is_Idle_State_PARAMS] = {nullptr};
+    size_t argc = IS_IDLE_STATE_PARAMS;
+    napi_value argv[IS_IDLE_STATE_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == Is_Idle_State_MIN_PARAMS || argc == Is_Idle_State_PARAMS,
+    NAPI_ASSERT(env, argc == IS_IDLE_STATE_MIN_PARAMS || argc == IS_IDLE_STATE_PARAMS,
         "invalid number of parameters");
 
     // argv[0] : bundleName
@@ -58,7 +56,7 @@ napi_value ParseIsIdleStateParameters(const napi_env &env, const napi_callback_i
     }
 
     // argv[1]: callback
-    if (argc == Is_Idle_State_PARAMS) {
+    if (argc == IS_IDLE_STATE_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseIsIdleStateParameters invalid parameter type. "
@@ -133,14 +131,14 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
 napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback_info &info,
     PriorityGroupParamsInfo &params)
 {
-    size_t argc = Priority_Group_PARAMS;
-    napi_value argv[Priority_Group_PARAMS] = {nullptr};
+    size_t argc = PRIORITY_GROUP_PARAMS;
+    napi_value argv[PRIORITY_GROUP_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == Priority_Group_MIN_PARAMS || argc == Priority_Group_PARAMS,
+    NAPI_ASSERT(env, argc == PRIORITY_GROUP_MIN_PARAMS || argc == PRIORITY_GROUP_PARAMS,
         "invalid number of parameters");
 
     // argv[0]: callback
-    if (argc == Priority_Group_PARAMS) {
+    if (argc == PRIORITY_GROUP_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
@@ -211,10 +209,10 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
 
 napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &info, StatesParamsInfo &params)
 {
-    size_t argc = States_PARAMS;
-    napi_value argv[States_PARAMS] = {nullptr};
+    size_t argc = STATES_PARAMS;
+    napi_value argv[STATES_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == States_MIN_PARAMS || argc == States_PARAMS,
+    NAPI_ASSERT(env, argc == STATES_MIN_PARAMS || argc == STATES_PARAMS,
         "invalid number of parameters");
 
     // argv[0] : beginTime
@@ -230,7 +228,7 @@ napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &
     }
 
     // argv[SECOND_ARG]: callback
-    if (argc == States_PARAMS) {
+    if (argc == STATES_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseStatesParameters invalid parameter type. "
@@ -379,10 +377,10 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
 napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_callback_info &info,
     AppUsageParamsByIntervalInfo &params)
 {
-    size_t argc = App_Usage_PARAMS_BY_INTERVAL;
-    napi_value argv[App_Usage_PARAMS_BY_INTERVAL] = {nullptr};
+    size_t argc = APP_USAGE_PARAMS_BY_INTERVAL;
+    napi_value argv[APP_USAGE_PARAMS_BY_INTERVAL] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == App_Usage_MIN_PARAMS_BY_INTERVAL || argc == App_Usage_PARAMS_BY_INTERVAL,
+    NAPI_ASSERT(env, argc == APP_USAGE_MIN_PARAMS_BY_INTERVAL || argc == APP_USAGE_PARAMS_BY_INTERVAL,
         "invalid number of parameters");
 
     // argv[0] : intervalType
@@ -404,7 +402,7 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
     }
 
     // argv[THIRD_ARG]: callback
-    if (argc == App_Usage_PARAMS_BY_INTERVAL) {
+    if (argc == APP_USAGE_PARAMS_BY_INTERVAL) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[THIRD_ARG], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageParametersByInterval invalid parameter type. "
@@ -487,10 +485,10 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
 
 napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info &info, AppUsageParamsInfo &params)
 {
-    size_t argc = App_Usage_PARAMS;
-    napi_value argv[App_Usage_PARAMS] = {nullptr};
+    size_t argc = APP_USAGE_PARAMS;
+    napi_value argv[APP_USAGE_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == App_Usage_MIN_PARAMS || argc == App_Usage_PARAMS,
+    NAPI_ASSERT(env, argc == APP_USAGE_MIN_PARAMS || argc == APP_USAGE_PARAMS,
         "invalid number of parameters");
 
     // argv[0] : beginTime
@@ -506,7 +504,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
     }
 
     // argv[SECOND_ARG]: callback
-    if (argc == App_Usage_PARAMS) {
+    if (argc == APP_USAGE_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageParameters invalid parameter type. "
@@ -522,7 +520,6 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
     if (ParseAppUsageParameters(env, info, params) == nullptr) {
         return BundleStateCommon::JSParaError(env, params.callback);
     }
-
     napi_value promise = nullptr;
     AsyncCallbackInfoAppUsage *asyncCallbackInfo =
         new (std::nothrow) AsyncCallbackInfoAppUsage {.env = env, .asyncWork = nullptr};
@@ -536,10 +533,8 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
     BUNDLE_ACTIVE_LOGI("QueryBundleStateInfos asyncCallbackInfo->endTime: %{public}lld",
         asyncCallbackInfo->endTime);
     BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
-
     napi_value resourceName = nullptr;
     napi_create_string_latin1(env, "QueryBundleStateInfos", NAPI_AUTO_LENGTH, &resourceName);
-
     napi_create_async_work(env,
         nullptr,
         resourceName,
@@ -548,10 +543,9 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
             AsyncCallbackInfoAppUsage *asyncCallbackInfo = (AsyncCallbackInfoAppUsage *)data;
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->packageStats =
-                    BundleActiveClient::GetInstance().QueryPackageStats(INTERVAL_TYPE_DEFAULT,
-                        asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime);
+                    BundleStateCommon::GetPackageStats(asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime);
             } else {
-                BUNDLE_ACTIVE_LOGE("QueryBundleStateInfos, asyncCallbackInfo == nullptr");
+                BUNDLE_ACTIVE_LOGE("QueryBundleStateInfos asyncCallbackInfo == nullptr");
             }
             BUNDLE_ACTIVE_LOGI("QueryBundleStateInfos worker pool thread execute end.");
         },
@@ -559,14 +553,12 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
             AsyncCallbackInfoAppUsage *asyncCallbackInfo = (AsyncCallbackInfoAppUsage *)data;
             if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
-                napi_create_array(env, &result);
+                napi_create_object(env, &result);
                 BundleStateCommon::GetBundleStateInfoForResult(env, asyncCallbackInfo->packageStats, result);
                 BundleStateCommon::GetCallbackPromiseResult(env, asyncCallbackInfo->info, result);
-
                 if (asyncCallbackInfo->info.callback != nullptr) {
                     napi_delete_reference(env, asyncCallbackInfo->info.callback);
                 }
-
                 napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
                 delete asyncCallbackInfo;
                 asyncCallbackInfo = nullptr;
@@ -574,9 +566,7 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
         },
         (void *)asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork);
-
     NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-
     if (asyncCallbackInfo->info.isCallback) {
         return BundleStateCommon::NapiGetNull(env);
     } else {

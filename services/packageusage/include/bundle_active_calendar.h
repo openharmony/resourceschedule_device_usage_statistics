@@ -23,10 +23,10 @@ namespace DeviceUsageStats {
 class BundleActiveCalendar {
 public:
     static const int64_t ONE_SECOND_MILLISECONDS = 1000;
-    static const int64_t DAY_MILLISECONDS = (int64_t)1 * 1 * 30 * 60 * 1000;
-    static const int64_t WEEK_MILLISECONDS = (int64_t)7 * 24 * 60 * 60 * 1000;
-    static const int64_t MONTH_MILLISECONDS = (int64_t)30 * 24 * 60 * 60 * 1000;
-    static const int64_t YEAR_MILLISECONDS = (int64_t)365 * 24 * 60 * 60 * 1000;
+    static const int64_t DAY_MILLISECONDS = (int64_t)1 * 1 * 10 * 60 * 1000;
+    static const int64_t WEEK_MILLISECONDS = (int64_t)1 * 1 * 20 * 60 * 1000;
+    static const int64_t MONTH_MILLISECONDS = (int64_t)1 * 1 * 30 * 60 * 1000;
+    static const int64_t YEAR_MILLISECONDS = (int64_t)1 * 1 * 40 * 60 * 1000;
     BundleActiveCalendar(const int64_t timeStamp);
     BundleActiveCalendar()
     {

@@ -21,7 +21,7 @@ void BundleActiveStatsCombiner<BundleActivePackageStats>::combine(
     const std::shared_ptr<BundleActivePeriodStats>& stats, std::vector<BundleActivePackageStats>& accumulatedResult,
     int64_t beginTime)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveStatsCombiner<BundleActivePackageStats>::combine called");
+    BUNDLE_ACTIVE_LOGI("BundleActivePackageStats combine called");
     for (auto it : stats->bundleStats_) {
         if (it.second != nullptr) {
             accumulatedResult.push_back(*(it.second));
@@ -33,9 +33,9 @@ void BundleActiveStatsCombiner<BundleActiveEvent>::combine(const std::shared_ptr
     std::vector<BundleActiveEvent>& accumulatedResult,
     int64_t beginTime)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveStatsCombiner<BundleActiveEvent>::combine called");
+    BUNDLE_ACTIVE_LOGI("BundleActiveEvent combine called");
     int startIndex = stats->events_.FindBestIndex(beginTime);
-    int size = stats->events_.events_.size();
+    int size = static_cast<int>(stats->events_.events_.size());
     for (int i = startIndex; i < size; i++) {
         accumulatedResult.push_back(stats->events_.events_[i]);
     }

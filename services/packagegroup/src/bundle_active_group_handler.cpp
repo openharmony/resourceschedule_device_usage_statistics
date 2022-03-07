@@ -33,9 +33,9 @@ BundleActiveGroupHandler::BundleActiveGroupHandler
 
 void BundleActiveGroupHandler::Init(const std::shared_ptr<BundleActiveGroupController>& bundleActiveController)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveGroupHandler::Init called");
+    BUNDLE_ACTIVE_LOGI("Init called");
     if (bundleActiveController == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveGroupHandler::Init failed bundleActiveController is null");
+        BUNDLE_ACTIVE_LOGE("Init failed bundleActiveController is null");
     }
     bundleActiveGroupController_ = bundleActiveController;
 }
@@ -64,7 +64,7 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
                 BUNDLE_ACTIVE_LOGI("BundleActiveCore::GetAllActiveUser size is 0");
                 return;
             }
-            for (int i = 0; i < osAccountInfos.size(); i++) {
+            for (uint32_t i = 0; i < osAccountInfos.size(); i++) {
                 bundleActiveGroupController_->CheckEachBundleState(osAccountInfos[i].GetLocalId());
                 bundleActiveGroupController_->RestoreToDatabase(osAccountInfos[i].GetLocalId());
             }

@@ -47,10 +47,10 @@ public:
     int64_t GetBootBasedTimeStamp(int64_t bootBasedTimeStamp);
     int64_t GetScreenOnTimeStamp(int64_t bootBasedTimeStamp);
     void ReportUsage(std::shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory, const std::string& bundleName,
-        const int newGroup, const int groupReason, const int64_t bootBasedTimeStamp,
+        const int newGroup, const uint32_t groupReason, const int64_t bootBasedTimeStamp,
         const int64_t timeUntilNextCheck);
     void SetBundleGroup(const std::string& bundleName, const int userId, const int64_t bootBasedTimeStamp,
-        int newGroup, int groupReason, const bool& resetTimeout);
+        int newGroup, uint32_t groupReason, const bool& resetTimeout);
     int GetLevelIndex(const std::string& bundleName, const int userId, const int64_t bootBasedTimeStamp,
         const int64_t screenTimeLevel[4], const int64_t bootFromTimeLevel[4]);
     void WriteDeviceDuration();
