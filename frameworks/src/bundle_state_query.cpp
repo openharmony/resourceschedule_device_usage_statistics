@@ -37,10 +37,10 @@ const u_int32_t THIRD_ARG = 3;
 napi_value ParseIsIdleStateParameters(const napi_env &env, const napi_callback_info &info,
     IsIdleStateParamsInfo &params)
 {
-    size_t argc = Is_Idle_State_PARAMS;
-    napi_value argv[Is_Idle_State_PARAMS] = {nullptr};
+    size_t argc = IS_IDLE_STATE_PARAMS;
+    napi_value argv[IS_IDLE_STATE_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == Is_Idle_State_MIN_PARAMS || argc == Is_Idle_State_PARAMS,
+    NAPI_ASSERT(env, argc == IS_IDLE_STATE_MIN_PARAMS || argc == IS_IDLE_STATE_PARAMS,
         "invalid number of parameters");
 
     // argv[0] : bundleName
@@ -56,7 +56,7 @@ napi_value ParseIsIdleStateParameters(const napi_env &env, const napi_callback_i
     }
 
     // argv[1]: callback
-    if (argc == Is_Idle_State_PARAMS) {
+    if (argc == IS_IDLE_STATE_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseIsIdleStateParameters invalid parameter type. "
@@ -131,14 +131,14 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
 napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback_info &info,
     PriorityGroupParamsInfo &params)
 {
-    size_t argc = Priority_Group_PARAMS;
-    napi_value argv[Priority_Group_PARAMS] = {nullptr};
+    size_t argc = PRIORITY_GROUP_PARAMS;
+    napi_value argv[PRIORITY_GROUP_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == Priority_Group_MIN_PARAMS || argc == Priority_Group_PARAMS,
+    NAPI_ASSERT(env, argc == PRIORITY_GROUP_MIN_PARAMS || argc == PRIORITY_GROUP_PARAMS,
         "invalid number of parameters");
 
     // argv[0]: callback
-    if (argc == Priority_Group_PARAMS) {
+    if (argc == PRIORITY_GROUP_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
@@ -209,10 +209,10 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
 
 napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &info, StatesParamsInfo &params)
 {
-    size_t argc = States_PARAMS;
-    napi_value argv[States_PARAMS] = {nullptr};
+    size_t argc = STATES_PARAMS;
+    napi_value argv[STATES_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == States_MIN_PARAMS || argc == States_PARAMS,
+    NAPI_ASSERT(env, argc == STATES_MIN_PARAMS || argc == STATES_PARAMS,
         "invalid number of parameters");
 
     // argv[0] : beginTime
@@ -228,7 +228,7 @@ napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &
     }
 
     // argv[SECOND_ARG]: callback
-    if (argc == States_PARAMS) {
+    if (argc == STATES_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseStatesParameters invalid parameter type. "
@@ -377,10 +377,10 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
 napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_callback_info &info,
     AppUsageParamsByIntervalInfo &params)
 {
-    size_t argc = App_Usage_PARAMS_BY_INTERVAL;
-    napi_value argv[App_Usage_PARAMS_BY_INTERVAL] = {nullptr};
+    size_t argc = APP_USAGE_PARAMS_BY_INTERVAL;
+    napi_value argv[APP_USAGE_PARAMS_BY_INTERVAL] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == App_Usage_MIN_PARAMS_BY_INTERVAL || argc == App_Usage_PARAMS_BY_INTERVAL,
+    NAPI_ASSERT(env, argc == APP_USAGE_MIN_PARAMS_BY_INTERVAL || argc == APP_USAGE_PARAMS_BY_INTERVAL,
         "invalid number of parameters");
 
     // argv[0] : intervalType
@@ -402,7 +402,7 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
     }
 
     // argv[THIRD_ARG]: callback
-    if (argc == App_Usage_PARAMS_BY_INTERVAL) {
+    if (argc == APP_USAGE_PARAMS_BY_INTERVAL) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[THIRD_ARG], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageParametersByInterval invalid parameter type. "
@@ -485,10 +485,10 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
 
 napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info &info, AppUsageParamsInfo &params)
 {
-    size_t argc = App_Usage_PARAMS;
-    napi_value argv[App_Usage_PARAMS] = {nullptr};
+    size_t argc = APP_USAGE_PARAMS;
+    napi_value argv[APP_USAGE_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == App_Usage_MIN_PARAMS || argc == App_Usage_PARAMS,
+    NAPI_ASSERT(env, argc == APP_USAGE_MIN_PARAMS || argc == APP_USAGE_PARAMS,
         "invalid number of parameters");
 
     // argv[0] : beginTime
@@ -504,7 +504,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
     }
 
     // argv[SECOND_ARG]: callback
-    if (argc == App_Usage_PARAMS) {
+    if (argc == APP_USAGE_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageParameters invalid parameter type. "
