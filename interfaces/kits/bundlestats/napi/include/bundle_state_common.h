@@ -16,11 +16,11 @@
 #ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_COMMON_H
 #define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_COMMON_H
 
-#include <string_ex.h>
-
+#include "bundle_active_client.h"
+#include "bundle_state_data.h"
+#include "bundle_state_query.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-#include "bundle_state_data.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -50,8 +50,8 @@ public:
     static void GetBundleStateInfoByIntervalForResult(
         napi_env env, const std::vector<BundleActivePackageStats> &packageStats, napi_value result);
 
-    static void GetBundleStateInfoForResult(
-        napi_env env, const std::vector<BundleActivePackageStats> &packageStats, napi_value result);
+    static void GetBundleStateInfoForResult(napi_env env,
+        const std::shared_ptr<std::map<std::string, BundleActivePackageStats>> &packageStats, napi_value result);
 
     static void SetPromiseInfo(const napi_env &env, const napi_deferred &deferred, const napi_value &result);
 
@@ -62,6 +62,11 @@ public:
     static napi_value GetInt64NumberValue(const napi_env &env, const napi_value &value, int64_t &result);
 
     static napi_value GetInt32NumberValue(const napi_env &env, const napi_value &value, int32_t &result);
+
+    static std::shared_ptr<std::map<std::string, BundleActivePackageStats>> GetPackageStats(
+	    int64_t &beginTime, int64_t &endTime);
+
+    static void MergePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

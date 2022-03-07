@@ -36,7 +36,7 @@ public:
     BundleActiveEvent event_;
     int userId_;
     std::string bundleName_;
-    BundleActiveReportHandlerObject() {};
+    BundleActiveReportHandlerObject();
     BundleActiveReportHandlerObject(const BundleActiveReportHandlerObject& orig);
     ~BundleActiveReportHandlerObject() {};
 };
@@ -60,7 +60,7 @@ public:
     /*
     * function: OnStatsChanged, report flush to disk, end_of_day event to service.
     */
-    void OnStatsChanged() override;
+    void OnStatsChanged(const int userId) override;
     /*
     * function: OnStatsChanged, when device reboot after more than one day, BundleActiveUserService
     * will use it to flush group info.
@@ -91,10 +91,10 @@ public:
     * function: SetHandler, BundleActiveService call it to set event report handler
     */
     void SetHandler(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
-    // flush database.
-    void RestoreToDatabase();
-    // flush database
-    void RestoreToDatabaseLocked();
+    // flush database for one user data
+    void RestoreToDatabase(const int userId);
+    // flush database for one user data
+    void RestoreToDatabaseLocked(const int userId);
     // called when device shutdown, update the in-memory stat and flush the database.
     void ShutDown();
     // query the package stat for calling user.
@@ -108,7 +108,7 @@ public:
     // query the app group for calling app.
     int QueryPackageGroup(const int userId, const std::string bundleName);
     // get the wall time and check if the wall time is changed.
-    int64_t CheckTimeChangeAndGetWallTime();
+    int64_t CheckTimeChangeAndGetWallTime(int userId = 0);
     // convert event timestamp from boot based time to wall time.
     void ConvertToSystemTimeLocked(BundleActiveEvent& event);
     // get or create BundleActiveUserService object for specifice user.
@@ -122,6 +122,7 @@ public:
     void GetAllActiveUser(std::vector<OHOS::AccountSA::OsAccountInfo> &osAccountInfos);
     // when service stop, call it to unregister commen event and shutdown call back.
     void UnRegisterSubscriber();
+    int64_t GetSystemTimeMs();
 
 private:
     static const int64_t FLUSH_INTERVAL = TWO_MINUTE;
@@ -138,6 +139,7 @@ private:
     std::map<int, std::shared_ptr<BundleActiveUserService>> userStatServices_;
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
+    void RestoreAllData();
 };
 }
 }

@@ -41,6 +41,9 @@ ohos_shared_library("usagestatsinner") {
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
+
+  deps = [ ":usagestatservice" ]
+
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
 }
@@ -52,7 +55,7 @@ ohos_prebuilt_etc("device_usage_statistics_service_init") {
   subsystem_name = "resourceschedule"
 }
 
-ohos_shared_library("usagestatskit") {
+ohos_shared_library("bundlestate") {
   sources = [
     "frameworks/src/bundle_state_common.cpp",
     "frameworks/src/bundle_state_init.cpp",
@@ -65,7 +68,10 @@ ohos_shared_library("usagestatskit") {
     "services/packageusage/include",
   ]
 
-  deps = [ "//foundation/resourceschedule/${device_usage_statistics_part_name}:usagestatsinner" ]
+  deps = [
+    ":usagestatservice",
+    ":usagestatsinner",
+  ]
 
   external_deps = [
     "dmsfwk_standard:zuri",
@@ -87,6 +93,7 @@ ohos_shared_library("usagestatservice") {
     "services/common/src/bundle_active_binary_search.cpp",
     "services/common/src/bundle_active_continuous_task_observer.cpp",
     "services/common/src/bundle_active_core.cpp",
+    "services/common/src/bundle_active_log.cpp",
     "services/common/src/bundle_active_open_callback.cpp",
     "services/common/src/bundle_active_service.cpp",
     "services/common/src/bundle_active_shutdown_callback_proxy.cpp",

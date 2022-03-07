@@ -40,7 +40,7 @@ napi_module _module = {
     .nm_flags = 0,
     .nm_filename = nullptr,
     .nm_register_func = BundleStateInit,
-    .nm_modname = "usagestatskit",
+    .nm_modname = "bundleState",
     .nm_priv = ((void *)0),
     .reserved = {0}
 };

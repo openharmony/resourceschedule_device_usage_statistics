@@ -29,7 +29,7 @@ BundleActiveBinarySearch::~BundleActiveBinarySearch()
 int32_t BundleActiveBinarySearch::BinarySearch(const std::vector<int64_t> &tableNameArray, int64_t targetValue)
 {
     int32_t low = 0;
-    int32_t high = tableNameArray.size() - 1;
+    int32_t high = static_cast<int32_t>(tableNameArray.size() - 1);
     while (low <= high) {
         int32_t mid = (low + high) >> 1;
         int64_t midValue = tableNameArray.at(mid);
@@ -41,7 +41,7 @@ int32_t BundleActiveBinarySearch::BinarySearch(const std::vector<int64_t> &table
             return mid;
         }
     }
-    return ~low;
+    return -1;
 }
 }
 }

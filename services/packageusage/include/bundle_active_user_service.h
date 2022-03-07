@@ -44,9 +44,9 @@ public:
     }
     void Init(const int64_t timeStamp);
     ~BundleActiveUserService() {};
-    void ReportForFlushAndShutdown(const BundleActiveEvent& event);
+    void ReportForShutdown(const BundleActiveEvent& event);
     void ReportEvent(const BundleActiveEvent& event);
-    void RestoreStats();
+    void RestoreStats(bool forced);
     void RenewStatsInMemory(const int64_t timeStamp);
     void RenewTableTime(int64_t oldTime, int64_t newTime);
     void OnUserRemoved();
@@ -57,6 +57,7 @@ public:
         const int64_t endTime, const int userId, const std::string& bundleName);
     std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, const int userId,
         const std::string& bundleName);
+    void LoadActiveStats(const int64_t timeStamp, const bool& force, const bool& timeChanged);
 
 private:
     static const int64_t ONE_SECOND_MILLISECONDS = 1000;
@@ -68,7 +69,6 @@ private:
     inline static const std::vector<int64_t> PERIOD_LENGTH = {BundleActiveCalendar::DAY_MILLISECONDS,
         BundleActiveCalendar::WEEK_MILLISECONDS, BundleActiveCalendar::MONTH_MILLISECONDS,
         BundleActiveCalendar::YEAR_MILLISECONDS};
-    void LoadActiveStats(const int64_t timeStamp, const bool& force);
     void NotifyStatsChanged();
     void NotifyNewUpdate();
     void printstat();
