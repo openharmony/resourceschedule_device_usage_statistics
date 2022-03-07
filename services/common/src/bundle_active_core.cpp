@@ -236,7 +236,7 @@ void BundleActiveCore::RestoreAllData()
         bundleGroupController_->RestoreDurationToDatabase();
     }
     if (!handler_.expired()) {
-        BUNDLE_ACTIVE_LOGI("RestoreToDatabaseLocked remove flush to disk event");
+        BUNDLE_ACTIVE_LOGI("RestoreAllData remove flush to disk event");
         handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
     }
 }
@@ -322,7 +322,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
             it->second->RenewTableTime(expectedSystemTime, actualSystemTime);
             it->second->LoadActiveStats(actualSystemTime, true, true);
             if (!handler_.expired()) {
-                BUNDLE_ACTIVE_LOGI("RestoreToDatabaseLocked remove flush to disk event");
+                BUNDLE_ACTIVE_LOGI("CheckTimeChangeAndGetWallTime remove flush to disk event");
                 handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
             }
         }
