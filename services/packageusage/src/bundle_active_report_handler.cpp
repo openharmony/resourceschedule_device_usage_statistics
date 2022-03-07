@@ -61,16 +61,15 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
             bundleActiveCore_->OnUserRemoved(tmpHandlerobj.userId_);
             break;
         }
-        case MSG_DEVICE_SHUTDOWN: {
-            bundleActiveCore_->ShutDown();
-            break;
-        }
         case MSG_BUNDLE_UNINSTALLED: {
             BUNDLE_ACTIVE_LOGI("MSG_BUNDLE_UNINSTALLED CALLED");
             auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->OnBundleUninstalled(tmpHandlerobj.userId_, tmpHandlerobj.bundleName_);
             break;
+        }
+        case MSG_SWITCH_USER: {
+            bundleActiveCore_->OnUserSwitched();
         }
         default: {
             break;

@@ -45,6 +45,18 @@ void BundleActiveGroupController::OnUserRemoved(const int userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     bundleUserHistory_->userHistory_.erase(userId);
+    if (!activeGroupHandler_.expired()) {
+        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
+    }
+}
+
+void BundleActiveGroupController::OnUserSwitched(const int userId)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!activeGroupHandler_.expired()) {
+        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
+    }
+    PeriodCheckBundleState(userId);
 }
 
 void BundleActiveGroupController::OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp)

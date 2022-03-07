@@ -45,6 +45,7 @@ BundleActiveCore::BundleActiveCore()
 {
     systemTimeShot_ = -1;
     realTimeShot_ = -1;
+    lastUsedUser_ = -1;
 }
 
 BundleActiveCore::~BundleActiveCore()
@@ -83,6 +84,11 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
         if (!activeGroupController_.expired() && userId >= 0) {
             activeGroupController_.lock()->PeriodCheckBundleState(userId);
         }
+    } else if (action == CommonEventSupport::COMMON_EVENT_USER_SWITCHED) {
+        int32_t userId = data.GetCode();
+        BUNDLE_ACTIVE_LOGI("OnReceiveEvent receive switched user event, user id is %{public}d", userId);
+        auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_SWITCH_USER);
+        bundleActiveReportHandler_.lock()->SendEvent(event);
     } else if (action == CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED ||
         action == CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED) {
         int32_t userId = data.GetWant().GetIntParam("userId", 0);
@@ -113,6 +119,7 @@ void BundleActiveCore::RegisterSubscriber()
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);
+    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     commonEventSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
         bundleGroupController_, handler_);
@@ -157,11 +164,15 @@ void BundleActiveCore::InitBundleGroupController()
         BUNDLE_ACTIVE_LOGI("Init Set group controller and handler done");
     }
     RegisterSubscriber();
-    std::vector<OHOS::AccountSA::OsAccountInfo> osAccountInfos;
-    GetAllActiveUser(osAccountInfos);
+    std::vector<int> activatedOsAccountIds;
     bundleGroupController_->bundleGroupEnable_ = true;
-    for (uint32_t i = 0; i < osAccountInfos.size(); i++) {
-        bundleGroupController_->PeriodCheckBundleState(osAccountInfos[i].GetLocalId());
+    GetAllActiveUser(activatedOsAccountIds);
+    if (activatedOsAccountIds.size() == 0) {
+        BUNDLE_ACTIVE_LOGI("query activated account failed, no account activated");
+        return;
+    }
+    for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
+        bundleGroupController_->PeriodCheckBundleState(activatedOsAccountIds[i]);
     }
 }
 
@@ -236,7 +247,7 @@ void BundleActiveCore::RestoreAllData()
         bundleGroupController_->RestoreDurationToDatabase();
     }
     if (!handler_.expired()) {
-        BUNDLE_ACTIVE_LOGI("RestoreToDatabaseLocked remove flush to disk event");
+        BUNDLE_ACTIVE_LOGI("RestoreAllData remove flush to disk event");
         handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
     }
 }
@@ -322,7 +333,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
             it->second->RenewTableTime(expectedSystemTime, actualSystemTime);
             it->second->LoadActiveStats(actualSystemTime, true, true);
             if (!handler_.expired()) {
-                BUNDLE_ACTIVE_LOGI("RestoreToDatabaseLocked remove flush to disk event");
+                BUNDLE_ACTIVE_LOGI("CheckTimeChangeAndGetWallTime remove flush to disk event");
                 handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
             }
         }
@@ -352,9 +363,37 @@ void BundleActiveCore::OnUserRemoved(const int userId)
     bundleGroupController_->OnUserRemoved(userId);
 }
 
+void BundleActiveCore::OnUserSwitched()
+{
+    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+    auto it = userStatServices_.find(lastUsedUser_);
+    if (it != userStatServices_.end()) {
+        if (it != userStatServices_.end()) {
+            BundleActiveEvent event;
+            event.eventId_ = BundleActiveEvent::FLUSH;
+            int64_t actualRealTime = timer->GetBootTimeMs();
+            event.timeStamp_ = (actualRealTime - realTimeShot_) + systemTimeShot_;
+            event.abilityId_ = "";
+            it->second->ReportEvent(event);
+            it->second->RestoreStats(true);
+        }
+    }
+    std::vector<int> activatedOsAccountIds;
+    GetAllActiveUser(activatedOsAccountIds);
+    if (activatedOsAccountIds.size() == 0) {
+        BUNDLE_ACTIVE_LOGI("query activated account failed, no account activated");
+        return;
+    }
+    for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
+        BUNDLE_ACTIVE_LOGI("start to period check for userId %{public}d", activatedOsAccountIds[i]);
+        bundleGroupController_->OnUserSwitched(activatedOsAccountIds[i]);
+    }
+}
+
 int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    lastUsedUser_ = userId;
     if (userId == 0) {
         return -1;
     }
@@ -468,14 +507,13 @@ int BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int user
     return bundleGroupController_->IsBundleIdle(bundleName, userId);
 }
 
-void BundleActiveCore::GetAllActiveUser(std::vector<OHOS::AccountSA::OsAccountInfo> &osAccountInfos)
+void BundleActiveCore::GetAllActiveUser(std::vector<int>& activatedOsAccountIds)
 {
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::QueryAllCreatedOsAccounts(osAccountInfos);
-    if (ret != ERR_OK) {
-        BUNDLE_ACTIVE_LOGI("GetAllActiveUser failed");
+    if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
+        BUNDLE_ACTIVE_LOGI("query activated account failed");
         return;
     }
-    if (osAccountInfos.size() == 0) {
+    if (activatedOsAccountIds.size() == 0) {
         BUNDLE_ACTIVE_LOGI("GetAllActiveUser size is 0");
         return;
     }
