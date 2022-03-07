@@ -214,15 +214,7 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
     int result = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("IsBundleIdle user id is %{public}d", userId);
-        if (!GetBundleMgrProxy()) {
-            BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");
-            return true;
-        }
-        bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(callingUid);
-        if (bundleIsSystemApp == true) {
-            result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
-        }
+        result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
     }
     if (result == 0) {
         return false;
@@ -321,15 +313,9 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryCurrentEvents(const int
     int userId = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("QueryCurrentEvents userid is %{public}d", userId);
-        if (!GetBundleMgrProxy()) {
-            BUNDLE_ACTIVE_LOGE("QueryCurrentEvents get bundle manager proxy failed!");
-            return result;
-        }
         std::string bundleName = "";
         sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId);
-        if (!bundleName.empty() && isSystemAppAndHasPermission == true) {
+        if (!bundleName.empty()) {
             BUNDLE_ACTIVE_LOGI("QueryCurrentEvents buindle name is %{public}s",
                 bundleName.c_str());
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, bundleName);
