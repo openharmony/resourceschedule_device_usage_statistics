@@ -78,12 +78,6 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
             auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REMOVE_USER, handlerobjToPtr);
             bundleActiveReportHandler_.lock()->SendEvent(event);
         }
-    } else if (action == CommonEventSupport::COMMON_EVENT_USER_ADDED) {
-        int32_t userId = data.GetCode();
-        BUNDLE_ACTIVE_LOGI("OnReceiveEvent receive add user event, user id is %{public}d", userId);
-        if (!activeGroupController_.expired() && userId >= 0) {
-            activeGroupController_.lock()->PeriodCheckBundleState(userId);
-        }
     } else if (action == CommonEventSupport::COMMON_EVENT_USER_SWITCHED) {
         int32_t userId = data.GetCode();
         BUNDLE_ACTIVE_LOGI("OnReceiveEvent receive switched user event, user id is %{public}d", userId);
@@ -115,11 +109,10 @@ void BundleActiveCore::RegisterSubscriber()
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_OFF);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_ON);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_USER_REMOVED);
-    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_USER_ADDED);
+    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);
-    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     commonEventSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
         bundleGroupController_, handler_);
