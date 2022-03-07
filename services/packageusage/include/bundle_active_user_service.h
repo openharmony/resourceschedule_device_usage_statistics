@@ -71,7 +71,8 @@ private:
         BundleActiveCalendar::YEAR_MILLISECONDS};
     void NotifyStatsChanged();
     void NotifyNewUpdate();
-    void PrintInMemStats();
+    void PrintInMemPackageStats(const int idx);
+    void PrintInMemEventStats();
 };
 }
 }

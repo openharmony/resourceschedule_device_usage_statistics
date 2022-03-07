@@ -309,7 +309,7 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
     BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}d",
         static_cast<int>(result.size()));
-    PrintInMemStats();
+    PrintInMemPackageStats(intervalType);
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats need in memory stats");
@@ -344,9 +344,10 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     if (beginTime >= currentStats->endTime_) {
         return result;
     }
-    BUNDLE_ACTIVE_LOGI("QueryEvents bundle name is %{public}s", bundleName.c_str());
+    BUNDLE_ACTIVE_LOGI("Query event bundle name is %{public}s", bundleName.c_str());
     result = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
-    BUNDLE_ACTIVE_LOGI("event database query size is %{public}d", result.size());
+    BUNDLE_ACTIVE_LOGI("Query event data in db result size is %{public}d", result.size());
+    PrintInMemEventStats();
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryEvents need in memory stats");
@@ -363,10 +364,9 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     return result;
 }
 
-void BundleActiveUserService::PrintInMemStats()
+void BundleActiveUserService::PrintInMemPackageStats(const int idx)
 {
-    BUNDLE_ACTIVE_LOGI("PrintInMemStats called");
-    int idx = 0;
+    BUNDLE_ACTIVE_LOGI("PrintInMemPackageStats called");
     for (auto it : currentStats_[idx]->bundleStats_) {
         BUNDLE_ACTIVE_LOGI("In mem, bundle name is %{public}s", it.first.c_str());
         int64_t lastTimeUsed = it.second->lastTimeUsed_;
@@ -377,6 +377,12 @@ void BundleActiveUserService::PrintInMemStats()
             "total continuous task is %{public}lld, lastTimeContinuousTaskUsed is %{public}lld",
             totalUsedTime, lastTimeUsed, totalTimeContinuousTaskUsed, lastTimeContinuousTaskUsed);
     }
+}
+
+void BundleActiveUserService::PrintInMemEventStats()
+{
+    BUNDLE_ACTIVE_LOGI("PrintInMemEventStats called");
+    int idx = 0;
     int size = static_cast<int>(currentStats_[idx]->events_.events_.size());
     for (int i = 0; i < size; i++) {
         std::string abilityId = currentStats_[idx]->events_.events_[i].abilityId_;
