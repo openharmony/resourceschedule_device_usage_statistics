@@ -100,7 +100,7 @@ void BundleActiveService::InitNecessaryState()
     }
     try {
         shutdownCallback_ = new BundleActiveShutdownCallbackService(bundleActiveCore_);
-    } catch(const std::bad_alloc &e) {
+    } catch (const std::bad_alloc &e) {
         BUNDLE_ACTIVE_LOGE("Memory allocation failed");
         return;
     }

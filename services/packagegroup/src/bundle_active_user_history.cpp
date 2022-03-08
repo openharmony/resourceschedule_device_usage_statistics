@@ -31,6 +31,7 @@ BundleActivePackageHistory::BundleActivePackageHistory()
     reasonInGroup_ = DeviceUsageStatsGroupConst::GROUP_CONTROL_REASON_DEFAULT;
     bundleAliveTimeoutTimeStamp_ = 0;
     bundleDailyTimeoutTimeStamp_ = 0;
+    lastCalculatedGroup_ = 60;
 };
 
 void BundleActiveUserHistory::WriteDeviceDuration()

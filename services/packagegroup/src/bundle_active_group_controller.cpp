@@ -221,7 +221,7 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
             return;
         }
         int64_t timeUntilNextCheck;
-        int eventReason = EventToGroupReason(eventId);
+        uint32_t eventReason = EventToGroupReason(eventId);
         switch (eventId) {
             case BundleActiveEvent::NOTIFICATION_SEEN:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_DAILY,
