@@ -18,16 +18,15 @@ the component will be periodically refreshed to the database for persistent stor
 
 ```
 /foundation/resourceschedule/device_usage_statistics
-├── ohos.build                         # Compilation script
 ├── BUILD.gn                           # Module compilation script
-├── interfaces
-│   ├── innerkits                      # Internal interface directory
-│   └── kits                           # External interface directory
-├── services                           # Service layer directory
-├── frameworks
-│   ├── JS                             # External JS interface implementation directory
-│   └── native                         # External native interface implementation directory
+├── LICENSE                            # Open source protocol
 ├── adapter                            # Adaptation directory
+├── bundle.json                        # Component decoupling and compiling script
+├── frameworks                         # Framework layer directory
+├── interfaces
+│   ├── innerkits                      # Internal interface directory
+│   └── kits                           # External interface directory
+├── services                           # Service layer directory
 └── test                               # Testing case directory
 ```
 
@@ -45,20 +44,20 @@ Taking app usage interface as an example, the main exposed interfaces are as fol
 </th>
 </tr>
 </thead>
-<tbody><tr id="row1975804332517"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p5758174313255"><a name="p5758174313255"></a><a name="p5758174313255"></a>queryBundleActiveStates(begin::number, end::number, callback:AsyncCallback&lt;Array&lt;BundleActiveState&gt;&gt;):void</p>
+<tbody><tr id="row1975804332517"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p5758174313255"><a name="p5758174313255"></a><a name="p5758174313255"></a>queryBundleActiveStates(begin:number, end:number, callback:AsyncCallback&lt;Array&lt;BundleActiveState&gt;&gt;):void</p>
 </td>
 <td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p14758743192519"><a name="p14758743192519"></a><a name="p14758743192519"></a>Queries the event collection of all applications through time interval.</p>
 </td>
 </tr>
-<tr id="row2758943102514"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p107581438250"><a name="p107581438250"></a><a name="p107581438250"></a>queryBundleStateInfos(begin::number, end::number, callback:AsyncCallback&lt;BundleStateInfoResponse&gt;):void</p>
+<tr id="row2758943102514"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p107581438250"><a name="p107581438250"></a><a name="p107581438250"></a>queryBundleStateInfos(begin:number, end:number, callback:AsyncCallback&lt;BundleStateInfoResponse&gt;):void</p>
 </td>
 <td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p8758743202512"><a name="p8758743202512"></a><a name="p8758743202512"></a>Uses the start and end time to query the application usage time statistics.</p>
 </td>
 </tr>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryCurrentBundleActiveStates(begin::number, end::number, callback:AsyncCallback&lt;Array&lt;BundleActiveState&gt;&gt;):void</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryCurrentBundleActiveStates(begin:number, end:number, callback:AsyncCallback&lt;Array&lt;BundleActiveState&gt;&gt;):void</p>
 </td>
 <td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries the event collection of the current application through the time interval.</p>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryBundleStateInfoByInterval(byInterval:intervalType, begin::number, end::number, callback:AsyncCallback&lt;Array&lt;BundleStateInfo&gt;&gt;):void</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryBundleStateInfoByInterval(byInterval:intervalType, begin:number, end:number, callback:AsyncCallback&lt;Array&lt;BundleStateInfo&gt;&gt;):void</p>
 </td>
 <td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries application usage duration statistics by time interval.</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(callback:AsyncCallback&lt;number&gt;):void</p>
@@ -76,7 +75,6 @@ Taking app usage interface as an example, the main exposed interfaces are as fol
 
 There are many interfaces for device usage statistics. Take app usage interface as an example to introduce the interface logic.
 
-- **running process**:The device usage statistics service starts and runs in the foundation process.
 - **device usage statistics saving time**:
 >1.  refreshing is triggered every 30 minutes;
 >2.  refreshing is triggered when system time changes;
