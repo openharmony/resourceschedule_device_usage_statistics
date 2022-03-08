@@ -39,8 +39,8 @@ public:
     static const int MSG_REPORT_EVENT_TO_ALL_USER = 1;
     static const int MSG_FLUSH_TO_DISK = 2;
     static const int MSG_REMOVE_USER = 3;
-    static const int MSG_DEVICE_SHUTDOWN = 4;
-    static const int MSG_BUNDLE_UNINSTALLED = 5;
+    static const int MSG_BUNDLE_UNINSTALLED = 4;
+    static const int MSG_SWITCH_USER = 5;
 
 private:
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;

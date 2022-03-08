@@ -16,16 +16,15 @@
 
 ```
 /foundation/resourceschedule/device_usage_statistics
-├── ohos.build                         # 编译脚本
 ├── BUILD.gn                           # 模块编译脚本
-├── interfaces
-│   ├── innerkits                      # 对内接口目录
-│   └── kits                           # 对外接口目录
-├── services                           # 服务层目录
-├── frameworks
-│   ├── JS                             # 对外JS接口实现目录
-│   └── native                         # 对外Native接口实现目录
+├── LICENSE                            # 开源协议
 ├── adapter                            # 适配目录
+├── bundle.json                        # 部件化解耦及编译脚本
+├── frameworks                         # 框架层目录
+├── interfaces
+│   ├── innerkits                      # 对内接口目录
+│   └── kits                           # 对外接口目录
+├── services                           # 服务层目录
 └── test                               # 测试用例目录
 ```
 
@@ -42,20 +41,20 @@
 </th>
 </tr>
 </thead>
-<tbody><tr id="row1975804332517"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p5758174313255"><a name="p5758174313255"></a><a name="p5758174313255"></a>queryBundleActiveStates(begin::number, end::number, callback:AsyncCallback&lt;Array&lt;BundleActiveState&gt;&gt;):void</p>
+<tbody><tr id="row1975804332517"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p5758174313255"><a name="p5758174313255"></a><a name="p5758174313255"></a>queryBundleActiveStates(begin:number, end:number, callback:AsyncCallback&lt;Array&lt;BundleActiveState&gt;&gt;):void</p>
 </td>
 <td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p14758743192519"><a name="p14758743192519"></a><a name="p14758743192519"></a>通过指定起始和结束时间查询所有应用的事件集合。</p>
 </td>
 </tr>
-<tr id="row2758943102514"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p107581438250"><a name="p107581438250"></a><a name="p107581438250"></a>queryBundleStateInfos(begin::number, end::number, callback:AsyncCallback&lt;BundleStateInfoResponse&gt;):void</p>
+<tr id="row2758943102514"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p107581438250"><a name="p107581438250"></a><a name="p107581438250"></a>queryBundleStateInfos(begin:number, end:number, callback:AsyncCallback&lt;BundleStateInfoResponse&gt;):void</p>
 </td>
 <td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p8758743202512"><a name="p8758743202512"></a><a name="p8758743202512"></a>通过指定起始和结束时间查询应用使用时长统计信息。</p>
 </td>
 </tr>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryCurrentBundleActiveStates(begin::number, end::number, callback:AsyncCallback&lt;Array&lt;BundleActiveState&gt;&gt;):void</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryCurrentBundleActiveStates(begin:number, end:number, callback:AsyncCallback&lt;Array&lt;BundleActiveState&gt;&gt;):void</p>
 </td>
 <td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>通过指定起始和结束时间查询当前应用的事件集合。</p>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryBundleStateInfoByInterval(byInterval:intervalType, begin::number, end::number, callback:AsyncCallback&lt;Array&lt;BundleStateInfo&gt;&gt;):void</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryBundleStateInfoByInterval(byInterval:intervalType, begin:number, end:number, callback:AsyncCallback&lt;Array&lt;BundleStateInfo&gt;&gt;):void</p>
 </td>
 <td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>通过指定时间段间隔（天、周、月、年）查询应用使用时长统计信息。</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(callback:AsyncCallback&lt;number&gt;):void</p>
@@ -73,7 +72,6 @@
 
 设备使用信息统计接口众多，以应用使用详情（app usage）接口为例，介绍接口逻辑。
 
-- **运行进程**：设备使用信息统计服务在foundation进程启动和运行。
 - **应用使用统计信息落盘时机**：
 >1.  每隔30分钟触发一次刷新；
 >2.  系统时间变更触发一次刷新；
@@ -84,7 +82,7 @@
 >3.  根据起止时间查询当前应用的事件集合；
 >4.  根据interval（日、周、月、年）类型和起止时间查询应用的使用时长；
 >5.  查询调用者应用的优先级群组；
->5.  判断指定应用当前是否是空闲状态；
+>6.  判断指定应用当前是否是空闲状态；
 
 ## 相关仓<a name="section1371113476307"></a>
 

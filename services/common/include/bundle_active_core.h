@@ -116,10 +116,11 @@ public:
         const int64_t timeStamp);
     // when received a USER_REMOVED commen event, call it to remove data.
     void OnUserRemoved(const int userId);
+    void OnUserSwitched();
     // force set app group.
     void SetBundleGroup(const std::string& bundleName, const int newGroup, const int userId);
     // get all user in device
-    void GetAllActiveUser(std::vector<OHOS::AccountSA::OsAccountInfo> &osAccountInfos);
+    void GetAllActiveUser(std::vector<int>& activatedOsAccountIds);
     // when service stop, call it to unregister commen event and shutdown call back.
     void UnRegisterSubscriber();
     int64_t GetSystemTimeMs();
@@ -140,6 +141,7 @@ private:
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
     void RestoreAllData();
+    int lastUsedUser_;
 };
 }
 }

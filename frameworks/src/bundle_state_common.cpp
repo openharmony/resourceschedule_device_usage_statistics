@@ -34,7 +34,7 @@ void BundleStateCommon::GetCallbackPromiseResult(const napi_env &env,
     if (info.isCallback) {
         SetCallbackInfo(env, info.callback, info.errorCode, result);
     } else {
-        SetPromiseInfo(env, info.deferred, result);
+        SetPromiseInfo(env, info.deferred, result, info.errorCode);
     }
 }
 
@@ -48,7 +48,7 @@ void BundleStateCommon::SetCallbackInfo(
     napi_value resultout = nullptr;
     napi_get_reference_value(env, callbackIn, &callback);
     napi_value results[ARGS_TWO] = {nullptr};
-    results[PARAM_FIRST] = GetCallbackErrorValue(env, errorCode);
+    results[PARAM_FIRST] = GetErrorValue(env, errorCode);
     results[PARAM_SECOND] = result;
     NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &results[PARAM_FIRST],
         &resultout));
@@ -138,37 +138,44 @@ void BundleStateCommon::GetBundleStateInfoForResult(napi_env env,
     }
 }
 
-void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred &deferred, const napi_value &result)
+void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred &deferred,
+    const napi_value &result, const int &errorCode)
 {
-    napi_resolve_deferred(env, deferred, result);
+    if (errorCode == ERR_OK) {
+        napi_resolve_deferred(env, deferred, result);
+    } else {
+        napi_reject_deferred(env, deferred, GetErrorValue(env, errorCode));
+    }
 }
 
-napi_value BundleStateCommon::GetCallbackErrorValue(napi_env env, int errCode)
+napi_value BundleStateCommon::GetErrorValue(napi_env env, int errCode)
 {
     napi_value result = nullptr;
     napi_value eCode = nullptr;
     NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
     NAPI_CALL(env, napi_create_object(env, &result));
-    NAPI_CALL(env, napi_set_named_property(env, result, "data", eCode));
+    NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
     return result;
 }
 
-napi_value BundleStateCommon::JSParaError(const napi_env &env, const napi_ref &callback)
+napi_value BundleStateCommon::JSParaError(const napi_env &env, const napi_ref &callback, const int &errorCode)
 {
     if (callback) {
-        return BundleStateCommon::NapiGetNull(env);
+        napi_value result = nullptr;
+        napi_create_array(env, &result);
+        SetCallbackInfo(env, callback, errorCode, result);
+        return result;
     } else {
         napi_value promise = nullptr;
         napi_deferred deferred = nullptr;
         napi_create_promise(env, &deferred, &promise);
-        napi_resolve_deferred(env, deferred, BundleStateCommon::NapiGetNull(env));
+        napi_reject_deferred(env, deferred, GetErrorValue(env, errorCode));
         return promise;
     }
 }
 
 std::string BundleStateCommon::GetTypeStringValue(napi_env env, napi_value param, const std::string &result)
 {
-    BUNDLE_ACTIVE_LOGI("GetTypeStringValue start");
     size_t size = 0;
     if (napi_get_value_string_utf8(env, param, nullptr, 0, &size) != BUNDLE_STATE_OK) {
         return result;
@@ -197,33 +204,31 @@ std::string BundleStateCommon::GetTypeStringValue(napi_env env, napi_value param
 
     delete[] buf;
     buf = nullptr;
-    BUNDLE_ACTIVE_LOGI("string result: %{public}s", value.c_str());
     return value;
 }
 
 napi_value BundleStateCommon::GetInt64NumberValue(const napi_env &env, const napi_value &value, int64_t &result)
 {
-    BUNDLE_ACTIVE_LOGI("GetInt64NumberValue start");
     napi_valuetype valuetype = napi_undefined;
 
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
-    NAPI_ASSERT(env, valuetype == napi_number, "Wrong argument type. Number or function expected.");
+    if (valuetype != napi_number) {
+        BUNDLE_ACTIVE_LOGE("Wrong argument type, number expected.");
+        return nullptr;
+    }
     napi_get_value_int64(env, value, &result);
-    BUNDLE_ACTIVE_LOGI("number result: %{public}lld", result);
-
     return BundleStateCommon::NapiGetNull(env);
 }
 
 napi_value BundleStateCommon::GetInt32NumberValue(const napi_env &env, const napi_value &value, int32_t &result)
 {
-    BUNDLE_ACTIVE_LOGI("GetInt32NumberValue start");
     napi_valuetype valuetype = napi_undefined;
-
     NAPI_CALL(env, napi_typeof(env, value, &valuetype));
-    NAPI_ASSERT(env, valuetype == napi_number, "Wrong argument type. Number or function expected.");
+    if (valuetype != napi_number) {
+        BUNDLE_ACTIVE_LOGE("Wrong argument type. Number expected.");
+        return nullptr;
+    }
     napi_get_value_int32(env, value, &result);
-    BUNDLE_ACTIVE_LOGI("number result: %{public}d", result);
-
     return BundleStateCommon::NapiGetNull(env);
 }
 

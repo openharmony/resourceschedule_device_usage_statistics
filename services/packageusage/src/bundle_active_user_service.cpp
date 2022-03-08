@@ -304,7 +304,12 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
         return result;
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
+    BUNDLE_ACTIVE_LOGI("Query package data in db from %{public}lld to %{public}lld, current begin %{public}lld",
+        beginTime, truncatedEndTime, currentStats->beginTime_);
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
+    BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}d",
+        static_cast<int>(result.size()));
+    PrintInMemPackageStats(intervalType);
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats need in memory stats");
@@ -339,9 +344,10 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     if (beginTime >= currentStats->endTime_) {
         return result;
     }
-    BUNDLE_ACTIVE_LOGI("QueryEvents bundle name is %{public}s", bundleName.c_str());
+    BUNDLE_ACTIVE_LOGI("Query event bundle name is %{public}s", bundleName.c_str());
     result = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
-    BUNDLE_ACTIVE_LOGI("event database query size is %{public}d", result.size());
+    BUNDLE_ACTIVE_LOGI("Query event data in db result size is %{public}d", result.size());
+    PrintInMemEventStats();
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryEvents need in memory stats");
@@ -358,17 +364,25 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     return result;
 }
 
-void BundleActiveUserService::printstat()
+void BundleActiveUserService::PrintInMemPackageStats(const int idx)
 {
-    BUNDLE_ACTIVE_LOGI("printstat called");
-    int idx = 0;
+    BUNDLE_ACTIVE_LOGI("PrintInMemPackageStats called");
     for (auto it : currentStats_[idx]->bundleStats_) {
-        BUNDLE_ACTIVE_LOGI("bundle name is %{public}s", it.first.c_str());
-        int64_t lasttimeused = it.second->lastTimeUsed_;
-        int64_t totalusedtime = it.second->totalInFrontTime_;
-        BUNDLE_ACTIVE_LOGI("event stat is, totaltime is %{public}lld, lasttimeused is %{public}lld",
-                           totalusedtime, lasttimeused);
+        BUNDLE_ACTIVE_LOGI("In mem, bundle name is %{public}s", it.first.c_str());
+        int64_t lastTimeUsed = it.second->lastTimeUsed_;
+        int64_t totalUsedTime = it.second->totalInFrontTime_;
+        int64_t lastTimeContinuousTaskUsed = it.second->lastContiniousTaskUsed_;
+        int64_t totalTimeContinuousTaskUsed = it.second->totalContiniousTaskUsedTime_;
+        BUNDLE_ACTIVE_LOGI("In mem, event stat is, totaltime is %{public}lld, lastTimeUsed is %{public}lld"
+            "total continuous task is %{public}lld, lastTimeContinuousTaskUsed is %{public}lld",
+            totalUsedTime, lastTimeUsed, totalTimeContinuousTaskUsed, lastTimeContinuousTaskUsed);
     }
+}
+
+void BundleActiveUserService::PrintInMemEventStats()
+{
+    BUNDLE_ACTIVE_LOGI("PrintInMemEventStats called");
+    int idx = 0;
     int size = static_cast<int>(currentStats_[idx]->events_.events_.size());
     for (int i = 0; i < size; i++) {
         std::string abilityId = currentStats_[idx]->events_.events_[i].abilityId_;
@@ -376,7 +390,7 @@ void BundleActiveUserService::printstat()
         std::string bundlename = currentStats_[idx]->events_.events_[i].bundleName_;
         int eventid = currentStats_[idx]->events_.events_[i].eventId_;
         int64_t timestamp = currentStats_[idx]->events_.events_[i].timeStamp_;
-        BUNDLE_ACTIVE_LOGI("event stat is, abilityid is %{public}s, abilityname is %{public}s, "
+        BUNDLE_ACTIVE_LOGI("In mem, event stat is, abilityid is %{public}s, abilityname is %{public}s, "
             "bundlename is %{public}s, eventid is %{public}d, timestamp is %{public}lld",
             abilityId.c_str(), abilityname.c_str(), bundlename.c_str(), eventid, timestamp);
     }
