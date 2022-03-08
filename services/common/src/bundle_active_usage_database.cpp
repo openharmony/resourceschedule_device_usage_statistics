@@ -888,6 +888,7 @@ int32_t BundleActiveUsageDatabase::GetOptimalIntervalType(int64_t beginTime, int
             }
         }
     }
+    BUNDLE_ACTIVE_LOGI("optimalIntervalType is %{public}d", optimalIntervalType);
     return optimalIntervalType;
 }
 
