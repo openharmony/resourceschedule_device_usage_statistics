@@ -685,13 +685,12 @@ void BundleActiveUsageDatabase::FlushPackageInfo(unsigned int databaseType, cons
         queryCondition.push_back(to_string(stats.userId_));
         queryCondition.push_back(iter->first);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_STARTED_COUNT, iter->second->bundleStartedCount_);
-        valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, (iter->second->lastTimeUsed_ - stats.beginTime_));
-        if (iter->second->lastContiniousTaskUsed_ == -1) {
-            valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME_CONTINUOUS_TASK, (iter->second->lastContiniousTaskUsed_));
-        } else {
-            valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME_CONTINUOUS_TASK, (iter->second->lastContiniousTaskUsed_ -
-                stats.beginTime_));
-        }
+        int64_t lastTimeUsedAdjusted = iter->second->lastTimeUsed_ == -1 ?
+            iter->second->lastTimeUsed_ : iter->second->lastTimeUsed_ - stats.beginTime_;
+        valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, lastTimeUsedAdjusted);
+        int64_t lastContinuousTaskUsedAdjusted = iter->second->lastContiniousTaskUsed_ == -1 ?
+            iter->second->lastContiniousTaskUsed_ : iter->second->lastContiniousTaskUsed_ - stats.beginTime_;
+        valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME_CONTINUOUS_TASK, lastContinuousTaskUsedAdjusted);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_TOTAL_TIME, iter->second->totalInFrontTime_);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_TOTAL_TIME_CONTINUOUS_TASK, iter->second->totalContiniousTaskUsedTime_);
         rdbStore->Update(changeRow, tableName, valuesBucket, "userId = ? and bundleName = ?", queryCondition);
@@ -746,13 +745,11 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         bundleActiveResult->GetString(BUNDLE_NAME_COLUMN_INDEX, usageStats->bundleName_);
         bundleActiveResult->GetInt(BUNDLE_STARTED_COUNT_COLUMN_INDEX, usageStats->bundleStartedCount_);
         bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, relativeLastTimeUsed);
-        usageStats->lastTimeUsed_ = relativeLastTimeUsed + currentPackageTime;
+        usageStats->lastTimeUsed_ = relativeLastTimeUsed == -1 ? -1 :
+            relativeLastTimeUsed + currentPackageTime;
         bundleActiveResult->GetLong(LAST_TIME_CONTINUOUS_TASK_COLUMN_INDEX, relativeLastTimeFrontServiceUsed);
-        if (relativeLastTimeFrontServiceUsed == -1) {
-            usageStats->lastContiniousTaskUsed_ = -1;
-        } else {
-            usageStats->lastContiniousTaskUsed_ = relativeLastTimeFrontServiceUsed + currentPackageTime;
-        }
+        usageStats->lastContiniousTaskUsed_ = relativeLastTimeFrontServiceUsed == -1 ? -1 :
+            relativeLastTimeFrontServiceUsed + currentPackageTime;
         bundleActiveResult->GetLong(TOTAL_TIME_COLUMN_INDEX, usageStats->totalInFrontTime_);
         bundleActiveResult->GetLong(TOTAL_TIME_CONTINUOUS_TASK_COLUMN_INDEX, usageStats->totalContiniousTaskUsedTime_);
         bundleStats.insert(pair<string, shared_ptr<BundleActivePackageStats>>(usageStats->bundleName_,
@@ -1082,13 +1079,11 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
             bundleActiveResult->GetInt(BUNDLE_STARTED_COUNT_COLUMN_INDEX, usageStats.bundleStartedCount_);
             bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, usageStats.lastTimeUsed_);
             bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, relativeLastTimeUsed);
-            usageStats.lastTimeUsed_ = relativeLastTimeUsed + packageTableTime;
+            usageStats->lastTimeUsed_ = relativeLastTimeUsed == -1 ? -1 :
+                relativeLastTimeUsed + packageTableTime;
             bundleActiveResult->GetLong(LAST_TIME_CONTINUOUS_TASK_COLUMN_INDEX, relativeLastTimeFrontServiceUsed);
-            if (relativeLastTimeFrontServiceUsed == -1) {
-                usageStats.lastContiniousTaskUsed_ = -1;
-            } else {
-                usageStats.lastContiniousTaskUsed_ = relativeLastTimeFrontServiceUsed + packageTableTime;
-            }
+            usageStats.lastContiniousTaskUsed_ = relativeLastTimeFrontServiceUsed == -1 ? -1 :
+                relativeLastTimeFrontServiceUsed + packageTableTime;
             bundleActiveResult->GetLong(TOTAL_TIME_COLUMN_INDEX, usageStats.totalInFrontTime_);
             bundleActiveResult->GetLong(TOTAL_TIME_CONTINUOUS_TASK_COLUMN_INDEX,
                 usageStats.totalContiniousTaskUsedTime_);
