@@ -372,7 +372,7 @@ void BundleActiveUserService::PrintInMemPackageStats(const int idx)
         int64_t totalUsedTime = it.second->totalInFrontTime_;
         int64_t lastTimeContinuousTaskUsed = it.second->lastContiniousTaskUsed_;
         int64_t totalTimeContinuousTaskUsed = it.second->totalContiniousTaskUsedTime_;
-        BUNDLE_ACTIVE_LOGI("In mem, event stat is, totaltime is %{public}lld, lastTimeUsed is %{public}lld"
+        BUNDLE_ACTIVE_LOGI("bundle stat is, totaltime is %{public}lld, lastTimeUsed is %{public}lld"
             "total continuous task is %{public}lld, lastTimeContinuousTaskUsed is %{public}lld",
             totalUsedTime, lastTimeUsed, totalTimeContinuousTaskUsed, lastTimeContinuousTaskUsed);
     }

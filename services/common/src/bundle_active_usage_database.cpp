@@ -1079,7 +1079,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
             bundleActiveResult->GetInt(BUNDLE_STARTED_COUNT_COLUMN_INDEX, usageStats.bundleStartedCount_);
             bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, usageStats.lastTimeUsed_);
             bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, relativeLastTimeUsed);
-            usageStats->lastTimeUsed_ = relativeLastTimeUsed == -1 ? -1 :
+            usageStats.lastTimeUsed_ = relativeLastTimeUsed == -1 ? -1 :
                 relativeLastTimeUsed + packageTableTime;
             bundleActiveResult->GetLong(LAST_TIME_CONTINUOUS_TASK_COLUMN_INDEX, relativeLastTimeFrontServiceUsed);
             usageStats.lastContiniousTaskUsed_ = relativeLastTimeFrontServiceUsed == -1 ? -1 :
