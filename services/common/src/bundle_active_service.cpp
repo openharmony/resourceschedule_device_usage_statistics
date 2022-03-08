@@ -169,7 +169,6 @@ bool BundleActiveService::SubscribeContinuousTask()
     return true;
 }
 
-
 void BundleActiveService::OnStop()
 {
     if (shutdownCallback_ != nullptr) {
