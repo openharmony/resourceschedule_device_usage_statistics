@@ -161,12 +161,15 @@ void BundleActiveUserService::RestoreStats(bool forced)
     if (statsChanged_ || forced) {
         BUNDLE_ACTIVE_LOGI("RestoreStats() stat changed is true");
         for (uint32_t i = 0; i < currentStats_.size(); i++) {
-            if (currentStats_[i] != nullptr) {
+            if (currentStats_[i]) {
+                if (currentStats_[i]->bundleStats_.empty() && currentStats_[i]->events_.events_.empty()) {
+                    continue;
+                }
                 database_.UpdateUsageData(i, *(currentStats_[i]));
-            }
-            if (i == 0) {
-                BUNDLE_ACTIVE_LOGI("RESOTRE EVENT SIZE IS %{public}d, USER ID IS %{public}d",
-                    currentStats_[i]->events_.Size(), userId_);
+                if (i == 0) {
+                    BUNDLE_ACTIVE_LOGI("RESOTRE EVENT SIZE IS %{public}d, USER ID IS %{public}d",
+                        currentStats_[i]->events_.Size(), userId_);
+                }
             }
         }
         currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Clear();
