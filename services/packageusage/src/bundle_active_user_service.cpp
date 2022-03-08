@@ -166,10 +166,6 @@ void BundleActiveUserService::RestoreStats(bool forced)
                     continue;
                 }
                 database_.UpdateUsageData(i, *(currentStats_[i]));
-                if (i == 0) {
-                    BUNDLE_ACTIVE_LOGI("RESOTRE EVENT SIZE IS %{public}d, USER ID IS %{public}d",
-                        currentStats_[i]->events_.Size(), userId_);
-                }
             }
         }
         currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Clear();
