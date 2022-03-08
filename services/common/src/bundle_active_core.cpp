@@ -388,6 +388,7 @@ void BundleActiveCore::OnUserSwitched(const int userId)
         BUNDLE_ACTIVE_LOGI("start to period check for userId %{public}d", activatedOsAccountIds[i]);
         bundleGroupController_->OnUserSwitched(activatedOsAccountIds[i]);
     }
+    lastUsedUser_ = userId;
     OnStatsChanged(userId);
 }
 
