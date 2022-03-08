@@ -69,7 +69,7 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
             break;
         }
         case MSG_SWITCH_USER: {
-             BUNDLE_ACTIVE_LOGI("MSG_SWITCH_USER CALLED");
+            BUNDLE_ACTIVE_LOGI("MSG_SWITCH_USER CALLED");
             auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->OnUserSwitched(tmpHandlerobj.userId_);
