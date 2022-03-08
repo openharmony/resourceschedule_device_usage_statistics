@@ -39,6 +39,9 @@ namespace DeviceUsageStats {
 
 #define BUNDLE_STATE_OK 0
 #define INTERVAL_TYPE_DEFAULT 0
+#define INTERVAL_NUMBER_MIN 0
+#define INTERVAL_NUMBER_MAX 4
+#define TIME_NUMBER_MIN 0
 
 struct CallbackPromiseInfo {
     napi_ref callback = nullptr;
@@ -93,16 +96,19 @@ struct AsyncCallbackInfoAppUsage {
 struct IsIdleStateParamsInfo {
     std::string bundleName;
     napi_ref callback = nullptr;
+    int errorCode = 0;
 };
 
 struct PriorityGroupParamsInfo {
     napi_ref callback = nullptr;
+    int errorCode = 0;
 };
 
 struct StatesParamsInfo {
     int64_t beginTime;
     int64_t endTime;
     napi_ref callback = nullptr;
+    int errorCode = 0;
 };
 
 struct AppUsageParamsByIntervalInfo {
@@ -110,12 +116,14 @@ struct AppUsageParamsByIntervalInfo {
     int64_t beginTime;
     int64_t endTime;
     napi_ref callback = nullptr;
+    int errorCode = 0;
 };
 
 struct AppUsageParamsInfo {
     int64_t beginTime;
     int64_t endTime;
     napi_ref callback = nullptr;
+    int errorCode = 0;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
