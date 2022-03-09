@@ -29,6 +29,12 @@ BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
         bundleName_ = "";
 }
 
+BundleActiveReportHandlerObject::BundleActiveReportHandlerObject(const int userId, const std::string bundleName)
+{
+    userId_ = userId;
+    bundleName_ = bundleName;
+}
+
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject(const BundleActiveReportHandlerObject& orig)
 {
     event_.bundleName_ = orig.event_.bundleName_;
@@ -71,8 +77,7 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
         if (!bundleActiveReportHandler_.expired()) {
             int32_t userId = data.GetCode();
             BUNDLE_ACTIVE_LOGI("remove user id %{public}d", userId);
-            BundleActiveReportHandlerObject tmpHandlerObject;
-            tmpHandlerObject.userId_ = userId;
+            BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
             auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REMOVE_USER, handlerobjToPtr);
@@ -81,7 +86,10 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
     } else if (action == CommonEventSupport::COMMON_EVENT_USER_SWITCHED) {
         int32_t userId = data.GetCode();
         BUNDLE_ACTIVE_LOGI("OnReceiveEvent receive switched user event, user id is %{public}d", userId);
-        auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_SWITCH_USER);
+        BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
+        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+        auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_SWITCH_USER, handlerobjToPtr);
         bundleActiveReportHandler_.lock()->SendEvent(event);
     } else if (action == CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED ||
         action == CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED) {
@@ -90,9 +98,7 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
         BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
             action.c_str(), userId, bundleName.c_str());
         if (!bundleActiveReportHandler_.expired()) {
-            BundleActiveReportHandlerObject tmpHandlerObject;
-            tmpHandlerObject.bundleName_ = bundleName;
-            tmpHandlerObject.userId_ = userId;
+            BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
             auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
@@ -356,12 +362,13 @@ void BundleActiveCore::OnUserRemoved(const int userId)
     bundleGroupController_->OnUserRemoved(userId);
 }
 
-void BundleActiveCore::OnUserSwitched()
+void BundleActiveCore::OnUserSwitched(const int userId)
 {
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     auto it = userStatServices_.find(lastUsedUser_);
     if (it != userStatServices_.end()) {
         if (it != userStatServices_.end()) {
+            BUNDLE_ACTIVE_LOGI("restore old user id %{public}d data when switch user", lastUsedUser_);
             BundleActiveEvent event;
             event.eventId_ = BundleActiveEvent::FLUSH;
             int64_t actualRealTime = timer->GetBootTimeMs();
@@ -381,16 +388,20 @@ void BundleActiveCore::OnUserSwitched()
         BUNDLE_ACTIVE_LOGI("start to period check for userId %{public}d", activatedOsAccountIds[i]);
         bundleGroupController_->OnUserSwitched(activatedOsAccountIds[i]);
     }
+    lastUsedUser_ = userId;
+    OnStatsChanged(userId);
 }
 
 int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    lastUsedUser_ = userId;
-    if (userId == 0) {
+    if (userId == 0 || userId == -1) {
         return -1;
     }
-    BUNDLE_ACTIVE_LOGI("ReportEvent called");
+    if (lastUsedUser_ == -1) {
+        lastUsedUser_ = userId;
+        BUNDLE_ACTIVE_LOGI("last used id change to %{public}d", lastUsedUser_);
+    }
     BUNDLE_ACTIVE_LOGI("report event called  bundle name %{public}s time %{public}lld userId %{public}d, "
         "eventid %{public}d, in lock range", event.bundleName_.c_str(), event.timeStamp_, userId, event.eventId_);
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();

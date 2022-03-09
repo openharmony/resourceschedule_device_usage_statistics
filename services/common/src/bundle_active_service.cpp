@@ -185,14 +185,12 @@ void BundleActiveService::OnStop()
 int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
     const std::string& continuousTask, const int userId, const int eventId)
 {
-    BUNDLE_ACTIVE_LOGI("report event called123123");
-    BundleActiveReportHandlerObject tmpHandlerObject;
+    BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
     tmpHandlerObject.event_.bundleName_ = bundleName;
     tmpHandlerObject.event_.abilityName_ = abilityName;
     tmpHandlerObject.event_.abilityId_ = abilityId;
     tmpHandlerObject.event_.eventId_ = eventId;
     tmpHandlerObject.event_.continuousTaskAbilityName_ = continuousTask;
-    tmpHandlerObject.userId_ = userId;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
     std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
