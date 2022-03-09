@@ -44,12 +44,11 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         std::stringstream stream;
         stream << abilityStateData.token.GetRefPtr();
         std::string abilityId = stream.str();
-        BundleActiveReportHandlerObject tmpHandlerObject;
+        BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
         tmpHandlerObject.event_.bundleName_ = abilityStateData.bundleName;
         tmpHandlerObject.event_.abilityName_ = abilityStateData.abilityName;
         tmpHandlerObject.event_.abilityId_ = abilityStateData.abilityName;
         tmpHandlerObject.event_.continuousTaskAbilityName_ = "";
-        tmpHandlerObject.userId_ = userId;
         sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
         switch (abilityStateData.abilityState) {

@@ -19,6 +19,7 @@ namespace OHOS {
 namespace DeviceUsageStats {
 BundleActiveEventStats::BundleActiveEventStats()
 {
+    eventId_ = 0;
     beginTimeStamp_ = 0;
     endTimeStamp_ = 0;
     lastEventTime_ = 0;

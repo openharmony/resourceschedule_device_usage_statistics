@@ -37,6 +37,7 @@ public:
     int userId_;
     std::string bundleName_;
     BundleActiveReportHandlerObject();
+    BundleActiveReportHandlerObject(const int userId, const std::string bundleName);
     BundleActiveReportHandlerObject(const BundleActiveReportHandlerObject& orig);
     ~BundleActiveReportHandlerObject() {};
 };
@@ -116,7 +117,7 @@ public:
         const int64_t timeStamp);
     // when received a USER_REMOVED commen event, call it to remove data.
     void OnUserRemoved(const int userId);
-    void OnUserSwitched();
+    void OnUserSwitched(const int userId);
     // force set app group.
     void SetBundleGroup(const std::string& bundleName, const int newGroup, const int userId);
     // get all user in device

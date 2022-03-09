@@ -94,7 +94,7 @@ private:
     int64_t timeoutForDirectlyUse_ = debug_ ? THREE_MINUTE : ONE_HOUR;
     int64_t timeoutForNotifySeen_ = debug_ ? ONE_MINUTE : TWELVE_HOUR;
     int64_t timeoutForSystemInteraction_ = debug_ ? ONE_MINUTE : TEN_MINUTE;
-    int64_t timeoutCalculated_;
+    int64_t timeoutCalculated_ = 0;
     sptr<IBundleMgr> sptrBundleMgr_;
     bool calculationTimeOut(const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory,
         const int64_t bootBasedTimeStamp);

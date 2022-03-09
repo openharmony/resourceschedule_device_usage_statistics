@@ -161,12 +161,11 @@ void BundleActiveUserService::RestoreStats(bool forced)
     if (statsChanged_ || forced) {
         BUNDLE_ACTIVE_LOGI("RestoreStats() stat changed is true");
         for (uint32_t i = 0; i < currentStats_.size(); i++) {
-            if (currentStats_[i] != nullptr) {
+            if (currentStats_[i]) {
+                if (currentStats_[i]->bundleStats_.empty() && currentStats_[i]->events_.events_.empty()) {
+                    continue;
+                }
                 database_.UpdateUsageData(i, *(currentStats_[i]));
-            }
-            if (i == 0) {
-                BUNDLE_ACTIVE_LOGI("RESOTRE EVENT SIZE IS %{public}d, USER ID IS %{public}d",
-                    currentStats_[i]->events_.Size(), userId_);
             }
         }
         currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Clear();
@@ -373,7 +372,7 @@ void BundleActiveUserService::PrintInMemPackageStats(const int idx)
         int64_t totalUsedTime = it.second->totalInFrontTime_;
         int64_t lastTimeContinuousTaskUsed = it.second->lastContiniousTaskUsed_;
         int64_t totalTimeContinuousTaskUsed = it.second->totalContiniousTaskUsedTime_;
-        BUNDLE_ACTIVE_LOGI("In mem, event stat is, totaltime is %{public}lld, lastTimeUsed is %{public}lld"
+        BUNDLE_ACTIVE_LOGI("bundle stat is, totaltime is %{public}lld, lastTimeUsed is %{public}lld"
             "total continuous task is %{public}lld, lastTimeContinuousTaskUsed is %{public}lld",
             totalUsedTime, lastTimeUsed, totalTimeContinuousTaskUsed, lastTimeContinuousTaskUsed);
     }

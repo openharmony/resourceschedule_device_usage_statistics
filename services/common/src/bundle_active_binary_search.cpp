@@ -30,8 +30,9 @@ int32_t BundleActiveBinarySearch::BinarySearch(const std::vector<int64_t> &table
 {
     int32_t low = 0;
     int32_t high = static_cast<int32_t>(tableNameArray.size() - 1);
+    int32_t divider = 2;
     while (low <= high) {
-        int32_t mid = (low + high) >> 1;
+        int32_t mid = (low + high) / divider;
         int64_t midValue = tableNameArray.at(mid);
         if (midValue < targetValue) {
             low = mid + 1;

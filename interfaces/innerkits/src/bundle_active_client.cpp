@@ -27,19 +27,19 @@ BundleActiveClient& BundleActiveClient::GetInstance()
 bool BundleActiveClient::GetBundleActiveProxy()
 {
     sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (samgr == nullptr) {
+    if (!samgr) {
         BUNDLE_ACTIVE_LOGE("Failed to get SystemAbilityManager.");
         return false;
     }
 
     sptr<IRemoteObject> object = samgr->GetSystemAbility(DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID);
-    if (object == nullptr) {
+    if (!object) {
         BUNDLE_ACTIVE_LOGE("Failed to get SystemAbility[1920] .");
         return false;
     }
 
     bundleActiveProxy_ = iface_cast<IBundleActiveService>(object);
-    if (bundleActiveProxy_ == nullptr) {
+    if (!bundleActiveProxy_) {
         BUNDLE_ACTIVE_LOGE("Failed to get BundleActiveClient.");
         return false;
     }
