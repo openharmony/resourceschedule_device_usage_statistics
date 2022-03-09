@@ -100,7 +100,7 @@ void BundleActiveService::InitNecessaryState()
     }
     try {
         shutdownCallback_ = new BundleActiveShutdownCallbackService(bundleActiveCore_);
-    } catch(const std::bad_alloc &e) {
+    } catch (const std::bad_alloc &e) {
         BUNDLE_ACTIVE_LOGE("Memory allocation failed");
         return;
     }
@@ -169,7 +169,6 @@ bool BundleActiveService::SubscribeContinuousTask()
     return true;
 }
 
-
 void BundleActiveService::OnStop()
 {
     if (shutdownCallback_ != nullptr) {
@@ -186,14 +185,12 @@ void BundleActiveService::OnStop()
 int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
     const std::string& continuousTask, const int userId, const int eventId)
 {
-    BUNDLE_ACTIVE_LOGI("report event called123123");
-    BundleActiveReportHandlerObject tmpHandlerObject;
+    BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
     tmpHandlerObject.event_.bundleName_ = bundleName;
     tmpHandlerObject.event_.abilityName_ = abilityName;
     tmpHandlerObject.event_.abilityId_ = abilityId;
     tmpHandlerObject.event_.eventId_ = eventId;
     tmpHandlerObject.event_.continuousTaskAbilityName_ = continuousTask;
-    tmpHandlerObject.userId_ = userId;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
     std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
@@ -214,15 +211,7 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
     int result = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("IsBundleIdle user id is %{public}d", userId);
-        if (!GetBundleMgrProxy()) {
-            BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");
-            return true;
-        }
-        bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(callingUid);
-        if (bundleIsSystemApp == true) {
-            result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
-        }
+        result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
     }
     if (result == 0) {
         return false;
@@ -321,15 +310,9 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryCurrentEvents(const int
     int userId = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("QueryCurrentEvents userid is %{public}d", userId);
-        if (!GetBundleMgrProxy()) {
-            BUNDLE_ACTIVE_LOGE("QueryCurrentEvents get bundle manager proxy failed!");
-            return result;
-        }
         std::string bundleName = "";
         sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId);
-        if (!bundleName.empty() && isSystemAppAndHasPermission == true) {
+        if (!bundleName.empty()) {
             BUNDLE_ACTIVE_LOGI("QueryCurrentEvents buindle name is %{public}s",
                 bundleName.c_str());
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, bundleName);

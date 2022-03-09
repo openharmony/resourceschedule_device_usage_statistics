@@ -88,12 +88,11 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);
     if (ret == ERR_OK && userId != -1 && !bundleName.empty()) {
         std::stringstream stream;
-        BundleActiveReportHandlerObject tmpHandlerObject;
+        BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
         tmpHandlerObject.event_.bundleName_ = bundleName;
         tmpHandlerObject.event_.abilityName_ = "";
         tmpHandlerObject.event_.abilityId_ = abilityId;
         tmpHandlerObject.event_.continuousTaskAbilityName_ = abiliytName;
-        tmpHandlerObject.userId_ = userId;
         sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
         if (isStart) {

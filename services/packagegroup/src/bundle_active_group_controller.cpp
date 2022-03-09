@@ -221,7 +221,7 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
             return;
         }
         int64_t timeUntilNextCheck;
-        int eventReason = EventToGroupReason(eventId);
+        uint32_t eventReason = EventToGroupReason(eventId);
         switch (eventId) {
             case BundleActiveEvent::NOTIFICATION_SEEN:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_DAILY,
@@ -281,6 +281,8 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
         bootBasedTimeStampAdjusted) {
         newGroup = ACTIVE_GROUP_ALIVE;
         groupReason = oneBundleHistory->reasonInGroup_;
+        groupReason = (newGroup == oldGroup) ? oneBundleHistory->reasonInGroup_ : GROUP_CONTROL_REASON_USAGE |
+            GROUP_EVENT_REASON_ALIVE_NOT_TIMEOUT;
     } else if (newGroup >= ACTIVE_GROUP_DAILY && oneBundleHistory->bundleDailyTimeoutTimeStamp_ >
         bootBasedTimeStampAdjusted) {
         newGroup = ACTIVE_GROUP_DAILY;
