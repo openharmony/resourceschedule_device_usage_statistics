@@ -141,7 +141,7 @@ bool BundleActiveService::SubscribeAppState()
 {
     BUNDLE_ACTIVE_LOGI("SubscribeAppState called");
     sptr<OHOS::AppExecFwk::IAppMgr> appManager = GetAppManagerInstance();
-    if (appStateObserver_ == nullptr) {
+    if (appStateObserver_ == nullptr ||  appManager == nullptr) {
         BUNDLE_ACTIVE_LOGE("SubscribeAppState appstateobserver is null, return");
         return false;
     }
