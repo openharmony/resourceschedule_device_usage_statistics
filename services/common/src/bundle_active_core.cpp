@@ -218,13 +218,16 @@ void BundleActiveCore::OnBundleUninstalled(const int userId, const std::string& 
 void BundleActiveCore::OnStatsChanged(const int userId)
 {
     if (!handler_.expired()) {
-        BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event");
         BundleActiveReportHandlerObject tmpHandlerObject;
         tmpHandlerObject.userId_ = userId;
         std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
         auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, handlerobjToPtr);
-        handler_.lock()->SendEvent(event, FLUSH_INTERVAL);
+        if (handler_.lock()->HasInnerEvent(static_cast<uint32_t>(BundleActiveReportHandler::MSG_FLUSH_TO_DISK)) ==
+            false) {
+            BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event");
+            handler_.lock()->SendEvent(event, FLUSH_INTERVAL);
+        }
     }
 }
 
