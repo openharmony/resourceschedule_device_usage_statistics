@@ -66,6 +66,7 @@ private:
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
     int ConvertIntervalType(const int intervalType);
     void InitNecessaryState();
+    void InitService();
     bool GetBundleMgrProxy();
     bool CheckBundleIsSystemAppAndHasPermission(const int uid, const int userId);
     void InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);

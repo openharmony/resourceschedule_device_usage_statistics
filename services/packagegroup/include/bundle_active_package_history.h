@@ -30,6 +30,7 @@ public:
     uint32_t reasonInGroup_;
     int64_t bundleAliveTimeoutTimeStamp_;
     int64_t bundleDailyTimeoutTimeStamp_;
+    bool isChanged_;
     BundleActivePackageHistory();
     ~BundleActivePackageHistory() {};
 };
