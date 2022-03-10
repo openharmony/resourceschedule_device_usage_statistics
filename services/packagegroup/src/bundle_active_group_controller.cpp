@@ -379,9 +379,10 @@ bool BundleActiveGroupController::IsBundleInstalled(const std::string& bundleNam
     return true;
 }
 
-void BundleActiveGroupController::ShutDown(const int64_t bootBasedTimeStamp)
+void BundleActiveGroupController::ShutDown(const int64_t bootBasedTimeStamp, const int userId)
 {
     BUNDLE_ACTIVE_LOGI("ShutDown called");
+    CheckEachBundleState(userId);
     bundleUserHistory_->UpdateBootBasedAndScreenTime(false, bootBasedTimeStamp, true);
 }
 
