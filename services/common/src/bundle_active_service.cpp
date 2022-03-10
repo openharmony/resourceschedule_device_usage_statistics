@@ -75,6 +75,24 @@ void BundleActiveService::InitNecessaryState()
         return;
     }
 
+    if (systemAbilityManager == nullptr
+        || systemAbilityManager->GetSystemAbility(APP_MGR_SERVICE_ID) == nullptr
+        || systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
+        || systemAbilityManager->GetSystemAbility(POWER_MANAGER_SERVICE_ID) == nullptr
+        || systemAbilityManager->GetSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
+        || systemAbilityManager->GetSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID) == nullptr
+        || systemAbilityManager->GetSystemAbility(TIME_SERVICE_ID) == nullptr) {
+        BUNDLE_ACTIVE_LOGI("request system service object is not ready yet!");
+        auto task = [this]() { this->InitNecessaryState(); };
+        handler_->PostTask(task, DELAY_TIME);
+        return;
+    }
+
+    InitService();
+}
+
+void BundleActiveService::InitService()
+{
     if (bundleActiveCore_ == nullptr) {
         bundleActiveCore_ = std::make_shared<BundleActiveCore>();
         bundleActiveCore_->Init();
@@ -118,6 +136,9 @@ OHOS::sptr<OHOS::AppExecFwk::IAppMgr> BundleActiveService::GetAppManagerInstance
     OHOS::sptr<OHOS::ISystemAbilityManager> systemAbilityManager =
         OHOS::SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     OHOS::sptr<OHOS::IRemoteObject> object = systemAbilityManager->GetSystemAbility(OHOS::APP_MGR_SERVICE_ID);
+    if (!object) {
+        return nullptr;
+    }
     return OHOS::iface_cast<OHOS::AppExecFwk::IAppMgr>(object);
 }
 
@@ -141,7 +162,7 @@ bool BundleActiveService::SubscribeAppState()
 {
     BUNDLE_ACTIVE_LOGI("SubscribeAppState called");
     sptr<OHOS::AppExecFwk::IAppMgr> appManager = GetAppManagerInstance();
-    if (appStateObserver_ == nullptr) {
+    if (appStateObserver_ == nullptr || appManager == nullptr) {
         BUNDLE_ACTIVE_LOGE("SubscribeAppState appstateobserver is null, return");
         return false;
     }
