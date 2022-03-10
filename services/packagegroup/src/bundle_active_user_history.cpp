@@ -179,6 +179,7 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
         oneBundleUsageHistory->currentGroup_ = newGroup;
     }
     oneBundleUsageHistory->reasonInGroup_ = GROUP_CONTROL_REASON_USAGE | groupReason;
+    oneBundleUsageHistory->isChanged_ = true;
 }
 
 void BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int userId,
