@@ -293,7 +293,15 @@ void BundleActiveCore::ShutDown()
     int64_t timeStamp = timer->GetBootTimeMs();
     BundleActiveEvent event(BundleActiveEvent::SHUTDOWN, timeStamp);
     event.bundleName_ = BundleActiveEvent::DEVICE_EVENT_PACKAGE_NAME;
-    bundleGroupController_->ShutDown(timeStamp);
+    std::vector<int> activatedOsAccountIds;
+    GetAllActiveUser(activatedOsAccountIds);
+    if (activatedOsAccountIds.size() == 0) {
+        BUNDLE_ACTIVE_LOGI("query activated account failed, no account activated");
+        return;
+    }
+    for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
+        bundleGroupController_->ShutDown(timeStamp, activatedOsAccountIds[i]);
+    }
     ReportEventToAllUserId(event);
     RestoreAllData();
 }
