@@ -88,6 +88,11 @@ void BundleActiveService::InitNecessaryState()
         return;
     }
 
+    InitService();
+}
+
+void BundleActiveService::InitService()
+{
     if (bundleActiveCore_ == nullptr) {
         bundleActiveCore_ = std::make_shared<BundleActiveCore>();
         bundleActiveCore_->Init();
