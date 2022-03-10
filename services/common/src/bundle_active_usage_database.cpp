@@ -552,8 +552,11 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
     NativeRdb::ValuesBucket valuesBucket;
     vector<string> queryCondition;
+    int updatedcount = 0;
+    int unupdatedcount = 0;
     for (auto iter = userHistory->begin(); iter != userHistory->end(); iter++) {
-        if (iter->second == nullptr) {
+        if (iter->second == nullptr || !iter->second->isChanged_) {
+            unupdatedcount++;
             continue;
         }
         queryCondition.push_back(to_string(userId));
@@ -576,7 +579,11 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
         }
         valuesBucket.Clear();
         queryCondition.clear();
+        iter->second->isChanged_ = false;
+        updatedcount++;
     }
+    BUNDLE_ACTIVE_LOGI("PutBundleHistoryData, update %{public}d bundles, keep %{public}d bundles group",
+        updatedcount, unupdatedcount);
 }
 
 shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsageDatabase::GetBundleHistoryData(

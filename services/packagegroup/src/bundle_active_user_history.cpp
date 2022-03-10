@@ -32,6 +32,7 @@ BundleActivePackageHistory::BundleActivePackageHistory()
     bundleAliveTimeoutTimeStamp_ = 0;
     bundleDailyTimeoutTimeStamp_ = 0;
     lastCalculatedGroup_ = ACTIVE_GROUP_NEVER;
+    isChanged_ = false;
 };
 
 void BundleActiveUserHistory::WriteDeviceDuration()
@@ -202,6 +203,7 @@ void BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int
         oneBundleHistory->bundleAliveTimeoutTimeStamp_ = setTimeStamp;
         oneBundleHistory->bundleDailyTimeoutTimeStamp_ = setTimeStamp;
     }
+    oneBundleHistory->isChanged_ = true;
 }
 
 void BundleActiveUserHistory::UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t bootBasedTimeStamp,
