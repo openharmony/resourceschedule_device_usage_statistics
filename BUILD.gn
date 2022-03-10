@@ -34,7 +34,6 @@ ohos_shared_library("usagestatsinner") {
   ]
 
   external_deps = [
-    "dmsfwk_standard:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
@@ -74,7 +73,6 @@ ohos_shared_library("bundlestate") {
   ]
 
   external_deps = [
-    "dmsfwk_standard:zuri",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
@@ -131,7 +129,6 @@ ohos_shared_library("usagestatservice") {
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "ces_standard:cesfwk_innerkits",
-    "dmsfwk_standard:zuri",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
