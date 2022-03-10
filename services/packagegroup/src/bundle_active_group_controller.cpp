@@ -277,19 +277,22 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
         groupReason = GROUP_CONTROL_REASON_TIMEOUT;
     }
     int64_t bootBasedTimeStampAdjusted = bundleUserHistory_->GetBootBasedTimeStamp(bootBasedTimeStamp);
+    bool notTimeout = false;
     if (newGroup >= ACTIVE_GROUP_ALIVE && oneBundleHistory->bundleAliveTimeoutTimeStamp_ >
         bootBasedTimeStampAdjusted) {
         newGroup = ACTIVE_GROUP_ALIVE;
         groupReason = oneBundleHistory->reasonInGroup_;
         groupReason = (newGroup == oldGroup) ? oneBundleHistory->reasonInGroup_ : GROUP_CONTROL_REASON_USAGE |
             GROUP_EVENT_REASON_ALIVE_NOT_TIMEOUT;
+        notTimeout = true;
     } else if (newGroup >= ACTIVE_GROUP_DAILY && oneBundleHistory->bundleDailyTimeoutTimeStamp_ >
         bootBasedTimeStampAdjusted) {
         newGroup = ACTIVE_GROUP_DAILY;
         groupReason = (newGroup == oldGroup) ? oneBundleHistory->reasonInGroup_ : GROUP_CONTROL_REASON_USAGE |
             GROUP_EVENT_REASON_ALIVE_TIMEOUT;
+        notTimeout = true;
     }
-    if (oldGroup < newGroup) {
+    if (oldGroup < newGroup || notTimeout) {
         BUNDLE_ACTIVE_LOGI("CheckAndUpdateGroup called SetBundleGroup");
         bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, groupReason, false);
     }
