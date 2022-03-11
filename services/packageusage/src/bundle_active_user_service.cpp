@@ -261,7 +261,6 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
                 for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
                     it != continueAbilities[continueBundleName].end(); it++) {
                     if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
-                        BUNDLE_ACTIVE_LOGI("ability is on background or stop, not update in new day");
                         continue;
                     }
                     (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
