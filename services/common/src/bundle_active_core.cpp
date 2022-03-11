@@ -23,6 +23,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
 {
         userId_ = -1;
@@ -407,6 +408,10 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (userId == 0 || userId == -1) {
+        return -1;
+    }
+    if (event.bundleName_ == LAUNCHER_BUNDLE_NAME) {
+        BUNDLE_ACTIVE_LOGI("ignore launcher event");
         return -1;
     }
     if (lastUsedUser_ == -1) {

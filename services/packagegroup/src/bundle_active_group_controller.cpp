@@ -282,14 +282,12 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
         bootBasedTimeStampAdjusted) {
         newGroup = ACTIVE_GROUP_ALIVE;
         groupReason = oneBundleHistory->reasonInGroup_;
-        groupReason = (newGroup == oldGroup) ? oneBundleHistory->reasonInGroup_ : GROUP_CONTROL_REASON_USAGE |
-            GROUP_EVENT_REASON_ALIVE_NOT_TIMEOUT;
+        groupReason = GROUP_CONTROL_REASON_USAGE | GROUP_EVENT_REASON_ALIVE_NOT_TIMEOUT;
         notTimeout = true;
     } else if (newGroup >= ACTIVE_GROUP_DAILY && oneBundleHistory->bundleDailyTimeoutTimeStamp_ >
         bootBasedTimeStampAdjusted) {
         newGroup = ACTIVE_GROUP_DAILY;
-        groupReason = (newGroup == oldGroup) ? oneBundleHistory->reasonInGroup_ : GROUP_CONTROL_REASON_USAGE |
-            GROUP_EVENT_REASON_ALIVE_TIMEOUT;
+        groupReason = GROUP_CONTROL_REASON_USAGE | GROUP_EVENT_REASON_ALIVE_TIMEOUT;
         notTimeout = true;
     }
     if (oldGroup < newGroup || notTimeout) {
