@@ -260,8 +260,7 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
             if (continueAbilities.find(continueBundleName) != continueAbilities.end()) {
                 for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
                     it != continueAbilities[continueBundleName].end(); it++) {
-                    if (it->second == BundleActiveEvent::ABILITY_BACKGROUND ||
-                        it->second == BundleActiveEvent::ABILITY_STOP) {
+                    if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
                         BUNDLE_ACTIVE_LOGI("ability is on background or stop, not update in new day");
                         continue;
                     }
@@ -271,10 +270,6 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
             if (continueServices.find(continueBundleName) != continueServices.end()) {
                 for (std::map<std::string, int>::iterator it = continueServices[continueBundleName].begin();
                     it != continueServices[continueBundleName].end(); it++) {
-                    if (it->second == BundleActiveEvent::LONG_TIME_TASK_ENDED) {
-                        BUNDLE_ACTIVE_LOGI("continuous task is stop, not update in new day");
-                        continue;
-                    }
                     (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
                 }
             }
