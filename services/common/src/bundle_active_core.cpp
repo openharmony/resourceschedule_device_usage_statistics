@@ -91,7 +91,7 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
         std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
         auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_SWITCH_USER, handlerobjToPtr);
-        bundleActiveReportHandler_.lock()->SendEvent(event, DELAY_WHEN_USER_SWITCH);
+        bundleActiveReportHandler_.lock()->SendEvent(event);
     } else if (action == CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED ||
         action == CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED) {
         int32_t userId = data.GetWant().GetIntParam("userId", 0);
