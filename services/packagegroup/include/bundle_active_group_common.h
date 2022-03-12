@@ -28,7 +28,6 @@ const int ACTIVE_GROUP_RARE = 40;
 const int ACTIVE_GROUP_LIMIT = 50;
 const int ACTIVE_GROUP_NEVER = 60;
 const int64_t FIVE_SECOND = 5 * 1000;
-const int64_t TEN_SECOND = 10 * 1000;
 const int64_t ONE_MINUTE = 60 * 1000;
 const int64_t TWO_MINUTE = 2 * ONE_MINUTE;
 const int64_t THREE_MINUTE = 3 * ONE_MINUTE;
