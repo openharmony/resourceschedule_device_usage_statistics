@@ -170,7 +170,7 @@ void BundleActiveUserService::RestoreStats(bool forced)
         }
         currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Clear();
         statsChanged_ = false;
-        BUNDLE_ACTIVE_LOGI("RestoreStats change to %{public}d user is is %{public}d", statsChanged_, userId_);
+        BUNDLE_ACTIVE_LOGI("change statsChanged_ to %{public}d user is %{public}d", statsChanged_, userId_);
     }
 }
 
