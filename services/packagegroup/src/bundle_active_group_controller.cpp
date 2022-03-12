@@ -50,14 +50,13 @@ void BundleActiveGroupController::OnUserRemoved(const int userId)
     }
 }
 
-void BundleActiveGroupController::OnUserSwitched(const int userId)
+void BundleActiveGroupController::OnUserSwitched(const int userId, const int lastUsedUser)
 {
+    BUNDLE_ACTIVE_LOGI("last time check for user %{public}d", lastUsedUser);
+    CheckEachBundleState(lastUsedUser);
     std::lock_guard<std::mutex> lock(mutex_);
-    CheckEachBundleState(userId);
     if (!activeGroupHandler_.expired()) {
         activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
-        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_ONE_TIME_CHECK_BUNDLE_STATE);
-        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_BUNDLE_STATE);
     }
     PeriodCheckBundleState(userId);
 }

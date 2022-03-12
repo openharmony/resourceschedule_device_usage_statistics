@@ -84,7 +84,7 @@ public:
     int IsBundleIdle(const std::string& bundleName, const int userId);
     int QueryPackageGroup(const int userId, const std::string& bundleName);
     void ShutDown(const int64_t bootBasedTimeStamp, const int userId);
-    void OnUserSwitched(const int userId);
+    void OnUserSwitched(const int userId, const int lastUsedUser);
 
 private:
     std::mutex mutex_;
