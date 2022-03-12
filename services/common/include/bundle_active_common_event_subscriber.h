@@ -48,7 +48,6 @@ public:
     void OnReceiveEvent(const CommonEventData &data) override;
 
 private:
-    static const int64_t DELAY_WHEN_USER_SWITCH = TEN_SECOND;
     std::mutex mutex_;
     std::weak_ptr<BundleActiveGroupController> activeGroupController_;
     std::weak_ptr<BundleActiveReportHandler> bundleActiveReportHandler_;
