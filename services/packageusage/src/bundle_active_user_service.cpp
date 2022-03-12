@@ -71,6 +71,7 @@ void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)
 
 void BundleActiveUserService::NotifyStatsChanged()
 {
+    BUNDLE_ACTIVE_LOGI("NotifyStatsChanged stat change is %{public}d, user is %{public}d", statsChanged_, userId_);
     if (!statsChanged_) {
         BUNDLE_ACTIVE_LOGI("NotifyStatsChanged() set stats changed to true");
         statsChanged_ = true;
@@ -260,6 +261,9 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
             if (continueAbilities.find(continueBundleName) != continueAbilities.end()) {
                 for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
                     it != continueAbilities[continueBundleName].end(); it++) {
+                    if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
+                        continue;
+                    }
                     (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
                 }
             }
