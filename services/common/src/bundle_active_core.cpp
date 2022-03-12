@@ -224,7 +224,7 @@ void BundleActiveCore::OnStatsChanged(const int userId)
         std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
         auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, handlerobjToPtr);
-        if (handler_.lock()->HasInnerEvent(static_cast<uint32_t>(BundleActiveReportHandler::MSG_FLUSH_TO_DISK)) ==
+        if (handler_.lock()->HasInnerEvent(>HasInnerEvent(static_cast<int64_t>(userId)) ==
             false) {
             BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event for user %{public}d", userId);
             handler_.lock()->SendEvent(event, FLUSH_INTERVAL);
