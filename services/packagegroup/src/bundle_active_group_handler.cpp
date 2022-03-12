@@ -54,19 +54,18 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
             break;
         }
         case MSG_ONE_TIME_CHECK_BUNDLE_STATE: {
-            std::vector<OHOS::AccountSA::OsAccountInfo> osAccountInfos;
-            OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::QueryAllCreatedOsAccounts(osAccountInfos);
-            if (ret != ERR_OK) {
-                BUNDLE_ACTIVE_LOGI("BundleActiveCore::GetAllActiveUser failed");
+            std::vector<int> activatedOsAccountIds;
+            if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
+                BUNDLE_ACTIVE_LOGI("query activated account failed");
                 return;
             }
-            if (osAccountInfos.size() == 0) {
-                BUNDLE_ACTIVE_LOGI("BundleActiveCore::GetAllActiveUser size is 0");
+            if (activatedOsAccountIds.size() == 0) {
+                BUNDLE_ACTIVE_LOGI("GetAllActiveUser size is 0");
                 return;
             }
-            for (uint32_t i = 0; i < osAccountInfos.size(); i++) {
-                bundleActiveGroupController_->CheckEachBundleState(osAccountInfos[i].GetLocalId());
-                bundleActiveGroupController_->RestoreToDatabase(osAccountInfos[i].GetLocalId());
+            for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
+                bundleActiveGroupController_->CheckEachBundleState(activatedOsAccountIds[i]);
+                bundleActiveGroupController_->RestoreToDatabase(activatedOsAccountIds[i]);
             }
             RemoveEvent(MSG_ONE_TIME_CHECK_BUNDLE_STATE);
             break;

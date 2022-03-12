@@ -226,7 +226,7 @@ void BundleActiveCore::OnStatsChanged(const int userId)
         auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, handlerobjToPtr);
         if (handler_.lock()->HasInnerEvent(static_cast<uint32_t>(BundleActiveReportHandler::MSG_FLUSH_TO_DISK)) ==
             false) {
-            BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event");
+            BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event for user %{public}d", userId);
             handler_.lock()->SendEvent(event, FLUSH_INTERVAL);
         }
     }
@@ -390,6 +390,10 @@ void BundleActiveCore::OnUserSwitched(const int userId)
             it->second->RestoreStats(true);
         }
     }
+    if (!handler_.expired()) {
+        BUNDLE_ACTIVE_LOGI("OnUserSwitched remove flush to disk event");
+        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
+    }
     std::vector<int> activatedOsAccountIds;
     GetAllActiveUser(activatedOsAccountIds);
     if (activatedOsAccountIds.size() == 0) {
@@ -398,10 +402,9 @@ void BundleActiveCore::OnUserSwitched(const int userId)
     }
     for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
         BUNDLE_ACTIVE_LOGI("start to period check for userId %{public}d", activatedOsAccountIds[i]);
-        bundleGroupController_->OnUserSwitched(activatedOsAccountIds[i]);
+        bundleGroupController_->OnUserSwitched(activatedOsAccountIds[i], lastUsedUser_);
     }
     lastUsedUser_ = userId;
-    OnStatsChanged(userId);
 }
 
 int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
