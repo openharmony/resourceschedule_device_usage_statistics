@@ -410,10 +410,6 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
     if (userId == 0 || userId == -1) {
         return -1;
     }
-    if (event.bundleName_ == LAUNCHER_BUNDLE_NAME) {
-        BUNDLE_ACTIVE_LOGI("ignore launcher event");
-        return -1;
-    }
     if (lastUsedUser_ == -1) {
         lastUsedUser_ = userId;
         BUNDLE_ACTIVE_LOGI("last used id change to %{public}d", lastUsedUser_);
@@ -432,7 +428,10 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
         BUNDLE_ACTIVE_LOGE("get user data service failed!");
         return -1;
     }
-    service->ReportEvent(event);
+    if (event.bundleName_ != LAUNCHER_BUNDLE_NAME) {
+        BUNDLE_ACTIVE_LOGI("not launcher event, report event to stats counter");
+        service->ReportEvent(event);
+    }
     bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
     return 0;
 }
