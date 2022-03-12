@@ -128,6 +128,7 @@ public:
 
 private:
     static const int64_t FLUSH_INTERVAL = TWO_MINUTE;
+    static const int64_t DELAY_WHEN_USER_SWITCH = TEN_SECOND;
     static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TWO_SECONDS;
     const int DEFAULT_USER_ID = -1;
     std::map<int, std::string> visibleActivities_;
