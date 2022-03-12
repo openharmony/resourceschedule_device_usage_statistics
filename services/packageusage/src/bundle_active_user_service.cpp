@@ -71,6 +71,7 @@ void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)
 
 void BundleActiveUserService::NotifyStatsChanged()
 {
+    BUNDLE_ACTIVE_LOGI("NotifyStatsChanged stat change is %{public}d, user is %{public}d", statsChanged_, userId_);
     if (!statsChanged_) {
         BUNDLE_ACTIVE_LOGI("NotifyStatsChanged() set stats changed to true");
         statsChanged_ = true;

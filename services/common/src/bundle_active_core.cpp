@@ -414,24 +414,28 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
         lastUsedUser_ = userId;
         BUNDLE_ACTIVE_LOGI("last used id change to %{public}d", lastUsedUser_);
     }
+
+    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+    int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
+    if (event.bundleName_ == LAUNCHER_BUNDLE_NAME) {
+        BUNDLE_ACTIVE_LOGI("launcher event, only update app group");
+        bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
+        return 0;
+    }
+
     BUNDLE_ACTIVE_LOGI("report event called  bundle name %{public}s time %{public}lld userId %{public}d, "
         "eventid %{public}d, in lock range", event.bundleName_.c_str(), event.timeStamp_, userId, event.eventId_);
-    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == -1) {
         return -1;
     }
-    int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     ConvertToSystemTimeLocked(event);
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow);
     if (service == nullptr) {
         BUNDLE_ACTIVE_LOGE("get user data service failed!");
         return -1;
     }
-    if (event.bundleName_ != LAUNCHER_BUNDLE_NAME) {
-        BUNDLE_ACTIVE_LOGI("not launcher event, report event to stats counter");
-        service->ReportEvent(event);
-    }
+    service->ReportEvent(event);
     bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
     return 0;
 }
