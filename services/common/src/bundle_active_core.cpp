@@ -404,6 +404,7 @@ void BundleActiveCore::OnUserSwitched(const int userId)
         bundleGroupController_->OnUserSwitched(activatedOsAccountIds[i], currentUsedUser_);
     }
     currentUsedUser_ = userId;
+    OnStatsChanged(userId);
 }
 
 int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
