@@ -142,7 +142,7 @@ private:
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
     void RestoreAllData();
-    int lastUsedUser_;
+    int currentUsedUser_;
 };
 }
 }
