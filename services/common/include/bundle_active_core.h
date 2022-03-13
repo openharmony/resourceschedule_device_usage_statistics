@@ -125,6 +125,7 @@ public:
     // when service stop, call it to unregister commen event and shutdown call back.
     void UnRegisterSubscriber();
     int64_t GetSystemTimeMs();
+    int currentUsedUser_;
 
 private:
     static const int64_t FLUSH_INTERVAL = TWO_MINUTE;
@@ -142,7 +143,6 @@ private:
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
     void RestoreAllData();
-    int currentUsedUser_;
 };
 }
 }
