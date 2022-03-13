@@ -52,6 +52,11 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
             BUNDLE_ACTIVE_LOGI("FLUSH TO DISK HANDLE");
             auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
+            if (tmpHandlerobj.userId_ != bundleActiveCore_->lastUsedUser_) {
+                BUNDLE_ACTIVE_LOGI("flush user is %{public}d, not last user %{public}d, return",
+                    tmpHandlerobj.userId_, bundleActiveCore_->lastUsedUser_);
+                return;
+            }
             bundleActiveCore_->RestoreToDatabase(tmpHandlerobj.userId_);
             break;
         }
