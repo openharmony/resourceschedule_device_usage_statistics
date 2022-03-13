@@ -49,6 +49,7 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
             if (tmpHandlerobj.userId_ != bundleActiveCore_->currentUsedUser_) {
                 BUNDLE_ACTIVE_LOGE("flush user is %{public}d, not last user %{public}d, return",
                     tmpHandlerobj.userId_, bundleActiveCore_->currentUsedUser_);
+                RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, tmpHandlerobj.userId_);
                 return;
             }
             bundleActiveCore_->RestoreToDatabase(tmpHandlerobj.userId_);
