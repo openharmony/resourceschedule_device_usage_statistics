@@ -133,7 +133,9 @@ void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
                 break;
         }
     }
-    NotifyStatsChanged();
+    if (event.eventId_ != BundleActiveEvent::FLUSH) {
+        NotifyStatsChanged();
+    }
 }
 
 void BundleActiveUserService::ReportForShutdown(const BundleActiveEvent& event)
