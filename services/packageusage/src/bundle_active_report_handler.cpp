@@ -42,16 +42,16 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
             bundleActiveCore_->ReportEvent(tmpHandlerobj.event_, tmpHandlerobj.userId_);
             break;
         }
-        case MSG_REPORT_EVENT_TO_ALL_USER: {
-            auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
-            BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
-            bundleActiveCore_->ReportEventToAllUserId(tmpHandlerobj.event_);
-            break;
-        }
         case MSG_FLUSH_TO_DISK: {
             BUNDLE_ACTIVE_LOGI("FLUSH TO DISK HANDLE");
             auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
+            if (tmpHandlerobj.userId_ != bundleActiveCore_->currentUsedUser_) {
+                BUNDLE_ACTIVE_LOGE("flush user is %{public}d, not last user %{public}d, return",
+                    tmpHandlerobj.userId_, bundleActiveCore_->currentUsedUser_);
+                RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, tmpHandlerobj.userId_);
+                return;
+            }
             bundleActiveCore_->RestoreToDatabase(tmpHandlerobj.userId_);
             break;
         }

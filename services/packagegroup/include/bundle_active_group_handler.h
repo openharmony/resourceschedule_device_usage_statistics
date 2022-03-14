@@ -48,7 +48,7 @@ public:
     static const int MSG_CHECK_BUNDLE_STATE = 0;
     static const int MSG_ONE_TIME_CHECK_BUNDLE_STATE = 1;
     static const int MSG_CHECK_IDLE_STATE = 2;
-    static const int CHECK_IDLE_INTERVAL = ONE_MINUTE;
+    static const int CHECK_IDLE_INTERVAL = THREE_HOUR;
 
 private:
     std::shared_ptr<BundleActiveGroupController> bundleActiveGroupController_;

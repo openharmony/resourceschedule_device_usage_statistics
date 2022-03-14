@@ -43,7 +43,7 @@ public:
     using ApplicationFlag = OHOS::AppExecFwk::ApplicationFlag;
     OHOS::AppExecFwk::ApplicationFlag flag = OHOS::AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO;
     bool bundleGroupEnable_ = true;
-    bool debug_ = true;
+    bool debug_ = false;
     const int LEVEL_GROUP[4] = {
         ACTIVE_GROUP_ALIVE,
         ACTIVE_GROUP_DAILY,
@@ -84,7 +84,7 @@ public:
     int IsBundleIdle(const std::string& bundleName, const int userId);
     int QueryPackageGroup(const int userId, const std::string& bundleName);
     void ShutDown(const int64_t bootBasedTimeStamp, const int userId);
-    void OnUserSwitched(const int userId, const int lastUsedUser);
+    void OnUserSwitched(const int userId, const int currentUsedUser);
 
 private:
     std::mutex mutex_;
