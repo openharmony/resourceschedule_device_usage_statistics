@@ -23,6 +23,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
 {
         userId_ = -1;
@@ -51,7 +52,7 @@ BundleActiveCore::BundleActiveCore()
 {
     systemTimeShot_ = -1;
     realTimeShot_ = -1;
-    lastUsedUser_ = -1;
+    currentUsedUser_ = -1;
 }
 
 BundleActiveCore::~BundleActiveCore()
@@ -223,9 +224,8 @@ void BundleActiveCore::OnStatsChanged(const int userId)
         std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
         auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, handlerobjToPtr);
-        if (handler_.lock()->HasInnerEvent(static_cast<uint32_t>(BundleActiveReportHandler::MSG_FLUSH_TO_DISK)) ==
-            false) {
-            BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event");
+        if (handler_.lock()->HasInnerEvent(static_cast<int64_t>(userId)) == false) {
+            BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event for user %{public}d", userId);
             handler_.lock()->SendEvent(event, FLUSH_INTERVAL);
         }
     }
@@ -281,7 +281,7 @@ void BundleActiveCore::RestoreToDatabaseLocked(const int userId)
     }
     if (!handler_.expired()) {
         BUNDLE_ACTIVE_LOGI("RestoreToDatabaseLocked remove flush to disk event");
-        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
+        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, userId);
     }
 }
 
@@ -344,7 +344,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
             it->second->LoadActiveStats(actualSystemTime, true, true);
             if (!handler_.expired()) {
                 BUNDLE_ACTIVE_LOGI("CheckTimeChangeAndGetWallTime remove flush to disk event");
-                handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
+                handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, userId);
             }
         }
         realTimeShot_ = actualRealTime;
@@ -376,10 +376,10 @@ void BundleActiveCore::OnUserRemoved(const int userId)
 void BundleActiveCore::OnUserSwitched(const int userId)
 {
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-    auto it = userStatServices_.find(lastUsedUser_);
+    auto it = userStatServices_.find(currentUsedUser_);
     if (it != userStatServices_.end()) {
         if (it != userStatServices_.end()) {
-            BUNDLE_ACTIVE_LOGI("restore old user id %{public}d data when switch user", lastUsedUser_);
+            BUNDLE_ACTIVE_LOGI("restore old user id %{public}d data when switch user", currentUsedUser_);
             BundleActiveEvent event;
             event.eventId_ = BundleActiveEvent::FLUSH;
             int64_t actualRealTime = timer->GetBootTimeMs();
@@ -389,6 +389,10 @@ void BundleActiveCore::OnUserSwitched(const int userId)
             it->second->RestoreStats(true);
         }
     }
+    if (!handler_.expired()) {
+        BUNDLE_ACTIVE_LOGI("OnUserSwitched remove flush to disk event");
+        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
+    }
     std::vector<int> activatedOsAccountIds;
     GetAllActiveUser(activatedOsAccountIds);
     if (activatedOsAccountIds.size() == 0) {
@@ -397,9 +401,9 @@ void BundleActiveCore::OnUserSwitched(const int userId)
     }
     for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
         BUNDLE_ACTIVE_LOGI("start to period check for userId %{public}d", activatedOsAccountIds[i]);
-        bundleGroupController_->OnUserSwitched(activatedOsAccountIds[i]);
+        bundleGroupController_->OnUserSwitched(activatedOsAccountIds[i], currentUsedUser_);
     }
-    lastUsedUser_ = userId;
+    currentUsedUser_ = userId;
     OnStatsChanged(userId);
 }
 
@@ -409,18 +413,25 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
     if (userId == 0 || userId == -1) {
         return -1;
     }
-    if (lastUsedUser_ == -1) {
-        lastUsedUser_ = userId;
-        BUNDLE_ACTIVE_LOGI("last used id change to %{public}d", lastUsedUser_);
+    if (currentUsedUser_ == -1) {
+        currentUsedUser_ = userId;
+        BUNDLE_ACTIVE_LOGI("last used id change to %{public}d", currentUsedUser_);
     }
+
+    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+    int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
+    if (event.bundleName_ == LAUNCHER_BUNDLE_NAME) {
+        BUNDLE_ACTIVE_LOGI("launcher event, only update app group");
+        bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
+        return 0;
+    }
+
     BUNDLE_ACTIVE_LOGI("report event called  bundle name %{public}s time %{public}lld userId %{public}d, "
         "eventid %{public}d, in lock range", event.bundleName_.c_str(), event.timeStamp_, userId, event.eventId_);
-    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == -1) {
         return -1;
     }
-    int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     ConvertToSystemTimeLocked(event);
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow);
     if (service == nullptr) {

@@ -50,8 +50,11 @@ void BundleActiveGroupController::OnUserRemoved(const int userId)
     }
 }
 
-void BundleActiveGroupController::OnUserSwitched(const int userId)
+void BundleActiveGroupController::OnUserSwitched(const int userId, const int currentUsedUser)
 {
+    BUNDLE_ACTIVE_LOGI("last time check for user %{public}d", currentUsedUser);
+    CheckEachBundleState(currentUsedUser);
+    bundleUserHistory_->WriteBundleUsage(currentUsedUser);
     std::lock_guard<std::mutex> lock(mutex_);
     if (!activeGroupHandler_.expired()) {
         activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
@@ -282,14 +285,12 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
         bootBasedTimeStampAdjusted) {
         newGroup = ACTIVE_GROUP_ALIVE;
         groupReason = oneBundleHistory->reasonInGroup_;
-        groupReason = (newGroup == oldGroup) ? oneBundleHistory->reasonInGroup_ : GROUP_CONTROL_REASON_USAGE |
-            GROUP_EVENT_REASON_ALIVE_NOT_TIMEOUT;
+        groupReason = GROUP_CONTROL_REASON_USAGE | GROUP_EVENT_REASON_ALIVE_NOT_TIMEOUT;
         notTimeout = true;
     } else if (newGroup >= ACTIVE_GROUP_DAILY && oneBundleHistory->bundleDailyTimeoutTimeStamp_ >
         bootBasedTimeStampAdjusted) {
         newGroup = ACTIVE_GROUP_DAILY;
-        groupReason = (newGroup == oldGroup) ? oneBundleHistory->reasonInGroup_ : GROUP_CONTROL_REASON_USAGE |
-            GROUP_EVENT_REASON_ALIVE_TIMEOUT;
+        groupReason = GROUP_CONTROL_REASON_USAGE | GROUP_EVENT_REASON_ALIVE_TIMEOUT;
         notTimeout = true;
     }
     if (oldGroup < newGroup || notTimeout) {
