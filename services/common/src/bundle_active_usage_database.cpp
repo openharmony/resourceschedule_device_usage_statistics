@@ -565,7 +565,6 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
     }
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return;
     }
     CheckDatabaseFile(APP_GROUP_DATABASE_INDEX);
