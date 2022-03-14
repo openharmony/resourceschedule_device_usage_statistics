@@ -391,7 +391,7 @@ void BundleActiveCore::OnUserSwitched(const int userId)
     }
     if (!handler_.expired()) {
         BUNDLE_ACTIVE_LOGI("OnUserSwitched remove flush to disk event");
-        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, currentUsedUser_);
+        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
     }
     std::vector<int> activatedOsAccountIds;
     GetAllActiveUser(activatedOsAccountIds);

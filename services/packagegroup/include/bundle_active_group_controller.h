@@ -43,7 +43,7 @@ public:
     using ApplicationFlag = OHOS::AppExecFwk::ApplicationFlag;
     OHOS::AppExecFwk::ApplicationFlag flag = OHOS::AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO;
     bool bundleGroupEnable_ = true;
-    bool debug_ = true;
+    bool debug_ = false;
     const int LEVEL_GROUP[4] = {
         ACTIVE_GROUP_ALIVE,
         ACTIVE_GROUP_DAILY,
