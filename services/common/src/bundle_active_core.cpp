@@ -281,7 +281,7 @@ void BundleActiveCore::RestoreToDatabaseLocked(const int userId)
     }
     if (!handler_.expired()) {
         BUNDLE_ACTIVE_LOGI("RestoreToDatabaseLocked remove flush to disk event");
-        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, userId);
+        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
     }
 }
 
@@ -344,7 +344,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
             it->second->LoadActiveStats(actualSystemTime, true, true);
             if (!handler_.expired()) {
                 BUNDLE_ACTIVE_LOGI("CheckTimeChangeAndGetWallTime remove flush to disk event");
-                handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, userId);
+                handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
             }
         }
         realTimeShot_ = actualRealTime;
@@ -388,10 +388,6 @@ void BundleActiveCore::OnUserSwitched(const int userId)
             it->second->ReportEvent(event);
             it->second->RestoreStats(true);
         }
-    }
-    if (!handler_.expired()) {
-        BUNDLE_ACTIVE_LOGI("OnUserSwitched remove flush to disk event");
-        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
     }
     std::vector<int> activatedOsAccountIds;
     GetAllActiveUser(activatedOsAccountIds);
