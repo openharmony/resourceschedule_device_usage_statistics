@@ -45,7 +45,7 @@ BundleActiveUsageDatabase::BundleActiveUsageDatabase()
     currentVersion_ = BUNDLE_ACTIVE_CURRENT_VERSION;
     versionDirectoryPath_ = BUNDLE_ACTIVE_DATABASE_DIR + BUNDLE_ACTIVE_VERSION_FILE;
     for (uint32_t i = 0; i < sizeof(DATABASE_TYPE)/sizeof(DATABASE_TYPE[0]); i++) {
-        databaseFiles_.push_back(DATABASE_TYPE[i]);
+        databaseFiles_.push_back(DATABASE_TYPE[i] + SUFFIX_TYPE[0]);
     }
     eventTableName_ = UNKNOWN_TABLE_NAME;
     durationTableName_ = UNKNOWN_TABLE_NAME;
@@ -415,6 +415,30 @@ shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbSto
     return rdbStore;
 }
 
+void BundleActiveUsageDatabase::CheckDatabaseFile(unsigned int databaseType)
+{
+    std::string databaseFileName = databaseFiles_.at(databaseType);
+    std::string dbFile;
+    for (uint32_t i = 0; i < sizeof(SUFFIX_TYPE) / sizeof(SUFFIX_TYPE[0]); i++) {
+        dbFile = BUNDLE_ACTIVE_DATABASE_DIR + DATABASE_TYPE[databaseType] + SUFFIX_TYPE[i];
+        if ((access(dbFile.c_str(), F_OK) != 0)
+            && (bundleActiveRdbStoreCache_.find(databaseFileName) != bundleActiveRdbStoreCache_.end())) {
+            bundleActiveRdbStoreCache_.erase(databaseFileName);
+            std::string rdbStorePath = BUNDLE_ACTIVE_DATABASE_DIR + DATABASE_TYPE[databaseType] + SUFFIX_TYPE[0];
+            RdbHelper::DeleteRdbStore(rdbStorePath);
+            if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
+                sortedTableArray_.at(databaseType).clear();
+            } else if (databaseType == EVENT_DATABASE_INDEX) {
+                eventTableName_ = UNKNOWN_TABLE_NAME;
+            } else if (databaseType == APP_GROUP_DATABASE_INDEX) {
+                durationTableName_ = UNKNOWN_TABLE_NAME;
+                bundleHistoryTableName_ = UNKNOWN_TABLE_NAME;
+            }
+            return;
+        }
+    }
+}
+
 int32_t BundleActiveUsageDatabase::CreateEventLogTable(unsigned int databaseType, int64_t currentTimeMillis)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
@@ -539,14 +563,14 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
         BUNDLE_ACTIVE_LOGE("userHistory is nullptr");
         return;
     }
+    shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
+    if (rdbStore == nullptr) {
+        return;
+    }
+    CheckDatabaseFile(APP_GROUP_DATABASE_INDEX);
     if (bundleHistoryTableName_ == UNKNOWN_TABLE_NAME) {
         CreateBundleHistoryTable(APP_GROUP_DATABASE_INDEX);
         bundleHistoryTableName_ = BUNDLE_HISTORY_LOG_TABLE;
-    }
-    shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
-    if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
-        return;
     }
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
@@ -633,6 +657,7 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
 void BundleActiveUsageDatabase::PutDurationData(int64_t bootBasedDuration, int64_t screenOnDuration)
 {
     lock_guard<mutex> lock(databaseMutex_);
+    CheckDatabaseFile(APP_GROUP_DATABASE_INDEX);
     if (durationTableName_ == UNKNOWN_TABLE_NAME) {
         CreateDurationTable(APP_GROUP_DATABASE_INDEX);
         durationTableName_ = DURATION_LOG_TABLE;
@@ -775,11 +800,15 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
 
 void BundleActiveUsageDatabase::FlushEventInfo(unsigned int databaseType, BundleActivePeriodStats &stats)
 {
+    shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
+    if (rdbStore == nullptr) {
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        return;
+    }
     if (eventTableName_ == UNKNOWN_TABLE_NAME) {
         CreateEventLogTable(databaseType, stats.beginTime_);
     }
     int64_t eventTableTime = ParseStartTime(eventTableName_);
-    shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
     NativeRdb::ValuesBucket valuesBucket;
     for (int32_t i = 0; i < stats.events_.Size(); i++) {
@@ -987,8 +1016,10 @@ void BundleActiveUsageDatabase::UpdateUsageData(int32_t databaseType, BundleActi
         BUNDLE_ACTIVE_LOGE("databaseType is invalid : %{public}d", databaseType);
         return;
     }
+    CheckDatabaseFile(databaseType);
     if (databaseType == DAILY_DATABASE_INDEX) {
         if (stats.events_.Size() != 0) {
+            CheckDatabaseFile(EVENT_DATABASE_INDEX);
             FlushEventInfo(EVENT_DATABASE_INDEX, stats);
         }
     }

@@ -82,6 +82,7 @@ private:
         unsigned int databaseType);
     int32_t CreateDatabasePath();
     int64_t GetSystemTimeMs();
+    void CheckDatabaseFile(unsigned int databaseType);
 
 private:
     std::vector<std::string> databaseFiles_;
