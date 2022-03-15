@@ -46,10 +46,10 @@ public:
             dailyExpiryDate_.ChangeToDebug();
             database_.ChangeToDebug();
             debugUserService_ = true;
-            PERIOD_LENGTH = {ONE_DAY_TIME_DEBUG, ONE_WEEK_TIME_DEBUG, ONE_MONTH_TIME_DEBUG, ONE_YEAR_TIME_DEBUG};
+            periodLength_ = {ONE_DAY_TIME_DEBUG, ONE_WEEK_TIME_DEBUG, ONE_MONTH_TIME_DEBUG, ONE_YEAR_TIME_DEBUG};
         } else {
             debugUserService_ = false;
-            PERIOD_LENGTH = {ONE_DAY_TIME, ONE_WEEK_TIME, ONE_MONTH_TIME, ONE_YEAR_TIME};
+            periodLength_ = {ONE_DAY_TIME, ONE_WEEK_TIME, ONE_MONTH_TIME, ONE_YEAR_TIME};
         }
     }
     void Init(const int64_t timeStamp);
@@ -77,7 +77,7 @@ private:
     bool debugUserService_;
     std::string lastBackgroundBundle_;
     BundleActiveCore& listener_;
-    std::vector<int64_t> PERIOD_LENGTH = {0, 0, 0, 0};
+    std::vector<int64_t> periodLength_ = {0, 0, 0, 0};
     void NotifyStatsChanged();
     void NotifyNewUpdate();
     void PrintInMemPackageStats(const int idx);
