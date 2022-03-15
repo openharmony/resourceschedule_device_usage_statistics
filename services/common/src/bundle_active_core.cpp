@@ -55,8 +55,10 @@ BundleActiveCore::BundleActiveCore()
     currentUsedUser_ = -1;
     if (DEBUG_ON) {
         flushInterval_ = TWO_MINUTE;
+        debugCore_ = true;
     } else {
         flushInterval_ = THIRTY_MINUTE;
+        debugCore_ = false;
     }
 }
 

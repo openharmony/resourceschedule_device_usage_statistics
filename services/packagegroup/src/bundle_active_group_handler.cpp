@@ -30,7 +30,7 @@ BundleActiveGroupHandler::BundleActiveGroupHandler
     (const std::shared_ptr<AppExecFwk::EventRunner> &runner, const bool debug) : AppExecFwk::EventHandler(runner)
 {
     if (debug) {
-        checkIdleInterval_ = TWO_MINUTE;
+        checkIdleInterval_ = ONE_MINUTE;
     } else {
         checkIdleInterval_ = THREE_HOUR;
     }
