@@ -222,10 +222,6 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
     if (IsBundleInstalled(event.bundleName_, userId) == false) {
         return;
     }
-    BUNDLE_ACTIVE_LOGI("screen %{public}lld, %{public}lld, %{public}lld, %{public}lld",
-        screenTimeLevel_[0], screenTimeLevel_[1], screenTimeLevel_[2], screenTimeLevel_[3]);
-    BUNDLE_ACTIVE_LOGI("boot %{public}lld, %{public}lld, %{public}lld, %{public}lld",
-        bootTimeLevel_[0], bootTimeLevel_[1], bootTimeLevel_[2], bootTimeLevel_[3]);
     int eventId = event.eventId_;
     if (eventId == BundleActiveEvent::ABILITY_FOREGROUND ||
         eventId == BundleActiveEvent::ABILITY_BACKGROUND ||

@@ -61,7 +61,8 @@ BundleActiveUsageDatabase::~BundleActiveUsageDatabase()
     RdbHelper::ClearCache();
 }
 
-void BundleActiveUsageDatabase::ChangeToDebug() {
+void BundleActiveUsageDatabase::ChangeToDebug()
+{
     calendar_->ChangeToDebug();
     debugDatabase_ = true;
 }

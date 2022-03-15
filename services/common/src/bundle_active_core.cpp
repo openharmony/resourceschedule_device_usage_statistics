@@ -193,7 +193,8 @@ std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitial
     std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.find(userId);
     if (it == userStatServices_.end()) {
         BUNDLE_ACTIVE_LOGI("first initialize user service");
-        std::shared_ptr<BundleActiveUserService> service = std::make_shared<BundleActiveUserService>(userId, *this, debug);
+        std::shared_ptr<BundleActiveUserService> service = std::make_shared<BundleActiveUserService>(userId, *this,
+            debug);
         service->Init(timeStamp);
         userStatServices_[userId] = service;
         if (service == nullptr) {
@@ -453,12 +454,14 @@ int BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
         return -1;
     }
     if (userStatServices_.empty()) {
-        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(DEFAULT_USER_ID, timeNow, debugCore_);
+        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(DEFAULT_USER_ID, timeNow,
+            debugCore_);
     }
     for (std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.begin();
         it != userStatServices_.end(); it++) {
         ConvertToSystemTimeLocked(event);
-        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(it->first, timeNow, debugCore_);
+        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(it->first, timeNow,
+            debugCore_);
         if (service == nullptr) {
             BUNDLE_ACTIVE_LOGE("get user data service failed!");
             return -1;

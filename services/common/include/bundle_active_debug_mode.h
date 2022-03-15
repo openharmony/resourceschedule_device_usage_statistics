@@ -16,8 +16,6 @@
 #ifndef BUNDLE_ACTIVE_DEBUG_MODE_H
 #define BUNDLE_ACTIVE_DEBUG_MODE_H
 
-#include<stdint.h>
-
 namespace OHOS {
 namespace DeviceUsageStats {
 extern const bool DEBUG_ON;
