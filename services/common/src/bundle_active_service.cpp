@@ -75,8 +75,7 @@ void BundleActiveService::InitNecessaryState()
         return;
     }
 
-    if (systemAbilityManager == nullptr
-        || systemAbilityManager->GetSystemAbility(APP_MGR_SERVICE_ID) == nullptr
+    if (systemAbilityManager->GetSystemAbility(APP_MGR_SERVICE_ID) == nullptr
         || systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
         || systemAbilityManager->GetSystemAbility(POWER_MANAGER_SERVICE_ID) == nullptr
         || systemAbilityManager->GetSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
