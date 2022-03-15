@@ -29,6 +29,17 @@ BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject()
         userId_ = -1;
 }
 
+
+BundleActiveGroupController::BundleActiveGroupController(const bool debug)
+{
+    timeoutForDirectlyUse_ = debug ? THREE_MINUTE : ONE_HOUR;
+    timeoutForNotifySeen_ = debug ? ONE_MINUTE : TWELVE_HOUR;
+    timeoutForSystemInteraction_ = debug ? ONE_MINUTE : TEN_MINUTE;
+    screenTimeLevel_ = {0, 0, debug ? TWO_MINUTE : ONE_HOUR, debug ? FOUR_MINUTE : TWO_HOUR};
+    bootTimeLevel_ = {0, debug ? TWO_MINUTE : TWELVE_HOUR, debug ? FOUR_MINUTE : TWENTY_FOUR_HOUR,
+        debug ? SIXTEEN_MINUTE : FOURTY_EIGHT_HOUR};
+}
+
 void BundleActiveGroupController::RestoreDurationToDatabase()
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -161,8 +172,8 @@ void BundleActiveGroupController::CheckIdleStatsOneTime()
 int BundleActiveGroupController::GetNewGroup(const std::string& bundleName, const int userId,
     const int64_t bootBasedTimeStamp)
 {
-    int groupIndex = bundleUserHistory_->GetLevelIndex(bundleName, userId, bootBasedTimeStamp, SCREEN_TIME_LEVEL,
-        BOOT_TIME_LEVEL);
+    int groupIndex = bundleUserHistory_->GetLevelIndex(bundleName, userId, bootBasedTimeStamp, screenTimeLevel_,
+        bootTimeLevel_);
     if (groupIndex < 0) {
         return -1;
     }

@@ -22,6 +22,7 @@
 #include "os_account_manager.h"
 
 #include "ibundle_active_service.h"
+#include "bundle_active_debug_mode.h"
 #include "bundle_active_stats_update_listener.h"
 #include "bundle_active_user_service.h"
 #include "bundle_active_group_controller.h"
@@ -114,7 +115,7 @@ public:
     void ConvertToSystemTimeLocked(BundleActiveEvent& event);
     // get or create BundleActiveUserService object for specifice user.
     std::shared_ptr<BundleActiveUserService> GetUserDataAndInitializeIfNeeded(const int userId,
-        const int64_t timeStamp);
+        const int64_t timeStamp, const bool debug);
     // when received a USER_REMOVED commen event, call it to remove data.
     void OnUserRemoved(const int userId);
     void OnUserSwitched(const int userId);
@@ -128,7 +129,7 @@ public:
     int currentUsedUser_;
 
 private:
-    static const int64_t FLUSH_INTERVAL = THIRTY_MINUTE;
+    int64_t flushInterval_;
     static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TWO_SECONDS;
     const int DEFAULT_USER_ID = -1;
     std::map<int, std::string> visibleActivities_;
@@ -143,6 +144,7 @@ private:
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
     void RestoreAllData();
+    bool debugCore_;
 };
 }
 }

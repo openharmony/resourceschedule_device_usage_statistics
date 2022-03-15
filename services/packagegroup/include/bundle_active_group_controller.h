@@ -43,26 +43,15 @@ public:
     using ApplicationFlag = OHOS::AppExecFwk::ApplicationFlag;
     OHOS::AppExecFwk::ApplicationFlag flag = OHOS::AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO;
     bool bundleGroupEnable_ = true;
-    bool debug_ = false;
     const int LEVEL_GROUP[4] = {
         ACTIVE_GROUP_ALIVE,
         ACTIVE_GROUP_DAILY,
         ACTIVE_GROUP_FIXED,
         ACTIVE_GROUP_RARE
     };
-    const int64_t SCREEN_TIME_LEVEL[4] = {
-        0,
-        0,
-        debug_ ? TWO_MINUTE : ONE_HOUR,
-        debug_ ? FOUR_MINUTE : TWO_HOUR
-    };
-    const int64_t BOOT_TIME_LEVEL[4] = {
-        0,
-        debug_ ? TWO_MINUTE : TWELVE_HOUR,
-        debug_ ? FOUR_MINUTE : TWENTY_FOUR_HOUR,
-        debug_ ? SIXTEEN_MINUTE : FOURTY_EIGHT_HOUR
-    };
-    BundleActiveGroupController() {};
+    std::vector<int64_t> screenTimeLevel_ = {0, 0, 0, 0};
+    std::vector<int64_t> bootTimeLevel_ = {0, 0, 0, 0};
+    BundleActiveGroupController(const bool debug);
     ~BundleActiveGroupController() {};
     std::shared_ptr<BundleActiveUserHistory> bundleUserHistory_;
     void SetHandlerAndCreateUserHistory(const std::shared_ptr<BundleActiveGroupHandler>& groupHandler,
@@ -91,9 +80,9 @@ private:
     bool GetBundleMgrProxy();
     std::weak_ptr<BundleActiveGroupHandler> activeGroupHandler_;
     uint32_t EventToGroupReason(const int eventId);
-    int64_t timeoutForDirectlyUse_ = debug_ ? THREE_MINUTE : ONE_HOUR;
-    int64_t timeoutForNotifySeen_ = debug_ ? ONE_MINUTE : TWELVE_HOUR;
-    int64_t timeoutForSystemInteraction_ = debug_ ? ONE_MINUTE : TEN_MINUTE;
+    int64_t timeoutForDirectlyUse_;
+    int64_t timeoutForNotifySeen_;
+    int64_t timeoutForSystemInteraction_;
     int64_t timeoutCalculated_ = 0;
     sptr<IBundleMgr> sptrBundleMgr_;
     bool calculationTimeOut(const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory,

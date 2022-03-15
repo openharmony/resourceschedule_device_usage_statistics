@@ -53,6 +53,13 @@ BundleActiveCore::BundleActiveCore()
     systemTimeShot_ = -1;
     realTimeShot_ = -1;
     currentUsedUser_ = -1;
+    if (DEBUG_ON) {
+        flushInterval_ = TWO_MINUTE;
+        debugCore_ = true;
+    } else {
+        flushInterval_ = THIRTY_MINUTE;
+        debugCore_ = false;
+    }
 }
 
 BundleActiveCore::~BundleActiveCore()
@@ -141,7 +148,7 @@ void BundleActiveCore::Init()
     } while (realTimeShot_ == -1 && systemTimeShot_ == -1);
     realTimeShot_ = timer->GetBootTimeMs();
     systemTimeShot_ = GetSystemTimeMs();
-    bundleGroupController_ = std::make_shared<BundleActiveGroupController>();
+    bundleGroupController_ = std::make_shared<BundleActiveGroupController>(debugCore_);
     BUNDLE_ACTIVE_LOGI("system time shot is %{public}lld", systemTimeShot_);
 }
 
@@ -154,7 +161,7 @@ void BundleActiveCore::InitBundleGroupController()
         BUNDLE_ACTIVE_LOGE("report handler is null");
         return;
     }
-    bundleGroupHandler_ = std::make_shared<BundleActiveGroupHandler>(runner);
+    bundleGroupHandler_ = std::make_shared<BundleActiveGroupHandler>(runner, debugCore_);
     if (bundleGroupHandler_ == nullptr) {
         return;
     }
@@ -182,13 +189,14 @@ void BundleActiveCore::SetHandler(const std::shared_ptr<BundleActiveReportHandle
 }
 
 std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitializeIfNeeded(const int userId,
-    const int64_t timeStamp)
+    const int64_t timeStamp, const bool debug)
 {
     BUNDLE_ACTIVE_LOGI("GetUserDataAndInitializeIfNeeded called");
     std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.find(userId);
     if (it == userStatServices_.end()) {
         BUNDLE_ACTIVE_LOGI("first initialize user service");
-        std::shared_ptr<BundleActiveUserService> service = std::make_shared<BundleActiveUserService>(userId, *this);
+        std::shared_ptr<BundleActiveUserService> service = std::make_shared<BundleActiveUserService>(userId, *this,
+            debug);
         service->Init(timeStamp);
         userStatServices_[userId] = service;
         if (service == nullptr) {
@@ -208,7 +216,7 @@ void BundleActiveCore::OnBundleUninstalled(const int userId, const std::string& 
     if (timeNow == -1) {
         return;
     }
-    auto service = GetUserDataAndInitializeIfNeeded(userId, timeNow);
+    auto service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (service == nullptr) {
         return;
     }
@@ -226,7 +234,7 @@ void BundleActiveCore::OnStatsChanged(const int userId)
         auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, handlerobjToPtr);
         if (handler_.lock()->HasInnerEvent(static_cast<int64_t>(userId)) == false) {
             BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event for user %{public}d", userId);
-            handler_.lock()->SendEvent(event, FLUSH_INTERVAL);
+            handler_.lock()->SendEvent(event, flushInterval_);
         }
     }
 }
@@ -405,6 +413,7 @@ void BundleActiveCore::OnUserSwitched(const int userId)
 
 int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
 {
+    BUNDLE_ACTIVE_LOGI("FLUSH interval is %{public}lld, debug is %{public}d", flushInterval_, debugCore_);
     std::lock_guard<std::mutex> lock(mutex_);
     if (userId == 0 || userId == -1) {
         return -1;
@@ -429,7 +438,7 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
         return -1;
     }
     ConvertToSystemTimeLocked(event);
-    std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow);
+    std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (service == nullptr) {
         BUNDLE_ACTIVE_LOGE("get user data service failed!");
         return -1;
@@ -447,12 +456,14 @@ int BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
         return -1;
     }
     if (userStatServices_.empty()) {
-        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(DEFAULT_USER_ID, timeNow);
+        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(DEFAULT_USER_ID, timeNow,
+            debugCore_);
     }
     for (std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.begin();
         it != userStatServices_.end(); it++) {
         ConvertToSystemTimeLocked(event);
-        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(it->first, timeNow);
+        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(it->first, timeNow,
+            debugCore_);
         if (service == nullptr) {
             BUNDLE_ACTIVE_LOGE("get user data service failed!");
             return -1;
@@ -481,7 +492,7 @@ std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const 
         BUNDLE_ACTIVE_LOGI("QueryPackageStats time span illegal");
         return result;
     }
-    std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow);
+    std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (service == nullptr) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats service is null, failed");
         return result;
@@ -503,7 +514,7 @@ std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int userId, c
     if (beginTime > timeNow || beginTime >= endTime) {
         return result;
     }
-    std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow);
+    std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (service == nullptr) {
         return result;
     }

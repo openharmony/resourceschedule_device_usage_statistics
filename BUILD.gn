@@ -91,6 +91,7 @@ ohos_shared_library("usagestatservice") {
     "services/common/src/bundle_active_binary_search.cpp",
     "services/common/src/bundle_active_continuous_task_observer.cpp",
     "services/common/src/bundle_active_core.cpp",
+    "services/common/src/bundle_active_debug_mode.cpp",
     "services/common/src/bundle_active_log.cpp",
     "services/common/src/bundle_active_open_callback.cpp",
     "services/common/src/bundle_active_service.cpp",
@@ -138,6 +139,7 @@ ohos_shared_library("usagestatservice") {
     "power_manager_native:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
+    "startup_l2:syspara",
     "time_native:time_service",
     "utils_base:utils",
   ]

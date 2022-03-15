@@ -182,9 +182,12 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
 {
     BUNDLE_ACTIVE_LOGI("LoadActiveStats called");
     BundleActiveCalendar tmpCalendar(0);
+    if (debugUserService_ == true) {
+        tmpCalendar.ChangeToDebug();
+    }
     tmpCalendar.SetMilliseconds(timeStamp);
     tmpCalendar.TruncateTo(BundleActivePeriodStats::PERIOD_DAILY);
-    for (uint32_t intervalType = 0; intervalType < PERIOD_LENGTH.size(); intervalType++) {
+    for (uint32_t intervalType = 0; intervalType < periodLength_.size(); intervalType++) {
         if (!force && currentStats_[intervalType] != nullptr &&
             currentStats_[intervalType]->beginTime_ == tmpCalendar.GetMilliseconds()) {
             continue;
@@ -197,8 +200,8 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
             // 如果当前时间在stats的统计时间范围内，则可以从数据库加载数据
             BUNDLE_ACTIVE_LOGI("interval type is %{public}d, database stat BEGIN time is %{public}lld, "
                 "timestamp is %{public}lld, expect end is %{public}lld",
-                intervalType, stats->beginTime_, timeStamp, stats->beginTime_ + PERIOD_LENGTH[intervalType]);
-            if (timeStamp > stats->beginTime_ && timeStamp < stats->beginTime_ + PERIOD_LENGTH[intervalType]) {
+                intervalType, stats->beginTime_, timeStamp, stats->beginTime_ + periodLength_[intervalType]);
+            if (timeStamp > stats->beginTime_ && timeStamp < stats->beginTime_ + periodLength_[intervalType]) {
                 currentStats_[intervalType] = stats;
             }
         }
@@ -301,7 +304,7 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
         return result;
     }
     if (currentStats->endTime_ == 0) {
-        if (beginTime > currentStats->beginTime_ + PERIOD_LENGTH[intervalType]) {
+        if (beginTime > currentStats->beginTime_ + periodLength_[intervalType]) {
             return result;
         } else {
             result = database_.QueryDatabaseUsageStats(intervalType, beginTime, endTime, userId);

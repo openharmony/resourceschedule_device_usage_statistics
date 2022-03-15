@@ -27,8 +27,13 @@ BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject(const BundleActiv
 }
 
 BundleActiveGroupHandler::BundleActiveGroupHandler
-    (const std::shared_ptr<AppExecFwk::EventRunner> &runner) : AppExecFwk::EventHandler(runner)
+    (const std::shared_ptr<AppExecFwk::EventRunner> &runner, const bool debug) : AppExecFwk::EventHandler(runner)
 {
+    if (debug) {
+        checkIdleInterval_ = ONE_MINUTE;
+    } else {
+        checkIdleInterval_ = THREE_HOUR;
+    }
 }
 
 void BundleActiveGroupHandler::Init(const std::shared_ptr<BundleActiveGroupController>& bundleActiveController)
@@ -82,7 +87,7 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
                 auto handlerEvent = AppExecFwk::InnerEvent::Get(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE,
                     handlerobjToPtr);
                 bundleActiveGroupController_->RestoreToDatabase(GroupHandlerObj.userId_);
-                SendEvent(handlerEvent, CHECK_IDLE_INTERVAL);
+                SendEvent(handlerEvent, checkIdleInterval_);
             }
             break;
         }
