@@ -63,7 +63,8 @@ BundleActiveUserHistory::BundleActiveUserHistory(const int64_t bootBasedTimeStam
 }
 
 int BundleActiveUserHistory::GetLevelIndex(const string& bundleName, const int userId,
-    const int64_t bootBasedTimeStamp, const int64_t screenTimeLevel[4], const int64_t bootFromTimeLevel[4])
+    const int64_t bootBasedTimeStamp, const std::vector<int64_t> screenTimeLevel,
+    const std::vector<int64_t> bootFromTimeLevel)
 {
     auto oneUserHistory = GetUserHistory(userId, false);
     if (oneUserHistory == nullptr) {
