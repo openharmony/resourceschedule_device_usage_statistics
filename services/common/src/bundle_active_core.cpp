@@ -71,7 +71,6 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
     std::lock_guard<std::mutex> lock(mutex_);
     std::string action = data.GetWant().GetAction();
     BUNDLE_ACTIVE_LOGI("OnReceiveEvent action is %{public}s", action.c_str());
-    auto want = data.GetWant();
     if (action == CommonEventSupport::COMMON_EVENT_SCREEN_OFF ||
         action == CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
         if (!activeGroupController_.expired()) {
@@ -111,8 +110,7 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
             auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
                 handlerobjToPtr);
-            bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
-                handlerobjToPtr);
+            bundleActiveReportHandler_.lock()->SendEvent(event);
         }
     }
 }
@@ -164,6 +162,8 @@ void BundleActiveCore::InitBundleGroupController()
     bundleGroupHandler_ = std::make_shared<BundleActiveGroupHandler>(runner, debugCore_);
     if (bundleGroupHandler_ == nullptr) {
         return;
+    } else {
+        return;
     }
     if (bundleGroupController_ != nullptr && bundleGroupHandler_ != nullptr) {
         bundleGroupHandler_->Init(bundleGroupController_);
@@ -197,6 +197,9 @@ std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitial
         BUNDLE_ACTIVE_LOGI("first initialize user service");
         std::shared_ptr<BundleActiveUserService> service = std::make_shared<BundleActiveUserService>(userId, *this,
             debug);
+        if (service == nullptr) {
+            return nullptr;
+        }
         service->Init(timeStamp);
         userStatServices_[userId] = service;
         if (service == nullptr) {
@@ -246,6 +249,7 @@ void BundleActiveCore::RestoreAllData()
         std::shared_ptr<BundleActiveUserService> service = it->second;
         if (service == nullptr) {
             BUNDLE_ACTIVE_LOGI("service in BundleActiveCore::RestoreToDatabaseLocked() is null");
+            return;
         }
         BUNDLE_ACTIVE_LOGI("userid is %{public}d ", service->userId_);
         service->RestoreStats(true);
@@ -456,8 +460,7 @@ int BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
         return -1;
     }
     if (userStatServices_.empty()) {
-        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(DEFAULT_USER_ID, timeNow,
-            debugCore_);
+        return DEFAULT_USER_ID;
     }
     for (std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.begin();
         it != userStatServices_.end(); it++) {
