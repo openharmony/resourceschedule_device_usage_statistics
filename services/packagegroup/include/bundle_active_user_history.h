@@ -52,7 +52,7 @@ public:
     void SetBundleGroup(const std::string& bundleName, const int userId, const int64_t bootBasedTimeStamp,
         int newGroup, uint32_t groupReason, const bool& resetTimeout);
     int GetLevelIndex(const std::string& bundleName, const int userId, const int64_t bootBasedTimeStamp,
-        const int64_t screenTimeLevel[4], const int64_t bootFromTimeLevel[4]);
+        const std::vector<int64_t> screenTimeLeve, const std::vector<int64_t> bootFromTimeLevel);
     void WriteDeviceDuration();
     void WriteBundleUsage(const int userId);
     void printdata(int userId);

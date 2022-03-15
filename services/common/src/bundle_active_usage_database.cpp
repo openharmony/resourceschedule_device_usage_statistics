@@ -53,6 +53,7 @@ BundleActiveUsageDatabase::BundleActiveUsageDatabase()
     sortedTableArray_ = vector<vector<int64_t>>(SORTED_TABLE_ARRAY_NUMBER);
     calendar_ = make_shared<BundleActiveCalendar>();
     eventBeginTime_ = EVENT_BEGIN_TIME_INITIAL_VALUE;
+    debugDatabase_ = false;
 }
 
 BundleActiveUsageDatabase::~BundleActiveUsageDatabase()
@@ -60,6 +61,10 @@ BundleActiveUsageDatabase::~BundleActiveUsageDatabase()
     RdbHelper::ClearCache();
 }
 
+void BundleActiveUsageDatabase::ChangeToDebug() {
+    calendar_->ChangeToDebug();
+    debugDatabase_ = true;
+}
 void BundleActiveUsageDatabase::InitUsageGroupInfo(int32_t databaseType)
 {
     lock_guard<mutex> lock(databaseMutex_);
@@ -276,7 +281,12 @@ void BundleActiveUsageDatabase::DeleteExcessiveTableData(unsigned int databaseTy
             return;
         }
         int64_t eventTableTime = ParseStartTime(eventTableName_);
-        int64_t deleteTimePoint = eventBeginTime_ - SIX_DAY_IN_MILLIS_MAX - eventTableTime;
+        int64_t deleteTimePoint = 0;
+        if (debugDatabase_) {
+            deleteTimePoint = eventBeginTime_ - SIX_DAY_IN_MILLIS_MAX_DEBUG - eventTableTime;
+        } else {
+            deleteTimePoint = eventBeginTime_ - SIX_DAY_IN_MILLIS_MAX - eventTableTime;
+        }
         if (deleteTimePoint <= 0) {
             return;
         }

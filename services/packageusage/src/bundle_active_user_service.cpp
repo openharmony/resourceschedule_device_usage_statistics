@@ -86,6 +86,8 @@ void BundleActiveUserService::NotifyNewUpdate()
 
 void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
 {
+    BUNDLE_ACTIVE_LOGI("PERIOD %{public}lld, %{public}lld, %{public}lld, %{public}lld",
+        PERIOD_LENGTH[0], PERIOD_LENGTH[1], PERIOD_LENGTH[2], PERIOD_LENGTH[3]);
     BUNDLE_ACTIVE_LOGI("ReportEvent, B time is %{public}lld, E time is %{public}lld, userId is %{public}d,"
         "event is %{public}d",
         currentStats_[0]->beginTime_, dailyExpiryDate_.GetMilliseconds(), userId_, event.eventId_);
@@ -182,6 +184,9 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
 {
     BUNDLE_ACTIVE_LOGI("LoadActiveStats called");
     BundleActiveCalendar tmpCalendar(0);
+    if (debugUserService_ == true) {
+        tmpCalendar.ChangeToDebug();
+    }
     tmpCalendar.SetMilliseconds(timeStamp);
     tmpCalendar.TruncateTo(BundleActivePeriodStats::PERIOD_DAILY);
     for (uint32_t intervalType = 0; intervalType < PERIOD_LENGTH.size(); intervalType++) {

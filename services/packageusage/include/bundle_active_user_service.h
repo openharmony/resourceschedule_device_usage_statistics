@@ -25,6 +25,7 @@
 #include "bundle_active_calendar.h"
 #include "bundle_active_stats_combiner.h"
 #include "bundle_active_usage_database.h"
+#include "bundle_active_constant.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -33,7 +34,7 @@ class BundleActiveCore;
 class BundleActiveUserService {
 public:
     BundleActiveUserService() = delete;
-    BundleActiveUserService(const int userId, BundleActiveCore& listener):listener_(listener)
+    BundleActiveUserService(const int userId, BundleActiveCore& listener, const bool debug):listener_(listener)
     {
         for (int i = 0; i < BundleActivePeriodStats::PERIOD_COUNT; i++) {
             currentStats_.push_back(nullptr);
@@ -41,6 +42,15 @@ public:
         userId_ = userId;
         dailyExpiryDate_.SetMilliseconds(0);
         statsChanged_ = false;
+        if (debug) {
+            dailyExpiryDate_.ChangeToDebug();
+            database_.ChangeToDebug();
+            debugUserService_ = true;
+            PERIOD_LENGTH = {ONE_DAY_TIME_DEBUG, ONE_WEEK_TIME_DEBUG, ONE_MONTH_TIME_DEBUG, ONE_YEAR_TIME_DEBUG};
+        } else {
+            debugUserService_ = false;
+            PERIOD_LENGTH = {ONE_DAY_TIME, ONE_WEEK_TIME, ONE_MONTH_TIME, ONE_YEAR_TIME};
+        }
     }
     void Init(const int64_t timeStamp);
     ~BundleActiveUserService() {};
@@ -64,11 +74,10 @@ private:
     BundleActiveUsageDatabase database_;
     std::vector<std::shared_ptr<BundleActivePeriodStats>> currentStats_;
     bool statsChanged_;
+    bool debugUserService_;
     std::string lastBackgroundBundle_;
     BundleActiveCore& listener_;
-    inline static const std::vector<int64_t> PERIOD_LENGTH = {BundleActiveCalendar::DAY_MILLISECONDS,
-        BundleActiveCalendar::WEEK_MILLISECONDS, BundleActiveCalendar::MONTH_MILLISECONDS,
-        BundleActiveCalendar::YEAR_MILLISECONDS};
+    std::vector<int64_t> PERIOD_LENGTH = {0, 0, 0, 0};
     void NotifyStatsChanged();
     void NotifyNewUpdate();
     void PrintInMemPackageStats(const int idx);
