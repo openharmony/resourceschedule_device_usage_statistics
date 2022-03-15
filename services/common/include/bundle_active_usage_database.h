@@ -56,6 +56,7 @@ public:
     std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>
         GetBundleHistoryData(int userId);
     void OnPackageUninstalled(const int userId, const std::string& bundleName);
+    void ChangeToDebug();
 
 private:
     void CheckDatabaseVersion();
@@ -96,6 +97,7 @@ private:
     uint32_t currentVersion_;
     std::mutex databaseMutex_;
     std::int64_t eventBeginTime_;
+    bool debugDatabase_;
 };
 }
 }

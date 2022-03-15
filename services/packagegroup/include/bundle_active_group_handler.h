@@ -36,7 +36,7 @@ public:
 
 class BundleActiveGroupHandler : public AppExecFwk::EventHandler {
 public:
-    explicit BundleActiveGroupHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
+    explicit BundleActiveGroupHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner, const bool debug);
     ~BundleActiveGroupHandler() = default;
         /**
      * Process the event. Developers should override this method.
@@ -48,7 +48,7 @@ public:
     static const int MSG_CHECK_BUNDLE_STATE = 0;
     static const int MSG_ONE_TIME_CHECK_BUNDLE_STATE = 1;
     static const int MSG_CHECK_IDLE_STATE = 2;
-    static const int CHECK_IDLE_INTERVAL = THREE_HOUR;
+    int64_t checkIdleInterval_;
 
 private:
     std::shared_ptr<BundleActiveGroupController> bundleActiveGroupController_;

@@ -18,20 +18,27 @@
 
 #include <stdint.h>
 
+#include "bundle_active_constant.h"
+
 namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveCalendar {
 public:
     static const int64_t ONE_SECOND_MILLISECONDS = 1000;
-    static const int64_t DAY_MILLISECONDS = (int64_t)1 * 24 * 60 * 60 * 1000;
-    static const int64_t WEEK_MILLISECONDS = (int64_t)7 * 24 * 60 * 60 * 1000;
-    static const int64_t MONTH_MILLISECONDS = (int64_t)30 * 24 * 60 * 60 * 1000;
-    static const int64_t YEAR_MILLISECONDS = (int64_t)365 * 24 * 60 * 60 * 1000;
+    int64_t dayMilliseconds_;
+    int64_t weekMilliseconds_;
+    int64_t monthMilliseconds_;
+    int64_t yearMilliseconds_;
     BundleActiveCalendar(const int64_t timeStamp);
     BundleActiveCalendar()
     {
         time_ = 0;
+        dayMilliseconds_ = ONE_DAY_TIME;
+        weekMilliseconds_ = ONE_WEEK_TIME;
+        monthMilliseconds_ = ONE_MONTH_TIME;
+        yearMilliseconds_ = ONE_YEAR_TIME;
     }
+    void ChangeToDebug();
     void TruncateToDay();
     void TruncateToWeek();
     void TruncateToMonth();

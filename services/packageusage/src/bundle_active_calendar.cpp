@@ -25,42 +25,42 @@ BundleActiveCalendar::BundleActiveCalendar(const int64_t timeStamp)
 
 void BundleActiveCalendar::TruncateToDay()
 {
-    time_ -= time_ % DAY_MILLISECONDS;
+    time_ -= time_ % dayMilliseconds_;
 }
 
 void BundleActiveCalendar::TruncateToWeek()
 {
-    time_ -= time_ % WEEK_MILLISECONDS;
+    time_ -= time_ % weekMilliseconds_;
 }
 
 void BundleActiveCalendar::TruncateToMonth()
 {
-    time_ -= time_ % MONTH_MILLISECONDS;
+    time_ -= time_ % monthMilliseconds_;
 }
 
 void BundleActiveCalendar::TruncateToYear()
 {
-    time_ -= time_ % YEAR_MILLISECONDS;
+    time_ -= time_ % yearMilliseconds_;
 }
 
 void BundleActiveCalendar::IncreaseDays(const int val)
 {
-    time_ += val * DAY_MILLISECONDS;
+    time_ += val * dayMilliseconds_;
 }
 
 void BundleActiveCalendar::IncreaseWeeks(const int val)
 {
-    time_ += val* WEEK_MILLISECONDS;
+    time_ += val* weekMilliseconds_;
 }
 
 void BundleActiveCalendar::IncreaseMonths(const int val)
 {
-    time_ += val * MONTH_MILLISECONDS;
+    time_ += val * monthMilliseconds_;
 }
 
 void BundleActiveCalendar::IncreaseYears(const int val)
 {
-    time_ += val * YEAR_MILLISECONDS;
+    time_ += val * yearMilliseconds_;
 }
 
 void BundleActiveCalendar::SetMilliseconds(const int64_t timeStamp)
@@ -71,6 +71,14 @@ void BundleActiveCalendar::SetMilliseconds(const int64_t timeStamp)
 int64_t BundleActiveCalendar::GetMilliseconds()
 {
     return time_;
+}
+
+void BundleActiveCalendar::ChangeToDebug()
+{
+        dayMilliseconds_ = ONE_DAY_TIME_DEBUG;
+        weekMilliseconds_ = ONE_WEEK_TIME_DEBUG;
+        monthMilliseconds_ = ONE_MONTH_TIME_DEBUG;
+        yearMilliseconds_ = ONE_YEAR_TIME_DEBUG;
 }
 
 void BundleActiveCalendar::TruncateTo(int intervalType)
