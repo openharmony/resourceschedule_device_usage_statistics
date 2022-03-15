@@ -93,10 +93,10 @@ const std::string BUNDLE_ACTIVE_DB_SCREEN_ON_DURATION = "screenOnDuration";
 const std::string REFRESH_DATABASE_RUNNER_NAME = "RefreshDatabase";
 const std::string BUNDLE_ACTIVE_DATABASE_DIR = "/data/system_ce/bundle_usage/";
 const std::string BUNDLE_ACTIVE_VERSION_FILE = "/version";
-const std::string BUNDLE_ACTIVE_DATABASE_SUFFIX = ".db";
 const std::string DATABASE_FILE_TABLE_NAME = "table";
 const std::string SQLITE_MASTER_NAME = "name";
-const std::string DATABASE_TYPE[] = {"daily.db", "weekly.db", "monthly.db", "yearly.db", "event.db", "usageGroup.db"};
+const std::string DATABASE_TYPE[] = {"daily", "weekly", "monthly", "yearly", "event", "usageGroup"};
+const std::string SUFFIX_TYPE[] = {".db", ".db-shm", ".db-wal"};
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_CONSTANT_H
