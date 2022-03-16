@@ -47,6 +47,9 @@ void BundleActiveGroupHandler::Init(const std::shared_ptr<BundleActiveGroupContr
 
 void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    if (event == nullptr) {
+        return;
+    }
     switch (event->GetInnerEventId()) {
         case MSG_CHECK_BUNDLE_STATE: {
             auto ptrToHandlerobj = event->GetSharedObject<BundleActiveGroupHandlerObject>();
