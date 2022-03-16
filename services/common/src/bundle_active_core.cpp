@@ -207,6 +207,7 @@ std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitial
     }
     return it->second;
 }
+
 void BundleActiveCore::OnBundleUninstalled(const int userId, const std::string& bundleName)
 {
     BUNDLE_ACTIVE_LOGI("OnBundleUninstalled CALLED");
