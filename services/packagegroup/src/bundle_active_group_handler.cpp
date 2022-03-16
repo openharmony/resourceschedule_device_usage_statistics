@@ -47,6 +47,9 @@ void BundleActiveGroupHandler::Init(const std::shared_ptr<BundleActiveGroupContr
 
 void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    if (event == nullptr) {
+        return;
+    }
     switch (event->GetInnerEventId()) {
         case MSG_CHECK_BUNDLE_STATE: {
             auto ptrToHandlerobj = event->GetSharedObject<BundleActiveGroupHandlerObject>();
@@ -65,7 +68,6 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
                 return;
             }
             if (activatedOsAccountIds.size() == 0) {
-                BUNDLE_ACTIVE_LOGI("GetAllActiveUser size is 0");
                 return;
             }
             for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {

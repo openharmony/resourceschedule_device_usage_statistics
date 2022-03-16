@@ -87,7 +87,6 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
     }
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);
     if (ret == ERR_OK && userId != -1 && !bundleName.empty()) {
-        std::stringstream stream;
         BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
         tmpHandlerObject.event_.bundleName_ = bundleName;
         tmpHandlerObject.event_.abilityName_ = "";

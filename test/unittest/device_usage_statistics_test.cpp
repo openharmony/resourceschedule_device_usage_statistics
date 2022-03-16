@@ -34,7 +34,7 @@ static std::string DEFAULT_BUNDLENAME = "com.ohos.camera";
 static std::string DEFAULT_ABILITYID = "1234";
 static std::string DEFAULT_ABILITYNAME = "testability";
 static int DEFAULT_USERID = 0;
-static int LARGE_NUM = LARGE_NUM;
+static int64_t LARGE_NUM = 20000000000000;
 
 class DeviceUsageStatisticsTest : public testing::Test {
 public:

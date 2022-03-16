@@ -96,7 +96,6 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
                 asyncCallbackInfo->state = BundleActiveClient::GetInstance().IsBundleIdle(
                     asyncCallbackInfo->bundleName);
             } else {
-                asyncCallbackInfo->info.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
                 BUNDLE_ACTIVE_LOGE("IsIdleState, asyncCallbackInfo == nullptr");
             }
         },
@@ -168,7 +167,6 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->priorityGroup = BundleActiveClient::GetInstance().QueryPackageGroup();
             } else {
-                asyncCallbackInfo->info.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
                 BUNDLE_ACTIVE_LOGE("QueryAppUsagePriorityGroup, asyncCallbackInfo == nullptr");
             }
         },
@@ -203,7 +201,7 @@ napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     NAPI_ASSERT(env, argc == STATES_MIN_PARAMS || argc == STATES_PARAMS,
         "Invalid number of parameters");
-    
+
     // argv[0] : beginTime
     if (BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseStatesParameters failed, beginTime type is invalid.");
@@ -278,7 +276,6 @@ napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info)
                     BundleActiveClient::GetInstance().QueryCurrentEvents(asyncCallbackInfo->beginTime,
                         asyncCallbackInfo->endTime);
             } else {
-                asyncCallbackInfo->info.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
                 BUNDLE_ACTIVE_LOGE("QueryCurrentBundleActiveStates, asyncCallbackInfo == nullptr");
             }
         },
@@ -345,7 +342,6 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
                     BundleActiveClient::GetInstance().QueryEvents(asyncCallbackInfo->beginTime,
                         asyncCallbackInfo->endTime);
             } else {
-                asyncCallbackInfo->info.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
                 BUNDLE_ACTIVE_LOGE("QueryBundleActiveStates, asyncCallbackInfo == nullptr");
             }
         },
@@ -470,7 +466,6 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
                     BundleActiveClient::GetInstance().QueryPackageStats(asyncCallbackInfo->intervalType,
                         asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime);
             } else {
-                asyncCallbackInfo->info.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
                 BUNDLE_ACTIVE_LOGE("QueryBundleStateInfoByInterval, asyncCallbackInfo == nullptr");
             }
         },
@@ -508,7 +503,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     NAPI_ASSERT(env, argc == APP_USAGE_MIN_PARAMS || argc == APP_USAGE_PARAMS,
         "Invalid number of parameters");
-    
+
     // argv[0] : beginTime
     if (BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters failed, beginTime type is invalid.");
@@ -580,7 +575,6 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
                 asyncCallbackInfo->packageStats =
                     BundleStateCommon::GetPackageStats(asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime);
             } else {
-                asyncCallbackInfo->info.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
                 BUNDLE_ACTIVE_LOGE("QueryBundleStateInfos asyncCallbackInfo == nullptr");
             }
         },
