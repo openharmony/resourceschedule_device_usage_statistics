@@ -68,7 +68,6 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
                 return;
             }
             if (activatedOsAccountIds.size() == 0) {
-                BUNDLE_ACTIVE_LOGI("GetAllActiveUser size is 0");
                 return;
             }
             for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
