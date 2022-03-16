@@ -162,13 +162,13 @@ void BundleActiveCore::InitBundleGroupController()
     bundleGroupHandler_ = std::make_shared<BundleActiveGroupHandler>(runner, debugCore_);
     if (bundleGroupHandler_ == nullptr) {
         return;
-    } else {
-        return;
     }
     if (bundleGroupController_ != nullptr && bundleGroupHandler_ != nullptr) {
         bundleGroupHandler_->Init(bundleGroupController_);
         bundleGroupController_->SetHandlerAndCreateUserHistory(bundleGroupHandler_, realTimeShot_);
         BUNDLE_ACTIVE_LOGI("Init Set group controller and handler done");
+    } else {
+        return;
     }
     RegisterSubscriber();
     std::vector<int> activatedOsAccountIds;
