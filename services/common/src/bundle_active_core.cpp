@@ -202,10 +202,6 @@ std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitial
         }
         service->Init(timeStamp);
         userStatServices_[userId] = service;
-        if (service == nullptr) {
-            BUNDLE_ACTIVE_LOGE("service is null");
-            return nullptr;
-        }
         BUNDLE_ACTIVE_LOGI("service is not null");
         return service;
     }
