@@ -375,8 +375,8 @@ int32_t BundleActiveUsageDatabase::DeleteInvalidTable(unsigned int databaseType,
 
 int64_t BundleActiveUsageDatabase::ParseStartTime(const string &tableName)
 {
-    int64_t invalidStartTime(BUNDLE_ACTIVE_FAIL);
     if (tableName.empty()) {
+        int64_t invalidStartTime(BUNDLE_ACTIVE_FAIL);
         return invalidStartTime;
     }
     string tableTime = tableName;
@@ -984,7 +984,6 @@ void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
 void BundleActiveUsageDatabase::RenewTableTime(int64_t changedTime)
 {
     lock_guard<mutex> lock(databaseMutex_);
-    string logInfo;
     for (unsigned int i = 0; i < sortedTableArray_.size(); i++) {
         if (sortedTableArray_.at(i).empty()) {
             continue;
@@ -1187,7 +1186,6 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
     int32_t tableRowNumber;
     bundleActiveResult->GetRowCount(tableRowNumber);
     BundleActiveEvent event;
-    string timeStamp;
     string relativeTimeStamp;
     for (int32_t i = 0; i < tableRowNumber; i++) {
         bundleActiveResult->GoToRow(i);

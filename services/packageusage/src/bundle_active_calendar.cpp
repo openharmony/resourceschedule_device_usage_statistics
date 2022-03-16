@@ -21,6 +21,10 @@ namespace DeviceUsageStats {
 BundleActiveCalendar::BundleActiveCalendar(const int64_t timeStamp)
 {
     time_ = timeStamp;
+    dayMilliseconds_ = ONE_DAY_TIME;
+    weekMilliseconds_ = ONE_WEEK_TIME;
+    monthMilliseconds_ = ONE_MONTH_TIME;
+    yearMilliseconds_ = ONE_YEAR_TIME;
 }
 
 void BundleActiveCalendar::TruncateToDay()
