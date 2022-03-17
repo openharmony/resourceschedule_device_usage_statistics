@@ -35,7 +35,7 @@ enum : int {
     DEVICE_USAGE_STATS_MODULE_COMMON = 0x01,
 };
 
-// Offset of device usage stats sub-system's errcode base, number : 39911424.
+// Offset of device usage stats sub-system's errCode base, number : 39911424.
 constexpr ErrCode DEVICE_USAGE_STATS_COMMON_ERR_OFFSET =
     ErrCodeOffset(SUBSYS_IAWARE, DEVICE_USAGE_STATS_MODULE_COMMON);
 // Device Usage Stats Common Error Code Defined.
