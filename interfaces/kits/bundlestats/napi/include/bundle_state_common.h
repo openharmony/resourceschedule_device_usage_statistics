@@ -65,7 +65,7 @@ public:
     static napi_value GetInt32NumberValue(const napi_env &env, const napi_value &value, int32_t &result);
 
     static std::shared_ptr<std::map<std::string, BundleActivePackageStats>> GetPackageStats(
-	    int64_t &beginTime, int64_t &endTime);
+	    int64_t &beginTime, int64_t &endTime, int32_t &errCode);
 
     static void MergePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right);
 };
