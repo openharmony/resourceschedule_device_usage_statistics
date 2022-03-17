@@ -49,7 +49,9 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
                 intervalType);
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
-            result = QueryPackageStats(intervalType, beginTime, endTime);
+            int32_t errCode = data.ReadInt32();
+            result = QueryPackageStats(intervalType, beginTime, endTime, errCode);
+            reply.WriteInt32(errCode);
             size = static_cast<int>(result.size());
             BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_USAGE_STATS result size is %{public}d", size);
             reply.WriteInt32(size);
@@ -66,8 +68,10 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int size = 0;
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
-            result = QueryEvents(beginTime, endTime);
+            int32_t errCode = data.ReadInt32();
+            result = QueryEvents(beginTime, endTime, errCode);
             size = static_cast<int>(result.size());
+            reply.WriteInt32(errCode);
             reply.WriteInt32(size);
             for (int i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
@@ -92,7 +96,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
                 "is %{public}d", intervalType);
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
-            result = QueryPackageStats(intervalType, beginTime, endTime);
+            result = QueryCurrentPackageStats(intervalType, beginTime, endTime);
             size = static_cast<int>(result.size());
             BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_CURRENT_USAGE_STATS result size "
                 "is %{public}d", size);

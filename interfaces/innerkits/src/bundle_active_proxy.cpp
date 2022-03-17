@@ -56,7 +56,7 @@ bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName)
 }
 
 std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const int intervalType,
-    const int64_t beginTime, const int64_t endTime)
+    const int64_t beginTime, const int64_t endTime, int32_t& errCode)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -68,7 +68,9 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
     data.WriteInt32(intervalType);
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
+    data.WriteInt32(errCode);
     Remote() -> SendRequest(QUERY_USAGE_STATS, data, reply, option);
+    errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int i = 0; i < size; i++) {
@@ -88,7 +90,8 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t beginTime, const int64_t endTime)
+std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t beginTime,
+    const int64_t endTime, int32_t& errCode)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -99,7 +102,9 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
     }
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
+    data.WriteInt32(errCode);
     Remote() -> SendRequest(QUERY_EVENTS, data, reply, option);
+    errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int i = 0; i < size; i++) {

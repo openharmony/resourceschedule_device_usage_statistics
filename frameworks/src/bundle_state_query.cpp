@@ -340,7 +340,7 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->BundleActiveState =
                     BundleActiveClient::GetInstance().QueryEvents(asyncCallbackInfo->beginTime,
-                        asyncCallbackInfo->endTime);
+                        asyncCallbackInfo->endTime, asyncCallbackInfo->info.errorCode);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleActiveStates, asyncCallbackInfo == nullptr");
             }
@@ -464,7 +464,7 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->packageStats =
                     BundleActiveClient::GetInstance().QueryPackageStats(asyncCallbackInfo->intervalType,
-                        asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime);
+                        asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime, asyncCallbackInfo->info.errorCode);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleStateInfoByInterval, asyncCallbackInfo == nullptr");
             }
@@ -572,8 +572,8 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
         [](napi_env env, void *data) {
             AsyncCallbackInfoAppUsage *asyncCallbackInfo = (AsyncCallbackInfoAppUsage *)data;
             if (asyncCallbackInfo != nullptr) {
-                asyncCallbackInfo->packageStats =
-                    BundleStateCommon::GetPackageStats(asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime);
+                asyncCallbackInfo->packageStats = BundleStateCommon::GetPackageStats(asyncCallbackInfo->beginTime,
+                    asyncCallbackInfo->endTime, asyncCallbackInfo->info.errorCode);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleStateInfos asyncCallbackInfo == nullptr");
             }

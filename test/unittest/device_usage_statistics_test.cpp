@@ -101,7 +101,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, F
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEvents_001, Function | MediumTest | Level0)
 {
-    std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryEvents(0, LARGE_NUM);
+    int32_t errCode = 0;
+    std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryEvents(0, LARGE_NUM, errCode);
     EXPECT_EQ(result.size(), 0);
 }
 
@@ -125,8 +126,9 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentEvents
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackagesStats_001, Function | MediumTest | Level0)
 {
+    int32_t errCode = 0;
     std::vector<BundleActivePackageStats> result = BundleActiveClient::GetInstance().QueryPackageStats(4, 0,
-        LARGE_NUM);
+        LARGE_NUM, errCode);
     EXPECT_EQ(result.size(), 0);
 }
 
