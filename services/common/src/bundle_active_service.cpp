@@ -240,7 +240,7 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
 }
 
 std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(const int intervalType,
-    const int64_t beginTime, const int64_t endTime)
+    const int64_t beginTime, const int64_t endTime, int32_t& errCode)
 {
     BUNDLE_ACTIVE_LOGI("QueryPackageStats stats called, intervaltype is %{public}d",
         intervalType);
@@ -253,7 +253,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats user id is %{public}d", userId);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId);
+        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
         if (isSystemAppAndHasPermission == true) {
             int convertedIntervalType = ConvertIntervalType(intervalType);
             result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime, "");
@@ -262,7 +262,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t beginTime, const int64_t endTime)
+std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t beginTime, const int64_t endTime, int32_t& errCode)
 {
     BUNDLE_ACTIVE_LOGI("QueryEvents stats called");
     std::vector<BundleActiveEvent> result;
@@ -274,7 +274,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryEvents userid is %{public}d", userId);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId);
+        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
         if (isSystemAppAndHasPermission == true) {
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, "");
         }
@@ -306,8 +306,9 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
             return result;
         }
         std::string bundleName = "";
+        int32_t errCode = 0;
         sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId);
+        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
         if (!bundleName.empty() && isSystemAppAndHasPermission == true) {
             int convertedIntervalType = ConvertIntervalType(intervalType);
             result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime,
@@ -403,22 +404,29 @@ int BundleActiveService::ConvertIntervalType(const int intervalType)
     return -1;
 }
 
-bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, const int userId)
+bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, const int userId, int32_t& errCode)
 {
     if (!GetBundleMgrProxy()) {
             BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");
             return false;
-        }
-        std::string bundleName = "";
-        sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
-        bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(uid);
-        int bundleHasPermission = sptrBundleMgr_->CheckPermissionByUid(bundleName, NEEDED_PERMISSION, userId);
-        BUNDLE_ACTIVE_LOGE(" %{public}s is system app %{public}d, "
-            "has permission %{public}d", bundleName.c_str(), bundleIsSystemApp, bundleHasPermission);
-        if (bundleIsSystemApp == true && bundleHasPermission == 0) {
-            return true;
-        }
+    }
+    std::string bundleName = "";
+    sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
+    bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(uid);
+    int bundleHasPermission = sptrBundleMgr_->CheckPermissionByUid(bundleName, NEEDED_PERMISSION, userId);
+    if (!bundleIsSystemApp) {
+        errCode = BUNDLE_ACTIVE_FAIL;
+        BUNDLE_ACTIVE_LOGE("%{public}s is not system app" , bundleName.c_str());
         return false;
+    } else if (bundleHasPermission != 0) {
+        errCode = bundleHasPermission;
+        BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
+        return false;
+    } else {
+        BUNDLE_ACTIVE_LOGI(" %{public}s is system app %{public}d, "
+            "has permission %{public}d", bundleName.c_str(), bundleIsSystemApp, bundleHasPermission);
+        return true;
+    }
 }
 }
 }

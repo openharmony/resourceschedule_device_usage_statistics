@@ -46,8 +46,8 @@ public:
         const std::string& continuousTask, const int userId, const int eventId) = 0;
     virtual bool IsBundleIdle(const std::string& bundleName) = 0;
     virtual std::vector<BundleActivePackageStats> QueryPackageStats(const int intervalType, const int64_t beginTime,
-        const int64_t endTime) = 0;
-    virtual std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime) = 0;
+        const int64_t endTime, int32_t& errCode) = 0;
+    virtual std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, int32_t& errCode) = 0;
     virtual std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int intervalType,
         const int64_t beginTime, const int64_t endTime) = 0;
     virtual std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime) = 0;

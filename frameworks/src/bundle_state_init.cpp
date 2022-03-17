@@ -13,12 +13,17 @@
  * limitations under the License.
  */
 
+#include "bundle_state_condition.h"
 #include "bundle_state_init.h"
 #include "bundle_state_query.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
 EXTERN_C_START
+
+static const uint8_t ARG_FIRST = 1;
+
+napi_ref intervalTypeConstructor_ = nullptr;
 
 /*
  * Module export function
@@ -38,7 +43,60 @@ static napi_value BundleStateInit(napi_env env, napi_value exports)
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
+
+    InitIntervalType(env, exports);
     return exports;
+}
+
+napi_value InitIntervalType(napi_env env, napi_value exports)
+{
+    napi_value by_optimized;
+    napi_value by_daily;
+    napi_value by_weekly;
+    napi_value by_monthly;
+    napi_value by_annually;
+    int32_t refCount = 1;
+
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::IntervalType::BY_OPTIMIZED),
+        &by_optimized);
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::IntervalType::BY_DAILY),
+        &by_daily);
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::IntervalType::BY_WEEKLY),
+        &by_weekly);
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::IntervalType::BY_MONTHLY),
+        &by_monthly);
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::IntervalType::BY_ANNUALLY),
+        &by_annually);
+
+    napi_property_descriptor desc[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("BY_OPTIMIZED", by_optimized),
+        DECLARE_NAPI_STATIC_PROPERTY("BY_DAILY", by_daily),
+        DECLARE_NAPI_STATIC_PROPERTY("BY_WEEKLY", by_weekly),
+        DECLARE_NAPI_STATIC_PROPERTY("BY_MONTHLY", by_monthly),
+        DECLARE_NAPI_STATIC_PROPERTY("BY_ANNUALLY", by_annually),
+    };
+
+    napi_value result = nullptr;
+    napi_define_class(env, "IntervalType", NAPI_AUTO_LENGTH, EnumIntervalTypeConstructor,
+        nullptr, sizeof(desc) / sizeof(*desc), desc, &result);
+    napi_create_reference(env, result, refCount, &intervalTypeConstructor_);
+    napi_set_named_property(env, exports, "IntervalType", result);
+    return exports;
+}
+
+napi_value EnumIntervalTypeConstructor(napi_env env, napi_callback_info info)
+{
+    size_t argc = 0;
+    napi_value args[ARG_FIRST] = {0};
+    napi_value res = nullptr;
+    void *data = nullptr;
+
+    napi_status status = napi_get_cb_info(env, info, &argc, args, &res, &data);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+
+    return res;
 }
 
 /*
