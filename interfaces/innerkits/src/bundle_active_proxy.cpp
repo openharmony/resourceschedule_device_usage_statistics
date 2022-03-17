@@ -90,7 +90,8 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t beginTime, const int64_t endTime, int32_t& errCode)
+std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t beginTime,
+    const int64_t endTime, int32_t& errCode)
 {
     MessageParcel data;
     MessageParcel reply;

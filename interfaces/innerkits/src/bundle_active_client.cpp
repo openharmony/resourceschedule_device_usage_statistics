@@ -73,7 +73,8 @@ std::vector<BundleActivePackageStats> BundleActiveClient::QueryPackageStats(cons
     return bundleActiveProxy_->QueryPackageStats(intervalType, beginTime, endTime, errCode);
 }
 
-std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t beginTime, const int64_t endTime, int32_t& errCode)
+std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t beginTime,
+    const int64_t endTime, int32_t& errCode)
 {
     if (!GetBundleActiveProxy()) {
         return std::vector<BundleActiveEvent>(0);

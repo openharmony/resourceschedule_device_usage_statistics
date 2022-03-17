@@ -14,8 +14,8 @@
  */
 
 #include "bundle_state_condition.h"
-#include "bundle_state_init.h"
 #include "bundle_state_query.h"
+#include "bundle_state_init.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

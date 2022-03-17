@@ -262,7 +262,8 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t beginTime, const int64_t endTime, int32_t& errCode)
+std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t beginTime,
+    const int64_t endTime, int32_t& errCode)
 {
     BUNDLE_ACTIVE_LOGI("QueryEvents stats called");
     std::vector<BundleActiveEvent> result;
@@ -416,7 +417,7 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, 
     int bundleHasPermission = sptrBundleMgr_->CheckPermissionByUid(bundleName, NEEDED_PERMISSION, userId);
     if (!bundleIsSystemApp) {
         errCode = BUNDLE_ACTIVE_FAIL;
-        BUNDLE_ACTIVE_LOGE("%{public}s is not system app" , bundleName.c_str());
+        BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
         return false;
     } else if (bundleHasPermission != 0) {
         errCode = bundleHasPermission;
