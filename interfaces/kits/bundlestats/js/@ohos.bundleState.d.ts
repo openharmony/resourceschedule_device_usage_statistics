@@ -23,7 +23,7 @@ import { AsyncCallback } from './basic';
  * the usage history and states of bundles in a specified period.
  * The system stores the query result in a {@link BundleStateInfo} or {@link BundleActiveState} instance and
  * then returns it to you.
- * 
+ *
  * @since 7
  */
 declare namespace bundleState {
@@ -79,7 +79,7 @@ declare namespace bundleState {
         /**
          * Merges a specified {@link BundleActiveInfo} object with this {@link BundleActiveInfo} object.
          * The bundle name of both objects must be the same.
-         * 
+         *
          * @since 7
          * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
          * @param toMerge Indicates the {@link BundleActiveInfo} object to merge.
@@ -134,7 +134,7 @@ declare namespace bundleState {
 
     /**
      * Queries the usage priority group of the calling application.
-     * 
+     *
      * <p>The priority defined in a priority group restricts the resource usage of an application,
      * for example, restricting the running of background tasks. </p>
      *
@@ -155,7 +155,7 @@ declare namespace bundleState {
 
     /**
      * Queries usage information about each bundle within a specified period.
-     * 
+     *
      * <p>This method queries usage information at the {@link #BY_OPTIMIZED} interval by default.</p>
      *
      * @since 7
@@ -171,7 +171,7 @@ declare namespace bundleState {
 
     /**
      * Declares interval type.
-     * 
+     *
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      */
