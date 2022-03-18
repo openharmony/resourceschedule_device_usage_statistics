@@ -71,7 +71,7 @@ private:
     void FlushEventInfo(unsigned int databaseType, BundleActivePeriodStats &stats);
     void DeleteExcessiveTableData(unsigned int databaseType);
     int32_t DeleteInvalidTable(unsigned int databaseType, int64_t tableTimeMillis);
-    std::unique_ptr<std::vector<int64_t>> GetOverdueTableCreateTime(unsigned int databaseType,
+    std::unique_ptr<std::vector<int64_t>> GetOverdueTableCreateTime(int32_t databaseType,
         int64_t currentTimeMillis);
     int32_t CreatePackageLogTable(unsigned int databaseType, int64_t currentTimeMillis);
     int32_t CreateEventLogTable(unsigned int databaseType, int64_t currentTimeMillis);
