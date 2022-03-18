@@ -241,14 +241,15 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
             continue;
         }
         for (auto bundleUsageStatsPair : (*it)->bundleStats_) {
+            if (bundleUsageStatsPair.second == nullptr) {
+                continue;
+            }
             BundleActivePackageStats bundleUsageStats(*(bundleUsageStatsPair.second));
             if (!bundleUsageStats.abilities_.empty()) {
                 continueAbilities[bundleUsageStats.bundleName_] = bundleUsageStats.abilities_;
             }
             if (!bundleUsageStats.longTimeTasks_.empty()) {
                 continueServices[bundleUsageStats.bundleName_] = bundleUsageStats.longTimeTasks_;
-            }
-            if (*it == nullptr) {
             }
             (*it)->Update(bundleUsageStats.bundleName_, "", dailyExpiryDate_.GetMilliseconds() - 1,
                 BundleActiveEvent::END_OF_THE_DAY, "");

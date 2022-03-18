@@ -387,16 +387,14 @@ void BundleActiveCore::OnUserSwitched(const int userId)
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     auto it = userStatServices_.find(currentUsedUser_);
     if (it != userStatServices_.end()) {
-        if (it != userStatServices_.end()) {
-            BUNDLE_ACTIVE_LOGI("restore old user id %{public}d data when switch user", currentUsedUser_);
-            BundleActiveEvent event;
-            event.eventId_ = BundleActiveEvent::FLUSH;
-            int64_t actualRealTime = timer->GetBootTimeMs();
-            event.timeStamp_ = (actualRealTime - realTimeShot_) + systemTimeShot_;
-            event.abilityId_ = "";
-            it->second->ReportEvent(event);
-            it->second->RestoreStats(true);
-        }
+        BUNDLE_ACTIVE_LOGI("restore old user id %{public}d data when switch user", currentUsedUser_);
+        BundleActiveEvent event;
+        event.eventId_ = BundleActiveEvent::FLUSH;
+        int64_t actualRealTime = timer->GetBootTimeMs();
+        event.timeStamp_ = (actualRealTime - realTimeShot_) + systemTimeShot_;
+        event.abilityId_ = "";
+        it->second->ReportEvent(event);
+        it->second->RestoreStats(true);
     }
     std::vector<int> activatedOsAccountIds;
     GetAllActiveUser(activatedOsAccountIds);
