@@ -313,7 +313,7 @@ std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTable
     int64_t currentTimeMillis)
 {
     std::unique_ptr<std::vector<int64_t>> overdueTableCreateTime = std::make_unique<std::vector<int64_t>>();
-    if (databaseType < 0 || databaseType >= sortedTableArray_.size()) {
+    if (databaseType >= sortedTableArray_.size()) {
         BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
         return nullptr;
     }
