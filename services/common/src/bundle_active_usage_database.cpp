@@ -309,11 +309,11 @@ void BundleActiveUsageDatabase::DeleteExcessiveTableData(unsigned int databaseTy
     }
 }
 
-std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTableCreateTime(int32_t databaseType,
+std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTableCreateTime(unsigned int databaseType,
     int64_t currentTimeMillis)
 {
     std::unique_ptr<std::vector<int64_t>> overdueTableCreateTime = std::make_unique<std::vector<int64_t>>();
-    if (databaseType < 0 || databaseType >= sortedTableArray_.size()) {
+    if (databaseType >= sortedTableArray_.size()) {
         BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
         return nullptr;
     }
