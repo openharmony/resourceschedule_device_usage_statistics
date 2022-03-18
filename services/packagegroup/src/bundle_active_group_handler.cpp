@@ -41,6 +41,7 @@ void BundleActiveGroupHandler::Init(const std::shared_ptr<BundleActiveGroupContr
     BUNDLE_ACTIVE_LOGI("Init called");
     if (bundleActiveController == nullptr) {
         BUNDLE_ACTIVE_LOGE("Init failed bundleActiveController is null");
+        return;
     }
     bundleActiveGroupController_ = bundleActiveController;
 }
