@@ -18,6 +18,7 @@
 #include "unistd.h"
 #include "accesstoken_kit.h"
 #include "app_mgr_interface.h"
+#include "os_account_manager.h"
 
 #include "bundle_active_event.h"
 #include "bundle_active_package_stats.h"
@@ -87,6 +88,19 @@ void BundleActiveService::InitNecessaryState()
         return;
     }
 
+    std::vector<int> activatedOsAccountIds;
+    if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
+        BUNDLE_ACTIVE_LOGI("query activated account failed");
+        auto task = [this]() { this->InitNecessaryState(); };
+        handler_->PostTask(task, DELAY_TIME);
+        return;
+    }
+    if (activatedOsAccountIds.size() == 0) {
+        BUNDLE_ACTIVE_LOGI("query activated account is 0");
+        auto task = [this]() { this->InitNecessaryState(); };
+        handler_->PostTask(task, DELAY_TIME);
+        return;
+    }
     InitService();
 }
 
