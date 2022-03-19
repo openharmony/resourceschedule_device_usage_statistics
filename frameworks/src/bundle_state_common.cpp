@@ -192,6 +192,8 @@ std::string BundleStateCommon::GetTypeStringValue(napi_env env, napi_value param
     }
 
     if (memset_s(buf, size + 1, 0, size + 1) != EOK) {
+        delete[] buf;
+        buf = nullptr;
         return value;
     }
 
