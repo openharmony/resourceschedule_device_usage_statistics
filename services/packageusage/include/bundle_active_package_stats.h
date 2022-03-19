@@ -35,7 +35,7 @@ public:
         int lastEvent_;
         // key is abilityId, value is the last event of this ability. Restore all abilities' last event of bundle.
         std::map<std::string, int> abilities_;
-        // key is name of continous task, value is last event of this last continous task.
+        // key is name of continuous task, value is last event of this last continuous task.
         std::map<std::string, int> longTimeTasks_;
         BundleActivePackageStats();
         ~BundleActivePackageStats() {};
