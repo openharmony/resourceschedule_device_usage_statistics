@@ -35,6 +35,9 @@ int32_t BundleActiveOpenCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
 
 int32_t BundleActiveOpenCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion)
 {
+    (void)rdbStore;
+    (void)oldVersion;
+    (void)newVersion;
     BUNDLE_ACTIVE_LOGI("Upgrade success.");
     return NativeRdb::E_OK;
 };
