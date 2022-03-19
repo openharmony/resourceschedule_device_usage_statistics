@@ -81,25 +81,5 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
     }
     return;
 }
-
-void BundleActiveAppStateObserver::OnForegroundApplicationChanged(const AppStateData &appStateData)
-{
-}
-
-void BundleActiveAppStateObserver::OnExtensionStateChanged(const AbilityStateData &abilityStateData)
-{
-}
-
-void BundleActiveAppStateObserver::OnProcessCreated(const ProcessData &processData)
-{
-}
-
-void BundleActiveAppStateObserver::OnProcessDied(const ProcessData &processData)
-{
-}
-
-void BundleActiveAppStateObserver::OnApplicationStateChanged(const AppStateData &appStateData)
-{
-}
 }
 }
