@@ -86,6 +86,7 @@ void BundleActiveService::InitNecessaryState()
         handler_->PostTask(task, DELAY_TIME);
         return;
     }
+
     InitService();
 }
 
