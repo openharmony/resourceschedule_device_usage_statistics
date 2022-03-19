@@ -305,7 +305,7 @@ void BundleActiveUsageDatabase::DeleteExcessiveTableData(unsigned int databaseTy
     } else if (databaseType == APP_GROUP_DATABASE_INDEX) {
         // 无数据删除
     } else {
-        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
+        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}u", databaseType);
     }
 }
 
@@ -314,7 +314,7 @@ std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTable
 {
     std::unique_ptr<std::vector<int64_t>> overdueTableCreateTime = std::make_unique<std::vector<int64_t>>();
     if (databaseType >= sortedTableArray_.size()) {
-        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
+        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}u", databaseType);
         return nullptr;
     }
     string queryDatabaseTableNames = "select * from sqlite_master where type = ?";

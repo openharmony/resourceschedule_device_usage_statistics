@@ -32,12 +32,7 @@ using OHOS::AppExecFwk::ProcessData;
 
 class BundleActiveAppStateObserver : public ApplicationStateObserverStub {
 public:
-    void OnForegroundApplicationChanged(const AppStateData &appStateData) override;
     void OnAbilityStateChanged(const AbilityStateData &abilityStateData) override;
-    void OnExtensionStateChanged(const AbilityStateData &abilityStateData) override;
-    void OnProcessCreated(const ProcessData &processData) override;
-    void OnProcessDied(const ProcessData &processData) override;
-    void OnApplicationStateChanged(const AppStateData &appStateData) override;
     void Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
 private:
     inline bool ValidateAppStateData(const AppStateData &appStateData) const

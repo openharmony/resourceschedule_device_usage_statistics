@@ -14,6 +14,7 @@
  */
 
 #include <string>
+#include "securec.h"
 
 #include "bundle_active_log.h"
 #include "bundle_state_common.h"
@@ -78,11 +79,18 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoIsIdleState *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoIsIdleState {.env = env, .asyncWork = nullptr};
+        new (std::nothrow) AsyncCallbackInfoIsIdleState;
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
+    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoIsIdleState), 0, sizeof(AsyncCallbackInfoIsIdleState)) !=
+        EOK) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    asyncCallbackInfo->env = env;
+    asyncCallbackInfo->asyncWork = nullptr;
     asyncCallbackInfo->bundleName = params.bundleName;
     BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
     napi_value resourceName = nullptr;
@@ -151,11 +159,18 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
     ParsePriorityGroupParameters(env, info, params);
     napi_value promise = nullptr;
     AsyncCallbackInfoPriorityGroup *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoPriorityGroup {.env = env, .asyncWork = nullptr};
+        new (std::nothrow) AsyncCallbackInfoPriorityGroup;
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
+    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoPriorityGroup), 0, sizeof(AsyncCallbackInfoPriorityGroup))
+        != EOK) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    asyncCallbackInfo->env = env;
+    asyncCallbackInfo->asyncWork = nullptr;
     BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
     napi_value resourceName = nullptr;
     napi_create_string_latin1(env, "QueryAppUsagePriorityGroup", NAPI_AUTO_LENGTH, &resourceName);
@@ -250,11 +265,18 @@ napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoStates *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoStates {.env = env, .asyncWork = nullptr};
+        new (std::nothrow) AsyncCallbackInfoStates;
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
+    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoStates), 0, sizeof(AsyncCallbackInfoStates))
+        != EOK) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    asyncCallbackInfo->env = env;
+    asyncCallbackInfo->asyncWork = nullptr;
     asyncCallbackInfo->beginTime = params.beginTime;
     BUNDLE_ACTIVE_LOGI("QueryCurrentBundleActiveStates asyncCallbackInfo->beginTime: %{public}lld",
         asyncCallbackInfo->beginTime);
@@ -316,11 +338,18 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoStates *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoStates {.env = env, .asyncWork = nullptr};
+        new (std::nothrow) AsyncCallbackInfoStates;
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
+    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoStates), 0, sizeof(AsyncCallbackInfoStates))
+        != EOK) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    asyncCallbackInfo->env = env;
+    asyncCallbackInfo->asyncWork = nullptr;
     asyncCallbackInfo->beginTime = params.beginTime;
     BUNDLE_ACTIVE_LOGI("QueryBundleActiveStates asyncCallbackInfo->beginTime: %{public}lld",
         asyncCallbackInfo->beginTime);
@@ -439,11 +468,18 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoAppUsageByInterval *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoAppUsageByInterval {.env = env, .asyncWork = nullptr};
+        new (std::nothrow) AsyncCallbackInfoAppUsageByInterval;
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
+    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoAppUsageByInterval), 0,
+        sizeof(AsyncCallbackInfoAppUsageByInterval)) != EOK) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    asyncCallbackInfo->env = env;
+    asyncCallbackInfo->asyncWork = nullptr;
     asyncCallbackInfo->intervalType = params.intervalType;
     BUNDLE_ACTIVE_LOGI("QueryBundleStateInfoByInterval asyncCallbackInfo->intervalType: %{public}d",
         asyncCallbackInfo->intervalType);
@@ -552,11 +588,18 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoAppUsage *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoAppUsage {.env = env, .asyncWork = nullptr};
+        new (std::nothrow) AsyncCallbackInfoAppUsage;
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
+    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoAppUsage), 0, sizeof(AsyncCallbackInfoAppUsage))
+        != EOK) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    asyncCallbackInfo->env = env;
+    asyncCallbackInfo->asyncWork = nullptr;
     asyncCallbackInfo->beginTime = params.beginTime;
     BUNDLE_ACTIVE_LOGI("QueryBundleStateInfos asyncCallbackInfo->beginTime: %{public}lld",
         asyncCallbackInfo->beginTime);

@@ -107,5 +107,5 @@ __attribute__((constructor)) void RegisterModule(void)
     napi_module_register(&_module);
 }
 EXTERN_C_END
-}  // namespace BackgroundTaskMgr
+}  // namespace DeviceUsageStats
 }  // namespace OHOS
