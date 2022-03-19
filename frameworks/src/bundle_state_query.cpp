@@ -473,8 +473,8 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoAppUsageByInterval), 0, sizeof(AsyncCallbackInfoAppUsageByInterval))
-        != EOK) {
+    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoAppUsageByInterval), 0,
+        sizeof(AsyncCallbackInfoAppUsageByInterval)) != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
