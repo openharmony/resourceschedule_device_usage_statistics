@@ -210,5 +210,7 @@ int BundleActiveProxy::QueryPackageGroup()
     BUNDLE_ACTIVE_LOGI("QueryPackageGroup result is %{public}d", packageGroup);
     return packageGroup;
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_PROXY_H
+

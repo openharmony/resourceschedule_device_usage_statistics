@@ -136,3 +136,4 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

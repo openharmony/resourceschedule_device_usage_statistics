@@ -139,3 +139,4 @@ std::string BundleActivePeriodStats::GetCachedString(std::string str)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

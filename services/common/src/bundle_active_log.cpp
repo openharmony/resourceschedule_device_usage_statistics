@@ -41,3 +41,4 @@ std::string BundleActiveLog::GetCurrFileName(const char *str)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

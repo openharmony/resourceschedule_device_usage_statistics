@@ -64,3 +64,4 @@ const uint32_t GROUP_EVENT_REASON_ALIVE_NOT_TIMEOUT = 0x0009;
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_GROUP_COMMON_H
+

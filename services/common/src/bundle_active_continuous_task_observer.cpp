@@ -116,3 +116,4 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

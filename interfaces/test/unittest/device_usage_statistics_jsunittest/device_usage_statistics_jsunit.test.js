@@ -24,21 +24,21 @@ describe("DeviceUsageStatisticsJsTest", function () {
          */
          console.info('beforeAll called')
     })
-    
+
     afterAll(function() {
         /*
          * @tc.teardown: teardown invoked after all testcases
          */
          console.info('afterAll called')
     })
-    
+
     beforeEach(function() {
         /*
          * @tc.setup: setup invoked before each testcases
          */
          console.info('beforeEach called')
     })
-    
+
     afterEach(function() {
         /*
          * @tc.teardown: teardown invoked after each testcases
@@ -330,3 +330,4 @@ describe("DeviceUsageStatisticsJsTest", function () {
         }, 500);
     })
 })
+

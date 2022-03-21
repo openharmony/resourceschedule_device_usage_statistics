@@ -63,3 +63,4 @@ public:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_PERIOD_STATS_H
+

@@ -43,3 +43,4 @@ public:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_STATS_COMBINER_H
+

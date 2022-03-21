@@ -59,3 +59,4 @@ void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStat
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

@@ -157,3 +157,4 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

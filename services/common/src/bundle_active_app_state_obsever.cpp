@@ -83,3 +83,4 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

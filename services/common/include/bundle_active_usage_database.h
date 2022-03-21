@@ -103,3 +103,4 @@ private:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_USAGE_DATABASE_H
+

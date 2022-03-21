@@ -22,3 +22,4 @@ extern const bool DEBUG_ON;
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_DEBUG_MODE_H
+

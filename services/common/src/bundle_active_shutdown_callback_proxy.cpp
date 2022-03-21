@@ -36,3 +36,4 @@ void BundleActiveShutdownCallbackProxy::ShutdownCallback()
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

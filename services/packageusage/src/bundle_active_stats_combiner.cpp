@@ -42,3 +42,4 @@ void BundleActiveStatsCombiner<BundleActiveEvent>::combine(const std::shared_ptr
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

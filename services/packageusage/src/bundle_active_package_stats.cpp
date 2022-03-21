@@ -266,3 +266,4 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePackageStats::Unmarshallin
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

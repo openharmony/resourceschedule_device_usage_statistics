@@ -26,3 +26,4 @@ class BundleActiveStatsUpdateListener {
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_STATS_UPDATE_LISTENER_H
+

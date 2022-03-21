@@ -72,3 +72,4 @@ public:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_COMMON_H
+

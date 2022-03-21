@@ -83,3 +83,4 @@ void BundleActiveEventStats::add(const BundleActiveEventStats& right)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

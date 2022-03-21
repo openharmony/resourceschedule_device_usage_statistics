@@ -406,3 +406,4 @@ bool BundleActiveGroupController::IsScreenOn()
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

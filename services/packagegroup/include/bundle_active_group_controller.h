@@ -92,3 +92,4 @@ private:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_GROUP_CONTROLLER_H
+

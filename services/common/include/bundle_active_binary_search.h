@@ -30,3 +30,4 @@ public:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_BINARY_SEARCH_H
+

@@ -47,3 +47,4 @@ private:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_REPORT_HANDLER_H
+

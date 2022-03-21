@@ -59,3 +59,4 @@ private:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_APP_STATE_OBSERVER_H
+

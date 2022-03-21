@@ -81,3 +81,4 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

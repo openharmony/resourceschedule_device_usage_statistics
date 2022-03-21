@@ -36,3 +36,4 @@ public:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_EVENT_TRACKER_H
+

@@ -70,3 +70,4 @@ void BundleActiveEventList::Merge(const BundleActiveEventList& right)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

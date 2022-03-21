@@ -90,3 +90,4 @@ std::shared_ptr<BundleActiveEvent> BundleActiveEvent::Unmarshalling(Parcel &parc
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

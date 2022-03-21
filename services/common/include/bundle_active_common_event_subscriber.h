@@ -55,3 +55,4 @@ private:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_COMMON_EVENT_SUBSCRIBER_H
+

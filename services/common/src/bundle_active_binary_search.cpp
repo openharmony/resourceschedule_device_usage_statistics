@@ -46,3 +46,4 @@ int32_t BundleActiveBinarySearch::BinarySearch(const std::vector<int64_t> &table
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

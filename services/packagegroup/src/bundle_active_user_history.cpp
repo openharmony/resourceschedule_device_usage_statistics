@@ -247,3 +247,4 @@ void BundleActiveUserHistory::printdata(int userId)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

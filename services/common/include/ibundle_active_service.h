@@ -72,3 +72,4 @@ public:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_ISERVICE_H
+

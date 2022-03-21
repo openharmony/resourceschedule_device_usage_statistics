@@ -408,3 +408,4 @@ void BundleActiveUserService::PrintInMemEventStats()
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

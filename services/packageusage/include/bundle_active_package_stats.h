@@ -67,3 +67,4 @@ private:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_PACKAGE_STATS_H
+

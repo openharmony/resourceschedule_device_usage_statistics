@@ -28,3 +28,4 @@ std::string DEBUG_MODE = "persist.sys.device_usage_debug_on";
 const bool DEBUG_ON = static_cast<bool>(GetIntParameter(DEBUG_MODE, DEBUG_ON_DEFAULT));
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

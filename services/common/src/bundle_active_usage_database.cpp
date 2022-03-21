@@ -1257,3 +1257,4 @@ int64_t BundleActiveUsageDatabase::GetSystemTimeMs()
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

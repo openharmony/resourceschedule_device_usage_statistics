@@ -33,3 +33,4 @@ public:
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_OPEN_CALLBACK_H
+
