@@ -567,5 +567,6 @@ int64_t BundleActiveCore::GetSystemTimeMs()
     }
     return static_cast<int64_t>(tarDate);
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+

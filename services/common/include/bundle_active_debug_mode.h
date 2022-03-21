@@ -19,6 +19,6 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 extern const bool DEBUG_ON;
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_DEBUG_MODE_H

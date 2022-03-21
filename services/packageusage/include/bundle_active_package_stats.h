@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef BUNDLE_ACTIVE_USAGE_STATS_H
-#define BUNDLE_ACTIVE_USAGE_STATS_H
+#ifndef BUNDLE_ACTIVE_PACKAGE_STATS_H
+#define BUNDLE_ACTIVE_PACKAGE_STATS_H
 
 #include "ibundle_active_service.h"
 #include "bundle_active_event.h"
@@ -38,7 +38,7 @@ public:
         // key is name of continuous task, value is last event of this last continuous task.
         std::map<std::string, int> longTimeTasks_;
         BundleActivePackageStats();
-        ~BundleActivePackageStats() {};
+        ~BundleActivePackageStats() {}
         BundleActivePackageStats(const BundleActivePackageStats& orig);
         std::string GetBundleName();
         int64_t GetBeginTimeStamp();
@@ -64,6 +64,6 @@ private:
         void UpdateAbility(const int64_t timeStamp, const int eventId, const std::string& abilityId);
         void UpdateLongTimeTask(const std::string& longTimeTaskName, const int64_t timeStamp, const int eventId);
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_PACKAGE_STATS_H

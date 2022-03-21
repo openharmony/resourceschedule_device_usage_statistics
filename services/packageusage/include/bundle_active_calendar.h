@@ -54,6 +54,6 @@ public:
 private:
     int64_t time_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_CALENDER_H

@@ -155,5 +155,5 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_
     int result = BundleActiveClient::GetInstance().QueryPackageGroup();
     EXPECT_EQ(result, -1);
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

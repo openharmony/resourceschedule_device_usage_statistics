@@ -81,5 +81,5 @@ void BundleActiveEventStats::add(const BundleActiveEventStats& right)
     totalTime_ += right.totalTime_;
     count_ += right.count_;
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

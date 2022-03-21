@@ -76,5 +76,4 @@ private:
 #define BUNDLE_ACTIVE_LOGF(fmt, ...) PRINT_LOG(FATAL, Fatal, fmt, ##__VA_ARGS__)
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-
 #endif  // BUNDLE_ACTIVE_LOG_H

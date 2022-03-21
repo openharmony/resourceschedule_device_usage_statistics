@@ -134,5 +134,5 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

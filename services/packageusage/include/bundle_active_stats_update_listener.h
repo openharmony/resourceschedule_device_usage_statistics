@@ -23,6 +23,6 @@ class BundleActiveStatsUpdateListener {
     virtual void OnStatsReload() = 0;
     virtual void OnSystemUpdate(int userId) = 0;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_STATS_UPDATE_LISTENER_H

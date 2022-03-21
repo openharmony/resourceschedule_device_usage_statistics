@@ -40,5 +40,5 @@ void BundleActiveShutdownCallbackStub::ShutdownStub()
 {
     ShutdownCallback();
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

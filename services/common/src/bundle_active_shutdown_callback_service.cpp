@@ -29,5 +29,6 @@ void BundleActiveShutdownCallbackService::ShutdownCallback()
 {
     bundleActiveCore_->ShutDown();
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+

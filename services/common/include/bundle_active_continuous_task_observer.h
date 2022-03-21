@@ -45,6 +45,6 @@ private:
     void ReportContinuousTaskEvent(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>&
         continuousTaskCallbackInfo, const bool isStart);
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_CONTINUOUS_TASK_OBSERVER_H

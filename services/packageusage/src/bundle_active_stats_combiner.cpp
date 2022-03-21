@@ -40,5 +40,5 @@ void BundleActiveStatsCombiner<BundleActiveEvent>::combine(const std::shared_ptr
         accumulatedResult.push_back(stats->events_.events_[i]);
     }
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

@@ -40,6 +40,6 @@ public:
     void combine(const std::shared_ptr<BundleActivePeriodStats>& stats,
         std::vector<BundleActiveEvent>& accumulatedResult, int64_t beginTime = 0);
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_STATS_COMBINER_H

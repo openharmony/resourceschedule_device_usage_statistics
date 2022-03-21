@@ -34,5 +34,5 @@ void BundleActiveShutdownCallbackProxy::ShutdownCallback()
         BUNDLE_ACTIVE_LOGE("BundleActiveShutdownCallbackProxy::ShutdownCallback failed!");
     }
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

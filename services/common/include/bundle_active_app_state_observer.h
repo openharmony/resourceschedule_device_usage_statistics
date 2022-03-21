@@ -56,6 +56,6 @@ private:
     }
     std::shared_ptr<BundleActiveReportHandler> reportHandler_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_APP_STATE_OBSERVER_H

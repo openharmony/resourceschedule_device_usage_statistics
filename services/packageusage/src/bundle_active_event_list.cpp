@@ -68,5 +68,5 @@ void BundleActiveEventList::Merge(const BundleActiveEventList& right)
         Insert(right.events_[i]);
     }
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

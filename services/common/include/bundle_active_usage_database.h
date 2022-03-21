@@ -100,6 +100,6 @@ private:
     std::int64_t eventBeginTime_;
     bool debugDatabase_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_USAGE_DATABASE_H

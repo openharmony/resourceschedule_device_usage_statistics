@@ -264,5 +264,5 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePackageStats::Unmarshallin
     result->totalContiniousTaskUsedTime_ = parcel.ReadInt64();
     return result;
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

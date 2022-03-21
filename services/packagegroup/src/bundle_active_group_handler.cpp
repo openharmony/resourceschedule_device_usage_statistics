@@ -99,5 +99,5 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
         }
     }
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

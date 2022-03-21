@@ -27,6 +27,6 @@ public:
     int32_t BinarySearch(const std::vector<int64_t> &tableNameArray, int64_t targetValue);
     DECLARE_DELAYED_SINGLETON(BundleActiveBinarySearch);
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_BINARY_SEARCH_H

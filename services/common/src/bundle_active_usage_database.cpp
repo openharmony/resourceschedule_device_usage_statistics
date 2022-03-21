@@ -1255,5 +1255,5 @@ int64_t BundleActiveUsageDatabase::GetSystemTimeMs()
     }
     return static_cast<int64_t>(tarDate);
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

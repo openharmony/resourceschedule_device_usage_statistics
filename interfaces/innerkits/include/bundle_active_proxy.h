@@ -42,6 +42,7 @@ public:
 private:
     static inline BrokerDelegator<BundleActiveProxy> delegator_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_PROXY_H
+

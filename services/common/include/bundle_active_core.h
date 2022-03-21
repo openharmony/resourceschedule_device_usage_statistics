@@ -40,7 +40,7 @@ public:
     BundleActiveReportHandlerObject();
     BundleActiveReportHandlerObject(const int userId, const std::string bundleName);
     BundleActiveReportHandlerObject(const BundleActiveReportHandlerObject& orig);
-    ~BundleActiveReportHandlerObject() {};
+    ~BundleActiveReportHandlerObject() {}
 };
 
 class BundleActiveReportHandler;
@@ -146,6 +146,7 @@ private:
     void RestoreAllData();
     bool debugCore_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_CORE_H
+

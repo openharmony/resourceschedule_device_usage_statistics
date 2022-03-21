@@ -104,5 +104,5 @@ void BundleActiveCalendar::TruncateTo(int intervalType)
             break;
     }
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS

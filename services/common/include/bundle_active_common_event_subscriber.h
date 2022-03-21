@@ -43,7 +43,7 @@ public:
         const std::weak_ptr<BundleActiveReportHandler>
         bundleActiveReportHandler) : CommonEventSubscriber(subscriberInfo),
         activeGroupController_(activeGroupController),
-        bundleActiveReportHandler_(bundleActiveReportHandler) {};
+        bundleActiveReportHandler_(bundleActiveReportHandler) {}
     ~BundleActiveCommonEventSubscriber() = default;
     void OnReceiveEvent(const CommonEventData &data) override;
 
@@ -52,6 +52,6 @@ private:
     std::weak_ptr<BundleActiveGroupController> activeGroupController_;
     std::weak_ptr<BundleActiveReportHandler> bundleActiveReportHandler_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_COMMON_EVENT_SUBSCRIBER_H
