@@ -38,6 +38,7 @@ public:
     int GetCount();
     void add(const BundleActiveEventStats& right);
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_EVENT_STATS_H
+

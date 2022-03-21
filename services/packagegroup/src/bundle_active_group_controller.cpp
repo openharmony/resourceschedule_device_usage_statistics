@@ -404,5 +404,6 @@ bool BundleActiveGroupController::IsScreenOn()
     BUNDLE_ACTIVE_LOGI("IsScreenOn() is %{public}d", result);
     return result;
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+

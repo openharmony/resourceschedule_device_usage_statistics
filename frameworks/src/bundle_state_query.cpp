@@ -647,3 +647,4 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

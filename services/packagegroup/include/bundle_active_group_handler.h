@@ -31,7 +31,7 @@ public:
     int userId_;
     BundleActiveGroupHandlerObject();
     BundleActiveGroupHandlerObject(const BundleActiveGroupHandlerObject& orig);
-    ~BundleActiveGroupHandlerObject() {};
+    ~BundleActiveGroupHandlerObject() {}
 };
 
 class BundleActiveGroupHandler : public AppExecFwk::EventHandler {
@@ -53,6 +53,7 @@ public:
 private:
     std::shared_ptr<BundleActiveGroupController> bundleActiveGroupController_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_GROUP_HANDLER_H
+

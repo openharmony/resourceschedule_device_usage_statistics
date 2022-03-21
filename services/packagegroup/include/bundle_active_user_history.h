@@ -61,6 +61,7 @@ public:
 private:
     bool isScreenOn_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_USER_HISTORY_H
+

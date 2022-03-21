@@ -429,5 +429,6 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, 
         return true;
     }
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+

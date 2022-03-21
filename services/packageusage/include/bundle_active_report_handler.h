@@ -44,6 +44,7 @@ public:
 private:
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_REPORT_HANDLER_H
+

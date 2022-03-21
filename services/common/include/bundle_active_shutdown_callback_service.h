@@ -24,11 +24,12 @@ namespace DeviceUsageStats {
 class BundleActiveShutdownCallbackService : public BundleActiveShutdownCallbackStub {
 public:
     BundleActiveShutdownCallbackService(std::shared_ptr<BundleActiveCore> bundleActiveCore);
-    virtual ~BundleActiveShutdownCallbackService() {};
+    virtual ~BundleActiveShutdownCallbackService() {}
     void ShutdownCallback() override;
 private:
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_SERVICE_H
+

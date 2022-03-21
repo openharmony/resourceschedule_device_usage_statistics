@@ -76,6 +76,7 @@ private:
     bool SubscribeContinuousTask();
     OHOS::sptr<OHOS::AppExecFwk::IAppMgr> GetAppManagerInstance();
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_SERVICE_H
+

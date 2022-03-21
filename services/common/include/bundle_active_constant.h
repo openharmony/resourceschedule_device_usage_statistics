@@ -109,3 +109,4 @@ const std::string SUFFIX_TYPE[] = {".db", ".db-shm", ".db-wal"};
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_CONSTANT_H
+

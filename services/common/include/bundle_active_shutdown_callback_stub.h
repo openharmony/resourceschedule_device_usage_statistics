@@ -33,7 +33,7 @@ public:
 private:
     void ShutdownStub();
 };
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_STUB_H
 
-#endif

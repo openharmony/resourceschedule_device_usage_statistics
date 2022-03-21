@@ -53,7 +53,7 @@ public:
         }
     }
     void Init(const int64_t timeStamp);
-    ~BundleActiveUserService() {};
+    ~BundleActiveUserService() {}
     void ReportForShutdown(const BundleActiveEvent& event);
     void ReportEvent(const BundleActiveEvent& event);
     void RestoreStats(bool forced);
@@ -83,6 +83,7 @@ private:
     void PrintInMemPackageStats(const int idx);
     void PrintInMemEventStats();
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_USER_SERVICE_H
+

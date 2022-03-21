@@ -245,5 +245,6 @@ void BundleActiveUserHistory::printdata(int userId)
             oneBundleUsage.second->bundleDailyTimeoutTimeStamp_, oneBundleUsage.second->bundleAliveTimeoutTimeStamp_);
     }
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+

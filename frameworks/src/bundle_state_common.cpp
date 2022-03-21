@@ -286,3 +286,4 @@ void BundleStateCommon::MergePackageStats(BundleActivePackageStats &left, const 
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

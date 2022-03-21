@@ -88,5 +88,6 @@ std::shared_ptr<BundleActiveEvent> BundleActiveEvent::Unmarshalling(Parcel &parc
     result->timeStamp_ = parcel.ReadInt64();
     return result;
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+

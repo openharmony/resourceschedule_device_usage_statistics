@@ -69,6 +69,7 @@ public:
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"Resourceschedule.IBundleActiveService");
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_ISERVICE_H
+

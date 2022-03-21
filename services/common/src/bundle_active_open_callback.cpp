@@ -43,3 +43,4 @@ int32_t BundleActiveOpenCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int o
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+

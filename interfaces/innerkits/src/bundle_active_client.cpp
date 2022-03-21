@@ -115,5 +115,6 @@ int BundleActiveClient::QueryPackageGroup()
     }
     return bundleActiveProxy_->QueryPackageGroup();
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+

@@ -60,6 +60,7 @@ public:
     virtual bool Marshalling(Parcel &parcel) const override;
     std::shared_ptr<BundleActiveEvent> Unmarshalling(Parcel &parcel);
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_EVENT_H
+

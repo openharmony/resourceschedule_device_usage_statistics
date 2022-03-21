@@ -32,8 +32,9 @@ public:
     int64_t bundleDailyTimeoutTimeStamp_;
     bool isChanged_;
     BundleActivePackageHistory();
-    ~BundleActivePackageHistory() {};
+    ~BundleActivePackageHistory() {}
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_USAGE_HISTORY_H
+

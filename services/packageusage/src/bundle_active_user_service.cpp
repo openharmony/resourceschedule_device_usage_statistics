@@ -406,5 +406,6 @@ void BundleActiveUserService::PrintInMemEventStats()
             abilityId.c_str(), abilityname.c_str(), bundlename.c_str(), eventid, timestamp);
     }
 }
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+

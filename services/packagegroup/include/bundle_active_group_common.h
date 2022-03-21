@@ -61,6 +61,7 @@ const uint32_t GROUP_EVENT_REASON_LONG_TIME_TASK_STARTTED = 0x0007;
 const uint32_t GROUP_EVENT_REASON_CALCULATED_RESTORED = 0x0008;
 const uint32_t GROUP_EVENT_REASON_ALIVE_NOT_TIMEOUT = 0x0009;
 }
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_GROUP_COMMON_H
+

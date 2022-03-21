@@ -60,6 +60,7 @@ public:
     void AddEventStatsTo(std::vector<BundleActiveEventStats>& eventStatsList);
     std::string GetCachedString(std::string str);
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_PERIOD_STATS_H
+

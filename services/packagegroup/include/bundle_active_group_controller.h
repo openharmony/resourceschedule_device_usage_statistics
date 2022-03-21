@@ -52,7 +52,7 @@ public:
     std::vector<int64_t> screenTimeLevel_ = {0, 0, 0, 0};
     std::vector<int64_t> bootTimeLevel_ = {0, 0, 0, 0};
     BundleActiveGroupController(const bool debug);
-    ~BundleActiveGroupController() {};
+    ~BundleActiveGroupController() {}
     std::shared_ptr<BundleActiveUserHistory> bundleUserHistory_;
     void SetHandlerAndCreateUserHistory(const std::shared_ptr<BundleActiveGroupHandler>& groupHandler,
         const int64_t bootFromTimeStamp);
@@ -89,7 +89,7 @@ private:
         const int64_t bootBasedTimeStamp);
     int GetNewGroup(const std::string& bundleName, const int userId, const int64_t bootBasedTimeStamp);
 };
-}
-}
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_GROUP_CONTROLLER_H
 
-#endif

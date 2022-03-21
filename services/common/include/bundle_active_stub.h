@@ -22,11 +22,12 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveStub : public IRemoteStub<IBundleActiveService> {
 public:
-    virtual int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
+    int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
         MessageOption &option) override;
-    BundleActiveStub() {};
-    ~BundleActiveStub() {};
+    BundleActiveStub() {}
+    ~BundleActiveStub() {}
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_STUB_H
+

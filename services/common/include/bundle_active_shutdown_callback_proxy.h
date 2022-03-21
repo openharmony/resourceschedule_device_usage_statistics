@@ -33,6 +33,7 @@ public:
 private:
     static inline BrokerDelegator<BundleActiveShutdownCallbackProxy> delegator_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_PROXY_H
+

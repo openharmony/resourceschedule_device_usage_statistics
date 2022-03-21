@@ -24,7 +24,7 @@ namespace DeviceUsageStats {
 class BundleActiveEventList {
 public:
     BundleActiveEventList();
-    ~BundleActiveEventList() {};
+    ~BundleActiveEventList() {}
     int Size();
     void Clear();
     void Insert(BundleActiveEvent event);
@@ -32,6 +32,7 @@ public:
     void Merge(const BundleActiveEventList& right);
     std::vector<BundleActiveEvent> events_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_EVENT_LIST_H
+

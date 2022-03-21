@@ -37,12 +37,13 @@ public:
     int QueryPackageGroup();
     static BundleActiveClient& GetInstance();
     BundleActiveClient() {}
-    ~BundleActiveClient() {};
+    ~BundleActiveClient() {}
 
 private:
     bool GetBundleActiveProxy();
     sptr<IBundleActiveService> bundleActiveProxy_;
 };
-}
-}
-#endif
+}  // namespace DeviceUsageStats
+}  // namespace OHOS
+#endif  // BUNDLE_ACTIVE_CLIENT_H
+
