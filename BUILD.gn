@@ -19,6 +19,15 @@ ohos_sa_profile("device_usage_statistics_sa_profile") {
   part_name = "${device_usage_statistics_part_name}"
 }
 
+config("usagestatsinner_public_config") {
+  include_dirs = [
+    "services/common/include",
+    "services/packageusage/include",
+    "services/packagegroup/include",
+    "interfaces/innerkits/include",
+  ]
+}
+
 ohos_shared_library("usagestatsinner") {
   sources = [
     "interfaces/innerkits/src/bundle_active_client.cpp",
@@ -26,13 +35,8 @@ ohos_shared_library("usagestatsinner") {
     "services/packageusage/src/bundle_active_event.cpp",
     "services/packageusage/src/bundle_active_package_stats.cpp",
   ]
-  include_dirs = [
-    "services/common/include",
-    "services/packageusage/include",
-    "services/packagegroup/include",
-    "interfaces/innerkits/include",
-  ]
-
+  public_configs = [ ":usagestatsinner_public_config" ]
+  public_deps = [ ":usagestatservice" ]
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -40,8 +44,6 @@ ohos_shared_library("usagestatsinner") {
     "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
-
-  deps = [ ":usagestatservice" ]
 
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
