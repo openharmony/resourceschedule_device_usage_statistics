@@ -412,6 +412,7 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, 
     }
     std::string bundleName = "";
     sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
+    bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(uid);
     AccessToken::AccessTokenID tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId,
         bundleName, 0);
     int bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
