@@ -25,13 +25,12 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+using namespace OHOS::Security;
 static const int PERIOD_BEST_JS = 0;
 static const int PERIOD_YEARLY_JS = 4;
 static const int PERIOD_BEST_SERVICE = 4;
 static const int DELAY_TIME = 2000;
 REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
-using namespace OHOS::Security::AccessToken;
-using AccessTokenKit = OHOS::Security::AccessToken::AccessTokenKit;
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 
 void BundleActiveService::OnStart()
@@ -413,8 +412,9 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, 
     }
     std::string bundleName = "";
     sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
-    bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(uid);
-    int bundleHasPermission = sptrBundleMgr_->CheckPermissionByUid(bundleName, NEEDED_PERMISSION, userId);
+    AccessToken::AccessTokenID tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId,
+        bundleName, 0);
+    int bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
     if (!bundleIsSystemApp) {
         errCode = BUNDLE_ACTIVE_FAIL;
         BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
