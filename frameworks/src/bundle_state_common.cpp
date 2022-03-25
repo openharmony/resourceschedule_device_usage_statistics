@@ -41,6 +41,7 @@ void BundleStateCommon::GetCallbackPromiseResult(const napi_env &env,
 void BundleStateCommon::SetCallbackInfo(
     const napi_env &env, const napi_ref &callbackIn, const int &errorCode, const napi_value &result)
 {
+    
     napi_value undefined = nullptr;
     napi_get_undefined(env, &undefined);
 
@@ -150,6 +151,9 @@ void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred 
 
 napi_value BundleStateCommon::GetErrorValue(napi_env env, int errCode)
 {
+    if (errCode == ERR_OK) {
+        return NapiGetNull(env);
+    }
     napi_value result = nullptr;
     napi_value eCode = nullptr;
     NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
