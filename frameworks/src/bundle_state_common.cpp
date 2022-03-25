@@ -41,7 +41,6 @@ void BundleStateCommon::GetCallbackPromiseResult(const napi_env &env,
 void BundleStateCommon::SetCallbackInfo(
     const napi_env &env, const napi_ref &callbackIn, const int &errorCode, const napi_value &result)
 {
-    
     napi_value undefined = nullptr;
     napi_get_undefined(env, &undefined);
 
