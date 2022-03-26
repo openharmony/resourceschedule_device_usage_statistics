@@ -53,7 +53,8 @@ int BundleActiveClient::ReportFormClickedOrRemoved(const std::string& bundleName
     if (!GetBundleActiveProxy()) {
         return -1;
     }
-    return bundleActiveProxy_->ReportFormClickedOrRemoved(bundleName, moduleName, modulePackage, formName, formId, formDimension, userId, eventId);
+    return bundleActiveProxy_->ReportFormClickedOrRemoved(bundleName, moduleName, modulePackage, formName, formId,
+        formDimension, userId, eventId);
 }
 
 bool BundleActiveClient::IsBundleIdle(const std::string& bundleName)

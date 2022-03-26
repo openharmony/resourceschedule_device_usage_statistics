@@ -36,7 +36,8 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int32_t formDimension = data.ReadInt32();
             int userId = data.ReadInt32();
             int eventId = data.ReadInt32();
-            int result = ReportFormClickedOrRemoved(bundleName, moduleName, modulePackage, formName, formId, formDimension, userId, eventId);
+            int result = ReportFormClickedOrRemoved(bundleName, moduleName, modulePackage, formName, formId,
+                formDimension, userId, eventId);
             return reply.WriteInt32(result);
         }
         case IS_BUNDLE_IDLE: {
