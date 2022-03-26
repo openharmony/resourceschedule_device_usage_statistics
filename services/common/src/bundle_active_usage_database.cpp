@@ -1258,8 +1258,8 @@ int64_t BundleActiveUsageDatabase::GetSystemTimeMs()
     return static_cast<int64_t>(tarDate);
 }
 
-void BundleActiveUsageDatabase::UpdateModuleData(int userId,
-    std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords_)
+void BundleActiveUsageDatabase::UpdateModuleData(const int userId,
+    std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords_, const int64_t timeStamp);
 {
     // mock
 }
