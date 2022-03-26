@@ -91,9 +91,11 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_GetServiceObject_0
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, Function | MediumTest | Level0)
 {
     BundleActiveClient::GetInstance().ReportFormClickedOrRemoved(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME,
-        DEFAULT_MODULE, DEFAULT_FORM_NAME, DEFAULT_DIMENSION, DEFAULT_FORMID, DEFAULT_USERID, BundleActiveEvent::FORM_IS_CLICKED);
+        DEFAULT_MODULE, DEFAULT_FORM_NAME, DEFAULT_DIMENSION, DEFAULT_FORMID, DEFAULT_USERID,
+        BundleActiveEvent::FORM_IS_CLICKED);
     BundleActiveClient::GetInstance().ReportFormClickedOrRemoved(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME,
-        DEFAULT_MODULE, DEFAULT_FORM_NAME, DEFAULT_DIMENSION, DEFAULT_FORMID, DEFAULT_USERID, BundleActiveEvent::FORM_IS_REMOVED);
+        DEFAULT_MODULE, DEFAULT_FORM_NAME, DEFAULT_DIMENSION, DEFAULT_FORMID, DEFAULT_USERID,
+        BundleActiveEvent::FORM_IS_REMOVED);
 }
 
 /*
