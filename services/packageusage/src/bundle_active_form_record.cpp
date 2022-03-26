@@ -38,7 +38,8 @@ BundleActiveFormRecord::BundleActiveFormRecord(const std::string formName, const
     userId_ = userId;
 }
 
-BundleActiveFormRecord::BundleActiveFormRecord(const BundleActiveFormRecord& orig) {
+BundleActiveFormRecord::BundleActiveFormRecord(const BundleActiveFormRecord& orig)
+{
     formName_ = orig.formName_;
     formDimension_ = orig.formDimension_;
     formId_ = orig.formId_;

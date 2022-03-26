@@ -379,7 +379,7 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
 
 int BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
 {
-    for(auto oneModuleRecord = moduleRecords_.begin(); oneModuleRecord != moduleRecords_.end(); oneModuleRecord++) {
+    for (auto oneModuleRecord = moduleRecords_.begin(); oneModuleRecord != moduleRecords_.end(); oneModuleRecord++) {
         if (!oneModuleRecord->second) {
             continue;
         }
@@ -444,7 +444,8 @@ void BundleActiveUserService::ReportFormClickedOrRemoved(const BundleActiveEvent
     }
 }
 
-std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateModuleRecord(const BundleActiveEvent& event)
+std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateModuleRecord(
+    const BundleActiveEvent& event)
 {
     std::string combinedInfo = event.bundleName_ + " " + event.moduleName_ + " " + event.modulePackage_;
     auto it = moduleRecords_.find(combinedInfo);

@@ -45,8 +45,9 @@ bool BundleActiveClient::GetBundleActiveProxy()
     return true;
 }
 
-int BundleActiveClient::ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName, const std::string modulePackage, const std::string& formName,
-    const int64_t formId, const int32_t formDimension, const int userId, const int eventId)
+int BundleActiveClient::ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName,
+    const std::string modulePackage, const std::string& formName, const int64_t formId,
+    const int32_t formDimension, const int userId, const int eventId)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveClient::ReportEvent called");
     if (!GetBundleActiveProxy()) {

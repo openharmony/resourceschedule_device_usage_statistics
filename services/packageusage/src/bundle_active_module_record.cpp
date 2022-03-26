@@ -121,7 +121,8 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveModuleRecord::UnMarshallin
     return result;
 }
 
-bool BundleActiveModuleRecord::cmp(const BundleActiveModuleRecord& moduleRecordA, const BundleActiveModuleRecord& moduleRecordB)
+bool BundleActiveModuleRecord::cmp(const BundleActiveModuleRecord& moduleRecordA,
+    const BundleActiveModuleRecord& moduleRecordB)
 {
     return moduleRecordA.lastModuleUsedTime_ > moduleRecordB.lastModuleUsedTime_;
 }
