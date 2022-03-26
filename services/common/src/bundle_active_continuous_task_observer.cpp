@@ -83,6 +83,7 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
     if (GetBundleMgr()) {
         bundleMgr_->GetBundleNameForUid(uid, bundleName);
     } else {
+        BUNDLE_ACTIVE_LOGE("Get bundle mgr failed!");
         return;
     }
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);

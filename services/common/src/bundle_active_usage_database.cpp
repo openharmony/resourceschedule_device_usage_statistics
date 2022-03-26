@@ -66,6 +66,7 @@ void BundleActiveUsageDatabase::ChangeToDebug()
     calendar_->ChangeToDebug();
     debugDatabase_ = true;
 }
+
 void BundleActiveUsageDatabase::InitUsageGroupInfo(int32_t databaseType)
 {
     lock_guard<mutex> lock(databaseMutex_);
@@ -1201,6 +1202,7 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
 
 void BundleActiveUsageDatabase::OnPackageUninstalled(const int userId, const string& bundleName)
 {
+    // 加入应用删除后删除卡片
     lock_guard<mutex> lock(databaseMutex_);
     for (uint32_t i = 0; i < sortedTableArray_.size(); i++) {
         if (sortedTableArray_.at(i).empty()) {
@@ -1254,6 +1256,24 @@ int64_t BundleActiveUsageDatabase::GetSystemTimeMs()
         return -1;
     }
     return static_cast<int64_t>(tarDate);
+}
+
+void BundleActiveUsageDatabase::UpdateModuleData(int userId, std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords_)
+{
+    // mock
+}
+
+void BundleActiveUsageDatabase::RemoveFormData(const int userId, const std::string formName,
+    const int32_t formDimension, const int64_t formId)
+{
+    // mock
+}
+
+void BundleActiveUsageDatabase::GetFormDataWhenInit(const int32_t userId, std::map<std::string,
+    std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords)
+{
+    // key: std::string combineInfo = bundlename + " " + modulePackage + " " + moduleName
+    // mock
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

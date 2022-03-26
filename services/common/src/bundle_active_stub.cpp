@@ -16,6 +16,7 @@
 #include "bundle_active_stub.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_event.h"
+#include "bundle_active_module_record.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -26,14 +27,16 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         return -1;
     }
     switch (code) {
-        case REPORT_EVENT: {
+        case REPORT_FORM_EVENT: {
             std::string bundleName = data.ReadString();
-            std::string ablityName = data.ReadString();
-            std::string abilityId = data.ReadString();
-            std::string continuousTaskName = data.ReadString();
+            std::string moduleName = data.ReadString();
+            std::string modulePackage = data.ReadString();
+            std::string formName = data.ReadString();
+            int64_t formId = data.ReadInt64();
+            int32_t formDimension = data.ReadInt32();
             int userId = data.ReadInt32();
             int eventId = data.ReadInt32();
-            int result = ReportEvent(bundleName, ablityName, abilityId, continuousTaskName, userId, eventId);
+            int result = ReportFormClickedOrRemoved(bundleName, moduleName, modulePackage, formName, formId, formDimension, userId, eventId);
             return reply.WriteInt32(result);
         }
         case IS_BUNDLE_IDLE: {
@@ -129,6 +132,21 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int result = -1;
             result = QueryPackageGroup();
             return reply.WriteInt32(result);
+        }
+        case QUERY_FORM_STATS: {
+            std::vector<BundleActiveModuleRecord> results;
+            int size = 0;
+            int32_t maxNum = data.ReadInt32();
+            QueryFormStatistics(maxNum, results);
+            size = static_cast<int>(results.size());
+            reply.WriteInt32(size);
+            for (int i = 0; i < size; i++) {
+                bool tmp = results[i].Marshalling(reply);
+                if (tmp == false) {
+                    return 1;
+                }
+            }
+            return size == 0;
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);

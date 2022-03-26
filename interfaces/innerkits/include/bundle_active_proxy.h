@@ -18,13 +18,16 @@
 
 #include "ibundle_active_service.h"
 #include "bundle_active_event.h"
+#include "bundle_active_package_stats.h"
+#include "bundle_active_package_stats.h"
+#include "bundle_active_module_record.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveProxy : public IRemoteProxy<IBundleActiveService> {
 public:
-    int ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
-        const std::string& continuousTask, const int userId, const int eventId) override;
+    int ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName, const std::string modulePackage, const std::string& formName,
+        const int64_t formId, const int32_t formDimension, const int userId, const int eventId) override;
     bool IsBundleIdle(const std::string& bundleName) override;
     std::vector<BundleActivePackageStats> QueryPackageStats(const int intervalType, const int64_t beginTime,
         const int64_t endTime, int32_t& errCode) override;
@@ -35,6 +38,7 @@ public:
         const int64_t endTime) override;
     std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime) override;
     int QueryPackageGroup() override;
+    int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results) override;
     explicit BundleActiveProxy(const sptr<IRemoteObject>& impl)
         : IRemoteProxy<IBundleActiveService>(impl) {}
     virtual ~BundleActiveProxy() {}

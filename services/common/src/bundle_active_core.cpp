@@ -442,6 +442,11 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
         BUNDLE_ACTIVE_LOGE("get user data service failed!");
         return -1;
     }
+    if (event.eventId_ == BundleActiveEvent::FORM_IS_CLICKED ||
+        event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED) {
+        service->ReportFormClickedOrRemoved(event);
+        return 0;
+    }
     service->ReportEvent(event);
     bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
     return 0;
@@ -518,6 +523,21 @@ std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int userId, c
     }
     result = service->QueryEvents(beginTime, endTime, userId, bundleName);
     return result;
+}
+
+int BundleActiveCore::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
+    if (timeNow == -1) {
+        return -1;
+    }
+    std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
+    if (service == nullptr) {
+        return -1;
+    }
+    int errCode = service->QueryFormStatistics(maxNum, results);
+    return errCode;
 }
 
 void BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int newGroup, const int userId)

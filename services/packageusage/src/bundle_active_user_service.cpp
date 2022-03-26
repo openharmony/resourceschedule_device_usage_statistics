@@ -23,6 +23,7 @@ void BundleActiveUserService::Init(const int64_t timeStamp)
     database_.InitDatabaseTableInfo(timeStamp);
     BUNDLE_ACTIVE_LOGI("Init called");
     LoadActiveStats(timeStamp, false, false);
+    database_.GetFormDataWhenInit(userId_, moduleRecords_);
     std::shared_ptr<BundleActivePeriodStats> currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentDailyStats != nullptr) {
         BundleActiveEvent startupEvent(BundleActiveEvent::STARTUP, timeStamp - ONE_SECOND_MILLISECONDS);
@@ -172,6 +173,7 @@ void BundleActiveUserService::RestoreStats(bool forced)
                 database_.UpdateUsageData(i, *(currentStats_[i]));
             }
         }
+        database_.UpdateModuleData(userId_, moduleRecords_);
         currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Clear();
         statsChanged_ = false;
         BUNDLE_ACTIVE_LOGI("change statsChanged_ to %{public}d user is %{public}d", statsChanged_, userId_);
@@ -185,9 +187,9 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
     if (debugUserService_ == true) {
         tmpCalendar.ChangeToDebug();
     }
-    tmpCalendar.SetMilliseconds(timeStamp);
-    tmpCalendar.TruncateTo(BundleActivePeriodStats::PERIOD_DAILY);
     for (uint32_t intervalType = 0; intervalType < periodLength_.size(); intervalType++) {
+        tmpCalendar.SetMilliseconds(timeStamp);
+        tmpCalendar.TruncateTo(static_cast<int>(intervalType));
         if (!force && currentStats_[intervalType] != nullptr &&
             currentStats_[intervalType]->beginTime_ == tmpCalendar.GetMilliseconds()) {
             continue;
@@ -375,6 +377,24 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     return result;
 }
 
+int BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
+{
+    for(auto oneModuleRecord = moduleRecords_.begin(); oneModuleRecord != moduleRecords_.end(); oneModuleRecord++) {
+        if (!oneModuleRecord->second) {
+            continue;
+        }
+        results.emplace_back(*(oneModuleRecord->second));
+    }
+    std::sort(results.begin(), results.end(), BundleActiveModuleRecord::cmp);
+    if (static_cast<int32_t>(results.size()) < maxNum) {
+        results.resize(maxNum);
+    }
+    for (auto result : results) {
+        std::sort(result.formRecords_.begin(), result.formRecords_.end(), BundleActiveFormRecord::cmp);
+    }
+    return 0;
+}
+
 void BundleActiveUserService::PrintInMemPackageStats(const int idx)
 {
     BUNDLE_ACTIVE_LOGI("PrintInMemPackageStats called");
@@ -405,6 +425,37 @@ void BundleActiveUserService::PrintInMemEventStats()
             "bundlename is %{public}s, eventid is %{public}d, timestamp is %{public}lld",
             abilityId.c_str(), abilityname.c_str(), bundlename.c_str(), eventid, timestamp);
     }
+}
+
+void BundleActiveUserService::ReportFormClickedOrRemoved(const BundleActiveEvent& event)
+{
+    auto moduleRecord = GetOrCreateModuleRecord(event);
+    if (event.eventId_ == BundleActiveEvent::FORM_IS_CLICKED && moduleRecord) {
+        if (!moduleRecord) {
+            return;
+        }
+        moduleRecord->UpdateModuleRecord(event.timeStamp_);
+        moduleRecord->AddOrUpdateOneFormRecord(event.formName_, event.formDimension_, event.formId_, event.timeStamp_);
+        NotifyStatsChanged();
+    } else if (event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED && moduleRecord) {
+        moduleRecord->RemoveOneFormRecord(event.formName_, event.formDimension_, event.formId_);
+        database_.RemoveFormData(userId_, event.formName_, event.formDimension_, event.formId_);
+        NotifyStatsChanged();
+    }
+}
+
+std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateModuleRecord(const BundleActiveEvent& event)
+{
+    std::string combinedInfo = event.bundleName_ + " " + event.moduleName_ + " " + event.modulePackage_;
+    auto it = moduleRecords_.find(combinedInfo);
+    if (it == moduleRecords_.end()) {
+        auto moduleRecordInserted = std::make_shared<BundleActiveModuleRecord>();
+        moduleRecordInserted->bundleName_ = event.bundleName_;
+        moduleRecordInserted->moduleName_ = event.moduleName_;
+        moduleRecordInserted->modulePackage_ = event.modulePackage_;
+        moduleRecords_[combinedInfo] = moduleRecordInserted;
+    }
+    return moduleRecords_[combinedInfo];
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
