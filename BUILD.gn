@@ -35,9 +35,7 @@ ohos_shared_library("usagestatsinner") {
     "services/packageusage/src/bundle_active_event.cpp",
     "services/packageusage/src/bundle_active_package_stats.cpp",
   ]
-  public_configs = [
-    ":usagestatsinner_public_config"
-  ]
+  public_configs = [ ":usagestatsinner_public_config" ]
   public_deps = [ ":usagestatservice" ]
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
