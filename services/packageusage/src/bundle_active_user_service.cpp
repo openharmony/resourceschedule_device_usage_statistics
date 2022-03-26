@@ -430,6 +430,7 @@ void BundleActiveUserService::PrintInMemEventStats()
 
 void BundleActiveUserService::ReportFormClickedOrRemoved(const BundleActiveEvent& event)
 {
+    BUNDLE_ACTIVE_LOGI("ReportFormClickedOrRemoved called");
     auto moduleRecord = GetOrCreateModuleRecord(event);
     if (event.eventId_ == BundleActiveEvent::FORM_IS_CLICKED && moduleRecord) {
         if (!moduleRecord) {
