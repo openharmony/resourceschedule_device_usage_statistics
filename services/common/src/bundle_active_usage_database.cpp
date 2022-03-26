@@ -1259,7 +1259,7 @@ int64_t BundleActiveUsageDatabase::GetSystemTimeMs()
 }
 
 void BundleActiveUsageDatabase::UpdateModuleData(const int userId,
-    std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords_, const int64_t timeStamp);
+    std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords_, const int64_t timeStamp)
 {
     // mock
 }
