@@ -40,10 +40,13 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActivePackageStats;
 class BundleActiveEvent;
+class BundleActiveModuleRecord;
+
 class IBundleActiveService : public IRemoteBroker {
 public:
-    virtual int ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
-        const std::string& continuousTask, const int userId, const int eventId) = 0;
+    virtual int ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName,
+        const std::string modulePackage, const std::string& formName, const int64_t formId,
+        const int32_t formDimension, const int userId, const int eventId) = 0;
     virtual bool IsBundleIdle(const std::string& bundleName) = 0;
     virtual std::vector<BundleActivePackageStats> QueryPackageStats(const int intervalType, const int64_t beginTime,
         const int64_t endTime, int32_t& errCode) = 0;
@@ -54,17 +57,19 @@ public:
     virtual std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime) = 0;
     virtual int QueryPackageGroup() = 0;
     virtual void SetBundleGroup(const std::string& bundleName, int newGroup, int userId) = 0;
+    virtual int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results) = 0;
 
 public:
     enum {
-        REPORT_EVENT = 1,
+        REPORT_FORM_EVENT = 1,
         IS_BUNDLE_IDLE = 2,
         QUERY_USAGE_STATS = 3,
         QUERY_EVENTS = 4,
         QUERY_CURRENT_USAGE_STATS = 5,
         QUERY_CURRENT_EVENTS = 6,
         QUERY_BUNDLE_GROUP = 7,
-        SET_BUNDLE_GROUP = 8
+        SET_BUNDLE_GROUP = 8,
+        QUERY_FORM_STATS = 9
     };
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"Resourceschedule.IBundleActiveService");

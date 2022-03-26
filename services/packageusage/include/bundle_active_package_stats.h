@@ -55,7 +55,7 @@ public:
         void IncrementServiceTimeUsed(const int64_t timeStamp);
         void IncrementBundleLaunchedCount();
         virtual bool Marshalling(Parcel &parcel) const override;
-        std::shared_ptr<BundleActivePackageStats> Unmarshalling(Parcel &parcel);
+        std::shared_ptr<BundleActivePackageStats> UnMarshalling(Parcel &parcel);
         void printdata();
 
 private:

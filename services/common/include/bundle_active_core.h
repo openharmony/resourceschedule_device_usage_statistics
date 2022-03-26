@@ -109,6 +109,7 @@ public:
     int IsBundleIdle(const std::string& bundleName, const int userId);
     // query the app group for calling app.
     int QueryPackageGroup(const int userId, const std::string bundleName);
+    int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId);
     // get the wall time and check if the wall time is changed.
     int64_t CheckTimeChangeAndGetWallTime(int userId = 0);
     // convert event timestamp from boot based time to wall time.

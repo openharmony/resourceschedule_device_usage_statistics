@@ -30,6 +30,8 @@ static const int PERIOD_BEST_JS = 0;
 static const int PERIOD_YEARLY_JS = 4;
 static const int PERIOD_BEST_SERVICE = 4;
 static const int DELAY_TIME = 2000;
+static const int ROOT_UID = 0;
+static const int SYSTEM_UID = 1000;
 REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 
@@ -201,22 +203,35 @@ void BundleActiveService::OnStop()
 }
 
 
-int BundleActiveService::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
-    const std::string& continuousTask, const int userId, const int eventId)
+int BundleActiveService::ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName,
+    const std::string modulePackage, const std::string& formName, const int64_t formId,
+    const int32_t formDimension, const int userId, const int eventId)
 {
-    BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-    tmpHandlerObject.event_.bundleName_ = bundleName;
-    tmpHandlerObject.event_.abilityName_ = abilityName;
-    tmpHandlerObject.event_.abilityId_ = abilityId;
-    tmpHandlerObject.event_.eventId_ = eventId;
-    tmpHandlerObject.event_.continuousTaskAbilityName_ = continuousTask;
-    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-    tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
-    std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-        std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-    auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
-    reportHandler_->SendEvent(event);
-    return 0;
+    int callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    if (!GetBundleMgrProxy()) {
+            BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");
+            return -1;
+    }
+    bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(callingUid);
+    if ((callingUid == ROOT_UID || callingUid == SYSTEM_UID) || bundleIsSystemApp) {
+        BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
+        tmpHandlerObject.event_.bundleName_ = bundleName;
+        tmpHandlerObject.event_.moduleName_ = moduleName;
+        tmpHandlerObject.event_.modulePackage_ = modulePackage;
+        tmpHandlerObject.event_.formName_ = formName;
+        tmpHandlerObject.event_.formId_ = formId;
+        tmpHandlerObject.event_.formDimension_ = formDimension;
+        tmpHandlerObject.event_.eventId_ = eventId;
+        sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+        tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
+        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+        auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
+        reportHandler_->SendEvent(event);
+        return 0;
+    } else {
+        return -1;
+    }
 }
 
 bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
@@ -429,6 +444,74 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, 
             "has permission %{public}d", bundleName.c_str(), bundleIsSystemApp, bundleHasPermission);
         return true;
     }
+}
+
+int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
+{
+    int callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    BUNDLE_ACTIVE_LOGI("QueryFormStatistics UID is %{public}d", callingUid);
+    // get userid
+    int userId = -1;
+    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
+    int32_t errCode = 0;
+    if (ret == ERR_OK && userId != -1) {
+        BUNDLE_ACTIVE_LOGI("QueryEvents userid is %{public}d", userId);
+        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
+        if (isSystemAppAndHasPermission == true) {
+            errCode = bundleActiveCore_->QueryFormStatistics(maxNum, results, userId);
+        }
+    }
+    return errCode;
+}
+
+void BundleActiveService::GetAndSetModuleRecordInfos(BundleInfo& bundleInfo, HapModuleInfo& hapModuleInfo,
+    ApplicationInfo& appInfo, AbilityInfo& abilityInfo, BundleActiveModuleRecord& moduleRecord)
+{
+    if (!GetBundleMgrProxy()) {
+        return;
+    }
+    if (!sptrBundleMgr_->GetApplicationInfo(moduleRecord.bundleName_, ApplicationFlag::GET_BASIC_APPLICATION_INFO,
+        moduleRecord.userId_, appInfo)) {
+        BUNDLE_ACTIVE_LOGE("GetApplicationInfo failed!");
+        return;
+    }
+    if (!sptrBundleMgr_->GetBundleInfo(moduleRecord.bundleName_, BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo,
+        moduleRecord.userId_)) {
+        BUNDLE_ACTIVE_LOGE("GetBundleInfo failed!");
+        return;
+    }
+    AbilityInfo mockAbilityInfo;
+    mockAbilityInfo.bundleName = moduleRecord.bundleName_;
+    mockAbilityInfo.package = moduleRecord.modulePackage_;
+    if (!sptrBundleMgr_->GetHapModuleInfo(mockAbilityInfo, hapModuleInfo)) {
+        BUNDLE_ACTIVE_LOGE("GetHapModuleInfo failed!");
+        return;
+    }
+    std::string mainAbility = hapModuleInfo.mainAbility;
+    if (!hapModuleInfo.abilityInfos.empty()) {
+        for (auto oneAbilityInfo : hapModuleInfo.abilityInfos) {
+            if (oneAbilityInfo.type != AbilityType::PAGE) {
+                continue;
+            }
+            if (mainAbility.empty() || mainAbility.compare(abilityInfo.name) == 0) {
+                SerModuleProperties(bundleInfo, hapModuleInfo, appInfo, oneAbilityInfo, moduleRecord);
+                break;
+            }
+        }
+    }
+}
+
+void BundleActiveService::SerModuleProperties(const BundleInfo& bundleInfo, const HapModuleInfo& hapModuleInfo,
+    const ApplicationInfo& appInfo, const AbilityInfo& abilityInfo, BundleActiveModuleRecord& moduleRecord)
+{
+    moduleRecord.deviceId_ = appInfo.deviceId;
+    moduleRecord.abilityName_ = abilityInfo.name;
+    moduleRecord.appLabelId_ = appInfo.labelId;
+    // hapModuleInfo.labelId 待徐浩添加
+    moduleRecord.abilityName_ = abilityInfo.labelId;
+    moduleRecord.descriptionId_ = abilityInfo.descriptionId;
+    moduleRecord.abilityIconId_ = abilityInfo.iconId;
+    moduleRecord.installFreeSupported_ = hapModuleInfo.installationFree;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

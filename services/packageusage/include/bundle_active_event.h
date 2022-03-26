@@ -40,11 +40,18 @@ public:
     static const int KEYGUARD_SHOWN = 15;
     static const int KEYGUARD_HIDDEN = 16;
     static const int NOTIFICATION_SEEN = 17;
+    static const int FORM_IS_CLICKED = 18;
+    static const int FORM_IS_REMOVED = 19;
     inline static const std::string DEVICE_EVENT_PACKAGE_NAME = "openharmony";
     std::string bundleName_;
     std::string continuousTaskAbilityName_;
     std::string abilityName_;
     std::string abilityId_;
+    std::string moduleName_;
+    std::string modulePackage_;
+    std::string formName_;
+    int32_t formDimension_;
+    int64_t formId_;
     int64_t timeStamp_;
     int eventId_;
 
@@ -58,7 +65,7 @@ public:
     int64_t GetTimeStamp();
     int GetEventId();
     virtual bool Marshalling(Parcel &parcel) const override;
-    std::shared_ptr<BundleActiveEvent> Unmarshalling(Parcel &parcel);
+    std::shared_ptr<BundleActiveEvent> UnMarshalling(Parcel &parcel);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

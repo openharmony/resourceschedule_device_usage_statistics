@@ -26,6 +26,7 @@
 #include "bundle_active_stats_combiner.h"
 #include "bundle_active_usage_database.h"
 #include "bundle_active_constant.h"
+#include "bundle_active_module_record.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -56,6 +57,7 @@ public:
     ~BundleActiveUserService() {}
     void ReportForShutdown(const BundleActiveEvent& event);
     void ReportEvent(const BundleActiveEvent& event);
+    void ReportFormClickedOrRemoved(const BundleActiveEvent& event);
     void RestoreStats(bool forced);
     void RenewStatsInMemory(const int64_t timeStamp);
     void RenewTableTime(int64_t oldTime, int64_t newTime);
@@ -67,12 +69,14 @@ public:
         const int64_t endTime, const int userId, const std::string& bundleName);
     std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, const int userId,
         const std::string& bundleName);
+    int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results);
     void LoadActiveStats(const int64_t timeStamp, const bool& force, const bool& timeChanged);
 
 private:
     static const int64_t ONE_SECOND_MILLISECONDS = 1000;
     BundleActiveUsageDatabase database_;
     std::vector<std::shared_ptr<BundleActivePeriodStats>> currentStats_;
+    std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords_;
     bool statsChanged_;
     bool debugUserService_;
     std::string lastBackgroundBundle_;
@@ -80,6 +84,7 @@ private:
     std::vector<int64_t> periodLength_ = {0, 0, 0, 0};
     void NotifyStatsChanged();
     void NotifyNewUpdate();
+    std::shared_ptr<BundleActiveModuleRecord> GetOrCreateModuleRecord(const BundleActiveEvent& event);
     void PrintInMemPackageStats(const int idx);
     void PrintInMemEventStats();
 };

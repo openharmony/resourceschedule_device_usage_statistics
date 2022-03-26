@@ -110,6 +110,8 @@ ohos_shared_library("usagestatservice") {
     "services/packageusage/src/bundle_active_event_list.cpp",
     "services/packageusage/src/bundle_active_event_stats.cpp",
     "services/packageusage/src/bundle_active_event_tracker.cpp",
+    "services/packageusage/src/bundle_active_form_record.cpp",
+    "services/packageusage/src/bundle_active_module_record.cpp",
     "services/packageusage/src/bundle_active_package_stats.cpp",
     "services/packageusage/src/bundle_active_period_stats.cpp",
     "services/packageusage/src/bundle_active_report_handler.cpp",

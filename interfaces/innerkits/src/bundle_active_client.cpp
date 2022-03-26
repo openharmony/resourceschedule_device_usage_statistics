@@ -14,7 +14,6 @@
  */
 
 #include "bundle_active_client.h"
-#include "bundle_active_package_stats.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -46,14 +45,16 @@ bool BundleActiveClient::GetBundleActiveProxy()
     return true;
 }
 
-int BundleActiveClient::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
-    const std::string& continuousTask, const int userId, const int eventId)
+int BundleActiveClient::ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName,
+    const std::string modulePackage, const std::string& formName, const int64_t formId,
+    const int32_t formDimension, const int userId, const int eventId)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveClient::ReportEvent called");
     if (!GetBundleActiveProxy()) {
         return -1;
     }
-    return bundleActiveProxy_->ReportEvent(bundleName, abilityName, abilityId, continuousTask, userId, eventId);
+    return bundleActiveProxy_->ReportFormClickedOrRemoved(bundleName, moduleName, modulePackage, formName, formId,
+        formDimension, userId, eventId);
 }
 
 bool BundleActiveClient::IsBundleIdle(const std::string& bundleName)
@@ -114,6 +115,14 @@ int BundleActiveClient::QueryPackageGroup()
         return -1;
     }
     return bundleActiveProxy_->QueryPackageGroup();
+}
+
+int BundleActiveClient::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
+{
+    if (!GetBundleActiveProxy()) {
+        return -1;
+    }
+    return bundleActiveProxy_->QueryFormStatistics(maxNum, results);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

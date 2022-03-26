@@ -14,13 +14,12 @@
  */
 
 #include "bundle_active_proxy.h"
-#include "bundle_active_package_stats.h"
-#include "bundle_active_package_stats.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
-    const std::string& continuousTask, const int userId, const int eventId)
+int BundleActiveProxy::ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName,
+    const std::string modulePackage, const std::string& formName, const int64_t formId,
+    const int32_t formDimension, const int userId, const int eventId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -29,12 +28,14 @@ int BundleActiveProxy::ReportEvent(std::string& bundleName, std::string& ability
         return -1;
     }
     data.WriteString(bundleName);
-    data.WriteString(abilityName);
-    data.WriteString(abilityId);
-    data.WriteString(continuousTask);
+    data.WriteString(moduleName);
+    data.WriteString(modulePackage);
+    data.WriteString(formName);
+    data.WriteInt64(formId);
+    data.WriteInt32(formDimension);
     data.WriteInt32(userId);
     data.WriteInt32(eventId);
-    Remote() -> SendRequest(REPORT_EVENT, data, reply, option);
+    Remote() -> SendRequest(REPORT_FORM_EVENT, data, reply, option);
 
     int32_t result = reply.ReadInt32();
     return result;
@@ -74,7 +75,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int i = 0; i < size; i++) {
-        tmp = tmp->Unmarshalling(reply);
+        tmp = tmp->UnMarshalling(reply);
         if (tmp == nullptr) {
             continue;
         }
@@ -108,7 +109,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int i = 0; i < size; i++) {
-        tmp = tmp->Unmarshalling(reply);
+        tmp = tmp->UnMarshalling(reply);
         if (tmp == nullptr) {
             continue;
         }
@@ -152,7 +153,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStat
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int i = 0; i < size; i++) {
-        tmp = tmp->Unmarshalling(reply);
+        tmp = tmp->UnMarshalling(reply);
         if (tmp == nullptr) {
             continue;
         }
@@ -183,7 +184,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int i = 0; i < size; i++) {
-        tmp = tmp->Unmarshalling(reply);
+        tmp = tmp->UnMarshalling(reply);
         if (tmp == nullptr) {
             continue;
         }
@@ -209,6 +210,28 @@ int BundleActiveProxy::QueryPackageGroup()
     int32_t packageGroup = reply.ReadInt32();
     BUNDLE_ACTIVE_LOGI("QueryPackageGroup result is %{public}d", packageGroup);
     return packageGroup;
+}
+
+int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return -1;
+    }
+    data.WriteInt32(maxNum);
+    Remote() -> SendRequest(QUERY_FORM_STATS, data, reply, option);
+    int32_t size = reply.ReadInt32();
+    std::shared_ptr<BundleActiveModuleRecord> tmp;
+    for (int i = 0; i < size; i++) {
+        tmp = tmp->UnMarshalling(reply);
+        if (tmp == nullptr) {
+            continue;
+        }
+        results.emplace_back(*tmp);
+    }
+    return 0;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

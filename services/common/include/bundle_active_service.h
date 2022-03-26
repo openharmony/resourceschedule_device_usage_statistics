@@ -33,11 +33,16 @@ class BundleActiveService : public SystemAbility, public BundleActiveStub {
     DECLARE_SYSTEM_ABILITY(BundleActiveService);
 public:
     using IBundleMgr = OHOS::AppExecFwk::IBundleMgr;
-    using ApplicationInfo = OHOS::AppExecFwk::ApplicationInfo;
     using BundleInfo = OHOS::AppExecFwk::BundleInfo;
     using BundleFlag = OHOS::AppExecFwk::BundleFlag;
-    int ReportEvent(std::string& bundleName, std::string& abilityName, std::string abilityId,
-        const std::string& continuousTask, const int userId, const int eventId) override;
+    using HapModuleInfo = OHOS::AppExecFwk::HapModuleInfo;
+    using AbilityInfo = OHOS::AppExecFwk::AbilityInfo;
+    using ApplicationInfo = OHOS::AppExecFwk::ApplicationInfo;
+    using ApplicationFlag = OHOS::AppExecFwk::ApplicationFlag;
+    using AbilityType = OHOS::AppExecFwk::AbilityType;
+    int ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName,
+        const std::string modulePackage, const std::string& formName, const int64_t formId,
+        const int32_t formDimension, const int userId, const int eventId) override;
     bool IsBundleIdle(const std::string& bundleName) override;
     std::vector<BundleActivePackageStats> QueryPackageStats(const int intervalType, const int64_t beginTime,
         const int64_t endTime, int32_t& errCode) override;
@@ -48,6 +53,7 @@ public:
         const int64_t endTime) override;
     std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime) override;
     int QueryPackageGroup() override;
+    int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results) override;
     BundleActiveService(int32_t systemAbilityId, int runOnCreate)
         : SystemAbility(systemAbilityId, runOnCreate) {}
     ~BundleActiveService() {}
@@ -75,6 +81,10 @@ private:
     bool SubscribeAppState();
     bool SubscribeContinuousTask();
     OHOS::sptr<OHOS::AppExecFwk::IAppMgr> GetAppManagerInstance();
+    void GetAndSetModuleRecordInfos(BundleInfo& bundleInfo, HapModuleInfo& hapModuleInfo,
+        ApplicationInfo& appInfo, AbilityInfo& abilityInfo, BundleActiveModuleRecord& moduleRecord);
+    void SerModuleProperties(const BundleInfo& bundleInfo, const HapModuleInfo& hapModuleInfo,
+    const ApplicationInfo& appInfo, const AbilityInfo& abilityInfo, BundleActiveModuleRecord& moduleRecord);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

@@ -23,6 +23,11 @@ BundleActiveEvent::BundleActiveEvent()
     continuousTaskAbilityName_ = "";
     abilityName_ = "";
     abilityId_ = "";
+    moduleName_ = "";
+    modulePackage_ = "";
+    formName_ = "";
+    formId_ = 0;
+    formDimension_ = 0;
     timeStamp_ = 0;
     eventId_ = 0;
 }
@@ -30,8 +35,14 @@ BundleActiveEvent::BundleActiveEvent()
 BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig)
 {
     bundleName_ = orig.bundleName_;
+    continuousTaskAbilityName_ = orig.continuousTaskAbilityName_;
     abilityName_ = orig.abilityName_;
     abilityId_ = orig.abilityId_;
+    moduleName_ = orig.moduleName_;
+    modulePackage_ = orig.modulePackage_;
+    formName_ = orig.formName_;
+    formId_ = orig.formId_;
+    formDimension_ = orig.formDimension_;
     timeStamp_ = orig.timeStamp_;
     eventId_ = orig.eventId_;
 }
@@ -80,7 +91,7 @@ bool BundleActiveEvent::Marshalling(Parcel &parcel) const
     return false;
 }
 
-std::shared_ptr<BundleActiveEvent> BundleActiveEvent::Unmarshalling(Parcel &parcel)
+std::shared_ptr<BundleActiveEvent> BundleActiveEvent::UnMarshalling(Parcel &parcel)
 {
     std::shared_ptr<BundleActiveEvent> result = std::make_shared<BundleActiveEvent>();
     result->bundleName_ = parcel.ReadString();

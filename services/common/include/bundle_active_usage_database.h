@@ -31,6 +31,7 @@
 #include "bundle_active_period_stats.h"
 #include "bundle_active_calendar.h"
 #include "bundle_active_package_history.h"
+#include "bundle_active_module_record.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -57,6 +58,12 @@ public:
         GetBundleHistoryData(int userId);
     void OnPackageUninstalled(const int userId, const std::string& bundleName);
     void ChangeToDebug();
+    void UpdateModuleData(const int userId,
+        std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords_, const int64_t timeStamp);
+    void RemoveFormData(const int userId, const std::string formName,
+        const int32_t formDimension, const int64_t formId);
+    void GetFormDataWhenInit(const int32_t userId, std::map<std::string,
+        std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
 
 private:
     void CheckDatabaseVersion();

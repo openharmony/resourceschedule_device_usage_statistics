@@ -253,7 +253,7 @@ bool BundleActivePackageStats::Marshalling(Parcel &parcel) const
     return false;
 }
 
-std::shared_ptr<BundleActivePackageStats> BundleActivePackageStats::Unmarshalling(Parcel &parcel)
+std::shared_ptr<BundleActivePackageStats> BundleActivePackageStats::UnMarshalling(Parcel &parcel)
 {
     std::shared_ptr<BundleActivePackageStats> result = std::make_shared<BundleActivePackageStats>();
     result->bundleName_ = parcel.ReadString();
