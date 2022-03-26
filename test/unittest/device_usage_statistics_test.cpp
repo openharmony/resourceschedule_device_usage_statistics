@@ -31,6 +31,11 @@ using namespace testing::ext;
 namespace OHOS {
 namespace DeviceUsageStats {
 static std::string DEFAULT_BUNDLENAME = "com.ohos.camera";
+static std::string DEFAULT_MODULENAME = "defaultmodulename";
+static std::string DEFAULT_MODULE = "defaultmodule";
+static std::string DEFAULT_FORM_NAME = "defaultformname";
+static int32_t DEFAULT_DIMENSION = 4;
+static int64_t DEFAULT_FORMID = 1;
 static std::string DEFAULT_ABILITYID = "1234";
 static std::string DEFAULT_ABILITYNAME = "testability";
 static int DEFAULT_USERID = 0;
@@ -85,12 +90,10 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_GetServiceObject_0
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, Function | MediumTest | Level0)
 {
-    BundleActiveClient::GetInstance().ReportEvent(DEFAULT_BUNDLENAME, DEFAULT_ABILITYNAME, DEFAULT_ABILITYID, "",
-        DEFAULT_USERID, 2);
-    BundleActiveClient::GetInstance().ReportEvent(DEFAULT_BUNDLENAME, DEFAULT_ABILITYNAME, DEFAULT_ABILITYID, "",
-        DEFAULT_USERID, 3);
-    BundleActiveClient::GetInstance().ReportEvent(DEFAULT_BUNDLENAME, DEFAULT_ABILITYNAME, DEFAULT_ABILITYID, "",
-        DEFAULT_USERID, 4);
+    BundleActiveClient::GetInstance().ReportFormClickedOrRemoved(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME,
+        DEFAULT_MODULE, DEFAULT_FORM_NAME, DEFAULT_DIMENSION, DEFAULT_FORMID, DEFAULT_USERID, BundleActiveEvent::FORM_IS_CLICKED);
+    BundleActiveClient::GetInstance().ReportFormClickedOrRemoved(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME,
+        DEFAULT_MODULE, DEFAULT_FORM_NAME, DEFAULT_DIMENSION, DEFAULT_FORMID, DEFAULT_USERID, BundleActiveEvent::FORM_IS_REMOVED);
 }
 
 /*
