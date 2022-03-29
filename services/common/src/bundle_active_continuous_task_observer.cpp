@@ -76,8 +76,7 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
 {
     int uid = continuousTaskCallbackInfo->GetCreatorUid();
     int pid = continuousTaskCallbackInfo->GetCreatorPid();
-    std::string abiliytName = continuousTaskCallbackInfo->GetAbilityName();
-    std::string abilityId = "";
+    std::string continuousTaskAbilityName_ = continuousTaskCallbackInfo->GetAbilityName();
     int userId = -1;
     std::string bundleName = "";
     if (GetBundleMgr()) {
@@ -89,10 +88,7 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);
     if (ret == ERR_OK && userId != -1 && !bundleName.empty()) {
         BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-        tmpHandlerObject.event_.bundleName_ = bundleName;
-        tmpHandlerObject.event_.abilityName_ = "";
-        tmpHandlerObject.event_.abilityId_ = abilityId;
-        tmpHandlerObject.event_.continuousTaskAbilityName_ = abiliytName;
+        BundleActiveEvent event(bundleName, continuousTaskAbilityName_);
         sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
         if (isStart) {
@@ -101,10 +97,10 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
             tmpHandlerObject.event_.eventId_ = BundleActiveEvent::LONG_TIME_TASK_ENDED;
         }
         BUNDLE_ACTIVE_LOGI("OnContinuousTaskStart id is %{public}d, bundle name is %{public}s, "
-            "ability name is %{public}s, ability id is %{public}s, event id is %{public}d,"
+            "ability name is %{public}s, event id is %{public}d,"
             "uid is %{public}d, pid is %{public}d",
             tmpHandlerObject.userId_, tmpHandlerObject.event_.bundleName_.c_str(),
-            tmpHandlerObject.event_.abilityName_.c_str(), abilityId.c_str(), tmpHandlerObject.event_.eventId_,
+            tmpHandlerObject.event_.continuousTaskAbilityName_.c_str(), tmpHandlerObject.event_.eventId_,
             uid, pid);
         if (reportHandler_ != nullptr) {
             BUNDLE_ACTIVE_LOGI("BundleActiveAppStateObserver::OnAbilityStateChanged handler not null, SEND");

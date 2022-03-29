@@ -138,6 +138,100 @@ void BundleStateCommon::GetBundleStateInfoForResult(napi_env env,
     }
 }
 
+void BundleStateCommon::GetModuleRecordForResult(napi_env env,
+        const std::vector<BundleActiveModuleRecord> &moduleRecords, napi_value result)
+{
+    int32_t index = 0;
+    for (const auto &item : moduleRecords) {
+        napi_value moduleObject = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &moduleObject));
+        napi_value bundleName = nullptr;
+        NAPI_CALL_RETURN_VOID(
+            env, napi_create_string_utf8(env, item.bundleName_.c_str(), NAPI_AUTO_LENGTH, &bundleName));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "bundleName", bundleName));
+
+        napi_value appLabelId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.appLabelId_, &appLabelId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "appLabelId", appLabelId));
+
+        napi_value moduleName = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, item.moduleName_.c_str(), NAPI_AUTO_LENGTH,
+            &moduleName));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "name", moduleName));
+
+        napi_value labelId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.labelId_, &labelId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "labelId", labelId));
+
+        napi_value descriptionId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.descriptionId_, &descriptionId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "descriptionId", descriptionId));
+
+        napi_value abilityName = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, item.abilityName_.c_str(), NAPI_AUTO_LENGTH,
+            &abilityName));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityName", abilityName));
+
+        napi_value abilityLableId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.abilityLableId_, &abilityLableId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityLableId", abilityLableId));
+
+        napi_value abilityDescriptionId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.abilityDescriptionId_, &abilityDescriptionId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityDescriptionId",
+            abilityDescriptionId));
+
+        napi_value abilityIconId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.abilityIconId_, &abilityIconId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityIconId", abilityIconId));
+
+        napi_value launchedCount = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.launchedCount_, &launchedCount));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "launchedCount", launchedCount));
+
+        napi_value lastModuleUsedTime = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.lastModuleUsedTime_, &lastModuleUsedTime));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "lastLaunchTime", lastModuleUsedTime));
+
+        napi_value removed = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.removed_, &removed));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "isRemoved", removed));
+
+        napi_value formRecords = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &formRecords));
+        int32_t formIdx = 0;
+        for (const auto& oneFormRecord : item.formRecords_) {
+            napi_value formObject = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &formObject));
+            napi_value formName = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, oneFormRecord.formName_.c_str(), NAPI_AUTO_LENGTH,
+                &formName));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, formObject, "formName", formName));
+
+            napi_value formDimension = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, oneFormRecord.formDimension_, &formDimension));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, formObject, "formDimension", formDimension));
+
+            napi_value formId = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, oneFormRecord.formId_, &formId));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, formObject, "formId", formId));
+
+            napi_value formLastUsedTime = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, oneFormRecord.formLastUsedTime_, &formLastUsedTime));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, formObject, "formLastUsedTime", formLastUsedTime));
+
+            napi_value count = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, oneFormRecord.count_, &count));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, formObject, "formTouchedCount", count));
+            NAPI_CALL_RETURN_VOID(env, napi_set_element(env, formRecords, formIdx, formObject));
+            formIdx++;
+        }
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "formRecords", formRecords));
+        NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, index, moduleObject));
+        index++;
+    }
+}
+
 void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred &deferred,
     const napi_value &result, const int &errorCode)
 {
@@ -150,9 +244,6 @@ void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred 
 
 napi_value BundleStateCommon::GetErrorValue(napi_env env, int errCode)
 {
-    if (errCode == ERR_OK) {
-        return NapiGetNull(env);
-    }
     napi_value result = nullptr;
     napi_value eCode = nullptr;
     NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));

@@ -44,24 +44,65 @@ class BundleActiveModuleRecord;
 
 class IBundleActiveService : public IRemoteBroker {
 public:
-    virtual int ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName,
-        const std::string modulePackage, const std::string& formName, const int64_t formId,
-        const int32_t formDimension, const int userId, const int eventId) = 0;
+    /*
+    * function: ReportEvent, used to report event.
+    * parameters: event, userId
+    * return: errorcode.
+    */
+    virtual int ReportEvent(BundleActiveEvent& event, const int userId) = 0;
+    /*
+    * function: IsBundleIdle, used to check whether specific bundle is idle.
+    * parameters: bundleName
+    * return: if bundle is idle, return true. if bundle is not idle, return false.
+    */
     virtual bool IsBundleIdle(const std::string& bundleName) = 0;
+    /*
+    * function: QueryPackageStats, query all bundle usage statistics in specific time span for calling user.
+    * parameters: intervalType, beginTime, endTime, errCode
+    * return: vector of bundle usage statistics.
+    */
     virtual std::vector<BundleActivePackageStats> QueryPackageStats(const int intervalType, const int64_t beginTime,
         const int64_t endTime, int32_t& errCode) = 0;
+    /*
+    * function: QueryEvents, query all events in specific time span for calling user.
+    * parameters: beginTime, endTime, errCode
+    * return: vector of events.
+    */
     virtual std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime,
         int32_t& errCode) = 0;
+    /*
+    * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
+    * parameters: intervalType, beginTime, endTime, errCode
+    * return: vector of calling bundle usage statistics.
+    */
     virtual std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int intervalType,
         const int64_t beginTime, const int64_t endTime) = 0;
+    /*
+    * function: QueryCurrentEvents, query bundle usage statistics in specific time span for calling bundle.
+    * parameters: beginTime, endTime, errCode
+    * return: vector of calling bundle events.
+    */
     virtual std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime) = 0;
+    /*
+    * function: QueryPackageGroup, query bundle priority group calling bundle.
+    * return: the priority group of calling bundle.
+    */
     virtual int QueryPackageGroup() = 0;
+    /*
+    * function: SetBundleGroup, set specific bundle of specific user to a priority group.
+    * parameters: bundleName, newGroup, userId
+    */
     virtual void SetBundleGroup(const std::string& bundleName, int newGroup, int userId) = 0;
+    /*
+    * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
+    * parameters: maxNum
+    * return: errorcode.
+    */
     virtual int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results) = 0;
 
 public:
     enum {
-        REPORT_FORM_EVENT = 1,
+        REPORT_EVENT = 1,
         IS_BUNDLE_IDLE = 2,
         QUERY_USAGE_STATS = 3,
         QUERY_EVENTS = 4,

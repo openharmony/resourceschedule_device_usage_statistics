@@ -30,8 +30,6 @@ static const int PERIOD_BEST_JS = 0;
 static const int PERIOD_YEARLY_JS = 4;
 static const int PERIOD_BEST_SERVICE = 4;
 static const int DELAY_TIME = 2000;
-static const int ROOT_UID = 0;
-static const int SYSTEM_UID = 1000;
 REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 
@@ -203,25 +201,12 @@ void BundleActiveService::OnStop()
 }
 
 
-int BundleActiveService::ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName,
-    const std::string modulePackage, const std::string& formName, const int64_t formId,
-    const int32_t formDimension, const int userId, const int eventId)
+int BundleActiveService::ReportEvent(BundleActiveEvent& event, const int userId)
 {
-    int callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    if (!GetBundleMgrProxy()) {
-            BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");
-            return -1;
-    }
-    bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(callingUid);
-    if ((callingUid == ROOT_UID || callingUid == SYSTEM_UID) || bundleIsSystemApp) {
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+    if ((AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE)) {
         BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-        tmpHandlerObject.event_.bundleName_ = bundleName;
-        tmpHandlerObject.event_.moduleName_ = moduleName;
-        tmpHandlerObject.event_.modulePackage_ = modulePackage;
-        tmpHandlerObject.event_.formName_ = formName;
-        tmpHandlerObject.event_.formId_ = formId;
-        tmpHandlerObject.event_.formDimension_ = formDimension;
-        tmpHandlerObject.event_.eventId_ = eventId;
+        tmpHandlerObject.event_ = event;
         sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
         std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
@@ -230,6 +215,7 @@ int BundleActiveService::ReportFormClickedOrRemoved(const std::string& bundleNam
         reportHandler_->SendEvent(event);
         return 0;
     } else {
+        BUNDLE_ACTIVE_LOGE("token does not belong to native process, return");
         return -1;
     }
 }
@@ -459,32 +445,31 @@ int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleA
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
         if (isSystemAppAndHasPermission == true) {
             errCode = bundleActiveCore_->QueryFormStatistics(maxNum, results, userId);
+            for (auto& oneResult : results) {
+                QueryModuleRecordInfos(oneResult);
+            }
         }
     }
     return errCode;
 }
 
-void BundleActiveService::GetAndSetModuleRecordInfos(BundleInfo& bundleInfo, HapModuleInfo& hapModuleInfo,
-    ApplicationInfo& appInfo, AbilityInfo& abilityInfo, BundleActiveModuleRecord& moduleRecord)
+void BundleActiveService::QueryModuleRecordInfos(BundleActiveModuleRecord& moduleRecord)
 {
     if (!GetBundleMgrProxy()) {
         return;
     }
+    ApplicationInfo appInfo;
     if (!sptrBundleMgr_->GetApplicationInfo(moduleRecord.bundleName_, ApplicationFlag::GET_BASIC_APPLICATION_INFO,
         moduleRecord.userId_, appInfo)) {
-        BUNDLE_ACTIVE_LOGE("GetApplicationInfo failed!");
-        return;
-    }
-    if (!sptrBundleMgr_->GetBundleInfo(moduleRecord.bundleName_, BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo,
-        moduleRecord.userId_)) {
-        BUNDLE_ACTIVE_LOGE("GetBundleInfo failed!");
+        BUNDLE_ACTIVE_LOGW("GetApplicationInfo failed!");
         return;
     }
     AbilityInfo mockAbilityInfo;
     mockAbilityInfo.bundleName = moduleRecord.bundleName_;
     mockAbilityInfo.package = moduleRecord.modulePackage_;
+    HapModuleInfo hapModuleInfo;
     if (!sptrBundleMgr_->GetHapModuleInfo(mockAbilityInfo, hapModuleInfo)) {
-        BUNDLE_ACTIVE_LOGE("GetHapModuleInfo failed!");
+        BUNDLE_ACTIVE_LOGW("GetHapModuleInfo failed!");
         return;
     }
     std::string mainAbility = hapModuleInfo.mainAbility;
@@ -493,15 +478,15 @@ void BundleActiveService::GetAndSetModuleRecordInfos(BundleInfo& bundleInfo, Hap
             if (oneAbilityInfo.type != AbilityType::PAGE) {
                 continue;
             }
-            if (mainAbility.empty() || mainAbility.compare(abilityInfo.name) == 0) {
-                SerModuleProperties(bundleInfo, hapModuleInfo, appInfo, oneAbilityInfo, moduleRecord);
+            if (mainAbility.empty() || mainAbility.compare(oneAbilityInfo.name) == 0) {
+                SerModuleProperties(hapModuleInfo, appInfo, oneAbilityInfo, moduleRecord);
                 break;
             }
         }
     }
 }
 
-void BundleActiveService::SerModuleProperties(const BundleInfo& bundleInfo, const HapModuleInfo& hapModuleInfo,
+void BundleActiveService::SerModuleProperties(const HapModuleInfo& hapModuleInfo,
     const ApplicationInfo& appInfo, const AbilityInfo& abilityInfo, BundleActiveModuleRecord& moduleRecord)
 {
     moduleRecord.deviceId_ = appInfo.deviceId;

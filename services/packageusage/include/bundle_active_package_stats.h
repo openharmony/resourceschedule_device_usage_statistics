@@ -23,46 +23,71 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActivePackageStats : public Parcelable {
 public:
-        std::string bundleName_;
-        int64_t beginTimeStamp_; // start time of counting
-        int64_t endTimeStamp_; // stop time of counting
-        int64_t lastTimeUsed_; // the timestamp of last launch
-        int64_t totalInFrontTime_; // the total time of using the bundle
-        int64_t lastContiniousTaskUsed_;
-        int64_t totalContiniousTaskUsedTime_;
-        int startCount_;
-        int bundleStartedCount_;
-        int lastEvent_;
-        // key is abilityId, value is the last event of this ability. Restore all abilities' last event of bundle.
-        std::map<std::string, int> abilities_;
-        // key is name of continuous task, value is last event of this last continuous task.
-        std::map<std::string, int> longTimeTasks_;
-        BundleActivePackageStats();
-        ~BundleActivePackageStats() {}
-        BundleActivePackageStats(const BundleActivePackageStats& orig);
-        std::string GetBundleName();
-        int64_t GetBeginTimeStamp();
-        int64_t GetEntTimeStamp();
-        int64_t GetLastTimeUsed();
-        int64_t GetTotalTimeInFront();
-        int64_t GetLastTimeFrontServiceUsed();
-        int64_t GetTotalTimeFrontServiceUsed();
-        int GetLaunchedCount();
-        int GetBundleLaunchedCount();
-        void Update(const std::string& longTimeTaskName, const int64_t timeStamp, const int eventId,
-                const std::string& abilityId);
-        void IncrementTimeUsed(const int64_t timeStamp);
-        void IncrementServiceTimeUsed(const int64_t timeStamp);
-        void IncrementBundleLaunchedCount();
-        virtual bool Marshalling(Parcel &parcel) const override;
-        std::shared_ptr<BundleActivePackageStats> UnMarshalling(Parcel &parcel);
-        void printdata();
+    std::string bundleName_;
+    int64_t beginTimeStamp_; // start time of counting
+    int64_t endTimeStamp_; // stop time of counting
+    int64_t lastTimeUsed_; // the timestamp of last launch
+    int64_t totalInFrontTime_; // the total time of using the bundle
+    int64_t lastContiniousTaskUsed_;
+    int64_t totalContiniousTaskUsedTime_;
+    int startCount_;
+    int bundleStartedCount_;
+    int lastEvent_;
+    // key is abilityId, value is the last event of this ability. Restore all abilities' last event of bundle.
+    std::map<std::string, int> abilities_;
+    // key is name of continuous task, value is last event of this last continuous task.
+    std::map<std::string, int> longTimeTasks_;
+    /*
+    * function: BundleActivePackageStats, default constructor.
+    */
+    BundleActivePackageStats();
+    /*
+    * function: ~BundleActivePackageStats, default destructor.
+    */
+    ~BundleActivePackageStats() {}
+    /*
+    * function: BundleActivePackageStats, copy constructor.
+    * parameters: orig
+    */
+    BundleActivePackageStats(const BundleActivePackageStats& orig);
+    /*
+    * function: Update, update one bundle statistics.
+    * parameters: longTimeTaskName timeStamp eventId abilityId
+    */
+    void Update(const std::string& longTimeTaskName, const int64_t timeStamp, const int eventId,
+        const std::string& abilityId);
+    /*
+    * function: IncrementTimeUsed, increase bundle's use time.
+    * parameters: timeStamp
+    */
+    void IncrementTimeUsed(const int64_t timeStamp);
+    /*
+    * function: IncrementServiceTimeUsed, increase bundle's continuous task use time.
+    * parameters: timeStamp
+    */
+    void IncrementServiceTimeUsed(const int64_t timeStamp);
+    /*
+    * function: IncrementBundleLaunchedCount, increase bundle's launched times by 1.
+    */
+    void IncrementBundleLaunchedCount();
+    /*
+    * function: Marshalling, mashalling BundleActivePackageStats object to parcel.
+    * parameters: parcel
+    * return: result of mashalling, true means successful, flase means failed.
+    */
+    virtual bool Marshalling(Parcel &parcel) const override;
+    /*
+    * function: UnMarshalling, Unmashalling BundleActivePackageStats object from parcel.
+    * parameters: parcel
+    * return: point to a BundleActivePackageStats.
+    */
+    std::shared_ptr<BundleActivePackageStats> UnMarshalling(Parcel &parcel);
 
 private:
-        bool HasFrontAbility();
-        bool AnyLongTimeTaskStarted();
-        void UpdateAbility(const int64_t timeStamp, const int eventId, const std::string& abilityId);
-        void UpdateLongTimeTask(const std::string& longTimeTaskName, const int64_t timeStamp, const int eventId);
+    bool HasFrontAbility();
+    bool AnyLongTimeTaskStarted();
+    void UpdateAbility(const int64_t timeStamp, const int eventId, const std::string& abilityId);
+    void UpdateLongTimeTask(const std::string& longTimeTaskName, const int64_t timeStamp, const int eventId);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

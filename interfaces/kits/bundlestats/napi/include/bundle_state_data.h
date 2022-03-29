@@ -93,6 +93,14 @@ struct AsyncCallbackInfoAppUsage {
     CallbackPromiseInfo info;
 };
 
+struct AsyncCallbackInfoModuleRecord {
+    napi_env env = nullptr;
+    napi_async_work asyncWork = nullptr;
+    int32_t maxNum;
+    std::vector<BundleActiveModuleRecord> moduleRecords;
+    CallbackPromiseInfo info;
+};
+
 struct IsIdleStateParamsInfo {
     std::string bundleName;
     napi_ref callback = nullptr;
@@ -122,6 +130,12 @@ struct AppUsageParamsByIntervalInfo {
 struct AppUsageParamsInfo {
     int64_t beginTime;
     int64_t endTime;
+    napi_ref callback = nullptr;
+    int errorCode = 0;
+};
+
+struct ModuleRecordParamsInfo {
+    int32_t maxNum;
     napi_ref callback = nullptr;
     int errorCode = 0;
 };

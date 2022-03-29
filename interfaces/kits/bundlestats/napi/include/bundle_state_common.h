@@ -53,6 +53,9 @@ public:
     static void GetBundleStateInfoForResult(napi_env env,
         const std::shared_ptr<std::map<std::string, BundleActivePackageStats>> &packageStats, napi_value result);
 
+    static void GetModuleRecordForResult(napi_env env,
+        const std::vector<BundleActiveModuleRecord> &moduleRecords, napi_value result);
+
     static void SetPromiseInfo(const napi_env &env, const napi_deferred &deferred,
         const napi_value &result, const int &errorCode);
 

@@ -26,21 +26,72 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveClient {
 public:
-    int ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName,
-        const std::string modulePackage, const std::string& formName, const int64_t formId,
-        const int32_t formDimension, const int userId, const int eventId);
+    /*
+    * function: ReportEvent, used to report event.
+    * parameters: event, userId
+    * return: errorcode.
+    */
+    int ReportEvent(BundleActiveEvent event, const int userId);
+    /*
+    * function: IsBundleIdle, used to check whether specific bundle is idle.
+    * parameters: bundleName
+    * return: if bundle is idle, return true. if bundle is not idle, return false.
+    */
     bool IsBundleIdle(const std::string& bundleName);
+    /*
+    * function: QueryPackageStats, query all bundle usage statistics in specific time span for calling user.
+    * parameters: intervalType, beginTime, endTime, errCode
+    * return: vector of bundle usage statistics.
+    */
     std::vector<BundleActivePackageStats> QueryPackageStats(const int intervalType, const int64_t beginTime,
         const int64_t endTime, int32_t& errCode);
+    /*
+    * function: QueryEvents, query all events in specific time span for calling user.
+    * parameters: beginTime, endTime, errCode
+    * return: vector of events.
+    */
     std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, int32_t& errCode);
+    /*
+    * function: SetBundleGroup, set specific bundle of specific user to a priority group.
+    * parameters: bundleName, newGroup, userId
+    */
     void SetBundleGroup(std::string bundleName, const int newGroup, const int userId);
+    /*
+    * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
+    * parameters: intervalType, beginTime, endTime, errCode
+    * return: vector of calling bundle usage statistics.
+    */
     std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int intervalType, const int64_t beginTime,
         const int64_t endTime);
+    /*
+    * function: QueryCurrentEvents, query bundle usage statistics in specific time span for calling bundle.
+    * parameters: beginTime, endTime, errCode
+    * return: vector of calling bundle events.
+    */
     std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime);
+    /*
+    * function: QueryPackageGroup, query bundle priority group calling bundle.
+    * return: the priority group of calling bundle.
+    */
     int QueryPackageGroup();
+    /*
+    * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
+    * parameters: maxNum
+    * return: errorcode.
+    */
     int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results);
+    /*
+    * function: GetInstance, get instance of client.
+    * return: object of BundleActiveClient.
+    */
     static BundleActiveClient& GetInstance();
+    /*
+    * function: BundleActiveClient, default constructor.
+    */
     BundleActiveClient() {}
+    /*
+    * function: ~BundleActiveClient, default destructor.
+    */
     ~BundleActiveClient() {}
 
 private:

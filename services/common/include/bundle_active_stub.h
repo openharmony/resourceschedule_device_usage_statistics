@@ -22,9 +22,20 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveStub : public IRemoteStub<IBundleActiveService> {
 public:
+    /*
+    * function: OnRemoteRequest, handle message from proxy.
+    * parameters: code, data, reply, option
+    * return: errorcode.
+    */
     int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
         MessageOption &option) override;
+    /*
+    * function: BundleActiveStub, default constructor.
+    */
     BundleActiveStub() {}
+    /*
+    * function: ~BundleActiveStub, default constructor.
+    */
     ~BundleActiveStub() {}
 };
 }  // namespace DeviceUsageStats

@@ -23,12 +23,38 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveEventList {
 public:
+    /*
+    * function: BundleActiveEventList, default constructor.
+    */
     BundleActiveEventList();
+    /*
+    * function: ~BundleActiveEventList, default destructor.
+    */
     ~BundleActiveEventList() {}
+    /*
+    * function: Size, get size of member events_.
+    * return: size of member events_
+    */
     int Size();
+    /*
+    * function: Clear, clear all event in member events_.
+    */
     void Clear();
+    /*
+    * function: Insert, insert a event to member events_.
+    * parameter: event
+    */
     void Insert(BundleActiveEvent event);
+    /*
+    * function: FindBestIndex, find best index to insert event.
+    * parameters: timeStamp
+    * return: the index of inserting.
+    */
     int FindBestIndex(const int64_t timeStamp);
+    /*
+    * function: Merge, merge two BundleActiveEventList.
+    * parameters: right
+    */
     void Merge(const BundleActiveEventList& right);
     std::vector<BundleActiveEvent> events_;
 };

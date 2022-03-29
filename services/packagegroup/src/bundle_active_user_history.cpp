@@ -229,10 +229,10 @@ void BundleActiveUserHistory::UpdateBootBasedAndScreenTime(const bool& isScreenO
     database_.PutDurationData(bootBasedDuration_, ScreenOnDuration_);
 }
 
-void BundleActiveUserHistory::printdata(int userId)
+void BundleActiveUserHistory::PrintData(int userId)
 {
     auto oneUserHistory = GetUserHistory(userId, false);
-    BUNDLE_ACTIVE_LOGI("printdata screen is %{public}d", isScreenOn_);
+    BUNDLE_ACTIVE_LOGI("PrintData screen is %{public}d", isScreenOn_);
     if (oneUserHistory == nullptr) {
         return;
     }

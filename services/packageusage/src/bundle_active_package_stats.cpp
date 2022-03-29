@@ -47,51 +47,6 @@ BundleActivePackageStats::BundleActivePackageStats (const BundleActivePackageSta
     lastEvent_ = orig.lastEvent_;
 }
 
-std::string BundleActivePackageStats::GetBundleName()
-{
-    return bundleName_;
-}
-
-int64_t BundleActivePackageStats::GetBeginTimeStamp()
-{
-    return beginTimeStamp_;
-}
-
-int64_t BundleActivePackageStats::GetEntTimeStamp()
-{
-    return endTimeStamp_;
-}
-
-int64_t BundleActivePackageStats::GetLastTimeUsed()
-{
-    return lastTimeUsed_;
-}
-
-int64_t BundleActivePackageStats::GetTotalTimeInFront()
-{
-    return totalInFrontTime_;
-}
-
-int64_t BundleActivePackageStats::GetLastTimeFrontServiceUsed()
-{
-    return lastContiniousTaskUsed_;
-}
-
-int64_t BundleActivePackageStats::GetTotalTimeFrontServiceUsed()
-{
-    return totalContiniousTaskUsedTime_;
-}
-
-int BundleActivePackageStats::GetLaunchedCount()
-{
-    return startCount_;
-}
-
-int BundleActivePackageStats::GetBundleLaunchedCount()
-{
-    return bundleStartedCount_;
-}
-
 bool BundleActivePackageStats::HasFrontAbility()
 {
     for (auto ability : abilities_) {

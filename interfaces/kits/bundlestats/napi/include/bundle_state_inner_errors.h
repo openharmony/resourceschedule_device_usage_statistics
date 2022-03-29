@@ -49,6 +49,7 @@ enum : int {
     ERR_USAGE_STATS_TIME_INTERVAL,
     ERR_USAGE_STATS_INTERVAL_TYPE,
     ERR_USAGE_STATS_INTERVAL_NUMBER,
+    ERR_MODULE_STATS_MAXNUM_INVALID,
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

@@ -23,7 +23,7 @@ void BundleActiveUserService::Init(const int64_t timeStamp)
     database_.InitDatabaseTableInfo(timeStamp);
     BUNDLE_ACTIVE_LOGI("Init called");
     LoadActiveStats(timeStamp, false, false);
-    database_.GetFormDataWhenInit(userId_, moduleRecords_);
+    database_.LoadFormData(userId_, moduleRecords_);
     std::shared_ptr<BundleActivePeriodStats> currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentDailyStats != nullptr) {
         BundleActiveEvent startupEvent(BundleActiveEvent::STARTUP, timeStamp - ONE_SECOND_MILLISECONDS);
@@ -90,6 +90,7 @@ void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
     BUNDLE_ACTIVE_LOGI("ReportEvent, B time is %{public}lld, E time is %{public}lld, userId is %{public}d,"
         "event is %{public}d",
         currentStats_[0]->beginTime_, dailyExpiryDate_.GetMilliseconds(), userId_, event.eventId_);
+    event.PrintEvent();
     if (event.timeStamp_ >= dailyExpiryDate_.GetMilliseconds()) {
         BUNDLE_ACTIVE_LOGI("ReportEvent later than daily expire, renew data in memory");
         RenewStatsInMemory(event.timeStamp_);
@@ -428,9 +429,27 @@ void BundleActiveUserService::PrintInMemEventStats()
     }
 }
 
-void BundleActiveUserService::ReportFormClickedOrRemoved(const BundleActiveEvent& event)
+void BundleActiveUserService::PrintInMemFormStats()
 {
-    BUNDLE_ACTIVE_LOGI("ReportFormClickedOrRemoved called");
+    for (const auto& oneModule : moduleRecords_) {
+        if (oneModule.second) {
+        BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, module package is %{public}s, "
+            "lastusedtime is %{public}lld, launchcount is %{public}d", oneModule.second->bundleName_.c_str(),
+            oneModule.second->moduleName_.c_str(), oneModule.second->modulePackage_.c_str(),
+            oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_);
+        BUNDLE_ACTIVE_LOGI("combined info is %{public}s", oneModule.first.c_str());
+            for (const auto& oneForm : oneModule.second->formRecords_) {
+                BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, "
+                    "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
+                    oneForm.formDimension_, oneForm.formId_, oneForm.formLastUsedTime_, oneForm.count_);
+            }
+        }
+    }
+}
+
+void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
+{
+    BUNDLE_ACTIVE_LOGI("ReportFormEvent called");
     auto moduleRecord = GetOrCreateModuleRecord(event);
     if (event.eventId_ == BundleActiveEvent::FORM_IS_CLICKED && moduleRecord) {
         if (!moduleRecord) {
@@ -438,10 +457,12 @@ void BundleActiveUserService::ReportFormClickedOrRemoved(const BundleActiveEvent
         }
         moduleRecord->UpdateModuleRecord(event.timeStamp_);
         moduleRecord->AddOrUpdateOneFormRecord(event.formName_, event.formDimension_, event.formId_, event.timeStamp_);
+        PrintInMemFormStats();
         NotifyStatsChanged();
     } else if (event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED && moduleRecord) {
         moduleRecord->RemoveOneFormRecord(event.formName_, event.formDimension_, event.formId_);
         database_.RemoveFormData(userId_, event.formName_, event.formDimension_, event.formId_);
+        PrintInMemFormStats();
         NotifyStatsChanged();
     }
 }
@@ -449,6 +470,7 @@ void BundleActiveUserService::ReportFormClickedOrRemoved(const BundleActiveEvent
 std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateModuleRecord(
     const BundleActiveEvent& event)
 {
+    BUNDLE_ACTIVE_LOGI("GetOrCreateModuleRecord called");
     std::string combinedInfo = event.bundleName_ + " " + event.moduleName_ + " " + event.modulePackage_;
     auto it = moduleRecords_.find(combinedInfo);
     if (it == moduleRecords_.end()) {

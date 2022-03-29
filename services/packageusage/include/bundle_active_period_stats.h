@@ -46,18 +46,62 @@ public:
     BundleActiveEventTracker noninteractiveTracker_;
     BundleActiveEventTracker keyguardShownTracker_;
     BundleActiveEventTracker keyguardHiddenTracker_;
+    /*
+    * function: BundleActivePeriodStats,default constructor.
+    */
     BundleActivePeriodStats();
+    /*
+    * function: GetOrCreateUsageStats, get or create bundle usage statistics object of a bundle.
+    * parameters: bundleName
+    * return: point to bundle usage statistics object.
+    */
     std::shared_ptr<BundleActivePackageStats> GetOrCreateUsageStats(const std::string& bundleName);
-    BundleActiveEvent BuildEvent(std::string bundleName, std::string timeTaskName);
+    /*
+    * function: Update, update usage statistics of specific bundle.
+    * parameters: bundleName longTimeTaskName timeStamp eventId abilityId
+    */
     void Update(const std::string bundleName, const std::string longTimeTaskName, const int64_t timeStamp,
         const int eventId, const std::string abilityId);
+    /*
+    * function: AddEvent, add a event to member events_.
+    * parameters: event
+    */
     void AddEvent(BundleActiveEvent event);
+    /*
+    * function: UpdateScreenInteractive, update screen interactive time.
+    * parameters: timeStamp
+    */
     void UpdateScreenInteractive(const int64_t timeStamp);
+    /*
+    * function: UpdateScreenNonInteractive, update screen non interactive time.
+    * parameters: timeStamp
+    */
     void UpdateScreenNonInteractive(const int64_t timeStamp);
+    /*
+    * function: UpdateKeyguardShown, key guard shown time.
+    * parameters: timeStamp
+    */
     void UpdateKeyguardShown(const int64_t timeStamp);
+    /*
+    * function: UpdateKeyguardHidden, key guard hidden time.
+    * parameters: timeStamp
+    */
     void UpdateKeyguardHidden(const int64_t timeStamp);
+    /*
+    * function: CommitTime, key guard hidden time.
+    * parameters: timeStamp
+    */
     void CommitTime(const int64_t timeStamp);
+    /*
+    * function: AddEventStatsTo, add all time to eventStatsList.
+    * parameters: eventStatsList
+    */
     void AddEventStatsTo(std::vector<BundleActiveEventStats>& eventStatsList);
+    /*
+    * function: GetCachedString, store string to cache.
+    * parameters: str
+    * return: string
+    */
     std::string GetCachedString(std::string str);
 };
 }  // namespace DeviceUsageStats

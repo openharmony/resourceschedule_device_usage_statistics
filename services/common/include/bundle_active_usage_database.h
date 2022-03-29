@@ -59,10 +59,10 @@ public:
     void OnPackageUninstalled(const int userId, const std::string& bundleName);
     void ChangeToDebug();
     void UpdateModuleData(const int userId,
-        std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords_, const int64_t timeStamp);
+        std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords_, const int64_t timeStamp);
     void RemoveFormData(const int userId, const std::string formName,
         const int32_t formDimension, const int64_t formId);
-    void GetFormDataWhenInit(const int32_t userId, std::map<std::string,
+    void LoadFormData(const int32_t userId, std::map<std::string,
         std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
 
 private:
