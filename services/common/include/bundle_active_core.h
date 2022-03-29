@@ -119,13 +119,15 @@ public:
         const int64_t timeStamp, const bool debug);
     // when received a USER_REMOVED commen event, call it to remove data.
     void OnUserRemoved(const int userId);
+    // when user switched, restore old userdata.
     void OnUserSwitched(const int userId);
     // force set app group.
     void SetBundleGroup(const std::string& bundleName, const int newGroup, const int userId);
-    // get all user in device
+    // get all user in device.
     void GetAllActiveUser(std::vector<int>& activatedOsAccountIds);
     // when service stop, call it to unregister commen event and shutdown call back.
     void UnRegisterSubscriber();
+    // get system time in MS.
     int64_t GetSystemTimeMs();
     int currentUsedUser_;
 

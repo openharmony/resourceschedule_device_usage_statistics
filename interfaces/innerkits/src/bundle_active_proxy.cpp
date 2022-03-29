@@ -17,9 +17,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-int BundleActiveProxy::ReportFormClickedOrRemoved(const std::string& bundleName, const std::string& moduleName,
-    const std::string modulePackage, const std::string& formName, const int64_t formId,
-    const int32_t formDimension, const int userId, const int eventId)
+int BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -27,15 +25,9 @@ int BundleActiveProxy::ReportFormClickedOrRemoved(const std::string& bundleName,
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return -1;
     }
-    data.WriteString(bundleName);
-    data.WriteString(moduleName);
-    data.WriteString(modulePackage);
-    data.WriteString(formName);
-    data.WriteInt64(formId);
-    data.WriteInt32(formDimension);
     data.WriteInt32(userId);
-    data.WriteInt32(eventId);
-    Remote() -> SendRequest(REPORT_FORM_EVENT, data, reply, option);
+    event.Marshalling(data);
+    Remote() -> SendRequest(REPORT_EVENT, data, reply, option);
 
     int32_t result = reply.ReadInt32();
     return result;
@@ -116,8 +108,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
         result.push_back(*tmp);
     }
     for (uint32_t i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGI("QueryEvents event id is %{public}d, bundle name is %{public}s, "
-            "time stamp is %{public}lld", result[i].eventId_, result[i].bundleName_.c_str(), result[i].timeStamp_);
+        result[i].PrintEvent();
     }
     return result;
 }

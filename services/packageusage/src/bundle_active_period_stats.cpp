@@ -42,16 +42,6 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePeriodStats::GetOrCreateUs
     return bundleStats_[bundleName];
 }
 
-BundleActiveEvent BundleActivePeriodStats::BuildEvent(std::string bundleName, std::string timeTaskName)
-{
-    BundleActiveEvent newEvent;
-    newEvent.bundleName_ = bundleName;
-    if (!timeTaskName.empty()) {
-        newEvent.continuousTaskAbilityName_ = timeTaskName;
-    }
-    return newEvent;
-}
-
 void BundleActivePeriodStats::Update(const std::string bundleName, const std::string longTimeTaskName,
     const int64_t timeStamp, const int eventId, const std::string abilityId)
 {

@@ -27,17 +27,14 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         return -1;
     }
     switch (code) {
-        case REPORT_FORM_EVENT: {
-            std::string bundleName = data.ReadString();
-            std::string moduleName = data.ReadString();
-            std::string modulePackage = data.ReadString();
-            std::string formName = data.ReadString();
-            int64_t formId = data.ReadInt64();
-            int32_t formDimension = data.ReadInt32();
+        case REPORT_EVENT: {
             int userId = data.ReadInt32();
-            int eventId = data.ReadInt32();
-            int result = ReportFormClickedOrRemoved(bundleName, moduleName, modulePackage, formName, formId,
-                formDimension, userId, eventId);
+            std::shared_ptr<BundleActiveEvent> tmpEvent;
+            tmpEvent = tmpEvent->UnMarshalling(data);
+            if (!tmpEvent) {
+                return -1;
+            }
+            int result = ReportEvent(*tmpEvent, userId);
             return reply.WriteInt32(result);
         }
         case IS_BUNDLE_IDLE: {

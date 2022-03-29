@@ -55,7 +55,7 @@ public:
         const std::vector<int64_t> screenTimeLeve, const std::vector<int64_t> bootFromTimeLevel);
     void WriteDeviceDuration();
     void WriteBundleUsage(const int userId);
-    void printdata(int userId);
+    void PrintData(int userId);
     void UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t bootBasedTimeStamp,
         const bool& isShutdown = false);
 private:

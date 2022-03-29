@@ -33,10 +33,11 @@ public:
         const int64_t formId);
     void UpdateModuleRecord(int64_t timeStamp);
     BundleActiveModuleRecord();
-    virtual bool Marshalling(Parcel &parcel) const override;
-    std::shared_ptr<BundleActiveModuleRecord> UnMarshalling(Parcel &parcel);
     ~BundleActiveModuleRecord() {}
     static bool cmp(const BundleActiveModuleRecord& moduleRecordA, const BundleActiveModuleRecord& moduleRecordB);
+    virtual bool Marshalling(Parcel &parcel) const override;
+    std::shared_ptr<BundleActiveModuleRecord> UnMarshalling(Parcel &parcel);
+
 public:
     std::string deviceId_;
     std::string bundleName_;

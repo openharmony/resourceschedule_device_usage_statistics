@@ -1259,7 +1259,7 @@ int64_t BundleActiveUsageDatabase::GetSystemTimeMs()
 }
 
 void BundleActiveUsageDatabase::UpdateModuleData(const int userId,
-    std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords_, const int64_t timeStamp)
+    std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords_, const int64_t timeStamp)
 {
     // mock
 }
@@ -1270,7 +1270,7 @@ void BundleActiveUsageDatabase::RemoveFormData(const int userId, const std::stri
     // mock
 }
 
-void BundleActiveUsageDatabase::GetFormDataWhenInit(const int32_t userId, std::map<std::string,
+void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std::string,
     std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords)
 {
     // key: std::string combineInfo = bundlename + " " + modulePackage + " " + moduleName

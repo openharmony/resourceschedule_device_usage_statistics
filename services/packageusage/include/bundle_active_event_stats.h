@@ -28,14 +28,49 @@ public:
     int64_t lastEventTime_;
     int64_t totalTime_;
     int count_;
+    /*
+    * function: BundleActiveEventStats, default constructor.
+    */
     BundleActiveEventStats();
+    /*
+    * function: BundleActiveEventStats, copy constructor.
+    * parameters: orig
+    */
     BundleActiveEventStats(const BundleActiveEventStats& orig);
+    /*
+    * function: GetEventId, get eventId.
+    * return: member eventId_.
+    */
     int GetEventId();
+    /*
+    * function: GetFirstTimeStamp, get first time stamp.
+    * return: member beginTimeStamp_.
+    */
     int GetFirstTimeStamp();
+    /*
+    * function: GetLastTimeStamp, get last time stamp.
+    * return: member endTimeStamp_.
+    */
     int GetLastTimeStamp();
+    /*
+    * function: GetLastEventTime, get last event time.
+    * return: member lastEventTime_.
+    */
     int GetLastEventTime();
+    /*
+    * function: GetTotalTime, get total time.
+    * return: member totalTime_.
+    */
     int GetTotalTime();
+    /*
+    * function: GetCount, get count.
+    * return: member count_.
+    */
     int GetCount();
+    /*
+    * function: add, add statistics from another BundleActvieEventStats object.
+    * parameters: right
+    */
     void add(const BundleActiveEventStats& right);
 };
 }  // namespace DeviceUsageStats

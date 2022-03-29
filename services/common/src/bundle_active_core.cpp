@@ -38,12 +38,7 @@ BundleActiveReportHandlerObject::BundleActiveReportHandlerObject(const int userI
 
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject(const BundleActiveReportHandlerObject& orig)
 {
-    event_.bundleName_ = orig.event_.bundleName_;
-    event_.abilityName_ = orig.event_.abilityName_;
-    event_.abilityId_ = orig.event_.abilityId_;
-    event_.timeStamp_ = orig.event_.timeStamp_;
-    event_.eventId_ = orig.event_.eventId_;
-    event_.continuousTaskAbilityName_ = orig.event_.continuousTaskAbilityName_;
+    event_ = orig.event_;
     userId_ = orig.userId_;
     bundleName_ = orig.bundleName_;
 }
@@ -430,7 +425,7 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
         return 0;
     }
 
-    BUNDLE_ACTIVE_LOGI("report event called  bundle name %{public}s time %{public}lld userId %{public}d, "
+    BUNDLE_ACTIVE_LOGI("report event called, bundle name %{public}s time %{public}lld userId %{public}d, "
         "eventid %{public}d, in lock range", event.bundleName_.c_str(), event.timeStamp_, userId, event.eventId_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == -1) {
@@ -444,7 +439,7 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
     }
     if (event.eventId_ == BundleActiveEvent::FORM_IS_CLICKED ||
         event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED) {
-        service->ReportFormClickedOrRemoved(event);
+        service->ReportFormEvent(event);
         return 0;
     }
     service->ReportEvent(event);

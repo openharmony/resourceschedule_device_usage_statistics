@@ -31,6 +31,7 @@ public:
     static const int SYSTEM_INTERACTIVE = 7;
     static const int USER_INTERACTIVE = 8;
     // internal events
+    static const int DEFAULT_EVENT_ID = 0;
     static const int END_OF_THE_DAY = 9;
     static const int SHUTDOWN = 10;
     static const int STARTUP = 11;
@@ -56,15 +57,54 @@ public:
     int eventId_;
 
 public:
+    /*
+    * function: BundleActiveEvent, default constructor.
+    */
     BundleActiveEvent();
+    /*
+    * function: BundleActiveEvent, copy constructor.
+    * parameters: orig
+    */
     BundleActiveEvent(const BundleActiveEvent& orig);
+    /*
+    * function: BundleActiveEvent, constructor using event Id, time stamp.
+    * parameters: eventId, timeStamp
+    */
     BundleActiveEvent(int eventId, int64_t timeStamp);
-    std::string GetBundleName();
-    std::string GetAbilityName();
-    std::string GetAbilityId();
-    int64_t GetTimeStamp();
-    int GetEventId();
+    /*
+    * function: BundleActiveEvent, constructor of continuous task event.
+    * parameters: bundleName, continuousTaskAbilityName
+    */
+    BundleActiveEvent(const std::string bundleName, const std::string continuousTaskAbilityName);
+    /*
+    * function: BundleActiveEvent, constructor of app ability event.
+    * parameters: bundleName, abilityName, abilityId
+    */
+    BundleActiveEvent(const std::string bundleName, const std::string abilityName, const std::string abilityId);
+    /*
+    * function: BundleActiveEvent, constructor of form event.
+    * parameters: bundleName, moduleName, modulePackage, formName, formDimension, formId, eventId
+    */
+    BundleActiveEvent(const std::string bundleName, const std::string moduleName, const std::string modulePackage,
+        const std::string formName, const int32_t formDimension, const int64_t formId, const int eventId);
+    void PrintEvent() const;
+    /*
+    * function: operator=, override operator =.
+    * parameters: orig
+    * return: a BundleActiveEvent object same as orig.
+    */
+    BundleActiveEvent& operator=(const BundleActiveEvent& orig);
+    /*
+    * function: Marshalling, mashalling event object to parcel.
+    * parameters: parcel
+    * return: result of mashalling, true means successful, flase means failed.
+    */
     virtual bool Marshalling(Parcel &parcel) const override;
+    /*
+    * function: UnMarshalling, Unmashalling event object from parcel.
+    * parameters: parcel
+    * return: point to a BundleActiveEvent.
+    */
     std::shared_ptr<BundleActiveEvent> UnMarshalling(Parcel &parcel);
 };
 }  // namespace DeviceUsageStats

@@ -29,7 +29,7 @@ BundleActiveEvent::BundleActiveEvent()
     formId_ = 0;
     formDimension_ = 0;
     timeStamp_ = 0;
-    eventId_ = 0;
+    eventId_ = DEFAULT_EVENT_ID;
 }
 
 BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig)
@@ -56,36 +56,92 @@ BundleActiveEvent::BundleActiveEvent(int eventId, int64_t timeStamp)
     timeStamp_ = timeStamp;
 }
 
-std::string BundleActiveEvent::GetBundleName()
+BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string continuousTaskAbilityName)
 {
-    return bundleName_;
+    bundleName_ = bundleName;
+    continuousTaskAbilityName_ = continuousTaskAbilityName;
+    abilityName_.clear();
+    abilityId_.clear();
+    moduleName_.clear();
+    modulePackage_.clear();
+    formName_.clear();
+    formDimension_ = 0;
+    formId_ = 0;
+    timeStamp_ = 0;
+    eventId_ = DEFAULT_EVENT_ID;
 }
 
-std::string BundleActiveEvent::GetAbilityName()
+BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string abilityName,
+    const std::string abilityId)
 {
-    return abilityName_;
+    bundleName_ = bundleName;
+    continuousTaskAbilityName_.clear();
+    abilityName_ = abilityName;
+    abilityId_ = abilityId;
+    moduleName_.clear();
+    modulePackage_.clear();
+    formName_.clear();
+    formDimension_ = 0;
+    formId_ = 0;
+    timeStamp_ = 0;
+    eventId_ = DEFAULT_EVENT_ID;
 }
 
-std::string BundleActiveEvent::GetAbilityId()
+BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string moduleName,
+    const std::string modulePackage, const std::string formName, const int32_t formDimension,
+    const int64_t formId, const int eventId)
 {
-    return abilityId_;
+    bundleName_ = bundleName;
+    continuousTaskAbilityName_.clear();
+    abilityName_.clear();
+    abilityId_.clear();
+    moduleName_ = moduleName;
+    modulePackage_ = modulePackage;
+    formName_ = formName;
+    formDimension_ = formDimension;
+    formId_ = formId;
+    timeStamp_ = 0;
+    eventId_ = eventId;
 }
 
-int64_t BundleActiveEvent::GetTimeStamp()
+BundleActiveEvent& BundleActiveEvent::operator=(const BundleActiveEvent& orig)
 {
-    return timeStamp_;
+    bundleName_ = orig.bundleName_;
+    continuousTaskAbilityName_ = orig.continuousTaskAbilityName_;
+    abilityName_ = orig.abilityName_;
+    abilityId_ = orig.abilityId_;
+    moduleName_ = orig.moduleName_;
+    modulePackage_ = orig.modulePackage_;
+    formName_ = orig.formName_;
+    formDimension_ = orig.formDimension_;
+    formId_ = orig.formId_;
+    timeStamp_ = orig.timeStamp_;
+    eventId_ = orig.eventId_;
+    return *this;
 }
 
-int BundleActiveEvent::GetEventId()
+void BundleActiveEvent::PrintEvent() const
 {
-    return eventId_;
+    BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, ability name is %{public}s, continue task ability is %{public}s, "
+        "module name is %{public}s, module package is %{public}s, "
+        "form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, event id is %{public}d",
+        bundleName_.c_str(), abilityName_.c_str(), continuousTaskAbilityName_.c_str(), moduleName_.c_str(),
+        modulePackage_.c_str(), formName_.c_str(), formDimension_, formId_, eventId_);
 }
 
 bool BundleActiveEvent::Marshalling(Parcel &parcel) const
 {
     if (parcel.WriteString(bundleName_) &&
-        parcel.WriteInt32(eventId_) &&
-        parcel.WriteInt64(timeStamp_)) {
+        parcel.WriteString(continuousTaskAbilityName_) &&
+        parcel.WriteString(abilityName_) &&
+        parcel.WriteString(abilityId_) &&
+        parcel.WriteString(moduleName_) &&
+        parcel.WriteString(modulePackage_) &&
+        parcel.WriteString(formName_) &&
+        parcel.WriteInt32(formDimension_) &&
+        parcel.WriteInt64(formId_) &&
+        parcel.WriteInt64(timeStamp_) &&
+        parcel.WriteInt32(eventId_)) {
         return true;
     }
     return false;
@@ -95,8 +151,16 @@ std::shared_ptr<BundleActiveEvent> BundleActiveEvent::UnMarshalling(Parcel &parc
 {
     std::shared_ptr<BundleActiveEvent> result = std::make_shared<BundleActiveEvent>();
     result->bundleName_ = parcel.ReadString();
-    result->eventId_ = parcel.ReadInt32();
+    result->continuousTaskAbilityName_ = parcel.ReadString();
+    result->abilityName_ = parcel.ReadString();
+    result->abilityId_ = parcel.ReadString();
+    result->moduleName_ = parcel.ReadString();
+    result->modulePackage_ = parcel.ReadString();
+    result->formName_ = parcel.ReadString();
+    result->formDimension_ = parcel.ReadInt32();
+    result->formId_ = parcel.ReadInt64();
     result->timeStamp_ = parcel.ReadInt64();
+    result->eventId_ = parcel.ReadInt32();
     return result;
 }
 }  // namespace DeviceUsageStats
