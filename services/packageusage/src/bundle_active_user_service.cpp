@@ -456,14 +456,13 @@ void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
         }
         moduleRecord->UpdateModuleRecord(event.timeStamp_);
         moduleRecord->AddOrUpdateOneFormRecord(event.formName_, event.formDimension_, event.formId_, event.timeStamp_);
-        PrintInMemFormStats();
         NotifyStatsChanged();
     } else if (event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED && moduleRecord) {
         moduleRecord->RemoveOneFormRecord(event.formName_, event.formDimension_, event.formId_);
         database_.RemoveFormData(userId_, event.formName_, event.formDimension_, event.formId_);
-        PrintInMemFormStats();
         NotifyStatsChanged();
     }
+    PrintInMemFormStats();
 }
 
 std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateModuleRecord(
