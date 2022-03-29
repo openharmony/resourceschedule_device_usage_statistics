@@ -71,7 +71,8 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
     eventId_ = DEFAULT_EVENT_ID;
 }
 
-BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string abilityName, const std::string abilityId)
+BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string abilityName,
+    const std::string abilityId)
 {
     bundleName_ = bundleName;
     continuousTaskAbilityName_.clear();
@@ -86,8 +87,9 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
     eventId_ = DEFAULT_EVENT_ID;
 }
 
-BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string moduleName, const std::string modulePackage,
-    const std::string formName, const int32_t formDimension, const int64_t formId, const int eventId)
+BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string moduleName,
+    const std::string modulePackage, const std::string formName, const int32_t formDimension,
+    const int64_t formId, const int eventId)
 {
     bundleName_ = bundleName;
     continuousTaskAbilityName_.clear();

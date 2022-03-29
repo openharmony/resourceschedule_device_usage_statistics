@@ -138,64 +138,60 @@ void BundleStateCommon::GetBundleStateInfoForResult(napi_env env,
     }
 }
 
+void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
+    const BundleActiveModuleRecord &oneModuleRecord, napi_value &moduleObject)
+{
+        napi_value bundleName = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, oneModuleRecord.bundleName_.c_str(),
+            NAPI_AUTO_LENGTH, &bundleName));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "bundleName", bundleName));
+        napi_value appLabelId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, oneModuleRecord.appLabelId_, &appLabelId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "appLabelId", appLabelId));
+        napi_value moduleName = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, oneModuleRecord.moduleName_.c_str(), NAPI_AUTO_LENGTH,
+            &moduleName));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "name", moduleName));
+        napi_value labelId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, oneModuleRecord.labelId_, &labelId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "labelId", labelId));
+        napi_value descriptionId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, oneModuleRecord.descriptionId_, &descriptionId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "descriptionId", descriptionId));
+        napi_value abilityName = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, oneModuleRecord.abilityName_.c_str(), NAPI_AUTO_LENGTH,
+            &abilityName));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityName", abilityName));
+        napi_value abilityLableId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, oneModuleRecord.abilityLableId_, &abilityLableId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityLableId", abilityLableId));
+        napi_value abilityDescriptionId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, oneModuleRecord.abilityDescriptionId_,
+            &abilityDescriptionId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityDescriptionId",
+            abilityDescriptionId));
+        napi_value abilityIconId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, oneModuleRecord.abilityIconId_, &abilityIconId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityIconId", abilityIconId));
+        napi_value launchedCount = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, oneModuleRecord.launchedCount_, &launchedCount));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "launchedCount", launchedCount));
+        napi_value lastModuleUsedTime = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, oneModuleRecord.lastModuleUsedTime_, &lastModuleUsedTime));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "lastLaunchTime", lastModuleUsedTime));
+        napi_value removed = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, oneModuleRecord.removed_, &removed));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "isRemoved", removed));
+}
+
 void BundleStateCommon::GetModuleRecordForResult(napi_env env,
-        const std::vector<BundleActiveModuleRecord> &moduleRecords, napi_value result)
+    const std::vector<BundleActiveModuleRecord> &moduleRecords, napi_value result)
 {
     int32_t index = 0;
     for (const auto &item : moduleRecords) {
         napi_value moduleObject = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &moduleObject));
-        napi_value bundleName = nullptr;
-        NAPI_CALL_RETURN_VOID(
-            env, napi_create_string_utf8(env, item.bundleName_.c_str(), NAPI_AUTO_LENGTH, &bundleName));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "bundleName", bundleName));
-
-        napi_value appLabelId = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.appLabelId_, &appLabelId));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "appLabelId", appLabelId));
-
-        napi_value moduleName = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, item.moduleName_.c_str(), NAPI_AUTO_LENGTH,
-            &moduleName));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "name", moduleName));
-
-        napi_value labelId = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.labelId_, &labelId));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "labelId", labelId));
-
-        napi_value descriptionId = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.descriptionId_, &descriptionId));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "descriptionId", descriptionId));
-
-        napi_value abilityName = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, item.abilityName_.c_str(), NAPI_AUTO_LENGTH,
-            &abilityName));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityName", abilityName));
-
-        napi_value abilityLableId = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.abilityLableId_, &abilityLableId));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityLableId", abilityLableId));
-
-        napi_value abilityDescriptionId = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.abilityDescriptionId_, &abilityDescriptionId));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityDescriptionId",
-            abilityDescriptionId));
-
-        napi_value abilityIconId = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.abilityIconId_, &abilityIconId));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityIconId", abilityIconId));
-
-        napi_value launchedCount = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, item.launchedCount_, &launchedCount));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "launchedCount", launchedCount));
-
-        napi_value lastModuleUsedTime = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.lastModuleUsedTime_, &lastModuleUsedTime));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "lastLaunchTime", lastModuleUsedTime));
-
-        napi_value removed = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.removed_, &removed));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "isRemoved", removed));
+        GetModuleRecordBasicForResult(env, item, moduleObject);
 
         napi_value formRecords = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &formRecords));
