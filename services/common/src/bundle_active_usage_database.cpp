@@ -1398,7 +1398,8 @@ void BundleActiveUsageDatabase::UpdateModuleData(const int userId,
             }
             moduleValuesBucket.Clear();
             queryCondition.clear();
-            string moduleCombinedInfo = oneModuleRecord.second->moduleName_ + " " + oneModuleRecord.second->modulePackage_;
+            string moduleCombinedInfo = oneModuleRecord.second->moduleName_ + " " +
+                oneModuleRecord.second->modulePackage_;
             for (const auto& oneFormRecord : oneModuleRecord.second->formRecords_) {
                 UpdateFormData(oneModuleRecord.second->userId_, oneModuleRecord.second->bundleName_,
                     moduleCombinedInfo, oneFormRecord, rdbStore);
@@ -1429,9 +1430,9 @@ void BundleActiveUsageDatabase::UpdateFormData(const int32_t userId, const std::
     formValueBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, formRecord.formLastUsedTime_ -
         formRecordsTableTime);
     rdbStore->Update(changeRow, FORM_RECORD_LOG_TABLE, formValueBucket,
-            "userId = ? and bundleName = ? and moduleCombinedInfo = ? and formName = ? and formDimension = ? "
-            "and formId = ?",
-            queryCondition);
+        "userId = ? and bundleName = ? and moduleCombinedInfo = ? and formName = ? and formDimension = ? "
+        "and formId = ?",
+        queryCondition);
     if (changeRow == NO_UPDATE_ROW) {
         formValueBucket.PutInt(BUNDLE_ACTIVE_DB_USER_ID, userId);
         formValueBucket.PutString(BUNDLE_ACTIVE_DB_BUNDLE_NAME, bundleName);
