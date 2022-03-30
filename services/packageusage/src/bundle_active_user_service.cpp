@@ -21,9 +21,10 @@ namespace DeviceUsageStats {
 void BundleActiveUserService::Init(const int64_t timeStamp)
 {
     database_.InitDatabaseTableInfo(timeStamp);
+    database_.InitUsageGroupDatabase(APP_GROUP_DATABASE_INDEX, true);
     BUNDLE_ACTIVE_LOGI("Init called");
     LoadActiveStats(timeStamp, false, false);
-    database_.LoadFormData(userId_, moduleRecords_);
+    database_.LoadModuleData(userId_, moduleRecords_);
     std::shared_ptr<BundleActivePeriodStats> currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentDailyStats != nullptr) {
         BundleActiveEvent startupEvent(BundleActiveEvent::STARTUP, timeStamp - ONE_SECOND_MILLISECONDS);
@@ -323,7 +324,9 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
     BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}d",
         static_cast<int>(result.size()));
-    PrintInMemPackageStats(intervalType);
+    if (debugUserService_) {
+        PrintInMemPackageStats(intervalType);
+    }
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats need in memory stats");
@@ -361,7 +364,9 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     BUNDLE_ACTIVE_LOGI("Query event bundle name is %{public}s", bundleName.c_str());
     result = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
     BUNDLE_ACTIVE_LOGI("Query event data in db result size is %{public}d", result.size());
-    PrintInMemEventStats();
+    if (debugUserService_) {
+        PrintInMemEventStats();
+    }
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryEvents need in memory stats");
@@ -462,7 +467,9 @@ void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
         database_.RemoveFormData(userId_, event.formName_, event.formDimension_, event.formId_);
         NotifyStatsChanged();
     }
-    PrintInMemFormStats();
+    if (debugUserService_) {
+        PrintInMemFormStats();
+    }
 }
 
 std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateModuleRecord(

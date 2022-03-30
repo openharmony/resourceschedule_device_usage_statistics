@@ -43,7 +43,7 @@ public:
     BundleActiveFormRecord();
     /*
     * function: BundleActiveFormRecord, use formName, formDimension, formId, timeStamp, userId to construct object.
-    * parameters: formName formDimension formId timeStamp userId
+    * parameters: formName, formDimension, formId, timeStamp, userId
     */
     BundleActiveFormRecord(const std::string formName, const int32_t formDimension, const int64_t formId,
         const int64_t timeStamp, const int32_t userId);
@@ -76,7 +76,7 @@ public:
     }
     /*
     * function: cmp, compare two BundleActiveFormRecord.
-    * parameters: formRecordA formRecordB
+    * parameters: formRecordA, formRecordB
     * return: true if formRecordA.count_ > formRecordB.
     */
     static bool cmp(const BundleActiveFormRecord& formRecordA, const BundleActiveFormRecord& formRecordB);

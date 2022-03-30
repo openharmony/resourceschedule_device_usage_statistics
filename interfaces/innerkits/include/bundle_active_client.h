@@ -58,14 +58,14 @@ public:
     void SetBundleGroup(std::string bundleName, const int newGroup, const int userId);
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
-    * parameters: intervalType, beginTime, endTime, errCode
+    * parameters: intervalType, beginTime, endTime
     * return: vector of calling bundle usage statistics.
     */
     std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int intervalType, const int64_t beginTime,
         const int64_t endTime);
     /*
     * function: QueryCurrentEvents, query bundle usage statistics in specific time span for calling bundle.
-    * parameters: beginTime, endTime, errCode
+    * parameters: beginTime, endTime
     * return: vector of calling bundle events.
     */
     std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime);
@@ -76,7 +76,7 @@ public:
     int QueryPackageGroup();
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
-    * parameters: maxNum
+    * parameters: maxNum, results
     * return: errorcode.
     */
     int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results);

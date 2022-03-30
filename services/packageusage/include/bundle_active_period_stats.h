@@ -58,7 +58,7 @@ public:
     std::shared_ptr<BundleActivePackageStats> GetOrCreateUsageStats(const std::string& bundleName);
     /*
     * function: Update, update usage statistics of specific bundle.
-    * parameters: bundleName longTimeTaskName timeStamp eventId abilityId
+    * parameters: bundleName, longTimeTaskName, timeStamp, eventId, abilityId
     */
     void Update(const std::string bundleName, const std::string longTimeTaskName, const int64_t timeStamp,
         const int eventId, const std::string abilityId);

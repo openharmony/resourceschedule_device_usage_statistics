@@ -81,6 +81,8 @@ napi_value GetModuleUsageRecords(napi_env env, napi_callback_info info)
     if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoModuleRecord), 0,
         sizeof(AsyncCallbackInfoModuleRecord)) != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     asyncCallbackInfo->env = env;
@@ -180,6 +182,8 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
     if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoIsIdleState), 0, sizeof(AsyncCallbackInfoIsIdleState)) !=
         EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     asyncCallbackInfo->env = env;
@@ -260,6 +264,8 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
     if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoPriorityGroup), 0, sizeof(AsyncCallbackInfoPriorityGroup))
         != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     asyncCallbackInfo->env = env;
@@ -366,6 +372,8 @@ napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info)
     if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoStates), 0, sizeof(AsyncCallbackInfoStates))
         != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     asyncCallbackInfo->env = env;
@@ -439,6 +447,8 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
     if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoStates), 0, sizeof(AsyncCallbackInfoStates))
         != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     asyncCallbackInfo->env = env;
@@ -569,6 +579,8 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
     if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoAppUsageByInterval), 0,
         sizeof(AsyncCallbackInfoAppUsageByInterval)) != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     asyncCallbackInfo->env = env;
@@ -689,6 +701,8 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
     if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoAppUsage), 0, sizeof(AsyncCallbackInfoAppUsage))
         != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     asyncCallbackInfo->env = env;

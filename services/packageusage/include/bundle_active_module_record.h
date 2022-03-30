@@ -50,7 +50,7 @@ public:
     uint32_t abilityLableId_;
     uint32_t abilityDescriptionId_;
     uint32_t abilityIconId_;
-    uint32_t launchedCount_;
+    int32_t launchedCount_;
     int64_t lastModuleUsedTime_;
     int32_t userId_;
     bool removed_;

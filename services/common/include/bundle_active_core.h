@@ -61,6 +61,7 @@ public:
     int ReportEventToAllUserId(BundleActiveEvent& event);
     /*
     * function: OnStatsChanged, report flush to disk, end_of_day event to service.
+    * parameters: userId
     */
     void OnStatsChanged(const int userId) override;
     /*
@@ -70,12 +71,13 @@ public:
     void OnStatsReload() override;
     /*
     * function: OnSystemUpdate, now is emtpy, later will called when system is updated.
+    * parameters: userId
     */
     void OnSystemUpdate(int userId) override;
     /*
     * function: OnBundleUninstalled when received a PACKATE_REMOVED commen event,
     * BundleActiveCommonEventSubscriber call it to remove data.
-    * parameter: userId, Bundlename.
+    * parameters: userId, bundleName
     */
     void OnBundleUninstalled(const int userId, const std::string& bundleName);
     /*
@@ -91,15 +93,28 @@ public:
     void InitBundleGroupController();
     /*
     * function: SetHandler, BundleActiveService call it to set event report handler
+    * parameters: reportHandler
     */
     void SetHandler(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
-    // flush database for one user data
+    /*
+    * function: RestoreToDatabase, restore bundle usage data and form data to database
+    * parameters: userId
+    */
     void RestoreToDatabase(const int userId);
-    // flush database for one user data
+    /*
+    * function: RestoreToDatabaseLocked, flush database for one user data
+    * parameters: userId
+    */
     void RestoreToDatabaseLocked(const int userId);
-    // called when device shutdown, update the in-memory stat and flush the database.
+    /*
+    * function: ShutDown, called when device shutdown, update the in-memory stat and flush the database.
+    */
     void ShutDown();
-    // query the package stat for calling user.
+    /*
+    * function: QueryPackageStats, query the package stat for calling user.
+    * parameters: userId, intervalType, beginTime, endTime, bundleName
+    * return: vector of BundleActivePackageStats
+    */
     std::vector<BundleActivePackageStats> QueryPackageStats(const int userId, const int intervalType,
         const int64_t beginTime, const int64_t endTime, std::string bundleName);
     // query the event stat for calling user.

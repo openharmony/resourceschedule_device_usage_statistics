@@ -59,14 +59,14 @@ public:
     void SetBundleGroup(const std::string& bundleName, int newGroup, int userId) override;
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
-    * parameters: intervalType, beginTime, endTime, errCode
+    * parameters: intervalType, beginTime, endTime
     * return: vector of calling bundle usage statistics.
     */
     std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int intervalType, const int64_t beginTime,
         const int64_t endTime) override;
     /*
     * function: QueryCurrentEvents, query bundle usage statistics in specific time span for calling bundle.
-    * parameters: beginTime, endTime, errCode
+    * parameters: beginTime, endTime
     * return: vector of calling bundle events.
     */
     std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime) override;
@@ -77,12 +77,13 @@ public:
     int QueryPackageGroup() override;
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
-    * parameters: maxNum
+    * parameters: maxNum, results
     * return: errorcode.
     */
     int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results) override;
     /*
     * function: BundleActiveProxy, default constructor.
+    * parameters: impl
     */
     explicit BundleActiveProxy(const sptr<IRemoteObject>& impl)
         : IRemoteProxy<IBundleActiveService>(impl) {}

@@ -82,7 +82,7 @@ bool BundleActiveModuleRecord::Marshalling(Parcel &parcel) const
         parcel.WriteUint32(abilityLableId_) &&
         parcel.WriteUint32(abilityDescriptionId_) &&
         parcel.WriteUint32(abilityIconId_) &&
-        parcel.WriteUint32(launchedCount_) &&
+        parcel.WriteInt32(launchedCount_) &&
         parcel.WriteInt64(lastModuleUsedTime_) &&
         parcel.WriteUint32(formRecords_.size())
         ) {
@@ -107,7 +107,7 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveModuleRecord::UnMarshallin
     result->abilityLableId_ = parcel.ReadUint32();
     result->abilityDescriptionId_ = parcel.ReadUint32();
     result->abilityIconId_ = parcel.ReadUint32();
-    result->launchedCount_ = parcel.ReadUint32();
+    result->launchedCount_ = parcel.ReadInt32();
     result->lastModuleUsedTime_ = parcel.ReadInt64();
     uint32_t size = parcel.ReadUint32();
     std::shared_ptr<BundleActiveFormRecord> tmp = std::make_shared<BundleActiveFormRecord>();

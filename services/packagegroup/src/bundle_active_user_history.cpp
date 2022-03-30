@@ -55,7 +55,7 @@ BundleActiveUserHistory::BundleActiveUserHistory(const int64_t bootBasedTimeStam
 {
     bootBasedTimeStamp_ = bootBasedTimeStamp;
     screenOnTimeStamp_ = bootBasedTimeStamp;
-    database_.InitUsageGroupInfo(APP_GROUP_DATABASE_INDEX);
+    database_.InitUsageGroupDatabase(APP_GROUP_DATABASE_INDEX, false);
     auto bootAndScreenOnDuraton = database_.GetDurationData();
     bootBasedDuration_ = bootAndScreenOnDuraton.first;
     ScreenOnDuration_ = bootAndScreenOnDuraton.second;
