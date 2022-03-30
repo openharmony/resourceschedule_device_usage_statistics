@@ -60,8 +60,8 @@ public:
     void ChangeToDebug();
     void UpdateModuleData(const int userId,
         std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords, const int64_t timeStamp);
-    void RemoveFormData(const int userId, const std::string formName,
-        const int32_t formDimension, const int64_t formId);
+    void RemoveFormData(const int userId, const std::string combinedInfo, const std::string formName,
+        const std::string bundleName, const int32_t formDimension, const int64_t formId);
     void LoadModuleData(const int32_t userId, std::map<std::string,
         std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
 
@@ -96,6 +96,9 @@ private:
     void CheckDatabaseFile(unsigned int databaseType);
     void LoadFormData(const int32_t userId, std::map<std::string,
         std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
+    void UpdateFormData(const int32_t userId, const std::string bundleName,
+        const std::string combinedInfo, const BundleActiveFormRecord& formRecord,
+        std::shared_ptr<NativeRdb::RdbStore> rdbStore);
 
 private:
     std::vector<std::string> databaseFiles_;

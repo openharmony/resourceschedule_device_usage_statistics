@@ -108,10 +108,10 @@ void BundleActiveUsageDatabase::InitUsageGroupDatabase(const int32_t databaseTyp
                 bundleHistoryTableName_ = BUNDLE_HISTORY_LOG_TABLE;
             }
         } else {
-            if (MODULE_RECORD_LOG_TABLE == tableName) {
-                moduleRecordsTableName_ = MODULE_RECORD_LOG_TABLE;
-            } else if (FORM_RECORD_LOG_TABLE == tableName) {
-                formRecordsTableName_ = FORM_RECORD_LOG_TABLE;
+            if (tableName.find(MODULE_RECORD_LOG_TABLE.c_str()) != tableName.npos) {
+                moduleRecordsTableName_ = tableName;
+            } else if (tableName.find(FORM_RECORD_LOG_TABLE.c_str()) != tableName.npos) {
+                formRecordsTableName_ = tableName;
             }
         }
     }
@@ -258,11 +258,6 @@ void BundleActiveUsageDatabase::HandleTableInfo(unsigned int databaseType)
         if (tableNumber == EVENT_TABLE_NUMBER) {
             bundleActiveResult->GoToRow(tableNumber - EVENT_TABLE_NUMBER);
             bundleActiveResult->GetString(tableNameIndex, eventTableName_);
-        }
-    } else if (databaseType == APP_GROUP_DATABASE_INDEX) {
-        if (tableNumber == APP_GROUP_TABLE_NUMBER) {
-            durationTableName_ = DURATION_LOG_TABLE;
-            bundleHistoryTableName_ = BUNDLE_HISTORY_LOG_TABLE;
         }
     }
 }
@@ -944,7 +939,8 @@ string BundleActiveUsageDatabase::GetTableIndexSql(unsigned int databaseType, in
                     ", modulePackage);";
             } else if (indexFlag == BUNDLE_ACTIVE_DB_INDEX_FORM) {
                 tableIndexSql = "CREATE INDEX " + FORM_RECORD_LOG_TABLE_INDEX_PREFIX
-                    + " ON " + FORM_RECORD_LOG_TABLE + to_string(tableTime) + " (userId, formId);";
+                    + " ON " + FORM_RECORD_LOG_TABLE + to_string(tableTime) +
+                    " (userId, moduleCombinedInfo, formName, formDimension, formId);";
             }
         } else {
             if (indexFlag == BUNDLE_ACTIVE_DB_INDEX_NORMAL) {
@@ -1374,42 +1370,83 @@ void BundleActiveUsageDatabase::UpdateModuleData(const int userId,
         CreateFormRecordTable(APP_GROUP_DATABASE_INDEX, timeStamp);
     }
     int64_t moduleTableTime = ParseStartTime(moduleRecordsTableName_);
-    int64_t formRecordsTableTime = ParseStartTime(formRecordsTableName_);
+    int32_t changeRow = BUNDLE_ACTIVE_FAIL;
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
     NativeRdb::ValuesBucket moduleValuesBucket;
-    NativeRdb::ValuesBucket formValueBucket;
+    vector<string> queryCondition;
     for (const auto& oneModuleRecord : moduleRecords) {
         if (oneModuleRecord.second) {
-            moduleValuesBucket.PutInt(BUNDLE_ACTIVE_DB_USER_ID, oneModuleRecord.second->userId_);
-            moduleValuesBucket.PutString(BUNDLE_ACTIVE_DB_BUNDLE_NAME, oneModuleRecord.second->bundleName_);
-            moduleValuesBucket.PutString(BUNDLE_ACTIVE_DB_MODULE_NAME, oneModuleRecord.second->moduleName_);
-            moduleValuesBucket.PutString(BUNDLE_ACTIVE_DB_MODULE_PACKAGE, oneModuleRecord.second->modulePackage_);
+            queryCondition.emplace_back(to_string(oneModuleRecord.second->userId_));
+            queryCondition.emplace_back(oneModuleRecord.second->bundleName_);
+            queryCondition.emplace_back(oneModuleRecord.second->moduleName_);
+            queryCondition.emplace_back(oneModuleRecord.second->modulePackage_);
             moduleValuesBucket.PutInt(BUNDLE_ACTIVE_DB_MODULE_LAUNCHED_COUNT, oneModuleRecord.second->launchedCount_);
             moduleValuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, oneModuleRecord.second->lastModuleUsedTime_ -
                 moduleTableTime);
-            rdbStore->Insert(outRowId, moduleRecordsTableName_, moduleValuesBucket);
+            rdbStore->Update(changeRow, MODULE_RECORD_LOG_TABLE, moduleValuesBucket,
+                "userId = ? and bundleName = ? and moduleName = ? and modulePackage = ?", queryCondition);
+            if (changeRow == NO_UPDATE_ROW) {
+                moduleValuesBucket.PutInt(BUNDLE_ACTIVE_DB_USER_ID, oneModuleRecord.second->userId_);
+                moduleValuesBucket.PutString(BUNDLE_ACTIVE_DB_BUNDLE_NAME, oneModuleRecord.second->bundleName_);
+                moduleValuesBucket.PutString(BUNDLE_ACTIVE_DB_MODULE_NAME, oneModuleRecord.second->moduleName_);
+                moduleValuesBucket.PutString(BUNDLE_ACTIVE_DB_MODULE_PACKAGE, oneModuleRecord.second->modulePackage_);
+                rdbStore->Insert(outRowId, MODULE_RECORD_LOG_TABLE, moduleValuesBucket);
+                outRowId = BUNDLE_ACTIVE_FAIL;
+                changeRow = BUNDLE_ACTIVE_FAIL;
+            } else {
+                changeRow = BUNDLE_ACTIVE_FAIL;
+            }
             moduleValuesBucket.Clear();
-            string combinedInfo = oneModuleRecord.second->bundleName_ + " " + oneModuleRecord.second->moduleName_ +
-                " " + oneModuleRecord.second->modulePackage_;
+            queryCondition.clear();
+            string moduleCombinedInfo = oneModuleRecord.second->moduleName_ + " " + oneModuleRecord.second->modulePackage_;
             for (const auto& oneFormRecord : oneModuleRecord.second->formRecords_) {
-                formValueBucket.PutInt(BUNDLE_ACTIVE_DB_USER_ID, oneModuleRecord.second->userId_);
-                formValueBucket.PutString(BUNDLE_ACTVIE_DB_MODULE_COMBINED_INFO, combinedInfo);
-                formValueBucket.PutString(BUNDLE_ACTIVE_DB_FORM_NAME, oneFormRecord.formName_);
-                formValueBucket.PutInt(BUNDLE_ACTIVE_DB_FORM_DIMENSION, oneFormRecord.formDimension_);
-                formValueBucket.PutInt(BUNDLE_ACTIVE_DB_FORM_ID, oneFormRecord.formId_);
-                formValueBucket.PutInt(BUNDLE_ACTIVE_DB_FORM_TOUCH_COUNT, oneFormRecord.count_);
-                formValueBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, oneFormRecord.formLastUsedTime_ -
-                    formRecordsTableTime);
-                rdbStore->Insert(outRowId, formRecordsTableName_, formValueBucket);
-                formValueBucket.Clear();
+                UpdateFormData(oneModuleRecord.second->userId_, oneModuleRecord.second->bundleName_,
+                    moduleCombinedInfo, oneFormRecord, rdbStore);
             }
         }
     }
 }
 
-void BundleActiveUsageDatabase::RemoveFormData(const int userId, const std::string formName,
-    const int32_t formDimension, const int64_t formId)
+void BundleActiveUsageDatabase::UpdateFormData(const int32_t userId, const std::string bundleName,
+    const string combinedInfo, const BundleActiveFormRecord& formRecord,
+    std::shared_ptr<NativeRdb::RdbStore> rdbStore)
 {
+    if (rdbStore == nullptr) {
+        return;
+    }
+    int64_t formRecordsTableTime = ParseStartTime(formRecordsTableName_);
+    NativeRdb::ValuesBucket formValueBucket;
+    vector<string> queryCondition;
+    int32_t changeRow = BUNDLE_ACTIVE_FAIL;
+    int64_t outRowId = BUNDLE_ACTIVE_FAIL;
+    queryCondition.emplace_back(to_string(userId));
+    queryCondition.emplace_back(bundleName);
+    queryCondition.emplace_back(combinedInfo);
+    queryCondition.emplace_back(formRecord.formName_);
+    queryCondition.emplace_back(to_string(formRecord.formDimension_));
+    queryCondition.emplace_back(to_string(formRecord.formId_));
+    formValueBucket.PutInt(BUNDLE_ACTIVE_DB_FORM_TOUCH_COUNT, formRecord.count_);
+    formValueBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, formRecord.formLastUsedTime_ -
+        formRecordsTableTime);
+    rdbStore->Update(changeRow, FORM_RECORD_LOG_TABLE, formValueBucket,
+            "userId = ? and bundleName = ? and moduleCombinedInfo = ? and formName = ? and formDimension = ? "
+            "and formId = ?",
+            queryCondition);
+    if (changeRow == NO_UPDATE_ROW) {
+        formValueBucket.PutInt(BUNDLE_ACTIVE_DB_USER_ID, userId);
+        formValueBucket.PutString(BUNDLE_ACTIVE_DB_BUNDLE_NAME, bundleName);
+        formValueBucket.PutString(BUNDLE_ACTVIE_DB_MODULE_COMBINED_INFO, combinedInfo);
+        formValueBucket.PutString(BUNDLE_ACTIVE_DB_FORM_NAME, formRecord.formName_);
+        formValueBucket.PutInt(BUNDLE_ACTIVE_DB_FORM_DIMENSION, formRecord.formDimension_);
+        formValueBucket.PutInt(BUNDLE_ACTIVE_DB_FORM_ID, formRecord.formId_);
+        rdbStore->Insert(outRowId, formRecordsTableName_, formValueBucket);
+    }
+}
+
+void BundleActiveUsageDatabase::RemoveFormData(const int userId, const std::string combinedInfo,
+    const std::string formName, const std::string bundleName, const int32_t formDimension, const int64_t formId)
+{
+    lock_guard<mutex> lock(databaseMutex_);
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
     if (rdbStore == nullptr) {
         BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
@@ -1419,11 +1456,14 @@ void BundleActiveUsageDatabase::RemoveFormData(const int userId, const std::stri
     vector<string> queryCondition;
     if (formRecordsTableName_ != UNKNOWN_TABLE_NAME) {
         queryCondition.emplace_back(to_string(userId));
+        queryCondition.emplace_back(bundleName);
+        queryCondition.emplace_back(combinedInfo);
         queryCondition.emplace_back(formName);
         queryCondition.emplace_back(to_string(formDimension));
         queryCondition.emplace_back(to_string(formId));
         rdbStore->Delete(deletedRows, formRecordsTableName_,
-            "userId = ? and formName = ? and formDimension = ? and formId = ?", queryCondition);
+            "userId = ? and moduleCombinedInfo = ? and formName = ? and formDimension = ? and formId = ?",
+            queryCondition);
     }
 }
 
@@ -1433,7 +1473,7 @@ void BundleActiveUsageDatabase::LoadModuleData(const int32_t userId, std::map<st
     lock_guard<mutex> lock(databaseMutex_);
     string queryModuleSql = "select * from " + moduleRecordsTableName_ + " where userId = ?";
     vector<string> queryCondition;
-    queryCondition.emplace_back(userId);
+    queryCondition.emplace_back(to_string(userId));
     unique_ptr<NativeRdb::ResultSet> moduleRecordResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX, queryModuleSql,
         queryCondition);
     if (!moduleRecordResult) {
@@ -1462,23 +1502,25 @@ void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std:
 {
     string queryFormSql = "select * from " + formRecordsTableName_ + " where userId = ?";
     vector<string> queryCondition;
-    queryCondition.emplace_back(userId);
+    queryCondition.emplace_back(to_string(userId));
     unique_ptr<NativeRdb::ResultSet> formRecordResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX, queryFormSql,
         queryCondition);
     int32_t numOfFormRecord = 0;
     formRecordResult->GetRowCount(numOfFormRecord);
     for (int32_t i = 0; i < numOfFormRecord; i++) {
         BundleActiveFormRecord oneFormRecord;
-        string combinedInfo = "";
+        string moduleCombinedInfo = "";
+        string bundleName = "";
         formRecordResult->GoToRow(i);
         formRecordResult->GetInt(USER_ID_COLUMN_INDEX, oneFormRecord.userId_);
-        formRecordResult->GetString(MODULE_COMBINED_INFO_COLUMN_INDEX, combinedInfo);
+        formRecordResult->GetString(BUNDLE_NAME_COLUMN_INDEX, bundleName);
+        formRecordResult->GetString(MODULE_COMBINED_INFO_COLUMN_INDEX, moduleCombinedInfo);
         formRecordResult->GetString(FORM_NAME_COLUMN_INDEX, oneFormRecord.formName_);
         formRecordResult->GetInt(FORM_DIMENSION_COLUMN_INDEX, oneFormRecord.formDimension_);
         formRecordResult->GetLong(FORM_ID_COLUMN_INDEX, oneFormRecord.formId_);
         formRecordResult->GetInt(FORM_COUNT_COLUMN_INDEXT, oneFormRecord.count_);
         formRecordResult->GetLong(FORM_LAST_TIME_COLUMN_INDEX, oneFormRecord.formLastUsedTime_);
-        auto it = moduleRecords.find(combinedInfo);
+        auto it = moduleRecords.find(bundleName + " " + moduleCombinedInfo);
         if (it != moduleRecords.end() && it->second) {
             it->second->formRecords_.emplace_back(oneFormRecord);
         }

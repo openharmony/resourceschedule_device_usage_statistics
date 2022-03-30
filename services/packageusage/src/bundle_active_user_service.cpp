@@ -462,7 +462,9 @@ void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
         NotifyStatsChanged();
     } else if (event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED && moduleRecord) {
         moduleRecord->RemoveOneFormRecord(event.formName_, event.formDimension_, event.formId_);
-        database_.RemoveFormData(userId_, event.formName_, event.formDimension_, event.formId_);
+        std::string combinedInfo = event.moduleName_ + " " + event.modulePackage_;
+        database_.RemoveFormData(userId_, event.bundleName_, combinedInfo, event.formName_, event.formDimension_,
+            event.formId_);
         NotifyStatsChanged();
     }
     if (debugUserService_) {
