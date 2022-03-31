@@ -49,7 +49,6 @@ public:
     std::string abilityName_;
     std::string abilityId_;
     std::string moduleName_;
-    std::string modulePackage_;
     std::string formName_;
     int32_t formDimension_;
     int64_t formId_;
@@ -83,9 +82,9 @@ public:
     BundleActiveEvent(const std::string bundleName, const std::string abilityName, const std::string abilityId);
     /*
     * function: BundleActiveEvent, constructor of form event.
-    * parameters: bundleName, moduleName, modulePackage, formName, formDimension, formId, eventId
+    * parameters: bundleName, moduleName, formName, formDimension, formId, eventId
     */
-    BundleActiveEvent(const std::string bundleName, const std::string moduleName, const std::string modulePackage,
+    BundleActiveEvent(const std::string bundleName, const std::string moduleName,
         const std::string formName, const int32_t formDimension, const int64_t formId, const int eventId);
     void PrintEvent() const;
     /*

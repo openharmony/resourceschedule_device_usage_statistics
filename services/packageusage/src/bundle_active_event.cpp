@@ -24,7 +24,6 @@ BundleActiveEvent::BundleActiveEvent()
     abilityName_ = "";
     abilityId_ = "";
     moduleName_ = "";
-    modulePackage_ = "";
     formName_ = "";
     formId_ = 0;
     formDimension_ = 0;
@@ -39,7 +38,6 @@ BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig)
     abilityName_ = orig.abilityName_;
     abilityId_ = orig.abilityId_;
     moduleName_ = orig.moduleName_;
-    modulePackage_ = orig.modulePackage_;
     formName_ = orig.formName_;
     formId_ = orig.formId_;
     formDimension_ = orig.formDimension_;
@@ -63,7 +61,6 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
     abilityName_.clear();
     abilityId_.clear();
     moduleName_.clear();
-    modulePackage_.clear();
     formName_.clear();
     formDimension_ = 0;
     formId_ = 0;
@@ -79,7 +76,6 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
     abilityName_ = abilityName;
     abilityId_ = abilityId;
     moduleName_.clear();
-    modulePackage_.clear();
     formName_.clear();
     formDimension_ = 0;
     formId_ = 0;
@@ -88,7 +84,7 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
 }
 
 BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string moduleName,
-    const std::string modulePackage, const std::string formName, const int32_t formDimension,
+    const std::string formName, const int32_t formDimension,
     const int64_t formId, const int eventId)
 {
     bundleName_ = bundleName;
@@ -96,7 +92,6 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
     abilityName_.clear();
     abilityId_.clear();
     moduleName_ = moduleName;
-    modulePackage_ = modulePackage;
     formName_ = formName;
     formDimension_ = formDimension;
     formId_ = formId;
@@ -111,7 +106,6 @@ BundleActiveEvent& BundleActiveEvent::operator=(const BundleActiveEvent& orig)
     abilityName_ = orig.abilityName_;
     abilityId_ = orig.abilityId_;
     moduleName_ = orig.moduleName_;
-    modulePackage_ = orig.modulePackage_;
     formName_ = orig.formName_;
     formDimension_ = orig.formDimension_;
     formId_ = orig.formId_;
@@ -123,10 +117,10 @@ BundleActiveEvent& BundleActiveEvent::operator=(const BundleActiveEvent& orig)
 void BundleActiveEvent::PrintEvent() const
 {
     BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, ability name is %{public}s, continue task ability is %{public}s, "
-        "module name is %{public}s, module package is %{public}s, "
+        "module name is %{public}s, "
         "form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, event id is %{public}d",
         bundleName_.c_str(), abilityName_.c_str(), continuousTaskAbilityName_.c_str(), moduleName_.c_str(),
-        modulePackage_.c_str(), formName_.c_str(), formDimension_, formId_, eventId_);
+        formName_.c_str(), formDimension_, formId_, eventId_);
 }
 
 bool BundleActiveEvent::Marshalling(Parcel &parcel) const
@@ -136,7 +130,6 @@ bool BundleActiveEvent::Marshalling(Parcel &parcel) const
         parcel.WriteString(abilityName_) &&
         parcel.WriteString(abilityId_) &&
         parcel.WriteString(moduleName_) &&
-        parcel.WriteString(modulePackage_) &&
         parcel.WriteString(formName_) &&
         parcel.WriteInt32(formDimension_) &&
         parcel.WriteInt64(formId_) &&
@@ -155,7 +148,6 @@ std::shared_ptr<BundleActiveEvent> BundleActiveEvent::UnMarshalling(Parcel &parc
     result->abilityName_ = parcel.ReadString();
     result->abilityId_ = parcel.ReadString();
     result->moduleName_ = parcel.ReadString();
-    result->modulePackage_ = parcel.ReadString();
     result->formName_ = parcel.ReadString();
     result->formDimension_ = parcel.ReadInt32();
     result->formId_ = parcel.ReadInt64();

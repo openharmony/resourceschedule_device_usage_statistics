@@ -60,9 +60,12 @@ public:
     void ChangeToDebug();
     void UpdateModuleData(const int userId,
         std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords, const int64_t timeStamp);
-    void RemoveFormData(const int userId, const std::string combinedInfo, const std::string formName,
-        const std::string bundleName, const int32_t formDimension, const int64_t formId);
+    void RemoveFormData(const int userId, const std::string bundleName,
+        const std::string moduleName, const std::string formName, const int32_t formDimension,
+        const int64_t formId);
     void LoadModuleData(const int32_t userId, std::map<std::string,
+        std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
+    void LoadFormData(const int32_t userId, std::map<std::string,
         std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
 
 private:
@@ -75,6 +78,8 @@ private:
     int32_t RenameTableName(unsigned int databaseType, int64_t tableOldTime, int64_t tableNewTime);
     std::string GetTableIndexSql(unsigned int databaseType, int64_t tableTime, bool createFlag,
         int32_t indexFlag = BUNDLE_ACTIVE_DB_INDEX_NORMAL);
+    int32_t SetNewIndexWhenTimeChanged(unsigned int databaseType, int64_t tableOldTime,
+        int64_t tableNewTime, std::shared_ptr<NativeRdb::RdbStore> rdbStore);
     void FlushPackageInfo(unsigned int databaseType, const BundleActivePeriodStats &stats);
     void FlushEventInfo(unsigned int databaseType, BundleActivePeriodStats &stats);
     void DeleteExcessiveTableData(unsigned int databaseType);
@@ -94,10 +99,8 @@ private:
     int32_t CreateDatabasePath();
     int64_t GetSystemTimeMs();
     void CheckDatabaseFile(unsigned int databaseType);
-    void LoadFormData(const int32_t userId, std::map<std::string,
-        std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
     void UpdateFormData(const int32_t userId, const std::string bundleName,
-        const std::string combinedInfo, const BundleActiveFormRecord& formRecord,
+        const std::string moduleName, const BundleActiveFormRecord& formRecord,
         std::shared_ptr<NativeRdb::RdbStore> rdbStore);
 
 private:

@@ -25,6 +25,11 @@ void BundleActiveUserService::Init(const int64_t timeStamp)
     BUNDLE_ACTIVE_LOGI("Init called");
     LoadActiveStats(timeStamp, false, false);
     database_.LoadModuleData(userId_, moduleRecords_);
+    database_.LoadFormData(userId_, moduleRecords_);
+    if (debugUserService_) {
+        PrintInMemFormStats();
+        PrintInMemPackageStats(0);
+    }
     std::shared_ptr<BundleActivePeriodStats> currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentDailyStats != nullptr) {
         BundleActiveEvent startupEvent(BundleActiveEvent::STARTUP, timeStamp - ONE_SECOND_MILLISECONDS);
@@ -435,9 +440,9 @@ void BundleActiveUserService::PrintInMemFormStats()
 {
     for (const auto& oneModule : moduleRecords_) {
         if (oneModule.second) {
-        BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, module package is %{public}s, "
+        BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, "
             "lastusedtime is %{public}lld, launchcount is %{public}d", oneModule.second->bundleName_.c_str(),
-            oneModule.second->moduleName_.c_str(), oneModule.second->modulePackage_.c_str(),
+            oneModule.second->moduleName_.c_str(),
             oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_);
         BUNDLE_ACTIVE_LOGI("combined info is %{public}s", oneModule.first.c_str());
             for (const auto& oneForm : oneModule.second->formRecords_) {
@@ -462,10 +467,8 @@ void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
         NotifyStatsChanged();
     } else if (event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED && moduleRecord) {
         moduleRecord->RemoveOneFormRecord(event.formName_, event.formDimension_, event.formId_);
-        std::string combinedInfo = event.moduleName_ + " " + event.modulePackage_;
-        database_.RemoveFormData(userId_, event.bundleName_, combinedInfo, event.formName_, event.formDimension_,
+        database_.RemoveFormData(userId_, event.bundleName_, event.moduleName_, event.formName_, event.formDimension_,
             event.formId_);
-        NotifyStatsChanged();
     }
     if (debugUserService_) {
         PrintInMemFormStats();
@@ -476,13 +479,13 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateMo
     const BundleActiveEvent& event)
 {
     BUNDLE_ACTIVE_LOGI("GetOrCreateModuleRecord called");
-    std::string combinedInfo = event.bundleName_ + " " + event.moduleName_ + " " + event.modulePackage_;
+    std::string combinedInfo = event.bundleName_ + " " + event.moduleName_;
     auto it = moduleRecords_.find(combinedInfo);
     if (it == moduleRecords_.end()) {
         auto moduleRecordInserted = std::make_shared<BundleActiveModuleRecord>();
         moduleRecordInserted->bundleName_ = event.bundleName_;
         moduleRecordInserted->moduleName_ = event.moduleName_;
-        moduleRecordInserted->modulePackage_ = event.modulePackage_;
+        moduleRecordInserted->userId_ = userId_;
         moduleRecords_[combinedInfo] = moduleRecordInserted;
     }
     return moduleRecords_[combinedInfo];

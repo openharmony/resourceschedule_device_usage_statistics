@@ -54,7 +54,6 @@ BundleActiveModuleRecord::BundleActiveModuleRecord()
     deviceId_ = "";
     bundleName_ = ""; // in database
     moduleName_ = ""; // in database
-    modulePackage_ = ""; // in database
     abilityName_ = "";
     appLabelId_ = 0;
     labelId_ = 0;
@@ -75,7 +74,6 @@ bool BundleActiveModuleRecord::Marshalling(Parcel &parcel) const
     if (parcel.WriteString(deviceId_) &&
         parcel.WriteString(bundleName_) &&
         parcel.WriteString(moduleName_) &&
-        parcel.WriteString(modulePackage_) &&
         parcel.WriteString(abilityName_) &&
         parcel.WriteUint32(appLabelId_) &&
         parcel.WriteUint32(descriptionId_) &&
@@ -100,7 +98,6 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveModuleRecord::UnMarshallin
     result->deviceId_ = parcel.ReadString();
     result->bundleName_ = parcel.ReadString();
     result->moduleName_ = parcel.ReadString();
-    result->modulePackage_ = parcel.ReadString();
     result->abilityName_ = parcel.ReadString();
     result->appLabelId_ = parcel.ReadUint32();
     result->descriptionId_ = parcel.ReadUint32();

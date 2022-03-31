@@ -42,7 +42,6 @@ public:
     std::string deviceId_;
     std::string bundleName_;
     std::string moduleName_;
-    std::string modulePackage_;
     std::string abilityName_;
     uint32_t appLabelId_;
     uint32_t labelId_;
