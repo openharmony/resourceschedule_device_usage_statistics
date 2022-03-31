@@ -1453,7 +1453,7 @@ void BundleActiveUsageDatabase::UpdateModuleData(const int userId,
                 changeRow = BUNDLE_ACTIVE_FAIL;
             }
             moduleValuesBucket.Clear();
-            queryCondition.clear();;
+            queryCondition.clear();
             for (const auto& oneFormRecord : oneModuleRecord.second->formRecords_) {
                 UpdateFormData(oneModuleRecord.second->userId_, oneModuleRecord.second->bundleName_,
                     oneModuleRecord.second->moduleName_, oneFormRecord, rdbStore);
