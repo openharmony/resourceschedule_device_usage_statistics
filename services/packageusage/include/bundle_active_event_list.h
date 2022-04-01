@@ -42,7 +42,7 @@ public:
     void Clear();
     /*
     * function: Insert, insert a event to member events_.
-    * parameter: event
+    * parameters: event
     */
     void Insert(BundleActiveEvent event);
     /*

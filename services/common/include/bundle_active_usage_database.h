@@ -40,7 +40,7 @@ public:
     BundleActiveUsageDatabase();
     ~BundleActiveUsageDatabase();
     void InitDatabaseTableInfo(int64_t currentTime);
-    void InitUsageGroupInfo(int32_t databaseType);
+    void InitUsageGroupDatabase(const int32_t databaseType, const bool forModuleRecords);
     void UpdateUsageData(int32_t databaseType, BundleActivePeriodStats &stats);
     std::shared_ptr<BundleActivePeriodStats> GetCurrentUsageData(int32_t databaseType, int userId);
     void RenewTableTime(int64_t timeDiffMillis);
@@ -59,9 +59,12 @@ public:
     void OnPackageUninstalled(const int userId, const std::string& bundleName);
     void ChangeToDebug();
     void UpdateModuleData(const int userId,
-        std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords_, const int64_t timeStamp);
-    void RemoveFormData(const int userId, const std::string formName,
-        const int32_t formDimension, const int64_t formId);
+        std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords, const int64_t timeStamp);
+    void RemoveFormData(const int userId, const std::string bundleName,
+        const std::string moduleName, const std::string formName, const int32_t formDimension,
+        const int64_t formId);
+    void LoadModuleData(const int32_t userId, std::map<std::string,
+        std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
     void LoadFormData(const int32_t userId, std::map<std::string,
         std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
 
@@ -73,7 +76,10 @@ private:
     int32_t NearIndexOnOrAfterCurrentTime(int64_t currentTime, std::vector<int64_t> &sortedTableArray);
     int32_t NearIndexOnOrBeforeCurrentTime(int64_t currentTime, std::vector<int64_t> &sortedTableArray);
     int32_t RenameTableName(unsigned int databaseType, int64_t tableOldTime, int64_t tableNewTime);
-    std::string GetTableIndexSql(unsigned int databaseType, int64_t tableTime, bool createFlag);
+    std::string GetTableIndexSql(unsigned int databaseType, int64_t tableTime, bool createFlag,
+        int32_t indexFlag = BUNDLE_ACTIVE_DB_INDEX_NORMAL);
+    int32_t SetNewIndexWhenTimeChanged(unsigned int databaseType, int64_t tableOldTime,
+        int64_t tableNewTime, std::shared_ptr<NativeRdb::RdbStore> rdbStore);
     void FlushPackageInfo(unsigned int databaseType, const BundleActivePeriodStats &stats);
     void FlushEventInfo(unsigned int databaseType, BundleActivePeriodStats &stats);
     void DeleteExcessiveTableData(unsigned int databaseType);
@@ -84,6 +90,8 @@ private:
     int32_t CreateEventLogTable(unsigned int databaseType, int64_t currentTimeMillis);
     int32_t CreateDurationTable(unsigned int databaseType);
     int32_t CreateBundleHistoryTable(unsigned int databaseType);
+    int32_t CreateModuleRecordTable(unsigned int databaseType, int64_t timeStamp);
+    int32_t CreateFormRecordTable(unsigned int databaseType, int64_t timeStamp);
     std::unique_ptr<NativeRdb::ResultSet> QueryStatsInfoByStep(unsigned int databaseType,
         const std::string &sql, const std::vector<std::string> &selectionArgs);
     void DeleteUninstalledInfo(const int userId, const std::string& bundleName, const std::string& tableName,
@@ -91,6 +99,9 @@ private:
     int32_t CreateDatabasePath();
     int64_t GetSystemTimeMs();
     void CheckDatabaseFile(unsigned int databaseType);
+    void UpdateFormData(const int32_t userId, const std::string bundleName,
+        const std::string moduleName, const BundleActiveFormRecord& formRecord,
+        std::shared_ptr<NativeRdb::RdbStore> rdbStore);
 
 private:
     std::vector<std::string> databaseFiles_;
@@ -100,6 +111,8 @@ private:
     std::string eventTableName_;
     std::string durationTableName_;
     std::string bundleHistoryTableName_;
+    std::string moduleRecordsTableName_;
+    std::string formRecordsTableName_;
     std::string versionDirectoryPath_;
     std::string versionFile_;
     uint32_t currentVersion_;

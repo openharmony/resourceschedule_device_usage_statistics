@@ -32,7 +32,6 @@ namespace OHOS {
 namespace DeviceUsageStats {
 static std::string DEFAULT_BUNDLENAME = "com.ohos.camera";
 static std::string DEFAULT_MODULENAME = "defaultmodulename";
-static std::string DEFAULT_MODULE = "defaultmodule";
 static std::string DEFAULT_FORM_NAME = "defaultformname";
 static int32_t DEFAULT_DIMENSION = 4;
 static int64_t DEFAULT_FORMID = 1;
@@ -90,10 +89,10 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_GetServiceObject_0
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, Function | MediumTest | Level0)
 {
-    BundleActiveEvent eventA(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME, DEFAULT_MODULE, DEFAULT_FORM_NAME,
+    BundleActiveEvent eventA(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME, DEFAULT_FORM_NAME,
         DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_CLICKED);
     BundleActiveClient::GetInstance().ReportEvent(eventA, DEFAULT_USERID);
-    BundleActiveEvent eventB(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME, DEFAULT_MODULE, DEFAULT_FORM_NAME,
+    BundleActiveEvent eventB(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME, DEFAULT_FORM_NAME,
         DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_REMOVED);
     BundleActiveClient::GetInstance().ReportEvent(eventB, DEFAULT_USERID);
 }

@@ -21,9 +21,15 @@ namespace DeviceUsageStats {
 void BundleActiveUserService::Init(const int64_t timeStamp)
 {
     database_.InitDatabaseTableInfo(timeStamp);
+    database_.InitUsageGroupDatabase(APP_GROUP_DATABASE_INDEX, true);
     BUNDLE_ACTIVE_LOGI("Init called");
     LoadActiveStats(timeStamp, false, false);
+    database_.LoadModuleData(userId_, moduleRecords_);
     database_.LoadFormData(userId_, moduleRecords_);
+    if (debugUserService_) {
+        PrintInMemFormStats();
+        PrintInMemPackageStats(0);
+    }
     std::shared_ptr<BundleActivePeriodStats> currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentDailyStats != nullptr) {
         BundleActiveEvent startupEvent(BundleActiveEvent::STARTUP, timeStamp - ONE_SECOND_MILLISECONDS);
@@ -318,12 +324,12 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
         return result;
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
-    BUNDLE_ACTIVE_LOGI("Query package data in db from %{public}lld to %{public}lld, current begin %{public}lld",
-        beginTime, truncatedEndTime, currentStats->beginTime_);
+    BUNDLE_ACTIVE_LOGI("Query package data in db from %{public}lld to %{public}lld", beginTime, truncatedEndTime);
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
-    BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}d",
-        static_cast<int>(result.size()));
-    PrintInMemPackageStats(intervalType);
+    BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}d", static_cast<int>(result.size()));
+    if (debugUserService_) {
+        PrintInMemPackageStats(intervalType);
+    }
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats need in memory stats");
@@ -361,7 +367,9 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     BUNDLE_ACTIVE_LOGI("Query event bundle name is %{public}s", bundleName.c_str());
     result = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
     BUNDLE_ACTIVE_LOGI("Query event data in db result size is %{public}d", result.size());
-    PrintInMemEventStats();
+    if (debugUserService_) {
+        PrintInMemEventStats();
+    }
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryEvents need in memory stats");
@@ -432,9 +440,9 @@ void BundleActiveUserService::PrintInMemFormStats()
 {
     for (const auto& oneModule : moduleRecords_) {
         if (oneModule.second) {
-        BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, module package is %{public}s, "
+        BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, "
             "lastusedtime is %{public}lld, launchcount is %{public}d", oneModule.second->bundleName_.c_str(),
-            oneModule.second->moduleName_.c_str(), oneModule.second->modulePackage_.c_str(),
+            oneModule.second->moduleName_.c_str(),
             oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_);
         BUNDLE_ACTIVE_LOGI("combined info is %{public}s", oneModule.first.c_str());
             for (const auto& oneForm : oneModule.second->formRecords_) {
@@ -459,23 +467,25 @@ void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
         NotifyStatsChanged();
     } else if (event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED && moduleRecord) {
         moduleRecord->RemoveOneFormRecord(event.formName_, event.formDimension_, event.formId_);
-        database_.RemoveFormData(userId_, event.formName_, event.formDimension_, event.formId_);
-        NotifyStatsChanged();
+        database_.RemoveFormData(userId_, event.bundleName_, event.moduleName_, event.formName_, event.formDimension_,
+            event.formId_);
     }
-    PrintInMemFormStats();
+    if (debugUserService_) {
+        PrintInMemFormStats();
+    }
 }
 
 std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateModuleRecord(
     const BundleActiveEvent& event)
 {
     BUNDLE_ACTIVE_LOGI("GetOrCreateModuleRecord called");
-    std::string combinedInfo = event.bundleName_ + " " + event.moduleName_ + " " + event.modulePackage_;
+    std::string combinedInfo = event.bundleName_ + " " + event.moduleName_;
     auto it = moduleRecords_.find(combinedInfo);
     if (it == moduleRecords_.end()) {
         auto moduleRecordInserted = std::make_shared<BundleActiveModuleRecord>();
         moduleRecordInserted->bundleName_ = event.bundleName_;
         moduleRecordInserted->moduleName_ = event.moduleName_;
-        moduleRecordInserted->modulePackage_ = event.modulePackage_;
+        moduleRecordInserted->userId_ = userId_;
         moduleRecords_[combinedInfo] = moduleRecordInserted;
     }
     return moduleRecords_[combinedInfo];

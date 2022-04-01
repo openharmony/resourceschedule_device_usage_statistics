@@ -464,23 +464,23 @@ void BundleActiveService::QueryModuleRecordInfos(BundleActiveModuleRecord& modul
         BUNDLE_ACTIVE_LOGW("GetApplicationInfo failed!");
         return;
     }
-    AbilityInfo mockAbilityInfo;
-    mockAbilityInfo.bundleName = moduleRecord.bundleName_;
-    mockAbilityInfo.package = moduleRecord.modulePackage_;
-    HapModuleInfo hapModuleInfo;
-    if (!sptrBundleMgr_->GetHapModuleInfo(mockAbilityInfo, hapModuleInfo)) {
-        BUNDLE_ACTIVE_LOGW("GetHapModuleInfo failed!");
+    BundleInfo bundleInfo;
+    if (!sptrBundleMgr_->GetBundleInfo(moduleRecord.bundleName_, BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO,
+        bundleInfo, moduleRecord.userId_)) {
+        BUNDLE_ACTIVE_LOGW("GetBundleInfo failed!");
         return;
     }
-    std::string mainAbility = hapModuleInfo.mainAbility;
-    if (!hapModuleInfo.abilityInfos.empty()) {
-        for (auto oneAbilityInfo : hapModuleInfo.abilityInfos) {
-            if (oneAbilityInfo.type != AbilityType::PAGE) {
-                continue;
-            }
-            if (mainAbility.empty() || mainAbility.compare(oneAbilityInfo.name) == 0) {
-                SerModuleProperties(hapModuleInfo, appInfo, oneAbilityInfo, moduleRecord);
-                break;
+    for (const auto & oneModuleInfo : bundleInfo.hapModuleInfos) {
+        if (oneModuleInfo.moduleName == moduleRecord.moduleName_) {
+            std::string mainAbility = oneModuleInfo.mainAbility;
+            for (auto oneAbilityInfo : oneModuleInfo.abilityInfos) {
+                if (oneAbilityInfo.type != AbilityType::PAGE) {
+                    continue;
+                }
+                if (mainAbility.empty() || mainAbility.compare(oneAbilityInfo.name) == 0) {
+                    SerModuleProperties(oneModuleInfo, appInfo, oneAbilityInfo, moduleRecord);
+                    break;
+                }
             }
         }
     }

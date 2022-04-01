@@ -42,7 +42,6 @@ public:
     std::string deviceId_;
     std::string bundleName_;
     std::string moduleName_;
-    std::string modulePackage_;
     std::string abilityName_;
     uint32_t appLabelId_;
     uint32_t labelId_;
@@ -50,7 +49,7 @@ public:
     uint32_t abilityLableId_;
     uint32_t abilityDescriptionId_;
     uint32_t abilityIconId_;
-    uint32_t launchedCount_;
+    int32_t launchedCount_;
     int64_t lastModuleUsedTime_;
     int32_t userId_;
     bool removed_;
