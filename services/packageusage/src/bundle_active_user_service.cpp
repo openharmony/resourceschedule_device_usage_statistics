@@ -327,7 +327,8 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
         return result;
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
-    BUNDLE_ACTIVE_LOGI("Query package data in db from %{public}lld to %{public}lld", beginTime, truncatedEndTime);
+    BUNDLE_ACTIVE_LOGI("Query package data in db from %{public}lld to %{public}lld",
+        (long long)beginTime, (long long)truncatedEndTime);
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
     BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}d", static_cast<int>(result.size()));
     if (debugUserService_) {
@@ -369,7 +370,7 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     }
     BUNDLE_ACTIVE_LOGI("Query event bundle name is %{public}s", bundleName.c_str());
     result = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
-    BUNDLE_ACTIVE_LOGI("Query event data in db result size is %{public}d", result.size());
+    BUNDLE_ACTIVE_LOGI("Query event data in db result size is %{public}zu", result.size());
     if (debugUserService_) {
         PrintInMemEventStats();
     }
@@ -447,12 +448,13 @@ void BundleActiveUserService::PrintInMemFormStats()
         BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, "
             "lastusedtime is %{public}lld, launchcount is %{public}d", oneModule.second->bundleName_.c_str(),
             oneModule.second->moduleName_.c_str(),
-            oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_);
+            (long long)oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_);
         BUNDLE_ACTIVE_LOGI("combined info is %{public}s", oneModule.first.c_str());
             for (const auto& oneForm : oneModule.second->formRecords_) {
                 BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, "
                     "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
-                    oneForm.formDimension_, oneForm.formId_, oneForm.formLastUsedTime_, oneForm.count_);
+                    oneForm.formDimension_, (long long)oneForm.formId_,
+                    (long long)oneForm.formLastUsedTime_, oneForm.count_);
             }
         }
     }
