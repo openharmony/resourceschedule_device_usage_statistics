@@ -37,10 +37,11 @@ void BundleActiveUserService::Init(const int64_t timeStamp)
         currentDailyStats->AddEvent(startupEvent);
         for (auto it : currentDailyStats->events_.events_) {
             BUNDLE_ACTIVE_LOGI("Init event id is %{public}d, time stamp is %{public}lld",
-                it.eventId_, it.timeStamp_);
+                it.eventId_, (long long)it.timeStamp_);
         }
         BUNDLE_ACTIVE_LOGI("Init currentDailyStats begintime is %{public}lld, "
-            "expire time is %{public}lld", currentDailyStats->beginTime_, dailyExpiryDate_.GetMilliseconds());
+            "expire time is %{public}lld", (long long)currentDailyStats->beginTime_,
+            (long long)dailyExpiryDate_.GetMilliseconds());
     }
 }
 
@@ -94,7 +95,7 @@ void BundleActiveUserService::NotifyNewUpdate()
 void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
 {
     BUNDLE_ACTIVE_LOGI("ReportEvent, B time is %{public}lld, E time is %{public}lld, userId is %{public}d,",
-        currentStats_[0]->beginTime_, dailyExpiryDate_.GetMilliseconds(), userId_);
+        (long long)currentStats_[0]->beginTime_, (long long)dailyExpiryDate_.GetMilliseconds(), userId_);
     event.PrintEvent();
     if (event.timeStamp_ >= dailyExpiryDate_.GetMilliseconds()) {
         BUNDLE_ACTIVE_LOGI("ReportEvent later than daily expire, renew data in memory");
@@ -205,11 +206,12 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
         currentStats_[intervalType].reset(); // 当前interval stat置空
         if (stats != nullptr) { // 找出最近的stats
             BUNDLE_ACTIVE_LOGI("LoadActiveStats inter type is %{public}d, "
-                "bundle size is %{public}d", intervalType, stats->bundleStats_.size());
+                "bundle size is %{public}zu", intervalType, stats->bundleStats_.size());
             // 如果当前时间在stats的统计时间范围内，则可以从数据库加载数据
             BUNDLE_ACTIVE_LOGI("interval type is %{public}d, database stat BEGIN time is %{public}lld, "
                 "timestamp is %{public}lld, expect end is %{public}lld",
-                intervalType, stats->beginTime_, timeStamp, stats->beginTime_ + periodLength_[intervalType]);
+                intervalType, (long long)stats->beginTime_, (long long)timeStamp,
+                (long long)stats->beginTime_ + periodLength_[intervalType]);
             if (timeStamp > stats->beginTime_ && timeStamp < stats->beginTime_ + periodLength_[intervalType]) {
                 currentStats_[intervalType] = stats;
             }
@@ -236,7 +238,8 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
     }
     listener_.OnStatsReload();
     BUNDLE_ACTIVE_LOGI("LoadActiveStats current expire time is %{public}lld, "
-        "begin time is %{public}lld", dailyExpiryDate_.GetMilliseconds(), tmpCalendar.GetMilliseconds());
+        "begin time is %{public}lld", (long long)dailyExpiryDate_.GetMilliseconds(),
+        (long long)tmpCalendar.GetMilliseconds());
 }
 
 void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
@@ -415,7 +418,8 @@ void BundleActiveUserService::PrintInMemPackageStats(const int idx)
         int64_t totalTimeContinuousTaskUsed = it.second->totalContiniousTaskUsedTime_;
         BUNDLE_ACTIVE_LOGI("bundle stat is, totaltime is %{public}lld, lastTimeUsed is %{public}lld"
             "total continuous task is %{public}lld, lastTimeContinuousTaskUsed is %{public}lld",
-            totalUsedTime, lastTimeUsed, totalTimeContinuousTaskUsed, lastTimeContinuousTaskUsed);
+            (long long)totalUsedTime, (long long)lastTimeUsed,
+            (long long)totalTimeContinuousTaskUsed, (long long)lastTimeContinuousTaskUsed);
     }
 }
 
@@ -432,7 +436,7 @@ void BundleActiveUserService::PrintInMemEventStats()
         int64_t timestamp = currentStats_[idx]->events_.events_[i].timeStamp_;
         BUNDLE_ACTIVE_LOGI("In mem, event stat is, abilityid is %{public}s, abilityname is %{public}s, "
             "bundlename is %{public}s, eventid is %{public}d, timestamp is %{public}lld",
-            abilityId.c_str(), abilityname.c_str(), bundlename.c_str(), eventid, timestamp);
+            abilityId.c_str(), abilityname.c_str(), bundlename.c_str(), eventid, (long long)timestamp);
     }
 }
 

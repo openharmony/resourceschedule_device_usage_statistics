@@ -1130,7 +1130,7 @@ void BundleActiveUsageDatabase::RenewTableTime(int64_t changedTime)
         vector<int64_t> tableArray = sortedTableArray_.at(i);
         for (unsigned int j = 0; j < tableArray.size(); j++) {
             int64_t newTime = tableArray.at(j) + changedTime;
-            BUNDLE_ACTIVE_LOGI("new table time is %{public}lld", newTime);
+            BUNDLE_ACTIVE_LOGI("new table time is %{public}lld", (long long)newTime);
             if (newTime < 0) {
                 DeleteInvalidTable(i, tableArray.at(j));
             } else {
@@ -1209,7 +1209,8 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
         return databaseUsageStats;
     }
     if (endTime <= beginTime) {
-        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= beginTime(%{public}lld)", endTime, beginTime);
+        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= beginTime(%{public}lld)",
+            (long long)endTime, (long long)beginTime);
         return databaseUsageStats;
     }
     int32_t startIndex = NearIndexOnOrBeforeCurrentTime(beginTime, sortedTableArray_.at(databaseType));
@@ -1301,12 +1302,14 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
         return databaseEvents;
     }
     if (endTime <= beginTime) {
-        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= beginTime(%{public}lld)", endTime, beginTime);
+        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= beginTime(%{public}lld)",
+            (long long)endTime, (long long)beginTime);
         return databaseEvents;
     }
     int64_t eventTableTime = ParseStartTime(eventTableName_);
     if (endTime < eventTableTime) {
-        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= eventTableTime(%{public}lld)", endTime, eventTableTime);
+        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= eventTableTime(%{public}lld)",
+            (long long)endTime, (long long)eventTableTime);
         return databaseEvents;
     }
     vector<string> queryCondition;
