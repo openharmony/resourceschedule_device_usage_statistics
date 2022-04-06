@@ -327,8 +327,6 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
         return result;
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
-    BUNDLE_ACTIVE_LOGI("Query package data in db from %{public}lld to %{public}lld",
-        (long long)beginTime, (long long)truncatedEndTime);
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
     BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}d", static_cast<int>(result.size()));
     if (debugUserService_) {
