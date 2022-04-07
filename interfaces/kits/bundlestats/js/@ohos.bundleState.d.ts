@@ -89,6 +89,92 @@ declare namespace bundleState {
     }
 
     /**
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     */
+    interface BundleActiveFormInfo {
+        /**
+         * the form name.
+         */
+        formName?: string;
+        /**
+         * the form dimension.
+         */
+        formDimension: number;
+        /**
+         * the form id.
+         */
+        formId: number;
+        /**
+         * the last time when the form was accessed, in milliseconds..
+         */
+        formLastUsedTime: number;
+        /**
+         * the click count of module.
+         */
+        count: number;
+    }
+
+    /**
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     */
+    interface BundleActiveModuleInfo {
+        /**
+         * the device id of module.
+         */
+        deviceId?: string;
+        /**
+         * the bundle name.
+         */
+        bundleName?: string;
+        /**
+         * the module name.
+         */
+        moduleName?: string;
+        /**
+         * the main ability name of module.
+         */
+        abilityName?: string;
+        /**
+         * the label id of application.
+         */
+        appLabelId?: number;
+        /**
+         * the label id of module.
+         */
+        labelId?: number;
+        /**
+         * the description id of application.
+         */
+        descriptionId?: number;
+        /**
+         * the ability id of main ability.
+         */
+        abilityLableId?: number;
+        /**
+         * the description id of main ability.
+         */
+        abilityDescriptionId?: number;
+        /**
+         * the icon id of main ability.
+         */
+        abilityIconId?: number;
+        /**
+         * the launch count of module.
+         */
+        launchedCount?: number;
+        /**
+         * the last time when the module was accessed, in milliseconds.
+         */
+        lastModuleUsedTime?: number;
+        /**
+         * the form usage record list of current module.
+         */
+        formRecords?: Array<BundleActiveFormInfo>;
+    }
+
+    /**
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      */
@@ -244,6 +330,19 @@ declare namespace bundleState {
      */
     function queryCurrentBundleActiveStates(begin: number, end: number, callback: AsyncCallback<Array<BundleActiveState>>): void;
     function queryCurrentBundleActiveStates(begin: number, end: number): Promise<Array<BundleActiveState>>;
+
+    /**
+     * Queries module usage records.
+     *
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @systemapi Hide this for inner system use.
+     * @param maxNum Indicates max record number in result, max is 1000.
+     * @return Returns the {@link BundleActiveModuleInfo} object Array containing the state data of the current module.
+     */
+    function getModuleUsageRecord(maxNum: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
+    function getModuleUsageRecord(maxNum: number): Promise<Array<BundleActiveModuleInfo>>;
 }
 
 export default bundleState;

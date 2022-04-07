@@ -408,6 +408,9 @@ void BundleActiveCore::OnUserSwitched(const int userId)
 int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
 {
     BUNDLE_ACTIVE_LOGI("FLUSH interval is %{public}lld, debug is %{public}d", flushInterval_, debugCore_);
+    if (debugCore_) {
+        event.PrintEvent();
+    }
     std::lock_guard<std::mutex> lock(mutex_);
     if (userId == 0 || userId == -1) {
         return -1;
