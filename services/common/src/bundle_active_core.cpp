@@ -142,7 +142,7 @@ void BundleActiveCore::Init()
     realTimeShot_ = timer->GetBootTimeMs();
     systemTimeShot_ = GetSystemTimeMs();
     bundleGroupController_ = std::make_shared<BundleActiveGroupController>(debugCore_);
-    BUNDLE_ACTIVE_LOGI("system time shot is %{public}lld", systemTimeShot_);
+    BUNDLE_ACTIVE_LOGI("system time shot is %{public}lld", (long long)systemTimeShot_);
 }
 
 void BundleActiveCore::InitBundleGroupController()
@@ -333,7 +333,8 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
     }
     BUNDLE_ACTIVE_LOGI("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, "
         "diff is %{public}lld",
-        actualSystemTime, actualRealTime, expectedSystemTime, diffSystemTime);
+        (long long)actualSystemTime, (long long)actualRealTime,
+        (long long)expectedSystemTime, (long long)diffSystemTime);
     if (std::abs(diffSystemTime) > TIME_CHANGE_THRESHOLD_MILLIS) {
         // 时区变换逻辑
         auto it = userStatServices_.find(userId);
@@ -429,7 +430,8 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
     }
 
     BUNDLE_ACTIVE_LOGI("report event called, bundle name %{public}s time %{public}lld userId %{public}d, "
-        "eventid %{public}d, in lock range", event.bundleName_.c_str(), event.timeStamp_, userId, event.eventId_);
+        "eventid %{public}d, in lock range", event.bundleName_.c_str(),
+        (long long)event.timeStamp_, userId, event.eventId_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == -1) {
         return -1;
@@ -488,7 +490,7 @@ std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const 
         return result;
     }
     BUNDLE_ACTIVE_LOGI("QueryPackageStats begin time is %{public}lld, end time is %{public}lld, "
-        "intervaltype is %{public}d", beginTime, endTime, intervalType);
+        "intervaltype is %{public}d", (long long)beginTime, (long long)endTime, intervalType);
     if (beginTime > timeNow || beginTime >= endTime) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats time span illegal");
         return result;

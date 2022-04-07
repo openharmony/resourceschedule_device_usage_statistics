@@ -125,7 +125,7 @@ void BundleActiveEvent::PrintEvent() const
         "module name is %{public}s, "
         "form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, event id is %{public}d",
         bundleName_.c_str(), abilityName_.c_str(), continuousTaskAbilityName_.c_str(), moduleName_.c_str(),
-        formName_.c_str(), formDimension_, formId_, eventId_);
+        formName_.c_str(), formDimension_, (long long)formId_, eventId_);
 }
 
 bool BundleActiveEvent::Marshalling(Parcel &parcel) const

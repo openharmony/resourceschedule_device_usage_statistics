@@ -37,10 +37,11 @@ void BundleActiveUserService::Init(const int64_t timeStamp)
         currentDailyStats->AddEvent(startupEvent);
         for (auto it : currentDailyStats->events_.events_) {
             BUNDLE_ACTIVE_LOGI("Init event id is %{public}d, time stamp is %{public}lld",
-                it.eventId_, it.timeStamp_);
+                it.eventId_, (long long)it.timeStamp_);
         }
         BUNDLE_ACTIVE_LOGI("Init currentDailyStats begintime is %{public}lld, "
-            "expire time is %{public}lld", currentDailyStats->beginTime_, dailyExpiryDate_.GetMilliseconds());
+            "expire time is %{public}lld", (long long)currentDailyStats->beginTime_,
+            (long long)dailyExpiryDate_.GetMilliseconds());
     }
 }
 
@@ -94,7 +95,7 @@ void BundleActiveUserService::NotifyNewUpdate()
 void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
 {
     BUNDLE_ACTIVE_LOGI("ReportEvent, B time is %{public}lld, E time is %{public}lld, userId is %{public}d,",
-        currentStats_[0]->beginTime_, dailyExpiryDate_.GetMilliseconds(), userId_);
+        (long long)currentStats_[0]->beginTime_, (long long)dailyExpiryDate_.GetMilliseconds(), userId_);
     event.PrintEvent();
     if (event.timeStamp_ >= dailyExpiryDate_.GetMilliseconds()) {
         BUNDLE_ACTIVE_LOGI("ReportEvent later than daily expire, renew data in memory");
@@ -207,11 +208,12 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
         currentStats_[intervalType].reset(); // 当前interval stat置空
         if (stats != nullptr) { // 找出最近的stats
             BUNDLE_ACTIVE_LOGI("LoadActiveStats inter type is %{public}d, "
-                "bundle size is %{public}d", intervalType, stats->bundleStats_.size());
+                "bundle size is %{public}zu", intervalType, stats->bundleStats_.size());
             // 如果当前时间在stats的统计时间范围内，则可以从数据库加载数据
             BUNDLE_ACTIVE_LOGI("interval type is %{public}d, database stat BEGIN time is %{public}lld, "
                 "timestamp is %{public}lld, expect end is %{public}lld",
-                intervalType, stats->beginTime_, timeStamp, stats->beginTime_ + periodLength_[intervalType]);
+                intervalType, (long long)stats->beginTime_, (long long)timeStamp,
+                (long long)stats->beginTime_ + periodLength_[intervalType]);
             if (timeStamp > stats->beginTime_ && timeStamp < stats->beginTime_ + periodLength_[intervalType]) {
                 currentStats_[intervalType] = stats;
             }
@@ -238,7 +240,8 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
     }
     listener_.OnStatsReload();
     BUNDLE_ACTIVE_LOGI("LoadActiveStats current expire time is %{public}lld, "
-        "begin time is %{public}lld", dailyExpiryDate_.GetMilliseconds(), tmpCalendar.GetMilliseconds());
+        "begin time is %{public}lld", (long long)dailyExpiryDate_.GetMilliseconds(),
+        (long long)tmpCalendar.GetMilliseconds());
 }
 
 void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
@@ -326,7 +329,6 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
         return result;
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
-    BUNDLE_ACTIVE_LOGI("Query package data in db from %{public}lld to %{public}lld", beginTime, truncatedEndTime);
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
     BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}d", static_cast<int>(result.size()));
     if (debugUserService_) {
@@ -368,7 +370,7 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     }
     BUNDLE_ACTIVE_LOGI("Query event bundle name is %{public}s", bundleName.c_str());
     result = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
-    BUNDLE_ACTIVE_LOGI("Query event data in db result size is %{public}d", result.size());
+    BUNDLE_ACTIVE_LOGI("Query event data in db result size is %{public}zu", result.size());
     if (debugUserService_) {
         PrintInMemEventStats();
     }
@@ -417,7 +419,8 @@ void BundleActiveUserService::PrintInMemPackageStats(const int idx)
         int64_t totalTimeContinuousTaskUsed = it.second->totalContiniousTaskUsedTime_;
         BUNDLE_ACTIVE_LOGI("bundle stat is, totaltime is %{public}lld, lastTimeUsed is %{public}lld"
             "total continuous task is %{public}lld, lastTimeContinuousTaskUsed is %{public}lld",
-            totalUsedTime, lastTimeUsed, totalTimeContinuousTaskUsed, lastTimeContinuousTaskUsed);
+            (long long)totalUsedTime, (long long)lastTimeUsed,
+            (long long)totalTimeContinuousTaskUsed, (long long)lastTimeContinuousTaskUsed);
     }
 }
 
@@ -434,7 +437,7 @@ void BundleActiveUserService::PrintInMemEventStats()
         int64_t timestamp = currentStats_[idx]->events_.events_[i].timeStamp_;
         BUNDLE_ACTIVE_LOGI("In mem, event stat is, abilityid is %{public}s, abilityname is %{public}s, "
             "bundlename is %{public}s, eventid is %{public}d, timestamp is %{public}lld",
-            abilityId.c_str(), abilityname.c_str(), bundlename.c_str(), eventid, timestamp);
+            abilityId.c_str(), abilityname.c_str(), bundlename.c_str(), eventid, (long long)timestamp);
     }
 }
 
@@ -445,12 +448,13 @@ void BundleActiveUserService::PrintInMemFormStats()
         BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, "
             "lastusedtime is %{public}lld, launchcount is %{public}d", oneModule.second->bundleName_.c_str(),
             oneModule.second->moduleName_.c_str(),
-            oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_);
+            (long long)oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_);
         BUNDLE_ACTIVE_LOGI("combined info is %{public}s", oneModule.first.c_str());
             for (const auto& oneForm : oneModule.second->formRecords_) {
                 BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, "
                     "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
-                    oneForm.formDimension_, oneForm.formId_, oneForm.formLastUsedTime_, oneForm.count_);
+                    oneForm.formDimension_, (long long)oneForm.formId_,
+                    (long long)oneForm.formLastUsedTime_, oneForm.count_);
             }
         }
     }

@@ -325,7 +325,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
                 bundleName);
         }
     }
-    BUNDLE_ACTIVE_LOGI("QueryCurrentPackageStats result size is %{public}d", result.size());
+    BUNDLE_ACTIVE_LOGI("QueryCurrentPackageStats result size is %{public}zu", result.size());
     return result;
 }
 
@@ -349,7 +349,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryCurrentEvents(const int
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, bundleName);
         }
     }
-    BUNDLE_ACTIVE_LOGI("QueryCurrentEvents result size is %{public}d", result.size());
+    BUNDLE_ACTIVE_LOGI("QueryCurrentEvents result size is %{public}zu", result.size());
     return result;
 }
 

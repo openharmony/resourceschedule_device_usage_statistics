@@ -77,8 +77,9 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
         BUNDLE_ACTIVE_LOGI("QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
-            i + 1, result[i].bundleName_.c_str(), result[i].lastTimeUsed_, result[i].lastContiniousTaskUsed_,
-            result[i].totalInFrontTime_, result[i].totalContiniousTaskUsedTime_);
+            i + 1, result[i].bundleName_.c_str(),
+            (long long)result[i].lastTimeUsed_, (long long)result[i].lastContiniousTaskUsed_,
+            (long long)result[i].totalInFrontTime_, (long long)result[i].totalContiniousTaskUsedTime_);
     }
     return result;
 }
@@ -154,8 +155,9 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStat
         BUNDLE_ACTIVE_LOGI("QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
-            i + 1, result[i].bundleName_.c_str(), result[i].lastTimeUsed_, result[i].lastContiniousTaskUsed_,
-            result[i].totalInFrontTime_, result[i].totalContiniousTaskUsedTime_);
+            i + 1, result[i].bundleName_.c_str(),
+            (long long)result[i].lastTimeUsed_, (long long)result[i].lastContiniousTaskUsed_,
+            (long long)result[i].totalInFrontTime_, (long long)result[i].totalContiniousTaskUsedTime_);
     }
     return result;
 }
@@ -184,7 +186,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64
     for (uint32_t i = 0; i < result.size(); i++) {
         BUNDLE_ACTIVE_LOGI("QueryCurrentEvents event id is %{public}d, bundle name is %{public}s,"
             "time stamp is %{public}lld",
-            result[i].eventId_, result[i].bundleName_.c_str(), result[i].timeStamp_);
+            result[i].eventId_, result[i].bundleName_.c_str(), (long long)result[i].timeStamp_);
     }
     return result;
 }
