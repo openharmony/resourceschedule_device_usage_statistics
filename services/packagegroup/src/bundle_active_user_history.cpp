@@ -78,7 +78,7 @@ int BundleActiveUserHistory::GetLevelIndex(const string& bundleName, const int u
     int64_t bootFromDiff = GetBootBasedTimeStamp(bootBasedTimeStamp) - oneBundleHistory->lastBootFromUsedTimeStamp_;
     BUNDLE_ACTIVE_LOGI("screendiff is %{public}lld, bootfromdiff is %{public}lld, bundle name is %{public}s,"
         "userid is %{public}d",
-        screenDiff, bootFromDiff, bundleName.c_str(), userId);
+        (long long)screenDiff, (long long)bootFromDiff, bundleName.c_str(), userId);
     for (int i = 3; i >= 0; i--) {
         if (screenDiff >= screenTimeLevel[i] && bootFromDiff >= bootFromTimeLevel[i]) {
             return i;
@@ -240,9 +240,11 @@ void BundleActiveUserHistory::PrintData(int userId)
         BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, lastBootFromUsedTimeStamp_ is %{public}lld, "
             "lastScreenUsedTimeStamp_ is %{public}lld, currentGroup_ is %{public}d, reasonInGroup_ is %{public}d, "
             "daily time out %{public}lld, alive time out %{public}lld", oneBundleUsage.first.c_str(),
-            oneBundleUsage.second->lastBootFromUsedTimeStamp_, oneBundleUsage.second->lastScreenUsedTimeStamp_,
+            (long long)oneBundleUsage.second->lastBootFromUsedTimeStamp_,
+            (long long)oneBundleUsage.second->lastScreenUsedTimeStamp_,
             oneBundleUsage.second->currentGroup_, oneBundleUsage.second->reasonInGroup_,
-            oneBundleUsage.second->bundleDailyTimeoutTimeStamp_, oneBundleUsage.second->bundleAliveTimeoutTimeStamp_);
+            (long long)oneBundleUsage.second->bundleDailyTimeoutTimeStamp_,
+            (long long)oneBundleUsage.second->bundleAliveTimeoutTimeStamp_);
     }
 }
 }  // namespace DeviceUsageStats

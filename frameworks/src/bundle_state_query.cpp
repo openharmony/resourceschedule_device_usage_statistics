@@ -340,7 +340,7 @@ napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
         BUNDLE_ACTIVE_LOGE("ParseStatesParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
-            params.endTime, params.beginTime);
+            (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
 
@@ -380,10 +380,10 @@ napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info)
     asyncCallbackInfo->asyncWork = nullptr;
     asyncCallbackInfo->beginTime = params.beginTime;
     BUNDLE_ACTIVE_LOGI("QueryCurrentBundleActiveStates asyncCallbackInfo->beginTime: %{public}lld",
-        asyncCallbackInfo->beginTime);
+        (long long)asyncCallbackInfo->beginTime);
     asyncCallbackInfo->endTime = params.endTime;
     BUNDLE_ACTIVE_LOGI("QueryCurrentBundleActiveStates asyncCallbackInfo->endTime: %{public}lld",
-        asyncCallbackInfo->endTime);
+        (long long)asyncCallbackInfo->endTime);
     BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
 
     napi_value resourceName = nullptr;
@@ -455,10 +455,10 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
     asyncCallbackInfo->asyncWork = nullptr;
     asyncCallbackInfo->beginTime = params.beginTime;
     BUNDLE_ACTIVE_LOGI("QueryBundleActiveStates asyncCallbackInfo->beginTime: %{public}lld",
-        asyncCallbackInfo->beginTime);
+        (long long)asyncCallbackInfo->beginTime);
     asyncCallbackInfo->endTime = params.endTime;
     BUNDLE_ACTIVE_LOGI("QueryBundleActiveStates asyncCallbackInfo->endTime: %{public}lld",
-        asyncCallbackInfo->endTime);
+        (long long)asyncCallbackInfo->endTime);
     BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
 
     napi_value resourceName = nullptr;
@@ -547,7 +547,7 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval endTime(%{public}lld) <= beginTime(%{public}lld)",
-            params.endTime, params.beginTime);
+            (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
 
@@ -590,10 +590,10 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
         asyncCallbackInfo->intervalType);
     asyncCallbackInfo->beginTime = params.beginTime;
     BUNDLE_ACTIVE_LOGI("QueryBundleStateInfoByInterval asyncCallbackInfo->beginTime: %{public}lld",
-        asyncCallbackInfo->beginTime);
+        (long long)asyncCallbackInfo->beginTime);
     asyncCallbackInfo->endTime = params.endTime;
     BUNDLE_ACTIVE_LOGI("QueryBundleStateInfoByInterval asyncCallbackInfo->endTime: %{public}lld",
-        asyncCallbackInfo->endTime);
+        (long long)asyncCallbackInfo->endTime);
     BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
     napi_value resourceName = nullptr;
     napi_create_string_latin1(env, "QueryBundleStateInfoByInterval", NAPI_AUTO_LENGTH, &resourceName);
@@ -669,7 +669,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
-            params.endTime, params.beginTime);
+            (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
 
@@ -709,10 +709,10 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
     asyncCallbackInfo->asyncWork = nullptr;
     asyncCallbackInfo->beginTime = params.beginTime;
     BUNDLE_ACTIVE_LOGI("QueryBundleStateInfos asyncCallbackInfo->beginTime: %{public}lld",
-        asyncCallbackInfo->beginTime);
+        (long long)asyncCallbackInfo->beginTime);
     asyncCallbackInfo->endTime = params.endTime;
     BUNDLE_ACTIVE_LOGI("QueryBundleStateInfos asyncCallbackInfo->endTime: %{public}lld",
-        asyncCallbackInfo->endTime);
+        (long long)asyncCallbackInfo->endTime);
     BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
     napi_value resourceName = nullptr;
     napi_create_string_latin1(env, "QueryBundleStateInfos", NAPI_AUTO_LENGTH, &resourceName);

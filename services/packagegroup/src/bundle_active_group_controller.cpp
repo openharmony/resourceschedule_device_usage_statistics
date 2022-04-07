@@ -84,7 +84,7 @@ void BundleActiveGroupController::SetHandlerAndCreateUserHistory(
 {
     if (bundleUserHistory_ == nullptr) {
         BUNDLE_ACTIVE_LOGI("SetHandlerAndCreateUserHistory bundleUserHistory_ is null, "
-            "called constructor, bootstamp is %{public}lld", bootFromTimeStamp);
+            "called constructor, bootstamp is %{public}lld", (long long)bootFromTimeStamp);
         bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootFromTimeStamp);
     }
     OnScreenChanged(IsScreenOn(), bootFromTimeStamp);
@@ -326,7 +326,8 @@ void BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, 
         bootBasedTimeStampAdjusted) {
         BUNDLE_ACTIVE_LOGI("%{public}s should be decreased, but time out in alive is not expire! now is %{public}lld,"
             "timeout is %{public}lld",
-            bundleName.c_str(), bootBasedTimeStampAdjusted, oneBundleHistory->bundleAliveTimeoutTimeStamp_);
+            bundleName.c_str(),
+            (long long)bootBasedTimeStampAdjusted, (long long)oneBundleHistory->bundleAliveTimeoutTimeStamp_);
         newGroup = ACTIVE_GROUP_ALIVE;
         reason = oneBundleHistory->reasonInGroup_;
     } else if (newGroup > ACTIVE_GROUP_DAILY && oneBundleHistory->bundleDailyTimeoutTimeStamp_ >
