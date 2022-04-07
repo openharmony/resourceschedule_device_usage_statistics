@@ -407,7 +407,7 @@ void BundleActiveCore::OnUserSwitched(const int userId)
 
 int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
 {
-    BUNDLE_ACTIVE_LOGI("FLUSH interval is %{public}lld, debug is %{public}d", flushInterval_, debugCore_);
+    BUNDLE_ACTIVE_LOGI("FLUSH interval is %{public}lld, debug is %{public}d", (long long)flushInterval_, debugCore_);
     if (debugCore_) {
         event.PrintEvent();
     }
