@@ -64,7 +64,7 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value GetModuleUsageRecords(napi_env env, napi_callback_info info)
+napi_value GetModuleUsageRecord(napi_env env, napi_callback_info info)
 {
     ModuleRecordParamsInfo params;
     ParseModuleRecordsParameters(env, info, params);
@@ -90,7 +90,7 @@ napi_value GetModuleUsageRecords(napi_env env, napi_callback_info info)
     asyncCallbackInfo->maxNum = params.maxNum;
     BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
     napi_value resourceName = nullptr;
-    napi_create_string_latin1(env, "GetModuleUsageRecords", NAPI_AUTO_LENGTH, &resourceName);
+    napi_create_string_latin1(env, "GetModuleUsageRecord", NAPI_AUTO_LENGTH, &resourceName);
     napi_create_async_work(env,
         nullptr,
         resourceName,

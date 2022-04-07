@@ -30,6 +30,8 @@ static const int PERIOD_BEST_JS = 0;
 static const int PERIOD_YEARLY_JS = 4;
 static const int PERIOD_BEST_SERVICE = 4;
 static const int DELAY_TIME = 2000;
+static const std::string PERMITTED_PROCESS_NAME = "foundation";
+
 REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 
@@ -200,20 +202,27 @@ void BundleActiveService::OnStop()
     BUNDLE_ACTIVE_LOGI("[Server] OnStop");
 }
 
-
 int BundleActiveService::ReportEvent(BundleActiveEvent& event, const int userId)
 {
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if ((AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE)) {
-        BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-        tmpHandlerObject.event_ = event;
-        sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-        tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
-        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
-        reportHandler_->SendEvent(event);
-        return 0;
+        AccessToken::NativeTokenInfo callingTokenInfo;
+        AccessToken::AccessTokenKit::GetNativeTokenInfo(tokenId, callingTokenInfo);
+        BUNDLE_ACTIVE_LOGI("calling process name is %{public}s", callingTokenInfo.processName.c_str());
+        if (callingTokenInfo.processName == PERMITTED_PROCESS_NAME) {
+            BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
+            tmpHandlerObject.event_ = event;
+            sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+            tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
+            std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+            auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
+            reportHandler_->SendEvent(event);
+            return 0;
+        } else {
+            BUNDLE_ACTIVE_LOGE("token does not belong to fms service process, return");
+            return -1;
+        }
     } else {
         BUNDLE_ACTIVE_LOGE("token does not belong to native process, return");
         return -1;
@@ -441,7 +450,7 @@ int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleA
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     int32_t errCode = 0;
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("QueryEvents userid is %{public}d", userId);
+        BUNDLE_ACTIVE_LOGI("QueryFormStatistics userid is %{public}d", userId);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
         if (isSystemAppAndHasPermission == true) {
             errCode = bundleActiveCore_->QueryFormStatistics(maxNum, results, userId);
@@ -492,7 +501,7 @@ void BundleActiveService::SerModuleProperties(const HapModuleInfo& hapModuleInfo
     moduleRecord.deviceId_ = appInfo.deviceId;
     moduleRecord.abilityName_ = abilityInfo.name;
     moduleRecord.appLabelId_ = appInfo.labelId;
-    // hapModuleInfo.labelId 待徐浩添加
+    moduleRecord.labelId_ = static_cast<uint32_t>(hapModuleInfo.labelId);
     moduleRecord.abilityName_ = abilityInfo.labelId;
     moduleRecord.descriptionId_ = abilityInfo.descriptionId;
     moduleRecord.abilityIconId_ = abilityInfo.iconId;

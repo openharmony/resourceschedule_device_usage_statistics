@@ -180,8 +180,10 @@ void BundleActiveUserService::RestoreStats(bool forced)
                 database_.UpdateUsageData(i, *(currentStats_[i]));
             }
         }
-        database_.UpdateModuleData(userId_, moduleRecords_,
-            currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_);
+        if (!moduleRecords_.empty()) {
+            database_.UpdateModuleData(userId_, moduleRecords_,
+                currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_);
+        }
         currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Clear();
         statsChanged_ = false;
         BUNDLE_ACTIVE_LOGI("change statsChanged_ to %{public}d user is %{public}d", statsChanged_, userId_);

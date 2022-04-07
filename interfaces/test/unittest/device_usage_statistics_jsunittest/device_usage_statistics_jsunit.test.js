@@ -329,5 +329,51 @@ describe("DeviceUsageStatisticsJsTest", function () {
             done();
         }, 500);
     })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest013
+     * @tc.desc: test getModuleUsageRecord callback.
+     * @tc.type: FUNC
+     * @tc.require:
+     */
+    it("DeviceUsageStatisticsJsTest013", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest013---------------------------');
+        let maxNum = 1;
+        bundleState.getModuleUsageRecord(maxNum, (err, res) => {
+            if (err) {
+                console.info('BUNDLE_ACTIVE getModuleUsageRecord callback failure.');
+                expect(false).assertEqual(true);
+            } else {
+                console.info('BUNDLE_ACTIVE getModuleUsageRecord callback success.');
+                expect(true).assertEqual(true);
+            }
+        });
+
+        setTimeout(()=>{
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest014
+     * @tc.desc: test getModuleUsageRecord promise.
+     * @tc.type: FUNC
+     * @tc.require:
+     */
+    it("DeviceUsageStatisticsJsTest014", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest014---------------------------');
+        let maxNum = 1;
+        bundleState.getModuleUsageRecord(maxNum).then((res) => {
+            console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise success.');
+            expect(true).assertEqual(true);
+        }).catch((err) => {
+            console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise failure.');
+            expect(false).assertEqual(true);
+        });
+
+        setTimeout(()=>{
+            done();
+        }, 500);
+    })
 })
 
