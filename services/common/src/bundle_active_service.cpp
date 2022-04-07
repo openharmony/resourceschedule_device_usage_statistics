@@ -31,6 +31,7 @@ static const int PERIOD_YEARLY_JS = 4;
 static const int PERIOD_BEST_SERVICE = 4;
 static const int DELAY_TIME = 2000;
 static const std::string PERMITTED_PROCESS_NAME = "foundation";
+const int SYSTEM_UID = 1000;
 
 REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
@@ -208,8 +209,10 @@ int BundleActiveService::ReportEvent(BundleActiveEvent& event, const int userId)
     if ((AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE)) {
         AccessToken::NativeTokenInfo callingTokenInfo;
         AccessToken::AccessTokenKit::GetNativeTokenInfo(tokenId, callingTokenInfo);
-        BUNDLE_ACTIVE_LOGI("calling process name is %{public}s", callingTokenInfo.processName.c_str());
-        if (callingTokenInfo.processName == PERMITTED_PROCESS_NAME) {
+        int callingUid = OHOS::IPCSkeleton::GetCallingUid();
+        BUNDLE_ACTIVE_LOGI("calling process name is %{public}s, uid is %{public}d",
+            callingTokenInfo.processName.c_str(), callingUid);
+        if (callingTokenInfo.processName == PERMITTED_PROCESS_NAME && callingUid == SYSTEM_UID) {
             BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
             tmpHandlerObject.event_ = event;
             sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
