@@ -462,7 +462,8 @@ int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleA
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         if (isSystemAppAndHasPermission == true ||
-            AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
+            (AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
+            AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE && callingUid == SYSTEM_UID)) {
             errCode = bundleActiveCore_->QueryFormStatistics(maxNum, results, userId);
             for (auto& oneResult : results) {
                 QueryModuleRecordInfos(oneResult);
