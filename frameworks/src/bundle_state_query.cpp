@@ -98,7 +98,8 @@ napi_value GetModuleUsageRecord(napi_env env, napi_callback_info info)
             AsyncCallbackInfoModuleRecord *asyncCallbackInfo = (AsyncCallbackInfoModuleRecord *)data;
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->info.errorCode =
-                    BundleActiveClient::GetInstance().QueryFormStatistics(asyncCallbackInfo->maxNum,
+                    asyncCallbackInfo->info.errorCode =
+                        BundleActiveClient::GetInstance().QueryFormStatistics(asyncCallbackInfo->maxNum,
                         asyncCallbackInfo->moduleRecords);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleStateInfoByInterval, asyncCallbackInfo == nullptr");

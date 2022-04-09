@@ -444,18 +444,25 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, 
     }
 }
 
-int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
+int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId)
 {
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
     BUNDLE_ACTIVE_LOGI("QueryFormStatistics UID is %{public}d", callingUid);
-    // get userid
-    int userId = -1;
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
+    // get userid when userId is -1
     int32_t errCode = 0;
-    if (ret == ERR_OK && userId != -1) {
+    if (userId == -1) {
+        OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
+        if (ret != ERR_OK) {
+            errCode = -1;
+            return errCode;
+        }
+    }
+    if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryFormStatistics userid is %{public}d", userId);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
-        if (isSystemAppAndHasPermission == true) {
+        AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+        if (isSystemAppAndHasPermission == true ||
+            AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
             errCode = bundleActiveCore_->QueryFormStatistics(maxNum, results, userId);
             for (auto& oneResult : results) {
                 QueryModuleRecordInfos(oneResult);

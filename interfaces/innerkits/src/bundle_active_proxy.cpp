@@ -205,7 +205,7 @@ int BundleActiveProxy::QueryPackageGroup()
     return packageGroup;
 }
 
-int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
+int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -214,7 +214,9 @@ int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleAct
         return -1;
     }
     data.WriteInt32(maxNum);
+    data.WriteInt32(userId);
     Remote() -> SendRequest(QUERY_FORM_STATS, data, reply, option);
+    int32_t errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveModuleRecord> tmp;
     for (int i = 0; i < size; i++) {
@@ -224,7 +226,7 @@ int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleAct
         }
         results.emplace_back(*tmp);
     }
-    return 0;
+    return errCode;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
