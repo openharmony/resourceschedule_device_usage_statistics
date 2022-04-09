@@ -37,6 +37,7 @@ const u_int32_t MODULE_RECORDS_MIN_PARAMS = 1;
 const u_int32_t MODULE_RECORDS_PARAMS = 2;
 const u_int32_t SECOND_ARG = 2;
 const u_int32_t THIRD_ARG = 3;
+const int MAXNUM_UP_LIMIT = 1000;
 
 napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback_info &info,
     ModuleRecordParamsInfo &params)
@@ -53,7 +54,7 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
         params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
     }
 
-    if (params.maxNum > 1000) {
+    if (params.maxNum > MAXNUM_UP_LIMIT) {
         BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum is larger than 1000");
         params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
     }
