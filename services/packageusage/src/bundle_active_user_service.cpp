@@ -399,7 +399,7 @@ int BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<Bun
         results.emplace_back(*(oneModuleRecord->second));
     }
     std::sort(results.begin(), results.end(), BundleActiveModuleRecord::cmp);
-    if (static_cast<int32_t>(results.size()) < maxNum) {
+    if (static_cast<int32_t>(results.size()) > maxNum) {
         results.resize(maxNum);
     }
     for (auto result : results) {

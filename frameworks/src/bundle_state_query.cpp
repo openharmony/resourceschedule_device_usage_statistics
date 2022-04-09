@@ -49,7 +49,12 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
 
     // argv[0] : maxNum
     if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.maxNum) == nullptr) {
-        BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, beginTime type is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum type is invalid.");
+        params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
+    }
+
+    if (params.maxNum > 1000) {
+        BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum is larger than 1000");
         params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
     }
 
