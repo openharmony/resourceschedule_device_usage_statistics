@@ -32,6 +32,7 @@ static const int PERIOD_BEST_SERVICE = 4;
 static const int DELAY_TIME = 2000;
 static const std::string PERMITTED_PROCESS_NAME = "foundation";
 const int SYSTEM_UID = 1000;
+const int ROOT_UID = 0;
 
 REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
@@ -444,18 +445,26 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, 
     }
 }
 
-int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
+int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId)
 {
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
     BUNDLE_ACTIVE_LOGI("QueryFormStatistics UID is %{public}d", callingUid);
-    // get userid
-    int userId = -1;
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
+    // get userid when userId is -1
     int32_t errCode = 0;
-    if (ret == ERR_OK && userId != -1) {
+    if (userId == -1) {
+        OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
+        if (ret != ERR_OK) {
+            errCode = -1;
+            return errCode;
+        }
+    }
+    if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryFormStatistics userid is %{public}d", userId);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
-        if (isSystemAppAndHasPermission == true) {
+        AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+        if (isSystemAppAndHasPermission == true ||
+            (AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
+            AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE && (callingUid == SYSTEM_UID || callingUid == ROOT_UID))) {
             errCode = bundleActiveCore_->QueryFormStatistics(maxNum, results, userId);
             for (auto& oneResult : results) {
                 QueryModuleRecordInfos(oneResult);
@@ -505,7 +514,7 @@ void BundleActiveService::SerModuleProperties(const HapModuleInfo& hapModuleInfo
     moduleRecord.abilityName_ = abilityInfo.name;
     moduleRecord.appLabelId_ = appInfo.labelId;
     moduleRecord.labelId_ = static_cast<uint32_t>(hapModuleInfo.labelId);
-    moduleRecord.abilityName_ = abilityInfo.labelId;
+    moduleRecord.abilityLableId_ = abilityInfo.labelId;
     moduleRecord.descriptionId_ = abilityInfo.descriptionId;
     moduleRecord.abilityIconId_ = abilityInfo.iconId;
     moduleRecord.installFreeSupported_ = hapModuleInfo.installationFree;

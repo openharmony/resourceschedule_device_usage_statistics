@@ -37,6 +37,7 @@ const u_int32_t MODULE_RECORDS_MIN_PARAMS = 1;
 const u_int32_t MODULE_RECORDS_PARAMS = 2;
 const u_int32_t SECOND_ARG = 2;
 const u_int32_t THIRD_ARG = 3;
+const int MAXNUM_UP_LIMIT = 1000;
 
 napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback_info &info,
     ModuleRecordParamsInfo &params)
@@ -49,7 +50,12 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
 
     // argv[0] : maxNum
     if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.maxNum) == nullptr) {
-        BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, beginTime type is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum type is invalid.");
+        params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
+    }
+
+    if (params.maxNum > MAXNUM_UP_LIMIT) {
+        BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum is larger than 1000");
         params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
     }
 
@@ -98,7 +104,8 @@ napi_value GetModuleUsageRecord(napi_env env, napi_callback_info info)
             AsyncCallbackInfoModuleRecord *asyncCallbackInfo = (AsyncCallbackInfoModuleRecord *)data;
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->info.errorCode =
-                    BundleActiveClient::GetInstance().QueryFormStatistics(asyncCallbackInfo->maxNum,
+                    asyncCallbackInfo->info.errorCode =
+                        BundleActiveClient::GetInstance().QueryFormStatistics(asyncCallbackInfo->maxNum,
                         asyncCallbackInfo->moduleRecords);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleStateInfoByInterval, asyncCallbackInfo == nullptr");

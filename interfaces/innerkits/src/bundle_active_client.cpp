@@ -114,12 +114,12 @@ int BundleActiveClient::QueryPackageGroup()
     return bundleActiveProxy_->QueryPackageGroup();
 }
 
-int BundleActiveClient::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
+int BundleActiveClient::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId)
 {
     if (!GetBundleActiveProxy()) {
         return -1;
     }
-    return bundleActiveProxy_->QueryFormStatistics(maxNum, results);
+    return bundleActiveProxy_->QueryFormStatistics(maxNum, results, userId);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

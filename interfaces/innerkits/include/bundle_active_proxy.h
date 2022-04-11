@@ -77,10 +77,11 @@ public:
     int QueryPackageGroup() override;
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
-    * parameters: maxNum, results
+    * parameters: maxNum, results, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId
     * return: errorcode.
     */
-    int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results) override;
+    int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId = -1) override;
     /*
     * function: BundleActiveProxy, default constructor.
     * parameters: impl

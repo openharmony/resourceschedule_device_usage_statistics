@@ -135,8 +135,10 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             std::vector<BundleActiveModuleRecord> results;
             int size = 0;
             int32_t maxNum = data.ReadInt32();
-            QueryFormStatistics(maxNum, results);
+            int32_t userId = data.ReadInt32();
+            int32_t errCode = QueryFormStatistics(maxNum, results, userId);
             size = static_cast<int>(results.size());
+            reply.WriteInt32(errCode);
             reply.WriteInt32(size);
             for (int i = 0; i < size; i++) {
                 bool tmp = results[i].Marshalling(reply);

@@ -392,6 +392,7 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
 
 int BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
 {
+    BUNDLE_ACTIVE_LOGI("QueryFormStatistics called, MAX IS %{public}d", maxNum);
     for (auto oneModuleRecord = moduleRecords_.begin(); oneModuleRecord != moduleRecords_.end(); oneModuleRecord++) {
         if (!oneModuleRecord->second) {
             continue;
@@ -399,10 +400,10 @@ int BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<Bun
         results.emplace_back(*(oneModuleRecord->second));
     }
     std::sort(results.begin(), results.end(), BundleActiveModuleRecord::cmp);
-    if (static_cast<int32_t>(results.size()) < maxNum) {
+    if (static_cast<int32_t>(results.size()) > maxNum) {
         results.resize(maxNum);
     }
-    for (auto result : results) {
+    for (auto& result : results) {
         std::sort(result.formRecords_.begin(), result.formRecords_.end(), BundleActiveFormRecord::cmp);
     }
     return 0;

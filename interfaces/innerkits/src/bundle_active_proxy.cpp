@@ -205,7 +205,7 @@ int BundleActiveProxy::QueryPackageGroup()
     return packageGroup;
 }
 
-int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
+int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -214,7 +214,9 @@ int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleAct
         return -1;
     }
     data.WriteInt32(maxNum);
+    data.WriteInt32(userId);
     Remote() -> SendRequest(QUERY_FORM_STATS, data, reply, option);
+    int32_t errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveModuleRecord> tmp;
     for (int i = 0; i < size; i++) {
@@ -224,7 +226,19 @@ int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleAct
         }
         results.emplace_back(*tmp);
     }
-    return 0;
+    for (const auto& oneModule : results) {
+        BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, "
+            "lastusedtime is %{public}lld, launchcount is %{public}d", oneModule.bundleName_.c_str(),
+            oneModule.moduleName_.c_str(),
+            (long long)oneModule.lastModuleUsedTime_, oneModule.launchedCount_);
+            for (const auto& oneForm : oneModule.formRecords_) {
+                BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, "
+                    "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
+                    oneForm.formDimension_, (long long)oneForm.formId_,
+                    (long long)oneForm.formLastUsedTime_, oneForm.count_);
+        }
+    }
+    return errCode;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
