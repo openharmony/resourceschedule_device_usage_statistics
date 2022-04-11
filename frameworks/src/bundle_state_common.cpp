@@ -139,7 +139,7 @@ void BundleStateCommon::GetBundleStateInfoForResult(napi_env env,
 }
 
 void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
-    const BundleActiveModuleRecord &oneModuleRecord, napi_value &moduleObject)
+    const BundleActiveModuleRecord &oneModuleRecord, napi_value moduleObject)
 {
         napi_value bundleName = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, oneModuleRecord.bundleName_.c_str(),
@@ -171,7 +171,7 @@ void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityDescriptionId",
             abilityDescriptionId));
         napi_value abilityIconId = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, oneModuleRecord.abilityIconId_, &abilityIconId));
+        NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, oneModuleRecord.abilityIconId_, &abilityIconId));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "abilityIconId", abilityIconId));
         napi_value launchedCount = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, oneModuleRecord.launchedCount_, &launchedCount));
@@ -180,7 +180,7 @@ void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
         NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, oneModuleRecord.lastModuleUsedTime_, &lastModuleUsedTime));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "lastLaunchTime", lastModuleUsedTime));
         napi_value removed = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, oneModuleRecord.removed_, &removed));
+        NAPI_CALL_RETURN_VOID(env, napi_get_boolean(env, oneModuleRecord.removed_, &removed));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "isRemoved", removed));
 }
 
@@ -194,7 +194,7 @@ void BundleStateCommon::GetModuleRecordForResult(napi_env env,
         GetModuleRecordBasicForResult(env, item, moduleObject);
 
         napi_value formRecords = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &formRecords));
+        NAPI_CALL_RETURN_VOID(env, napi_create_array(env, &formRecords));
         int32_t formIdx = 0;
         for (const auto& oneFormRecord : item.formRecords_) {
             napi_value formObject = nullptr;

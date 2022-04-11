@@ -32,6 +32,7 @@ static const int PERIOD_BEST_SERVICE = 4;
 static const int DELAY_TIME = 2000;
 static const std::string PERMITTED_PROCESS_NAME = "foundation";
 const int SYSTEM_UID = 1000;
+const int ROOT_UID = 0;
 
 REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
@@ -463,7 +464,7 @@ int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleA
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         if (isSystemAppAndHasPermission == true ||
             (AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
-            AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE && callingUid == SYSTEM_UID)) {
+            AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE && (callingUid == SYSTEM_UID || callingUid == ROOT_UID))) {
             errCode = bundleActiveCore_->QueryFormStatistics(maxNum, results, userId);
             for (auto& oneResult : results) {
                 QueryModuleRecordInfos(oneResult);
@@ -513,7 +514,7 @@ void BundleActiveService::SerModuleProperties(const HapModuleInfo& hapModuleInfo
     moduleRecord.abilityName_ = abilityInfo.name;
     moduleRecord.appLabelId_ = appInfo.labelId;
     moduleRecord.labelId_ = static_cast<uint32_t>(hapModuleInfo.labelId);
-    moduleRecord.abilityName_ = abilityInfo.labelId;
+    moduleRecord.abilityLableId_ = abilityInfo.labelId;
     moduleRecord.descriptionId_ = abilityInfo.descriptionId;
     moduleRecord.abilityIconId_ = abilityInfo.iconId;
     moduleRecord.installFreeSupported_ = hapModuleInfo.installationFree;

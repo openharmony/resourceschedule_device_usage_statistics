@@ -392,6 +392,7 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
 
 int BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
 {
+    BUNDLE_ACTIVE_LOGI("QueryFormStatistics called, MAX IS %{public}d", maxNum);
     for (auto oneModuleRecord = moduleRecords_.begin(); oneModuleRecord != moduleRecords_.end(); oneModuleRecord++) {
         if (!oneModuleRecord->second) {
             continue;
