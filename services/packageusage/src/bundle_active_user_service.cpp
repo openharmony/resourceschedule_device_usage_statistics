@@ -402,7 +402,7 @@ int BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<Bun
     if (static_cast<int32_t>(results.size()) > maxNum) {
         results.resize(maxNum);
     }
-    for (auto result : results) {
+    for (auto& result : results) {
         std::sort(result.formRecords_.begin(), result.formRecords_.end(), BundleActiveFormRecord::cmp);
     }
     return 0;
