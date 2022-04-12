@@ -40,7 +40,7 @@ static napi_value BundleStateInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("queryBundleActiveStates", QueryBundleActiveStates),
         DECLARE_NAPI_FUNCTION("queryBundleStateInfoByInterval", QueryBundleStateInfoByInterval),
         DECLARE_NAPI_FUNCTION("queryBundleStateInfos", QueryBundleStateInfos),
-        DECLARE_NAPI_FUNCTION("getModuleUsageRecord", GetModuleUsageRecord)
+        DECLARE_NAPI_FUNCTION("getRecentUsageModules", GetModuleUsageRecord)
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));

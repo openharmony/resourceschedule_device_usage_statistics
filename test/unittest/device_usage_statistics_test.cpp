@@ -85,7 +85,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_GetServiceObject_0
  * @tc.name: DeviceUsageStatisticsTest_ReportEvent_001
  * @tc.desc: report a mock event
  * @tc.type: FUNC
- * @tc.require: SR000GGTO7 AR000GH6PJ
+ * @tc.require: SR000GGTO7 SR000GU31B AR000GH6PJ AR000GU380
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, Function | MediumTest | Level0)
 {
@@ -158,6 +158,24 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_
 {
     int result = BundleActiveClient::GetInstance().QueryPackageGroup();
     EXPECT_EQ(result, -1);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_QueryFormStatistics_001
+ * @tc.desc: QueryFormStatistics
+ * @tc.type: FUNC
+ * @tc.require: SR000GU2T1 AR000GU37U
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistics_001, Function | MediumTest | Level0)
+{
+    int maxNum = 1;
+    BundleActiveEvent eventA(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME, DEFAULT_FORM_NAME,
+        DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_CLICKED);
+    BundleActiveClient::GetInstance().ReportEvent(eventA, DEFAULT_USERID);
+    std::vector<BundleActiveModuleRecord> results;
+    int errCode = BundleActiveClient::GetInstance().QueryFormStatistics(maxNum, results, DEFAULT_USERID);
+    EXPECT_EQ(errCode, 0);
+    EXPECT_EQ(results.size(), 0);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

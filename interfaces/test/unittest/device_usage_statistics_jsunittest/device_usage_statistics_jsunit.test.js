@@ -332,19 +332,19 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest013
-     * @tc.desc: test getModuleUsageRecord callback.
+     * @tc.desc: test getRecentUsageModules callback.
      * @tc.type: FUNC
-     * @tc.require:
+     * @tc.require: SR000GU2UE AR0003GU3EQ
      */
     it("DeviceUsageStatisticsJsTest013", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest013---------------------------');
         let maxNum = 1;
-        bundleState.getModuleUsageRecord(maxNum, (err, res) => {
+        bundleState.getRecentUsageModules(maxNum, (err, res) => {
             if (err) {
-                console.info('BUNDLE_ACTIVE getModuleUsageRecord callback failure.');
+                console.info('BUNDLE_ACTIVE getRecentUsageModules callback failure.');
                 expect(false).assertEqual(true);
             } else {
-                console.info('BUNDLE_ACTIVE getModuleUsageRecord callback success.');
+                console.info('BUNDLE_ACTIVE getRecentUsageModules callback success.');
                 expect(true).assertEqual(true);
             }
         });
@@ -356,14 +356,14 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest014
-     * @tc.desc: test getModuleUsageRecord promise.
+     * @tc.desc: test getRecentUsageModules promise.
      * @tc.type: FUNC
-     * @tc.require:
+     * @tc.require: SR000GU2UE AR0003GU3EQ
      */
     it("DeviceUsageStatisticsJsTest014", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest014---------------------------');
         let maxNum = 1;
-        bundleState.getModuleUsageRecord(maxNum).then((res) => {
+        bundleState.getRecentUsageModules(maxNum).then((res) => {
             console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise success.');
             expect(true).assertEqual(true);
         }).catch((err) => {
