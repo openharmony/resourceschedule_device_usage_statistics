@@ -460,11 +460,14 @@ void BundleActiveUserService::PrintInMemFormStats(const bool debug, const bool p
             oneModule.second->moduleName_.c_str(),
             (long long)oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_);
         BUNDLE_ACTIVE_LOGI("combined info is %{public}s", oneModule.first.c_str());
-            for (const auto& oneForm : oneModule.second->formRecords_) {
-                BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, "
-                    "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
-                    oneForm.formDimension_, (long long)oneForm.formId_,
-                    (long long)oneForm.formLastUsedTime_, oneForm.count_);
+            if (printform) {
+                for (const auto& oneForm : oneModule.second->formRecords_) {
+                    BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, "
+                        "form id is %{public}lld, "
+                        "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
+                        oneForm.formDimension_, (long long)oneForm.formId_,
+                        (long long)oneForm.formLastUsedTime_, oneForm.count_);
+                }
             }
         }
     }
