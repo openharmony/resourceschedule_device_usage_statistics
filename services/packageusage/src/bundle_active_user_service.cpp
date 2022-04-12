@@ -66,6 +66,12 @@ void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bu
             }
         }
     }
+    for (auto it : moduleRecords_) {
+        if (it.first.find(bundleName) != std::string::npos) {
+            moduleRecords_.erase(it.first);
+            break;
+        }
+    }
     database_.OnPackageUninstalled(userId_, bundleName);
 }
 
