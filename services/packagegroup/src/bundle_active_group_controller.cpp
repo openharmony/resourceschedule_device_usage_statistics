@@ -94,12 +94,14 @@ void BundleActiveGroupController::SetHandlerAndCreateUserHistory(
 void BundleActiveGroupController::OnBundleUninstalled(const int userId, const std::string bundleName)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    BUNDLE_ACTIVE_LOGI("OnBundleUninstalled called, userId is %{public}d, bundlename is %{public}s",
+        userId, bundleName.c_str());
     auto oneUserHistory = bundleUserHistory_->GetUserHistory(userId, false);
     if (oneUserHistory == nullptr) {
         return;
     }
     oneUserHistory->erase(bundleName);
-    bundleUserHistory_->WriteBundleUsage(userId);
+    bundleUserHistory_->OnBundleUninstalled(userId, bundleName);
 }
 
 bool BundleActiveGroupController::GetBundleMgrProxy()

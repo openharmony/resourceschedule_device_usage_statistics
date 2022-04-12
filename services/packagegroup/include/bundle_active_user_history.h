@@ -58,6 +58,8 @@ public:
     void PrintData(int userId);
     void UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t bootBasedTimeStamp,
         const bool& isShutdown = false);
+    void OnBundleUninstalled(const int userId, const std::string bundleName);
+
 private:
     bool isScreenOn_;
 };

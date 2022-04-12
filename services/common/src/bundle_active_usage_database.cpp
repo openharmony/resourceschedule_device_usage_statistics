@@ -1352,7 +1352,6 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
 
 void BundleActiveUsageDatabase::OnPackageUninstalled(const int userId, const string& bundleName)
 {
-    // 加入应用删除后删除卡片
     lock_guard<mutex> lock(databaseMutex_);
     for (uint32_t i = 0; i < sortedTableArray_.size(); i++) {
         if (sortedTableArray_.at(i).empty()) {

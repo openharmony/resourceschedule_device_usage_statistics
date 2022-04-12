@@ -51,6 +51,11 @@ void BundleActiveUserHistory::WriteBundleUsage(const int userId)
     database_.PutBundleHistoryData(userId, userHistory);
 }
 
+void BundleActiveUserHistory::OnBundleUninstalled(const int userId, const std::string bundleName)
+{
+    database_.OnPackageUninstalled(userId, bundleName);
+}
+
 BundleActiveUserHistory::BundleActiveUserHistory(const int64_t bootBasedTimeStamp)
 {
     bootBasedTimeStamp_ = bootBasedTimeStamp;
