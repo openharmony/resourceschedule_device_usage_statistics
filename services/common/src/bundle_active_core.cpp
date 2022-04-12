@@ -409,9 +409,7 @@ void BundleActiveCore::OnUserSwitched(const int userId)
 int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
 {
     BUNDLE_ACTIVE_LOGI("FLUSH interval is %{public}lld, debug is %{public}d", (long long)flushInterval_, debugCore_);
-    if (debugCore_) {
-        event.PrintEvent();
-    }
+    event.PrintEvent(debugCore_);
     std::lock_guard<std::mutex> lock(mutex_);
     if (userId == 0 || userId == -1) {
         return -1;
@@ -447,6 +445,7 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
         service->ReportFormEvent(event);
         return 0;
     }
+    service->ReportModuleEvent(event);
     service->ReportEvent(event);
     bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
     return 0;

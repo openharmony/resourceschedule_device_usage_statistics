@@ -26,10 +26,8 @@ void BundleActiveUserService::Init(const int64_t timeStamp)
     LoadActiveStats(timeStamp, false, false);
     database_.LoadModuleData(userId_, moduleRecords_);
     database_.LoadFormData(userId_, moduleRecords_);
-    if (debugUserService_) {
-        PrintInMemFormStats();
-        PrintInMemPackageStats(0);
-    }
+    PrintInMemFormStats(debugUserService_, true);
+    PrintInMemPackageStats(0, debugUserService_);
     std::shared_ptr<BundleActivePeriodStats> currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentDailyStats != nullptr) {
         BundleActiveEvent startupEvent(BundleActiveEvent::STARTUP, timeStamp - ONE_SECOND_MILLISECONDS);
@@ -102,7 +100,7 @@ void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
 {
     BUNDLE_ACTIVE_LOGI("ReportEvent, B time is %{public}lld, E time is %{public}lld, userId is %{public}d,",
         (long long)currentStats_[0]->beginTime_, (long long)dailyExpiryDate_.GetMilliseconds(), userId_);
-    event.PrintEvent();
+    event.PrintEvent(debugUserService_);
     if (event.timeStamp_ >= dailyExpiryDate_.GetMilliseconds()) {
         BUNDLE_ACTIVE_LOGI("ReportEvent later than daily expire, renew data in memory");
         RenewStatsInMemory(event.timeStamp_);
@@ -337,9 +335,7 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
     BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}d", static_cast<int>(result.size()));
-    if (debugUserService_) {
-        PrintInMemPackageStats(intervalType);
-    }
+    PrintInMemPackageStats(intervalType, debugUserService_);
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats need in memory stats");
@@ -377,9 +373,7 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     BUNDLE_ACTIVE_LOGI("Query event bundle name is %{public}s", bundleName.c_str());
     result = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
     BUNDLE_ACTIVE_LOGI("Query event data in db result size is %{public}zu", result.size());
-    if (debugUserService_) {
-        PrintInMemEventStats();
-    }
+    PrintInMemEventStats(debugUserService_);
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryEvents need in memory stats");
@@ -415,8 +409,11 @@ int BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<Bun
     return 0;
 }
 
-void BundleActiveUserService::PrintInMemPackageStats(const int idx)
+void BundleActiveUserService::PrintInMemPackageStats(const int idx, const bool debug)
 {
+    if (!debug) {
+        return;
+    }
     BUNDLE_ACTIVE_LOGI("PrintInMemPackageStats called");
     for (auto it : currentStats_[idx]->bundleStats_) {
         BUNDLE_ACTIVE_LOGI("In mem, bundle name is %{public}s", it.first.c_str());
@@ -431,8 +428,11 @@ void BundleActiveUserService::PrintInMemPackageStats(const int idx)
     }
 }
 
-void BundleActiveUserService::PrintInMemEventStats()
+void BundleActiveUserService::PrintInMemEventStats(const bool debug)
 {
+    if (!debug) {
+        return;
+    }
     BUNDLE_ACTIVE_LOGI("PrintInMemEventStats called");
     int idx = 0;
     int size = static_cast<int>(currentStats_[idx]->events_.events_.size());
@@ -448,8 +448,11 @@ void BundleActiveUserService::PrintInMemEventStats()
     }
 }
 
-void BundleActiveUserService::PrintInMemFormStats()
+void BundleActiveUserService::PrintInMemFormStats(const bool debug, const bool printform)
 {
+    if (!debug) {
+        return;
+    }
     for (const auto& oneModule : moduleRecords_) {
         if (oneModule.second) {
         BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, "
@@ -457,14 +460,29 @@ void BundleActiveUserService::PrintInMemFormStats()
             oneModule.second->moduleName_.c_str(),
             (long long)oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_);
         BUNDLE_ACTIVE_LOGI("combined info is %{public}s", oneModule.first.c_str());
-            for (const auto& oneForm : oneModule.second->formRecords_) {
-                BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, "
-                    "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
-                    oneForm.formDimension_, (long long)oneForm.formId_,
-                    (long long)oneForm.formLastUsedTime_, oneForm.count_);
+            if (printform) {
+                for (const auto& oneForm : oneModule.second->formRecords_) {
+                    BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, "
+                        "form id is %{public}lld, "
+                        "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
+                        oneForm.formDimension_, (long long)oneForm.formId_,
+                        (long long)oneForm.formLastUsedTime_, oneForm.count_);
+                }
             }
         }
     }
+}
+
+void BundleActiveUserService::ReportModuleEvent(const BundleActiveEvent& event)
+{
+    BUNDLE_ACTIVE_LOGI("ReportModuleEvent called");
+    if (event.eventId_ != BundleActiveEvent::ABILITY_FOREGROUND) {
+        return;
+    }
+    auto moduleRecord = GetOrCreateModuleRecord(event);
+    moduleRecord->UpdateModuleRecord(event.timeStamp_);
+    NotifyStatsChanged();
+    PrintInMemFormStats(debugUserService_, false);
 }
 
 void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
@@ -475,7 +493,6 @@ void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
         if (!moduleRecord) {
             return;
         }
-        moduleRecord->UpdateModuleRecord(event.timeStamp_);
         moduleRecord->AddOrUpdateOneFormRecord(event.formName_, event.formDimension_, event.formId_, event.timeStamp_);
         NotifyStatsChanged();
     } else if (event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED && moduleRecord) {
@@ -483,9 +500,7 @@ void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
         database_.RemoveFormData(userId_, event.bundleName_, event.moduleName_, event.formName_, event.formDimension_,
             event.formId_);
     }
-    if (debugUserService_) {
-        PrintInMemFormStats();
-    }
+    PrintInMemFormStats(debugUserService_, true);
 }
 
 std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateModuleRecord(

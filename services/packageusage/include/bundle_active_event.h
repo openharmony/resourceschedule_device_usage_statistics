@@ -79,14 +79,15 @@ public:
     * function: BundleActiveEvent, constructor of app ability event.
     * parameters: bundleName, abilityName, abilityId
     */
-    BundleActiveEvent(const std::string bundleName, const std::string abilityName, const std::string abilityId);
+    BundleActiveEvent(const std::string bundleName, const std::string abilityName, const std::string abilityId,
+        const std::string moduleName);
     /*
     * function: BundleActiveEvent, constructor of form event.
     * parameters: bundleName, moduleName, formName, formDimension, formId, eventId
     */
     BundleActiveEvent(const std::string bundleName, const std::string moduleName,
         const std::string formName, const int32_t formDimension, const int64_t formId, const int eventId);
-    void PrintEvent() const;
+    void PrintEvent(const bool debug) const;
     /*
     * function: operator=, override operator =.
     * parameters: orig
