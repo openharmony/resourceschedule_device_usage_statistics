@@ -109,7 +109,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
         result.push_back(*tmp);
     }
     for (uint32_t i = 0; i < result.size(); i++) {
-        result[i].PrintEvent();
+        result[i].PrintEvent(true);
     }
     return result;
 }

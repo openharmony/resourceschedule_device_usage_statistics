@@ -58,6 +58,7 @@ public:
     void ReportForShutdown(const BundleActiveEvent& event);
     void ReportEvent(const BundleActiveEvent& event);
     void ReportFormEvent(const BundleActiveEvent& event);
+    void ReportModuleEvent(const BundleActiveEvent& event);
     void RestoreStats(bool forced);
     void RenewStatsInMemory(const int64_t timeStamp);
     void RenewTableTime(int64_t oldTime, int64_t newTime);
@@ -85,9 +86,9 @@ private:
     void NotifyStatsChanged();
     void NotifyNewUpdate();
     std::shared_ptr<BundleActiveModuleRecord> GetOrCreateModuleRecord(const BundleActiveEvent& event);
-    void PrintInMemPackageStats(const int idx);
-    void PrintInMemEventStats();
-    void PrintInMemFormStats();
+    void PrintInMemPackageStats(const int idx, const bool debug);
+    void PrintInMemEventStats(const bool debug);
+    void PrintInMemFormStats(const bool debug, const bool printform);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

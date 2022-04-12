@@ -74,13 +74,13 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
 }
 
 BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string abilityName,
-    const std::string abilityId)
+    const std::string abilityId, const std::string moduleName)
 {
     bundleName_ = bundleName;
     continuousTaskAbilityName_.clear();
     abilityName_ = abilityName;
     abilityId_ = abilityId;
-    moduleName_.clear();
+    moduleName_ = moduleName;
     formName_.clear();
     formDimension_ = 0;
     formId_ = 0;
@@ -119,8 +119,11 @@ BundleActiveEvent& BundleActiveEvent::operator=(const BundleActiveEvent& orig)
     return *this;
 }
 
-void BundleActiveEvent::PrintEvent() const
+void BundleActiveEvent::PrintEvent(const bool debug) const
 {
+    if (!debug) {
+        return;
+    }
     BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, ability name is %{public}s, continue task ability is %{public}s, "
         "module name is %{public}s, "
         "form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, event id is %{public}d",

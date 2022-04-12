@@ -69,6 +69,7 @@ void BundleActiveGroupController::OnUserSwitched(const int userId, const int cur
     std::lock_guard<std::mutex> lock(mutex_);
     if (!activeGroupHandler_.expired()) {
         activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
+        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_BUNDLE_STATE);
     }
     PeriodCheckBundleState(userId);
 }
