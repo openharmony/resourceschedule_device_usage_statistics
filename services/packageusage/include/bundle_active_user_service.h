@@ -80,7 +80,7 @@ private:
     std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords_;
     bool statsChanged_;
     bool debugUserService_;
-    std::string lastBackgroundBundle_;
+    std::string lastForegroundBundle_;
     BundleActiveCore& listener_;
     std::vector<int64_t> periodLength_ = {0, 0, 0, 0};
     void NotifyStatsChanged();
