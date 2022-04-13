@@ -17,6 +17,8 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+const int MAXNUM_UP_LIMIT = 1000;
+
 BundleActiveClient& BundleActiveClient::GetInstance()
 {
     static BundleActiveClient instance;
@@ -116,7 +118,7 @@ int BundleActiveClient::QueryPackageGroup()
 
 int BundleActiveClient::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId)
 {
-    if (maxNum <= 0 || maxNum > 1000) {
+    if (maxNum <= 0 || maxNum > MAXNUM_UP_LIMIT) {
         BUNDLE_ACTIVE_LOGI("maxNum is illegal, maxNum is %{public}d", maxNum);
         return -1;
     }
