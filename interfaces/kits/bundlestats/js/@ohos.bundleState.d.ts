@@ -341,8 +341,8 @@ declare namespace bundleState {
      * @param maxNum Indicates max record number in result, max is 1000.
      * @return Returns the {@link BundleActiveModuleInfo} object Array containing the state data of the current module.
      */
-    function getRecentUsageModules(maxNum: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
-    function getRecentUsageModules(maxNum: number): Promise<Array<BundleActiveModuleInfo>>;
+    function getRecentlyUsedModules(maxNum: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
+    function getRecentlyUsedModules(maxNum: number): Promise<Array<BundleActiveModuleInfo>>;
 }
 
 export default bundleState;
