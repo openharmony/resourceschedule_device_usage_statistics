@@ -116,6 +116,10 @@ int BundleActiveClient::QueryPackageGroup()
 
 int BundleActiveClient::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId)
 {
+    if (maxNum <= 0 || maxNum > 1000) {
+        BUNDLE_ACTIVE_LOGI("maxNum is illegal, maxNum is %{public}d", maxNum);
+        return -1;
+    }
     if (!GetBundleActiveProxy()) {
         return -1;
     }
