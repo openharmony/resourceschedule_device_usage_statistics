@@ -332,19 +332,19 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest013
-     * @tc.desc: test getRecentUsageModules callback.
+     * @tc.desc: test getRecentlyUsedModules callback.
      * @tc.type: FUNC
      * @tc.require: SR000GU2UE AR0003GU3EQ
      */
     it("DeviceUsageStatisticsJsTest013", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest013---------------------------');
         let maxNum = 1;
-        bundleState.getRecentUsageModules(maxNum, (err, res) => {
+        bundleState.getRecentlyUsedModules(maxNum, (err, res) => {
             if (err) {
-                console.info('BUNDLE_ACTIVE getRecentUsageModules callback failure.');
+                console.info('BUNDLE_ACTIVE getRecentlyUsedModules callback failure.');
                 expect(false).assertEqual(true);
             } else {
-                console.info('BUNDLE_ACTIVE getRecentUsageModules callback success.');
+                console.info('BUNDLE_ACTIVE getRecentlyUsedModules callback success.');
                 expect(true).assertEqual(true);
             }
         });
@@ -356,14 +356,14 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest014
-     * @tc.desc: test getRecentUsageModules promise.
+     * @tc.desc: test getRecentlyUsedModules promise.
      * @tc.type: FUNC
      * @tc.require: SR000GU2UE AR0003GU3EQ
      */
     it("DeviceUsageStatisticsJsTest014", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest014---------------------------');
         let maxNum = 1;
-        bundleState.getRecentUsageModules(maxNum).then((res) => {
+        bundleState.getRecentlyUsedModules(maxNum).then((res) => {
             console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise success.');
             expect(true).assertEqual(true);
         }).catch((err) => {
