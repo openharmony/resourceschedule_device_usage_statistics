@@ -54,8 +54,8 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
         params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
     }
 
-    if (params.maxNum > MAXNUM_UP_LIMIT) {
-        BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum is larger than 1000");
+    if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
+        BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum is larger than 1000 or less/equal than 0");
         params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
     }
 
