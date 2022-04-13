@@ -364,10 +364,10 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest014---------------------------');
         let maxNum = 1;
         bundleState.getRecentlyUsedModules(maxNum).then((res) => {
-            console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise success.');
+            console.info('BUNDLE_ACTIVE getRecentlyUsedModules promise success.');
             expect(true).assertEqual(true);
         }).catch((err) => {
-            console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise failure.');
+            console.info('BUNDLE_ACTIVE getRecentlyUsedModules promise failure.');
             expect(false).assertEqual(true);
         });
 
