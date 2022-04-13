@@ -114,12 +114,9 @@ void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
             currentDailyStats->AddEvent(event);
         }
     if (event.eventId_ == BundleActiveEvent::ABILITY_FOREGROUND) {
-        if (!event.bundleName_.empty() && event.bundleName_ != lastBackgroundBundle_) {
+        if (!event.bundleName_.empty() && event.bundleName_ != lastForegroundBundle_) {
             incrementBundleLaunch = true;
-        }
-    } else if (event.eventId_ == BundleActiveEvent::ABILITY_BACKGROUND) {
-        if (!event.bundleName_.empty()) {
-            lastBackgroundBundle_ = event.bundleName_;
+            lastForegroundBundle_ = event.bundleName_;
         }
     }
     for (auto it : currentStats_) {
