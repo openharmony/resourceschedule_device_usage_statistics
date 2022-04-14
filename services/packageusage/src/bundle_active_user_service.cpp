@@ -24,8 +24,7 @@ void BundleActiveUserService::Init(const int64_t timeStamp)
     database_.InitUsageGroupDatabase(APP_GROUP_DATABASE_INDEX, true);
     BUNDLE_ACTIVE_LOGI("Init called");
     LoadActiveStats(timeStamp, false, false);
-    database_.LoadModuleData(userId_, moduleRecords_);
-    database_.LoadFormData(userId_, moduleRecords_);
+    LoadModuleAndFormStats();
     PrintInMemFormStats(debugUserService_, true);
     PrintInMemPackageStats(0, debugUserService_);
     std::shared_ptr<BundleActivePeriodStats> currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
@@ -243,6 +242,12 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
     BUNDLE_ACTIVE_LOGI("LoadActiveStats current expire time is %{public}lld, "
         "begin time is %{public}lld", (long long)dailyExpiryDate_.GetMilliseconds(),
         (long long)tmpCalendar.GetMilliseconds());
+}
+
+void BundleActiveUserService::LoadModuleAndFormStats()
+{
+    database_.LoadModuleData(userId_, moduleRecords_);
+    database_.LoadFormData(userId_, moduleRecords_);
 }
 
 void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)

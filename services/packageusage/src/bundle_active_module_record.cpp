@@ -62,7 +62,7 @@ BundleActiveModuleRecord::BundleActiveModuleRecord()
     abilityDescriptionId_ = 0;
     abilityIconId_ = 0;
     launchedCount_ = 0;
-    lastModuleUsedTime_ = 0;
+    lastModuleUsedTime_ = -1;
     removed_ = false;
     installFreeSupported_ = false;
     isNewAdded_ = false;
