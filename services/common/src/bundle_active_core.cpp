@@ -347,6 +347,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
             it->second->RestoreStats(true);
             it->second->RenewTableTime(expectedSystemTime, actualSystemTime);
             it->second->LoadActiveStats(actualSystemTime, true, true);
+            it->second->LoadModuleAndFormStats();
             if (!handler_.expired()) {
                 BUNDLE_ACTIVE_LOGI("CheckTimeChangeAndGetWallTime remove flush to disk event");
                 handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);

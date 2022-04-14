@@ -72,6 +72,7 @@ public:
         const std::string& bundleName);
     int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results);
     void LoadActiveStats(const int64_t timeStamp, const bool& force, const bool& timeChanged);
+    void LoadModuleAndFormStats();
 
 private:
     static const int64_t ONE_SECOND_MILLISECONDS = 1000;

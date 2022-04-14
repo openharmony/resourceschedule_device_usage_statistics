@@ -1440,8 +1440,9 @@ void BundleActiveUsageDatabase::UpdateModuleData(const int userId,
             queryCondition.emplace_back(oneModuleRecord.second->bundleName_);
             queryCondition.emplace_back(oneModuleRecord.second->moduleName_);
             moduleValuesBucket.PutInt(BUNDLE_ACTIVE_DB_MODULE_LAUNCHED_COUNT, oneModuleRecord.second->launchedCount_);
-            moduleValuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, oneModuleRecord.second->lastModuleUsedTime_ -
-                moduleTableTime);
+            int64_t adjustLastTime = oneModuleRecord.second->lastModuleUsedTime_ != -1 ?
+                oneModuleRecord.second->lastModuleUsedTime_ - moduleTableTime : -1;
+            moduleValuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, adjustLastTime);
             rdbStore->Update(changeRow, moduleRecordsTableName_, moduleValuesBucket,
                 "userId = ? and bundleName = ? and moduleName = ?", queryCondition);
             if (changeRow == NO_UPDATE_ROW) {
@@ -1483,8 +1484,9 @@ void BundleActiveUsageDatabase::UpdateFormData(const int32_t userId, const std::
     queryCondition.emplace_back(to_string(formRecord.formDimension_));
     queryCondition.emplace_back(to_string(formRecord.formId_));
     formValueBucket.PutInt(BUNDLE_ACTIVE_DB_FORM_TOUCH_COUNT, formRecord.count_);
-    formValueBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, formRecord.formLastUsedTime_ -
-        formRecordsTableTime);
+    int64_t adjustLastTime = formRecord.formLastUsedTime_ != -1 ? formRecord.formLastUsedTime_ -
+        formRecordsTableTime : -1;
+    formValueBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, adjustLastTime);
     rdbStore->Update(changeRow, formRecordsTableName_, formValueBucket,
         "userId = ? and bundleName = ? and moduleName = ? and formName = ? and formDimension = ? "
         "and formId = ?",
@@ -1553,7 +1555,7 @@ void BundleActiveUsageDatabase::LoadModuleData(const int32_t userId, std::map<st
         moduleRecordResult->GetInt(MODULE_USED_COUNT_COLUMN_INDEX, oneModuleRecord->launchedCount_);
         int64_t relativeLastTime = 0;
         moduleRecordResult->GetLong(MODULE_LAST_TIME_COLUMN_INDEX, relativeLastTime);
-        oneModuleRecord->lastModuleUsedTime_ = relativeLastTime + baseTime;
+        oneModuleRecord->lastModuleUsedTime_ =  relativeLastTime != -1 ? relativeLastTime + baseTime : -1;
         string combinedInfo = oneModuleRecord->bundleName_ + " " + oneModuleRecord->moduleName_;
         moduleRecords[combinedInfo] = oneModuleRecord;
     }
@@ -1588,7 +1590,7 @@ void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std:
         formRecordResult->GetInt(FORM_COUNT_COLUMN_INDEX, oneFormRecord.count_);
         int64_t relativeLastTime = 0;
         formRecordResult->GetLong(FORM_LAST_TIME_COLUMN_INDEX, relativeLastTime);
-        oneFormRecord.formLastUsedTime_ = relativeLastTime + baseTime;
+        oneFormRecord.formLastUsedTime_ = relativeLastTime != -1 ? relativeLastTime + baseTime : -1;
         auto it = moduleRecords.find(bundleName + " " + moduleName);
         if (it != moduleRecords.end() && it->second) {
             it->second->formRecords_.emplace_back(oneFormRecord);
