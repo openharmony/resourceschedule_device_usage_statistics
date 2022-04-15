@@ -49,7 +49,6 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
     NAPI_ASSERT(env, argc == MODULE_RECORDS_MIN_PARAMS || argc == MODULE_RECORDS_MIDDLE_PARAMS ||
         argc == MODULE_RECORDS_PARAMS, "Invalid number of parameters");
 
-    BUNDLE_ACTIVE_LOGI("get module info has %{public}d params", argc);
     if (argc == MODULE_RECORDS_MIN_PARAMS) {
         params.maxNum = MAXNUM_UP_LIMIT;
     }
