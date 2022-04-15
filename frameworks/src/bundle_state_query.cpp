@@ -80,13 +80,11 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
         }
 
         // argv[1] : callback
-        if (argc == MODULE_RECORDS_PARAMS) {
-            napi_valuetype valuetype = napi_undefined;
-            NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-            NAPI_ASSERT(env, valuetype == napi_function,
-                "ParseModuleRecordsParameters invalid parameter type, function expected.");
-            napi_create_reference(env, argv[1], 1, &params.callback);
-        }
+        napi_valuetype valuetype = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
+        NAPI_ASSERT(env, valuetype == napi_function,
+            "ParseModuleRecordsParameters invalid parameter type, function expected.");
+        napi_create_reference(env, argv[1], 1, &params.callback);
     }
     return BundleStateCommon::NapiGetNull(env);
 }
