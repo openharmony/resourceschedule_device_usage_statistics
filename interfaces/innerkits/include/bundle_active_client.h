@@ -26,6 +26,7 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveClient {
 public:
+    const int MAXNUM_UP_LIMIT = 1000;
     /*
     * function: ReportEvent, used to report event.
     * parameters: event, userId

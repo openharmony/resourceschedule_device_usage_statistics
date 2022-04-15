@@ -17,8 +17,6 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-const int MAXNUM_UP_LIMIT = 1000;
-
 BundleActiveClient& BundleActiveClient::GetInstance()
 {
     static BundleActiveClient instance;

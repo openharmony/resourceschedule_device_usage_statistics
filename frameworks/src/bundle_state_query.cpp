@@ -33,7 +33,8 @@ const u_int32_t APP_USAGE_MIN_PARAMS_BY_INTERVAL = 3;
 const u_int32_t APP_USAGE_PARAMS_BY_INTERVAL = 4;
 const u_int32_t APP_USAGE_MIN_PARAMS = 2;
 const u_int32_t APP_USAGE_PARAMS = 3;
-const u_int32_t MODULE_RECORDS_MIN_PARAMS = 1;
+const u_int32_t MODULE_RECORDS_MIN_PARAMS = 0;
+const u_int32_t MODULE_RECORDS_MIDDLE_PARAMS = 1;
 const u_int32_t MODULE_RECORDS_PARAMS = 2;
 const u_int32_t SECOND_ARG = 2;
 const u_int32_t THIRD_ARG = 3;
@@ -45,27 +46,48 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
     size_t argc = MODULE_RECORDS_PARAMS;
     napi_value argv[MODULE_RECORDS_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == MODULE_RECORDS_MIN_PARAMS || argc == MODULE_RECORDS_PARAMS,
-        "Invalid number of parameters");
+    NAPI_ASSERT(env, argc == MODULE_RECORDS_MIN_PARAMS || argc == MODULE_RECORDS_MIDDLE_PARAMS ||
+        argc == MODULE_RECORDS_PARAMS, "Invalid number of parameters");
 
-    // argv[0] : maxNum
-    if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.maxNum) == nullptr) {
-        BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum type is invalid.");
-        params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
+    BUNDLE_ACTIVE_LOGI("get module info has %{public}d params", argc);
+    if (argc == 0) {
+        params.maxNum = MAXNUM_UP_LIMIT;
     }
-
-    if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
-        BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum is larger than 1000 or less/equal than 0");
-        params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
+    if (argc == 1) {
+        if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.maxNum) == nullptr) {
+            BUNDLE_ACTIVE_LOGI("get module info has only one callback param");
+            napi_valuetype valuetype = napi_undefined;
+            NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
+            NAPI_ASSERT(env, valuetype == napi_function,
+                "ParseModuleRecordsParameters invalid parameter type, function expected.");
+            params.maxNum = MAXNUM_UP_LIMIT;
+            napi_create_reference(env, argv[0], 1, &params.callback);
+        } else if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
+            BUNDLE_ACTIVE_LOGI("get module info has only one maxNum param");
+            BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum is larger than 1000 or less/equal than 0");
+            params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
+        }
     }
+    if (argc == 2) {
+        // argv[0] : maxNum
+        if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.maxNum) == nullptr) {
+            BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum type is invalid.");
+            params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
+        }
 
-    // argv[1] : callback
-    if (argc == MODULE_RECORDS_PARAMS) {
-        napi_valuetype valuetype = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-        NAPI_ASSERT(env, valuetype == napi_function,
-            "ParseModuleRecordsParameters invalid parameter type, function expected.");
-        napi_create_reference(env, argv[1], 1, &params.callback);
+        if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
+            BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum is larger than 1000 or less/equal than 0");
+            params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
+        }
+
+        // argv[1] : callback
+        if (argc == MODULE_RECORDS_PARAMS) {
+            napi_valuetype valuetype = napi_undefined;
+            NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
+            NAPI_ASSERT(env, valuetype == napi_function,
+                "ParseModuleRecordsParameters invalid parameter type, function expected.");
+            napi_create_reference(env, argv[1], 1, &params.callback);
+        }
     }
     return BundleStateCommon::NapiGetNull(env);
 }
