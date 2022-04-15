@@ -53,7 +53,7 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
     if (argc == 0) {
         params.maxNum = MAXNUM_UP_LIMIT;
     }
-    if (argc == 1) {
+    if (argc == MODULE_RECORDS_MIDDLE_PARAMS) {
         if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.maxNum) == nullptr) {
             BUNDLE_ACTIVE_LOGI("get module info has only one callback param");
             napi_valuetype valuetype = napi_undefined;
@@ -68,7 +68,7 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
             params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
         }
     }
-    if (argc == 2) {
+    if (argc == MODULE_RECORDS_PARAMS) {
         // argv[0] : maxNum
         if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.maxNum) == nullptr) {
             BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum type is invalid.");
