@@ -96,7 +96,7 @@ declare namespace bundleState {
         /**
          * the form name.
          */
-        formName?: string;
+        formName: string;
         /**
          * the form dimension.
          */
@@ -127,11 +127,11 @@ declare namespace bundleState {
         /**
          * the bundle name.
          */
-        bundleName?: string;
+        bundleName: string;
         /**
          * the module name.
          */
-        moduleName?: string;
+        moduleName: string;
         /**
          * the main ability name of module.
          */
@@ -163,15 +163,15 @@ declare namespace bundleState {
         /**
          * the launch count of module.
          */
-        launchedCount?: number;
+        launchedCount: number;
         /**
          * the last time when the module was accessed, in milliseconds.
          */
-        lastModuleUsedTime?: number;
+        lastModuleUsedTime: number;
         /**
          * the form usage record list of current module.
          */
-        formRecords?: Array<BundleActiveFormInfo>;
+        formRecords: Array<BundleActiveFormInfo>;
     }
 
     /**
