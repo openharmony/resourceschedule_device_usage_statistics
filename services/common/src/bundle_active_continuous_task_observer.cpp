@@ -90,6 +90,7 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
         BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
         BundleActiveEvent event(bundleName, continuousTaskAbilityName_);
         sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+        tmpHandlerObject.event_ = event;
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
         if (isStart) {
             tmpHandlerObject.event_.eventId_ = BundleActiveEvent::LONG_TIME_TASK_STARTTED;
