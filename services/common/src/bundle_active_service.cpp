@@ -316,7 +316,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
     if (ret == ERR_OK && userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryCurrentPackageStats userid is %{public}d", userId);
         if (!GetBundleMgrProxy()) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveGroupController::CheckEachBundleState get bundle manager proxy failed!");
+            BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
             return result;
         }
         std::string bundleName = "";
@@ -345,6 +345,10 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryCurrentEvents(const int
     int userId = -1;
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
+        if (!GetBundleMgrProxy()) {
+            BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
+            return result;
+        }
         std::string bundleName = "";
         sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
         if (!bundleName.empty()) {
@@ -370,7 +374,7 @@ int BundleActiveService::QueryPackageGroup()
     BUNDLE_ACTIVE_LOGI("QueryPackageGroup user id is %{public}d", userId);
     if (ret == ERR_OK && userId != -1) {
         if (!GetBundleMgrProxy()) {
-            BUNDLE_ACTIVE_LOGE("BundleActiveGroupController::CheckEachBundleState get bundle manager proxy failed!");
+            BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
             return result;
         }
         std::string bundleName = "";
