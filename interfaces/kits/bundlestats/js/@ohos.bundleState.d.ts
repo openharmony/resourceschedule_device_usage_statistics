@@ -338,11 +338,11 @@ declare namespace bundleState {
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
      * @systemapi Hide this for inner system use.
-     * @param maxNum Indicates max record number in result, max is 1000.
+     * @param maxNum Indicates max record number in result, max value is 1000, default value is 1000.
      * @return Returns the {@link BundleActiveModuleInfo} object Array containing the state data of the current module.
      */
-    function getRecentlyUsedModules(maxNum: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
-    function getRecentlyUsedModules(maxNum: number): Promise<Array<BundleActiveModuleInfo>>;
+    function getRecentlyUsedModules(maxNum?: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
+    function getRecentlyUsedModules(maxNum?: number): Promise<Array<BundleActiveModuleInfo>>;
 }
 
 export default bundleState;

@@ -26,6 +26,8 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveClient {
 public:
+    // max number of query modules result.
+    const int MAXNUM_UP_LIMIT = 1000;
     /*
     * function: ReportEvent, used to report event.
     * parameters: event, userId
