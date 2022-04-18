@@ -17,8 +17,9 @@
 #define BUNDLE_ACTIVE_SERVICE_H
 
 #include "bundle_mgr_interface.h"
+#ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
-
+#endif // OS_ACCOUNT_PART_ENABLED
 #include "ibundle_active_service.h"
 #include "bundle_active_stub.h"
 #include "bundle_active_core.h"

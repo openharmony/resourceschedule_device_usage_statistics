@@ -88,6 +88,7 @@ ohos_shared_library("bundlestate") {
 }
 
 ohos_shared_library("usagestatservice") {
+  cflags_cc = []
   sources = [
     "services/common/src/bundle_active_app_state_obsever.cpp",
     "services/common/src/bundle_active_binary_search.cpp",
@@ -138,7 +139,6 @@ ohos_shared_library("usagestatservice") {
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "native_appdatamgr:native_rdb",
-    "os_account_standard:os_account_innerkits",
     "permission_standard:libpermissionsdk_standard",
     "power_manager_native:powermgr_client",
     "safwk:system_ability_fwk",
@@ -147,6 +147,12 @@ ohos_shared_library("usagestatservice") {
     "time_native:time_service",
     "utils_base:utils",
   ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    external_deps += [ "os_account_standard:os_account_innerkits" ]
+  }
+
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
 }

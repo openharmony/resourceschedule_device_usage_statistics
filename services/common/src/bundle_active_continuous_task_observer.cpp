@@ -22,6 +22,16 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+#ifndef OS_ACCOUNT_PART_ENABLED
+namespace {
+constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
+void GetOsAccountIdFromUid(int uid, int &osAccountId)
+{
+    osAccountId = uid / UID_TRANSFORM_DIVISOR;
+}
+} // namespace
+#endif // OS_ACCOUNT_PART_ENABLED
+
 void BundleActiveContinuousTaskObserver::Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
 {
     if (reportHandler != nullptr) {
@@ -85,7 +95,12 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
         BUNDLE_ACTIVE_LOGE("Get bundle mgr failed!");
         return;
     }
+#ifdef OS_ACCOUNT_PART_ENABLED
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);
+#else // OS_ACCOUNT_PART_ENABLED
+    OHOS::ErrCode ret = ERR_OK;
+    GetOsAccountIdFromUid(uid, userId);
+#endif // OS_ACCOUNT_PART_ENABLED
     if (ret == ERR_OK && userId != -1 && !bundleName.empty()) {
         BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
         BundleActiveEvent event(bundleName, continuousTaskAbilityName_);

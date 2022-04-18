@@ -17,9 +17,9 @@
 #define BUNDLE_ACTIVE_APP_STATE_OBSERVER_H
 
 #include <memory>
-
+#ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
-
+#endif // OS_ACCOUNT_PART_ENABLED
 #include "application_state_observer_stub.h"
 #include "bundle_active_report_handler.h"
 

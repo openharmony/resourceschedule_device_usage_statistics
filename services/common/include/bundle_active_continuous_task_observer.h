@@ -17,8 +17,9 @@
 #define BUNDLE_ACTIVE_CONTINUOUS_TASK_OBSERVER_H
 
 #include <memory>
-
+#ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
+#endif // OS_ACCOUNT_PART_ENABLED
 #include "bundle_mgr_interface.h"
 #include "iremote_object.h"
 

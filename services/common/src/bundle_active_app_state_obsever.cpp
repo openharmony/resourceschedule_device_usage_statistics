@@ -21,6 +21,16 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+#ifndef OS_ACCOUNT_PART_ENABLED
+namespace {
+constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
+void GetOsAccountIdFromUid(int uid, int &osAccountId)
+{
+    osAccountId = uid / UID_TRANSFORM_DIVISOR;
+}
+} // namespace
+#endif // OS_ACCOUNT_PART_ENABLED
+
 void BundleActiveAppStateObserver::Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
 {
     if (reportHandler != nullptr) {
@@ -39,7 +49,12 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         return;
     }
     int userId = -1;
+#ifdef OS_ACCOUNT_PART_ENABLED
     OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(abilityStateData.uid, userId);
+#else // OS_ACCOUNT_PART_ENABLED
+    OHOS::ErrCode ret = ERR_OK;
+    GetOsAccountIdFromUid(abilityStateData.uid, userId);
+#endif // OS_ACCOUNT_PART_ENABLED
     if (ret == ERR_OK && userId != -1) {
         std::stringstream stream;
         stream << abilityStateData.token.GetRefPtr();
