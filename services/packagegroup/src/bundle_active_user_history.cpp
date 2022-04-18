@@ -203,7 +203,7 @@ void BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int
     if (oneBundleHistory == nullptr) {
         return;
     }
-    if (oneBundleHistory->currentGroup_ == newGroup || oneBundleHistory->reasonInGroup_ == groupReason) {
+    if (oneBundleHistory->currentGroup_ == newGroup && oneBundleHistory->reasonInGroup_ == groupReason) {
         BUNDLE_ACTIVE_LOGI("%{public}s group and reason is same as before, not update", bundleName.c_str());
         return;
     }
