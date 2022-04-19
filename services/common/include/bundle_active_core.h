@@ -19,8 +19,9 @@
 #include <mutex>
 
 #include "power_mgr_client.h"
+#ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
-
+#endif // OS_ACCOUNT_PART_ENABLED
 #include "ibundle_active_service.h"
 #include "bundle_active_debug_mode.h"
 #include "bundle_active_stats_update_listener.h"

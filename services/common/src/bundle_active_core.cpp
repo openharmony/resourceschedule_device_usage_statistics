@@ -24,6 +24,10 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
+#ifndef OS_ACCOUNT_PART_ENABLED
+const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
+#endif // OS_ACCOUNT_PART_ENABLED
+
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
 {
         userId_ = -1;
@@ -560,10 +564,16 @@ int BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int user
 
 void BundleActiveCore::GetAllActiveUser(std::vector<int>& activatedOsAccountIds)
 {
+#ifdef OS_ACCOUNT_PART_ENABLED
     if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
         BUNDLE_ACTIVE_LOGI("query activated account failed");
         return;
     }
+#else // OS_ACCOUNT_PART_ENABLED
+    activatedOsAccountIds.clear();
+    activatedOsAccountIds.push_back(DEFAULT_OS_ACCOUNT_ID);
+    BUNDLE_ACTIVE_LOGI("os account part is not enabled, use default id.");
+#endif // OS_ACCOUNT_PART_ENABLED
     if (activatedOsAccountIds.size() == 0) {
         BUNDLE_ACTIVE_LOGI("GetAllActiveUser size is 0");
         return;

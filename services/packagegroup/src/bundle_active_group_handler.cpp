@@ -14,12 +14,18 @@
  */
 
 #include "time_service_client.h"
+#ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
-
+#endif // OS_ACCOUNT_PART_ENABLED
 #include "bundle_active_group_handler.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
+#ifndef OS_ACCOUNT_PART_ENABLED
+namespace {
+constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
+} // namespace
+#endif // OS_ACCOUNT_PART_ENABLED
 BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject(const BundleActiveGroupHandlerObject& orig)
 {
     bundleName_ = orig.bundleName_;
@@ -64,10 +70,15 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
         }
         case MSG_ONE_TIME_CHECK_BUNDLE_STATE: {
             std::vector<int> activatedOsAccountIds;
+#ifdef OS_ACCOUNT_PART_ENABLED
             if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
                 BUNDLE_ACTIVE_LOGI("query activated account failed");
                 return;
             }
+#else // OS_ACCOUNT_PART_ENABLED
+            activatedOsAccountIds.push_back(DEFAULT_OS_ACCOUNT_ID);
+            BUNDLE_ACTIVE_LOGI("os account part not enabled, use default id.");
+#endif // OS_ACCOUNT_PART_ENABLED
             if (activatedOsAccountIds.size() == 0) {
                 return;
             }
