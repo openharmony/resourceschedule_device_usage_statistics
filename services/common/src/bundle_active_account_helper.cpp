@@ -25,8 +25,8 @@ ErrCode BundleActiveAccountHelper::GetUserId(const int32_t uid, int32_t& userId)
 #ifdef OS_ACCOUNT_PART_ENABLED
     ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(uid, userId);
 #else // OS_ACCOUNT_PART_ENABLED
-        ErrCode ret = ERR_OK;
-        userId = uid / UID_TRANSFORM_DIVISOR;
+    ErrCode ret = ERR_OK;
+    userId = uid / UID_TRANSFORM_DIVISOR;
 #endif // OS_ACCOUNT_PART_ENABLED
     return ret;
 }
