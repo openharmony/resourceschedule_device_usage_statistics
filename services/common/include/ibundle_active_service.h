@@ -120,4 +120,3 @@ public:
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_ISERVICE_H
 
-
