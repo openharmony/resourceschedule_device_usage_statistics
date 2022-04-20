@@ -23,7 +23,6 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-
 void BundleActiveContinuousTaskObserver::Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
 {
     if (reportHandler != nullptr) {
