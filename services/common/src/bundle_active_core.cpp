@@ -76,7 +76,7 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
             sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
             bool isScreenOn = activeGroupController_.lock()->IsScreenOn();
             BUNDLE_ACTIVE_LOGI("OnReceiveEvent Screen state changed "
-                "received, screen state chante to %{public}d", isScreenOn);
+                "received, screen state change to %{public}d", isScreenOn);
             activeGroupController_.lock()->OnScreenChanged(isScreenOn, timer->GetBootTimeMs());
         }
     } else if (action == CommonEventSupport::COMMON_EVENT_USER_REMOVED) {
