@@ -18,6 +18,7 @@
 #include "bundle_active_app_state_observer.h"
 #include "bundle_active_report_handler.h"
 #include "bundle_active_event.h"
+#include "bundle_active_account_helper.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -49,12 +50,7 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         return;
     }
     int userId = -1;
-#ifdef OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(abilityStateData.uid, userId);
-#else // OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = ERR_OK;
-    GetOsAccountIdFromUid(abilityStateData.uid, userId);
-#endif // OS_ACCOUNT_PART_ENABLED
+    OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(abilityStateData.uid, userId);
     if (ret == ERR_OK && userId != -1) {
         std::stringstream stream;
         stream << abilityStateData.token.GetRefPtr();

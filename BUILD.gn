@@ -90,6 +90,7 @@ ohos_shared_library("bundlestate") {
 ohos_shared_library("usagestatservice") {
   cflags_cc = []
   sources = [
+    "services/common/src/bundle_active_account_helper.cpp",
     "services/common/src/bundle_active_app_state_obsever.cpp",
     "services/common/src/bundle_active_binary_search.cpp",
     "services/common/src/bundle_active_continuous_task_observer.cpp",

@@ -44,14 +44,14 @@ public:
     * return: vector of bundle usage statistics.
     */
     std::vector<BundleActivePackageStats> QueryPackageStats(const int intervalType, const int64_t beginTime,
-        const int64_t endTime, int32_t& errCode) override;
+        const int64_t endTime, int32_t& errCode, int userId = -1) override;
     /*
     * function: QueryEvents, query all events in specific time span for calling user.
     * parameters: beginTime, endTime, errCode
     * return: vector of events.
     */
-    std::vector<BundleActiveEvent>  QueryEvents(const int64_t beginTime, const int64_t endTime,
-        int32_t& errCode) override;
+    std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime,
+        int32_t& errCode, int userId = -1) override;
     /*
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
