@@ -82,7 +82,11 @@ public:
     * return: point to a BundleActivePackageStats.
     */
     std::shared_ptr<BundleActivePackageStats> UnMarshalling(Parcel &parcel);
-
+    /*
+    * function: ToString, change module record object to string.
+    * return: string of bundle name, last used time, total front time, last continuous task used time,
+    * total continuous task time.
+    */
     std::string ToString();
 
 private:
