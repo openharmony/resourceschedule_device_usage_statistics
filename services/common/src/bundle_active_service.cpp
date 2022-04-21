@@ -275,8 +275,8 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         if (isSystemAppAndHasPermission == true ||
-        AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
-        AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
+            AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
+            AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
             int convertedIntervalType = ConvertIntervalType(intervalType);
             result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime, "");
         }
@@ -305,8 +305,8 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         if (isSystemAppAndHasPermission == true ||
-        AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
-        AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
+            AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
+            AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, "");
         }
     }
