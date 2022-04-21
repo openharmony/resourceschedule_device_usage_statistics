@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
-#include "shell_command.h"
-
 #include "bundle_active_log.h"
+#include "shell_command.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

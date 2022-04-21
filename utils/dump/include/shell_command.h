@@ -17,6 +17,7 @@
 #define SHELL_COMMAND
 
 #include <functional>
+#include <vector>
 #include <map>
 #include <string>
 
