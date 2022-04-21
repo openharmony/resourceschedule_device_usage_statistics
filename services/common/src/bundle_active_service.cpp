@@ -32,8 +32,6 @@ static const int PERIOD_YEARLY_JS = 4;
 static const int PERIOD_BEST_SERVICE = 4;
 static const int DELAY_TIME = 2000;
 static const std::string PERMITTED_PROCESS_NAME = "foundation";
-const int SYSTEM_UID = 1000;
-const int ROOT_UID = 0;
 
 REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
@@ -214,7 +212,7 @@ int BundleActiveService::ReportEvent(BundleActiveEvent& event, const int userId)
         int callingUid = OHOS::IPCSkeleton::GetCallingUid();
         BUNDLE_ACTIVE_LOGI("calling process name is %{public}s, uid is %{public}d",
             callingTokenInfo.processName.c_str(), callingUid);
-        if (callingTokenInfo.processName == PERMITTED_PROCESS_NAME && callingUid == SYSTEM_UID) {
+        if (callingTokenInfo.processName == PERMITTED_PROCESS_NAME) {
             BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
             tmpHandlerObject.event_ = event;
             sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
@@ -261,6 +259,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
     std::vector<BundleActivePackageStats> result;
     // get uid
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     BUNDLE_ACTIVE_LOGI("QueryPackageStats UID is %{public}d", callingUid);
     if (userId == -1) {
         // get userid
@@ -272,7 +271,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
     }
     if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats user id is %{public}d", userId);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
+        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         if (isSystemAppAndHasPermission == true ||
             AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
@@ -291,6 +290,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
     std::vector<BundleActiveEvent> result;
     // get uid
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     BUNDLE_ACTIVE_LOGI("QueryEvents UID is %{public}d", callingUid);
     if (userId == -1) {
         // get userid
@@ -302,7 +302,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
     }
     if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryEvents userid is %{public}d", userId);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
+        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         if (isSystemAppAndHasPermission == true ||
             AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
@@ -326,6 +326,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
     std::vector<BundleActivePackageStats> result;
     // get uid
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     BUNDLE_ACTIVE_LOGI("UID is %{public}d", callingUid);
     // get userid
     int userId = -1;
@@ -339,7 +340,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
         std::string bundleName = "";
         int32_t errCode = 0;
         sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
+        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
         if (!bundleName.empty() && isSystemAppAndHasPermission == true) {
             int convertedIntervalType = ConvertIntervalType(intervalType);
             result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime,
@@ -439,7 +440,8 @@ int BundleActiveService::ConvertIntervalType(const int intervalType)
     return -1;
 }
 
-bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, const int userId, int32_t& errCode)
+bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid,
+    OHOS::Security::AccessToken::AccessTokenID tokenId, int32_t& errCode)
 {
     if (!GetBundleMgrProxy()) {
             BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");
@@ -448,8 +450,7 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int uid, 
     std::string bundleName = "";
     sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
     bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(uid);
-    AccessToken::AccessTokenID tokenId = AccessToken::AccessTokenKit::GetHapTokenID(userId,
-        bundleName, 0);
+
     int bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
     if (!bundleIsSystemApp) {
         errCode = BUNDLE_ACTIVE_FAIL;
@@ -481,11 +482,11 @@ int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleA
     }
     if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryFormStatistics userid is %{public}d", userId);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
         if (isSystemAppAndHasPermission == true ||
-            (AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
-            AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE && (callingUid == SYSTEM_UID || callingUid == ROOT_UID))) {
+            AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
+            AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
             errCode = bundleActiveCore_->QueryFormStatistics(maxNum, results, userId);
             for (auto& oneResult : results) {
                 QueryModuleRecordInfos(oneResult);

@@ -124,7 +124,8 @@ private:
     void InitNecessaryState();
     void InitService();
     bool GetBundleMgrProxy();
-    bool CheckBundleIsSystemAppAndHasPermission(const int uid, const int userId, int32_t& errCode);
+    bool CheckBundleIsSystemAppAndHasPermission(const int uid, OHOS::Security::AccessToken::AccessTokenID tokenId,
+        int32_t& errCode);
     void InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     void InitContinuousSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     bool SubscribeAppState();
