@@ -48,7 +48,8 @@ namespace {
         "      ModuleUsage [maxNum] [userId]                              get module usage for one user\n";
 } // namespace
 
-BundleActiveShellCommand::BundleActiveShellCommand(int32_t argc, char *argv[]) : ShellCommand(argc, argv, "deviceusagestats")
+BundleActiveShellCommand::BundleActiveShellCommand(int32_t argc, char *argv[]) : ShellCommand(argc,
+    argv, "deviceusagestats")
 {}
 
 int32_t BundleActiveShellCommand::CreateCommandMap()
