@@ -63,21 +63,21 @@ bool BundleActiveClient::IsBundleIdle(const std::string& bundleName)
 }
 
 std::vector<BundleActivePackageStats> BundleActiveClient::QueryPackageStats(const int intervalType,
-    const int64_t beginTime, const int64_t endTime, int32_t& errCode)
+    const int64_t beginTime, const int64_t endTime, int32_t& errCode, int userId)
 {
     if (!GetBundleActiveProxy()) {
         return std::vector<BundleActivePackageStats>(0);
     }
-    return bundleActiveProxy_->QueryPackageStats(intervalType, beginTime, endTime, errCode);
+    return bundleActiveProxy_->QueryPackageStats(intervalType, beginTime, endTime, errCode, userId);
 }
 
 std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t beginTime,
-    const int64_t endTime, int32_t& errCode)
+    const int64_t endTime, int32_t& errCode, int userId)
 {
     if (!GetBundleActiveProxy()) {
         return std::vector<BundleActiveEvent>(0);
     }
-    return bundleActiveProxy_->QueryEvents(beginTime, endTime, errCode);
+    return bundleActiveProxy_->QueryEvents(beginTime, endTime, errCode, userId);
 }
 
 void BundleActiveClient::SetBundleGroup(std::string bundleName, const int newGroup, const int userId)

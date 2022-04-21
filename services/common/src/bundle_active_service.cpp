@@ -21,6 +21,7 @@
 
 #include "bundle_active_event.h"
 #include "bundle_active_package_stats.h"
+#include "bundle_active_account_helper.h"
 #include "bundle_active_service.h"
 
 namespace OHOS {
@@ -33,15 +34,6 @@ static const int DELAY_TIME = 2000;
 static const std::string PERMITTED_PROCESS_NAME = "foundation";
 const int SYSTEM_UID = 1000;
 const int ROOT_UID = 0;
-#ifndef OS_ACCOUNT_PART_ENABLED
-namespace {
-constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
-static void GetOsAccountIdFromUid(int uid, int &osAccountId)
-{
-    osAccountId = uid / UID_TRANSFORM_DIVISOR;
-}
-} // namespace
-#endif // OS_ACCOUNT_PART_ENABLED
 
 REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
@@ -251,12 +243,7 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
     // get user id
     int userId = -1;
     int result = -1;
-#ifdef OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
-#else // OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = ERR_OK;
-    GetOsAccountIdFromUid(callingUid, userId);
-#endif // OS_ACCOUNT_PART_ENABLED
+    OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
         result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
     }
@@ -267,7 +254,7 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
 }
 
 std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(const int intervalType,
-    const int64_t beginTime, const int64_t endTime, int32_t& errCode)
+    const int64_t beginTime, const int64_t endTime, int32_t& errCode, int userId)
 {
     BUNDLE_ACTIVE_LOGI("QueryPackageStats stats called, intervaltype is %{public}d",
         intervalType);
@@ -275,18 +262,21 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
     // get uid
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
     BUNDLE_ACTIVE_LOGI("QueryPackageStats UID is %{public}d", callingUid);
-    // get userid
-    int userId = -1;
-#ifdef OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
-#else // OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = ERR_OK;
-    GetOsAccountIdFromUid(callingUid, userId);
-#endif // OS_ACCOUNT_PART_ENABLED
-    if (ret == ERR_OK && userId != -1) {
+    if (userId == -1) {
+        // get userid
+        OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+        if (ret != ERR_OK) {
+            errCode = -1;
+            return result;
+        }
+    }
+    if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats user id is %{public}d", userId);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
-        if (isSystemAppAndHasPermission == true) {
+        AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+        if (isSystemAppAndHasPermission == true ||
+            AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
+            AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
             int convertedIntervalType = ConvertIntervalType(intervalType);
             result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime, "");
         }
@@ -295,25 +285,28 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
 }
 
 std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t beginTime,
-    const int64_t endTime, int32_t& errCode)
+    const int64_t endTime, int32_t& errCode, int userId)
 {
     BUNDLE_ACTIVE_LOGI("QueryEvents stats called");
     std::vector<BundleActiveEvent> result;
     // get uid
     int callingUid = OHOS::IPCSkeleton::GetCallingUid();
     BUNDLE_ACTIVE_LOGI("QueryEvents UID is %{public}d", callingUid);
-    // get userid
-    int userId = -1;
-#ifdef OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
-#else  // OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = ERR_OK;
-    GetOsAccountIdFromUid(callingUid, userId);
-#endif // OS_ACCOUNT_PART_ENABLED
-    if (ret == ERR_OK && userId != -1) {
+    if (userId == -1) {
+        // get userid
+        OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+        if (ret != ERR_OK) {
+            errCode = -1;
+            return result;
+        }
+    }
+    if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryEvents userid is %{public}d", userId);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, userId, errCode);
-        if (isSystemAppAndHasPermission == true) {
+        AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+        if (isSystemAppAndHasPermission == true ||
+            AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
+            AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, "");
         }
     }
@@ -336,12 +329,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
     BUNDLE_ACTIVE_LOGI("UID is %{public}d", callingUid);
     // get userid
     int userId = -1;
-#ifdef OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
-#else // OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = ERR_OK;
-    GetOsAccountIdFromUid(callingUid, userId);
-#endif // OS_ACCOUNT_PART_ENABLED
+    OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryCurrentPackageStats userid is %{public}d", userId);
         if (!GetBundleMgrProxy()) {
@@ -372,12 +360,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryCurrentEvents(const int
     BUNDLE_ACTIVE_LOGI("QueryCurrentEvents UID is %{public}d", callingUid);
     // get userid
     int userId = -1;
-#ifdef OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
-#else // OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = ERR_OK;
-    GetOsAccountIdFromUid(callingUid, userId);
-#endif // OS_ACCOUNT_PART_ENABLED
+    OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
         if (!GetBundleMgrProxy()) {
             BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
@@ -404,12 +387,7 @@ int BundleActiveService::QueryPackageGroup()
     // get userid
     int userId = -1;
     int result = -1;
-#ifdef OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
-#else // OS_ACCOUNT_PART_ENABLED
-    OHOS::ErrCode ret = ERR_OK;
-    GetOsAccountIdFromUid(callingUid, userId);
-#endif // OS_ACCOUNT_PART_ENABLED
+    OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
     BUNDLE_ACTIVE_LOGI("QueryPackageGroup user id is %{public}d", userId);
     if (ret == ERR_OK && userId != -1) {
         if (!GetBundleMgrProxy()) {
@@ -495,15 +473,11 @@ int BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleA
     // get userid when userId is -1
     int32_t errCode = 0;
     if (userId == -1) {
-#ifdef OS_ACCOUNT_PART_ENABLED
-        OHOS::ErrCode ret = OHOS::AccountSA::OsAccountManager::GetOsAccountLocalIdFromUid(callingUid, userId);
+        OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
         if (ret != ERR_OK) {
             errCode = -1;
             return errCode;
         }
-#else // OS_ACCOUNT_PART_ENABLED
-        GetOsAccountIdFromUid(callingUid, userId);
-#endif // OS_ACCOUNT_PART_ENABLED
     }
     if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryFormStatistics userid is %{public}d", userId);

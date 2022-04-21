@@ -62,14 +62,14 @@ public:
     * return: vector of bundle usage statistics.
     */
     virtual std::vector<BundleActivePackageStats> QueryPackageStats(const int intervalType, const int64_t beginTime,
-        const int64_t endTime, int32_t& errCode) = 0;
+        const int64_t endTime, int32_t& errCode, int userId) = 0;
     /*
     * function: QueryEvents, query all events in specific time span for calling user.
     * parameters: beginTime, endTime, errCode
     * return: vector of events.
     */
     virtual std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime,
-        int32_t& errCode) = 0;
+        int32_t& errCode, int userId) = 0;
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
