@@ -92,6 +92,8 @@ public:
     * return: point to a BundleActiveFormRecord.
     */
     std::shared_ptr<BundleActiveFormRecord> UnMarshalling(Parcel &parcel);
+
+    std::string ToString();
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

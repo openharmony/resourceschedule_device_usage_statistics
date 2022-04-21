@@ -106,6 +106,8 @@ public:
     * return: point to a BundleActiveEvent.
     */
     std::shared_ptr<BundleActiveEvent> UnMarshalling(Parcel &parcel);
+
+    std::string ToString();
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

@@ -83,6 +83,8 @@ public:
     */
     std::shared_ptr<BundleActivePackageStats> UnMarshalling(Parcel &parcel);
 
+    std::string ToString();
+
 private:
     bool HasFrontAbility();
     bool AnyLongTimeTaskStarted();
