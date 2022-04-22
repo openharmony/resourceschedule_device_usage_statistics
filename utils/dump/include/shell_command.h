@@ -17,9 +17,10 @@
 #define SHELL_COMMAND
 
 #include <functional>
-#include <vector>
 #include <map>
 #include <string>
+
+#include "ibundle_active_service.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
