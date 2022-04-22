@@ -344,13 +344,13 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
         for (auto it : currentStats->bundleStats_) {
             if (bundleName.empty()) {
                 if ((it.second->totalInFrontTime_ != 0 || it.second->totalContiniousTaskUsedTime_ != 0) &&
-                    it.second->lastTimeUsed_ > beginTime && it.second->lastTimeUsed_ < endTime) {
+                    it.second->lastTimeUsed_ >= beginTime && it.second->lastTimeUsed_ <= endTime) {
                     result.push_back(*(it.second));
                 }
             } else {
                 if ((it.second->totalInFrontTime_ != 0 || it.second->totalContiniousTaskUsedTime_ != 0) &&
-                    it.second->bundleName_ == bundleName && it.second->lastTimeUsed_ > beginTime &&
-                    it.second->lastTimeUsed_ < endTime) {
+                    it.second->bundleName_ == bundleName && it.second->lastTimeUsed_ >= beginTime &&
+                    it.second->lastTimeUsed_ <= endTime) {
                     result.push_back(*(it.second));
                 }
             }

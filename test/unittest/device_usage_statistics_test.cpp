@@ -107,7 +107,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEvents_001, F
 {
     int32_t errCode = 0;
     std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryEvents(0, LARGE_NUM, errCode);
-    EXPECT_EQ(result.size(), 0);
+    EXPECT_EQ(result.size(), 1);
 }
 
 /*
