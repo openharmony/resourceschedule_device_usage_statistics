@@ -75,7 +75,7 @@ protected:
     std::vector<std::string> argList_;
 
     std::string name_;
-    std::map<std::string, std::function<int()>> commandMap_;
+    std::map<std::string, std::function<int32_t()>> commandMap_;
     std::map<int32_t, std::string> messageMap_;
 
     std::string resultReceiver_ = "";
