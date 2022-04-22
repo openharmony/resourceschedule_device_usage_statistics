@@ -83,5 +83,6 @@ std::string ShellCommand::GetCommandErrorMsg() const
         name_ + ": '" + cmd_ + "' is not a valid " + name_ + " command. See '" + name_ + " help'.\n";
     return commandErrorMsg;
 }
-}  // namespace CgroupNative
+}  // namespace DeviceUsageStats
 }  // namespace OHOS
+

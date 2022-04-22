@@ -111,5 +111,6 @@ int32_t BundleActiveShellCommand::RunAsDumpCommand()
     }
     return ret;
 }
-}  // namespace CgroupNative
+}  // namespace DeviceUsageStats
 }  // namespace OHOS
+

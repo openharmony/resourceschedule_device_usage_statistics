@@ -81,7 +81,7 @@ protected:
 
     std::string resultReceiver_ = "";
 };
-}  // namespace CgroupNative
+}  // namespace DeviceUsageStats
 }  // namespace OHOS
+#endif  // SHELL_COMMAND
 
-#endif  // EFFICIENCY_MANAGER_UTILS_DUMP_SHELL_CMD_H

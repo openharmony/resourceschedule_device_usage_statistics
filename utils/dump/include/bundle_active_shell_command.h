@@ -35,3 +35,4 @@ private:
 } // namespace DeviceUsageStats
 } // namespace OHOS
 #endif // BUNDLE_ACTIVE_SHELL_COMMAND_H
+
