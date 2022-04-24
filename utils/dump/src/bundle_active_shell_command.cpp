@@ -95,10 +95,6 @@ int32_t BundleActiveShellCommand::RunAsDumpCommand()
                 return -1;
             }
             ret = BundleActiveClient::GetInstance().ShellDump(argList_, infos);
-            if (ret == -1) {
-                resultReceiver_.append("Please input correct params.\n");
-                resultReceiver_.append(DUMP_HELP_MSG);
-            }
             break;
         default:
             resultReceiver_.append("Please input correct params.\n");
