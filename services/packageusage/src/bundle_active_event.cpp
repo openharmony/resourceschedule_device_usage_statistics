@@ -163,6 +163,12 @@ std::shared_ptr<BundleActiveEvent> BundleActiveEvent::UnMarshalling(Parcel &parc
     result->eventId_ = parcel.ReadInt32();
     return result;
 }
+
+std::string BundleActiveEvent::ToString()
+{
+    return "bundle name is " + this->bundleName_ + ", event is " +
+        std::to_string(this->eventId_) + ", timestamp is " + std::to_string(this->timeStamp_) + "\n";
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 

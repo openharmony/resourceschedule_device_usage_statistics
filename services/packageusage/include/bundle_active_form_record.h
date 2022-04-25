@@ -92,6 +92,11 @@ public:
     * return: point to a BundleActiveFormRecord.
     */
     std::shared_ptr<BundleActiveFormRecord> UnMarshalling(Parcel &parcel);
+    /*
+    * function: ToString, change form record object to string.
+    * return: string of form name, form id, form dimension, last used time and touch count.
+    */
+    std::string ToString();
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

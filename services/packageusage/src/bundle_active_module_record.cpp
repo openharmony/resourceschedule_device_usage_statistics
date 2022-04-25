@@ -123,6 +123,14 @@ bool BundleActiveModuleRecord::cmp(const BundleActiveModuleRecord& moduleRecordA
 {
     return moduleRecordA.lastModuleUsedTime_ > moduleRecordB.lastModuleUsedTime_;
 }
+
+std::string BundleActiveModuleRecord::ToString()
+{
+    return "bundle name is " + this->bundleName_ +
+        ", module name is " + this->moduleName_ +
+        ", last used time stamp is " + std::to_string(this->lastModuleUsedTime_) +
+        ", module is used for " + std::to_string(this->launchedCount_) + " times\n";
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 

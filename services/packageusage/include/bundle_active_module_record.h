@@ -37,6 +37,7 @@ public:
     static bool cmp(const BundleActiveModuleRecord& moduleRecordA, const BundleActiveModuleRecord& moduleRecordB);
     virtual bool Marshalling(Parcel &parcel) const override;
     std::shared_ptr<BundleActiveModuleRecord> UnMarshalling(Parcel &parcel);
+    std::string ToString();
 
 public:
     std::string deviceId_;

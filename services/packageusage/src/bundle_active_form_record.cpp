@@ -84,6 +84,15 @@ bool BundleActiveFormRecord::cmp(const BundleActiveFormRecord& formRecordA,
 {
     return formRecordA.count_ > formRecordB.count_;
 }
+
+std::string BundleActiveFormRecord::ToString()
+{
+    return "form name is " + this->formName_ +
+        ", form dimension is " + std::to_string(this->formDimension_) +
+        ", form id is " + std::to_string(this->formId_) +
+        ", last used time stamp is" + std::to_string(this->formLastUsedTime_) +
+        ", touch count is " + std::to_string(this->count_) + "\n";
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 

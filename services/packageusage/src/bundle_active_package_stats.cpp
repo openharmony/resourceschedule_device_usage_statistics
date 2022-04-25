@@ -219,6 +219,16 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePackageStats::UnMarshallin
     result->totalContiniousTaskUsedTime_ = parcel.ReadInt64();
     return result;
 }
+
+std::string BundleActivePackageStats::ToString()
+{
+    return "bundle name is " + this->bundleName_ +
+            ", last used time stamp is " + std::to_string(this->lastTimeUsed_) +
+            ", total time in front is " + std::to_string(this->totalInFrontTime_) +
+            ", last continuous task used time is " + std::to_string(this->lastContiniousTaskUsed_) +
+            ", total continuous task time is " +
+            std::to_string(this->totalContiniousTaskUsedTime_) + "\n";
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 

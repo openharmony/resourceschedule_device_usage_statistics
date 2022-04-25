@@ -98,6 +98,7 @@ public:
     */
     ~BundleActiveClient() {}
 
+    int32_t ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 private:
     bool GetBundleActiveProxy();
     sptr<IBundleActiveService> bundleActiveProxy_;
