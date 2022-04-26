@@ -40,7 +40,7 @@ void BundleActiveUserHistory::WriteDeviceDuration()
     database_.PutDurationData(bootBasedDuration_, ScreenOnDuration_);
 }
 
-void BundleActiveUserHistory::WriteBundleUsage(const int userId)
+void BundleActiveUserHistory::WriteBundleUsage(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("WriteBundleUsage called");
     auto userHistory = GetUserHistory(userId, false);
@@ -51,7 +51,7 @@ void BundleActiveUserHistory::WriteBundleUsage(const int userId)
     database_.PutBundleHistoryData(userId, userHistory);
 }
 
-void BundleActiveUserHistory::OnBundleUninstalled(const int userId, const std::string bundleName)
+void BundleActiveUserHistory::OnBundleUninstalled(const int32_t userId, const std::string bundleName)
 {
     database_.OnPackageUninstalled(userId, bundleName);
 }
@@ -67,7 +67,7 @@ BundleActiveUserHistory::BundleActiveUserHistory(const int64_t bootBasedTimeStam
     isScreenOn_ = false;
 }
 
-int BundleActiveUserHistory::GetLevelIndex(const string& bundleName, const int userId,
+int32_t BundleActiveUserHistory::GetLevelIndex(const string& bundleName, const int32_t userId,
     const int64_t bootBasedTimeStamp, const std::vector<int64_t> screenTimeLevel,
     const std::vector<int64_t> bootFromTimeLevel)
 {
@@ -84,7 +84,7 @@ int BundleActiveUserHistory::GetLevelIndex(const string& bundleName, const int u
     BUNDLE_ACTIVE_LOGI("screendiff is %{public}lld, bootfromdiff is %{public}lld, bundle name is %{public}s,"
         "userid is %{public}d",
         (long long)screenDiff, (long long)bootFromDiff, bundleName.c_str(), userId);
-    for (int i = 3; i >= 0; i--) {
+    for (int32_t i = 3; i >= 0; i--) {
         if (screenDiff >= screenTimeLevel[i] && bootFromDiff >= bootFromTimeLevel[i]) {
             return i;
         }
@@ -107,7 +107,7 @@ int64_t BundleActiveUserHistory::GetScreenOnTimeStamp(int64_t bootBasedTimeStamp
 }
 
 shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUserHistory::GetUserHistory(
-    const int userId, const bool& create)
+    const int32_t userId, const bool& create)
 {
     auto it = userHistory_.find(userId);
     if (it == userHistory_.end() && create) {
@@ -147,7 +147,7 @@ shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryI
 }
 
 shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryForBundle(
-    const string& bundleName, const int userId, const int64_t bootBasedTimeStamp, const bool& create)
+    const string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp, const bool& create)
 {
     auto oneUserHistory = GetUserHistory(userId, create);
     if (oneUserHistory == nullptr) {
@@ -161,7 +161,7 @@ shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryF
 }
 
 void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory,
-    const string& bundleName, const int newGroup, const uint32_t groupReason, const int64_t bootBasedTimeStamp,
+    const string& bundleName, const int32_t newGroup, const uint32_t groupReason, const int64_t bootBasedTimeStamp,
     const int64_t timeUntilNextCheck)
 {
     if (timeUntilNextCheck > bootBasedTimeStamp) {
@@ -188,18 +188,17 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     oneBundleUsageHistory->isChanged_ = true;
 }
 
-void BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int userId,
-    const int64_t bootBasedTimeStamp, int newGroup, uint32_t groupReason, const bool& resetTimeout)
+void BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int32_t userId,
+    const int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason, const bool& resetTimeout)
 {
     BUNDLE_ACTIVE_LOGI("set %{public}s to group %{public}d, reason is %{public}d, userId is %{public}d",
         bundleName.c_str(), newGroup, groupReason, userId);
-    shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userBundleHistory =
-        GetUserHistory(userId, false);
+    shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userBundleHistory = GetUserHistory(userId, false);
     if (userBundleHistory == nullptr) {
         return;
     }
-    shared_ptr<BundleActivePackageHistory> oneBundleHistory = GetUsageHistoryInUserHistory(
-        userBundleHistory, bundleName, bootBasedTimeStamp, false);
+    shared_ptr<BundleActivePackageHistory> oneBundleHistory = GetUsageHistoryInUserHistory(userBundleHistory,
+        bundleName, bootBasedTimeStamp, false);
     if (oneBundleHistory == nullptr) {
         return;
     }
@@ -234,7 +233,7 @@ void BundleActiveUserHistory::UpdateBootBasedAndScreenTime(const bool& isScreenO
     database_.PutDurationData(bootBasedDuration_, ScreenOnDuration_);
 }
 
-void BundleActiveUserHistory::PrintData(int userId)
+void BundleActiveUserHistory::PrintData(int32_t userId)
 {
     auto oneUserHistory = GetUserHistory(userId, false);
     BUNDLE_ACTIVE_LOGI("PrintData screen is %{public}d", isScreenOn_);

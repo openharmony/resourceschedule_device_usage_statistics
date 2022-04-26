@@ -28,36 +28,34 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
     }
     switch (code) {
         case REPORT_EVENT: {
-            int userId = data.ReadInt32();
+            int32_t userId = data.ReadInt32();
             std::shared_ptr<BundleActiveEvent> tmpEvent;
             tmpEvent = tmpEvent->UnMarshalling(data);
             if (!tmpEvent) {
                 return -1;
             }
-            int result = ReportEvent(*tmpEvent, userId);
+            int32_t result = ReportEvent(*tmpEvent, userId);
             return reply.WriteInt32(result);
         }
         case IS_BUNDLE_IDLE: {
             std::string bundleName = data.ReadString();
-            int result = IsBundleIdle(bundleName);
+            int32_t result = IsBundleIdle(bundleName);
             return reply.WriteInt32(result);
         }
         case QUERY_USAGE_STATS: {
             std::vector<BundleActivePackageStats> result;
-            int size = 0;
-            int intervalType = data.ReadInt32();
-            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_USAGE_STATS intervaltype is %{public}d",
-                intervalType);
+            int32_t intervalType = data.ReadInt32();
+            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_USAGE_STATS intervaltype is %{public}d", intervalType);
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             int32_t userId = data.ReadInt32();
             int32_t errCode = data.ReadInt32();
             result = QueryPackageStats(intervalType, beginTime, endTime, errCode, userId);
             reply.WriteInt32(errCode);
-            size = static_cast<int>(result.size());
+            int32_t size = static_cast<int32_t>(result.size());
             BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_USAGE_STATS result size is %{public}d", size);
             reply.WriteInt32(size);
-            for (int i = 0; i < size; i++) {
+            for (int32_t i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
                 if (tmp == false) {
                     return 1;
@@ -67,16 +65,15 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         }
         case QUERY_EVENTS: {
             std::vector<BundleActiveEvent> result;
-            int size = 0;
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             int32_t userId = data.ReadInt32();
             int32_t errCode = data.ReadInt32();
             result = QueryEvents(beginTime, endTime, errCode, userId);
-            size = static_cast<int>(result.size());
+            int32_t size = static_cast<int32_t>(result.size());
             reply.WriteInt32(errCode);
             reply.WriteInt32(size);
-            for (int i = 0; i < size; i++) {
+            for (int32_t i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
                 if (tmp == false) {
                     return 1;
@@ -86,25 +83,22 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         }
         case SET_BUNDLE_GROUP: {
             std::string bundleName = data.ReadString();
-            int newGroup = data.ReadInt32();
-            int userId = data.ReadInt32();
+            int32_t newGroup = data.ReadInt32();
+            int32_t userId = data.ReadInt32();
             SetBundleGroup(bundleName, newGroup, userId);
             return 0;
         }
         case QUERY_CURRENT_USAGE_STATS: {
             std::vector<BundleActivePackageStats> result;
-            int size = 0;
-            int intervalType = data.ReadInt32();
-            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_CURRENT_USAGE_STATS intervaltype "
-                "is %{public}d", intervalType);
+            int32_t intervalType = data.ReadInt32();
+            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_CURRENT_USAGE_STATS intervaltype is %{public}d", intervalType);
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             result = QueryCurrentPackageStats(intervalType, beginTime, endTime);
-            size = static_cast<int>(result.size());
-            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_CURRENT_USAGE_STATS result size "
-                "is %{public}d", size);
+            int32_t size = static_cast<int32_t>(result.size());
+            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_CURRENT_USAGE_STATS result size is %{public}d", size);
             reply.WriteInt32(size);
-            for (int i = 0; i < size; i++) {
+            for (int32_t i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
                 if (tmp == false) {
                     return 1;
@@ -114,13 +108,12 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         }
         case QUERY_CURRENT_EVENTS: {
             std::vector<BundleActiveEvent> result;
-            int size = 0;
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             result = QueryCurrentEvents(beginTime, endTime);
-            size = static_cast<int>(result.size());
+            int32_t size = static_cast<int32_t>(result.size());
             reply.WriteInt32(size);
-            for (int i = 0; i < size; i++) {
+            for (int32_t i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
                 if (tmp == false) {
                     return 1;
@@ -129,20 +122,19 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             return size == 0;
         }
         case QUERY_BUNDLE_GROUP: {
-            int result = -1;
+            int32_t result = -1;
             result = QueryPackageGroup();
             return reply.WriteInt32(result);
         }
         case QUERY_FORM_STATS: {
             std::vector<BundleActiveModuleRecord> results;
-            int size = 0;
             int32_t maxNum = data.ReadInt32();
             int32_t userId = data.ReadInt32();
             int32_t errCode = QueryFormStatistics(maxNum, results, userId);
-            size = static_cast<int>(results.size());
+            int32_t size = static_cast<int32_t>(results.size());
             reply.WriteInt32(errCode);
             reply.WriteInt32(size);
-            for (int i = 0; i < size; i++) {
+            for (int32_t i = 0; i < size; i++) {
                 bool tmp = results[i].Marshalling(reply);
                 if (tmp == false) {
                     return 1;

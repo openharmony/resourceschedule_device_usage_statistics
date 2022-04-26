@@ -31,7 +31,7 @@ namespace DeviceUsageStats {
  */
 
 // DeviceUsageStats's module const defined.
-enum : int {
+enum : int32_t {
     DEVICE_USAGE_STATS_MODULE_COMMON = 0x01,
 };
 
@@ -39,7 +39,7 @@ enum : int {
 constexpr ErrCode DEVICE_USAGE_STATS_COMMON_ERR_OFFSET =
     ErrCodeOffset(SUBSYS_IAWARE, DEVICE_USAGE_STATS_MODULE_COMMON);
 // Device Usage Stats Common Error Code Defined.
-enum : int {
+enum : int32_t {
     ERR_USAGE_STATS_BUNDLENAME_EMPTY = DEVICE_USAGE_STATS_COMMON_ERR_OFFSET + 1,
     ERR_USAGE_STATS_BUNDLENAME_TYPE,
     ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR,

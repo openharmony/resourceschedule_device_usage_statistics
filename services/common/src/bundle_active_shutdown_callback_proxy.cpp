@@ -29,7 +29,7 @@ void BundleActiveShutdownCallbackProxy::ShutdownCallback()
     if (!data.WriteInterfaceToken(BundleActiveShutdownCallbackProxy::GetDescriptor())) {
         return;
     }
-    int ret = remote->SendRequest(IShutdownCallback::POWER_SHUTDOWN_CHANGED, data, reply, option);
+    int32_t ret = remote->SendRequest(IShutdownCallback::POWER_SHUTDOWN_CHANGED, data, reply, option);
     if (ret != ERR_OK) {
         BUNDLE_ACTIVE_LOGE("BundleActiveShutdownCallbackProxy::ShutdownCallback failed!");
     }

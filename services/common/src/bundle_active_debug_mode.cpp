@@ -23,7 +23,7 @@ using OHOS::system::GetParameter;
 
 namespace OHOS {
 namespace DeviceUsageStats {
-constexpr int DEBUG_ON_DEFAULT = false;
+constexpr int32_t DEBUG_ON_DEFAULT = 0;
 std::string DEBUG_MODE = "persist.sys.device_usage_debug_on";
 const bool DEBUG_ON = static_cast<bool>(GetIntParameter(DEBUG_MODE, DEBUG_ON_DEFAULT));
 }  // namespace DeviceUsageStats

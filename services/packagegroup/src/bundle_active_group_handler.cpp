@@ -69,7 +69,7 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
             break;
         }
         case MSG_ONE_TIME_CHECK_BUNDLE_STATE: {
-            std::vector<int> activatedOsAccountIds;
+            std::vector<int32_t> activatedOsAccountIds;
 #ifdef OS_ACCOUNT_PART_ENABLED
             if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
                 BUNDLE_ACTIVE_LOGI("query activated account failed");

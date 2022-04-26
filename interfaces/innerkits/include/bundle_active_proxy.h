@@ -31,7 +31,7 @@ public:
     * parameters: event, userId
     * return: errorcode.
     */
-    int ReportEvent(BundleActiveEvent& event, const int userId) override;
+    int32_t ReportEvent(BundleActiveEvent& event, const int32_t userId) override;
     /*
     * function: IsBundleIdle, used to check whether specific bundle is idle.
     * parameters: bundleName
@@ -43,26 +43,26 @@ public:
     * parameters: intervalType, beginTime, endTime, errCode
     * return: vector of bundle usage statistics.
     */
-    std::vector<BundleActivePackageStats> QueryPackageStats(const int intervalType, const int64_t beginTime,
-        const int64_t endTime, int32_t& errCode, int userId = -1) override;
+    std::vector<BundleActivePackageStats> QueryPackageStats(const int32_t intervalType, const int64_t beginTime,
+        const int64_t endTime, int32_t& errCode, int32_t userId = -1) override;
     /*
     * function: QueryEvents, query all events in specific time span for calling user.
     * parameters: beginTime, endTime, errCode
     * return: vector of events.
     */
     std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime,
-        int32_t& errCode, int userId = -1) override;
+        int32_t& errCode, int32_t userId = -1) override;
     /*
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    void SetBundleGroup(const std::string& bundleName, int newGroup, int userId) override;
+    void SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) override;
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
     * return: vector of calling bundle usage statistics.
     */
-    std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int intervalType, const int64_t beginTime,
+    std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int32_t intervalType, const int64_t beginTime,
         const int64_t endTime) override;
     /*
     * function: QueryCurrentEvents, query bundle usage statistics in specific time span for calling bundle.
@@ -74,14 +74,15 @@ public:
     * function: QueryPackageGroup, query bundle priority group calling bundle.
     * return: the priority group of calling bundle.
     */
-    int QueryPackageGroup() override;
+    int32_t QueryPackageGroup() override;
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId
     * return: errorcode.
     */
-    int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId = -1) override;
+    int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
+        int32_t userId = -1) override;
     /*
     * function: BundleActiveProxy, default constructor.
     * parameters: impl

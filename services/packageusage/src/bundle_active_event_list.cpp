@@ -21,7 +21,7 @@ BundleActiveEventList::BundleActiveEventList()
 {
 }
 
-int BundleActiveEventList::Size()
+int32_t BundleActiveEventList::Size()
 {
     return events_.size();
 }
@@ -38,18 +38,18 @@ void BundleActiveEventList::Insert(BundleActiveEvent event)
         events_.push_back(event);
         return;
     }
-    int insertIdx = FindBestIndex(event.timeStamp_);
+    int32_t insertIdx = FindBestIndex(event.timeStamp_);
     events_.insert(events_.begin() + insertIdx, event);
 }
 
-int BundleActiveEventList::FindBestIndex(const int64_t timeStamp)
+int32_t BundleActiveEventList::FindBestIndex(const int64_t timeStamp)
 {
-    int size = static_cast<int>(events_.size());
-    int result = size;
-    int lo = 0;
-    int hi = size - 1;
+    int32_t size = static_cast<int32_t>(events_.size());
+    int32_t result = size;
+    int32_t lo = 0;
+    int32_t hi = size - 1;
     while (lo <= hi) {
-        int mid = (hi - lo) / 2 + lo;
+        int32_t mid = (hi - lo) / 2 + lo;
         int64_t midTimeStamp = events_[mid].timeStamp_;
         if (midTimeStamp >= timeStamp) {
             hi = mid - 1;
@@ -63,8 +63,8 @@ int BundleActiveEventList::FindBestIndex(const int64_t timeStamp)
 
 void BundleActiveEventList::Merge(const BundleActiveEventList& right)
 {
-    int size = static_cast<int>(right.events_.size());
-    for (int i = 0; i < size; i++) {
+    int32_t size = static_cast<int32_t>(right.events_.size());
+    for (int32_t i = 0; i < size; i++) {
         Insert(right.events_[i]);
     }
 }

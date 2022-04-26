@@ -28,7 +28,7 @@ namespace DeviceUsageStats {
 class BundleActiveGroupHandlerObject {
 public:
     std::string bundleName_;
-    int userId_;
+    int32_t userId_;
     BundleActiveGroupHandlerObject();
     BundleActiveGroupHandlerObject(const BundleActiveGroupHandlerObject& orig);
     ~BundleActiveGroupHandlerObject() {}
@@ -45,9 +45,9 @@ public:
      */
     void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
     void Init(const std::shared_ptr<BundleActiveGroupController>& bundleActiveController);
-    static const int MSG_CHECK_BUNDLE_STATE = 0;
-    static const int MSG_ONE_TIME_CHECK_BUNDLE_STATE = 1;
-    static const int MSG_CHECK_IDLE_STATE = 2;
+    static const int32_t MSG_CHECK_BUNDLE_STATE = 0;
+    static const int32_t MSG_ONE_TIME_CHECK_BUNDLE_STATE = 1;
+    static const int32_t MSG_CHECK_IDLE_STATE = 2;
     int64_t checkIdleInterval_;
 
 private:

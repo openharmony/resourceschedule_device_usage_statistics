@@ -36,10 +36,10 @@ namespace DeviceUsageStats {
 class BundleActiveReportHandlerObject {
 public:
     BundleActiveEvent event_;
-    int userId_;
+    int32_t userId_;
     std::string bundleName_;
     BundleActiveReportHandlerObject();
-    BundleActiveReportHandlerObject(const int userId, const std::string bundleName);
+    BundleActiveReportHandlerObject(const int32_t userId, const std::string bundleName);
     BundleActiveReportHandlerObject(const BundleActiveReportHandlerObject& orig);
     ~BundleActiveReportHandlerObject() {}
 };
@@ -54,17 +54,17 @@ public:
     * function: ReportEvent, used to report ability fourground/background/destroy event.
     * parameters: event, userId
     */
-    int ReportEvent(BundleActiveEvent& event, const int userId);
+    int32_t ReportEvent(BundleActiveEvent& event, const int32_t userId);
     /*
     * function: ReportEventToAllUserId, report flush to disk, end_of_day event to service.
     * parameters: event
     */
-    int ReportEventToAllUserId(BundleActiveEvent& event);
+    int32_t ReportEventToAllUserId(BundleActiveEvent& event);
     /*
     * function: OnStatsChanged, report flush to disk, end_of_day event to service.
     * parameters: userId
     */
-    void OnStatsChanged(const int userId) override;
+    void OnStatsChanged(const int32_t userId) override;
     /*
     * function: OnStatsChanged, when device reboot after more than one day, BundleActiveUserService
     * will use it to flush group info.
@@ -74,13 +74,13 @@ public:
     * function: OnSystemUpdate, now is emtpy, later will called when system is updated.
     * parameters: userId
     */
-    void OnSystemUpdate(int userId) override;
+    void OnSystemUpdate(int32_t userId) override;
     /*
     * function: OnBundleUninstalled when received a PACKATE_REMOVED commen event,
     * BundleActiveCommonEventSubscriber call it to remove data.
     * parameters: userId, bundleName
     */
-    void OnBundleUninstalled(const int userId, const std::string& bundleName);
+    void OnBundleUninstalled(const int32_t userId, const std::string& bundleName);
     /*
     * function: Init, BundleAciveService call it to init systemTimeShot_, realTimeShot_,
     * create bundleGroupController_ object.
@@ -101,12 +101,12 @@ public:
     * function: RestoreToDatabase, restore bundle usage data and form data to database
     * parameters: userId
     */
-    void RestoreToDatabase(const int userId);
+    void RestoreToDatabase(const int32_t userId);
     /*
     * function: RestoreToDatabaseLocked, flush database for one user data
     * parameters: userId
     */
-    void RestoreToDatabaseLocked(const int userId);
+    void RestoreToDatabaseLocked(const int32_t userId);
     /*
     * function: ShutDown, called when device shutdown, update the in-memory stat and flush the database.
     */
@@ -116,42 +116,42 @@ public:
     * parameters: userId, intervalType, beginTime, endTime, bundleName
     * return: vector of BundleActivePackageStats
     */
-    std::vector<BundleActivePackageStats> QueryPackageStats(const int userId, const int intervalType,
+    std::vector<BundleActivePackageStats> QueryPackageStats(const int32_t userId, const int32_t intervalType,
         const int64_t beginTime, const int64_t endTime, std::string bundleName);
     // query the event stat for calling user.
-    std::vector<BundleActiveEvent> QueryEvents(const int userId, const int64_t beginTime,
+    std::vector<BundleActiveEvent> QueryEvents(const int32_t userId, const int64_t beginTime,
         const int64_t endTime, std::string bundleName);
     // check the app idle state for calling user.
-    int IsBundleIdle(const std::string& bundleName, const int userId);
+    int32_t IsBundleIdle(const std::string& bundleName, const int32_t userId);
     // query the app group for calling app.
-    int QueryPackageGroup(const int userId, const std::string bundleName);
-    int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId);
+    int32_t QueryPackageGroup(const int32_t userId, const std::string bundleName);
+    int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId);
     // get the wall time and check if the wall time is changed.
-    int64_t CheckTimeChangeAndGetWallTime(int userId = 0);
+    int64_t CheckTimeChangeAndGetWallTime(int32_t userId = 0);
     // convert event timestamp from boot based time to wall time.
     void ConvertToSystemTimeLocked(BundleActiveEvent& event);
     // get or create BundleActiveUserService object for specifice user.
-    std::shared_ptr<BundleActiveUserService> GetUserDataAndInitializeIfNeeded(const int userId,
+    std::shared_ptr<BundleActiveUserService> GetUserDataAndInitializeIfNeeded(const int32_t userId,
         const int64_t timeStamp, const bool debug);
     // when received a USER_REMOVED commen event, call it to remove data.
-    void OnUserRemoved(const int userId);
+    void OnUserRemoved(const int32_t userId);
     // when user switched, restore old userdata.
-    void OnUserSwitched(const int userId);
+    void OnUserSwitched(const int32_t userId);
     // force set app group.
-    void SetBundleGroup(const std::string& bundleName, const int newGroup, const int userId);
+    void SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId);
     // get all user in device.
-    void GetAllActiveUser(std::vector<int>& activatedOsAccountIds);
+    void GetAllActiveUser(std::vector<int32_t>& activatedOsAccountIds);
     // when service stop, call it to unregister commen event and shutdown call back.
     void UnRegisterSubscriber();
     // get system time in MS.
     int64_t GetSystemTimeMs();
-    int currentUsedUser_;
+    int32_t currentUsedUser_;
 
 private:
     int64_t flushInterval_;
     static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TWO_SECONDS;
-    const int DEFAULT_USER_ID = -1;
-    std::map<int, std::string> visibleActivities_;
+    const int32_t DEFAULT_USER_ID = -1;
+    std::map<int32_t, std::string> visibleActivities_;
     // use weak_ptr to avoid circulate reference of core and handler.
     std::weak_ptr<BundleActiveReportHandler> handler_;
     std::shared_ptr<BundleActiveGroupController> bundleGroupController_;
@@ -159,7 +159,7 @@ private:
     int64_t systemTimeShot_;
     int64_t realTimeShot_;
     std::mutex mutex_;
-    std::map<int, std::shared_ptr<BundleActiveUserService>> userStatServices_;
+    std::map<int32_t, std::shared_ptr<BundleActiveUserService>> userStatServices_;
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
     void RestoreAllData();

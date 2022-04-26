@@ -43,7 +43,7 @@ public:
     using ApplicationFlag = OHOS::AppExecFwk::ApplicationFlag;
     OHOS::AppExecFwk::ApplicationFlag flag = OHOS::AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO;
     bool bundleGroupEnable_ = true;
-    const int LEVEL_GROUP[4] = {
+    const int32_t LEVEL_GROUP[4] = {
         ACTIVE_GROUP_ALIVE,
         ACTIVE_GROUP_DAILY,
         ACTIVE_GROUP_FIXED,
@@ -56,30 +56,30 @@ public:
     std::shared_ptr<BundleActiveUserHistory> bundleUserHistory_;
     void SetHandlerAndCreateUserHistory(const std::shared_ptr<BundleActiveGroupHandler>& groupHandler,
         const int64_t bootFromTimeStamp);
-    void ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp, const int userId);
-    void CheckAndUpdateGroup(const std::string& bundleName, const int userId, const int64_t bootBasedTimeStamp);
-    bool CheckEachBundleState(const int userId);
+    void ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp, const int32_t userId);
+    void CheckAndUpdateGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp);
+    bool CheckEachBundleState(const int32_t userId);
     void CheckIdleStatsOneTime();
-    void PeriodCheckBundleState(const int userId);
-    void OnUserRemoved(const int userId);
-    void OnBundleUninstalled(const int userId, const std::string bundleName);
+    void PeriodCheckBundleState(const int32_t userId);
+    void OnUserRemoved(const int32_t userId);
+    void OnBundleUninstalled(const int32_t userId, const std::string bundleName);
     void OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp);
-    void SetBundleGroup(const std::string& bundleName, const int userId, int newGroup, uint32_t reason,
+    void SetBundleGroup(const std::string& bundleName, const int32_t userId, int32_t newGroup, uint32_t reason,
         const int64_t bootBasedTimeStamp, const bool& resetTimeout);
-    void RestoreToDatabase(const int userId);
+    void RestoreToDatabase(const int32_t userId);
     void RestoreDurationToDatabase();
-    bool IsBundleInstalled(const std::string& bundleName, const int userId);
+    bool IsBundleInstalled(const std::string& bundleName, const int32_t userId);
     bool IsScreenOn();
-    int IsBundleIdle(const std::string& bundleName, const int userId);
-    int QueryPackageGroup(const int userId, const std::string& bundleName);
-    void ShutDown(const int64_t bootBasedTimeStamp, const int userId);
-    void OnUserSwitched(const int userId, const int currentUsedUser);
+    int32_t IsBundleIdle(const std::string& bundleName, const int32_t userId);
+    int32_t QueryPackageGroup(const int32_t userId, const std::string& bundleName);
+    void ShutDown(const int64_t bootBasedTimeStamp, const int32_t userId);
+    void OnUserSwitched(const int32_t userId, const int32_t currentUsedUser);
 
 private:
     std::mutex mutex_;
     bool GetBundleMgrProxy();
     std::weak_ptr<BundleActiveGroupHandler> activeGroupHandler_;
-    uint32_t EventToGroupReason(const int eventId);
+    uint32_t EventToGroupReason(const int32_t eventId);
     int64_t timeoutForDirectlyUse_;
     int64_t timeoutForNotifySeen_;
     int64_t timeoutForSystemInteraction_;
@@ -87,7 +87,7 @@ private:
     sptr<IBundleMgr> sptrBundleMgr_;
     bool calculationTimeOut(const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory,
         const int64_t bootBasedTimeStamp);
-    int GetNewGroup(const std::string& bundleName, const int userId, const int64_t bootBasedTimeStamp);
+    int32_t GetNewGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

@@ -33,7 +33,7 @@ int32_t BundleActiveOpenCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
     return NativeRdb::E_OK;
 };
 
-int32_t BundleActiveOpenCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion)
+int32_t BundleActiveOpenCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int32_t oldVersion, int32_t newVersion)
 {
     (void)rdbStore;
     (void)oldVersion;

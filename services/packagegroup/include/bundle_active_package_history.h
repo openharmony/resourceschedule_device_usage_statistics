@@ -25,8 +25,8 @@ public:
     int64_t lastBootFromUsedTimeStamp_;
     int64_t lastScreenUsedTimeStamp_;
     int64_t lastGroupCalculatedTimeStamp_;
-    int lastCalculatedGroup_;
-    int currentGroup_;
+    int32_t lastCalculatedGroup_;
+    int32_t currentGroup_;
     uint32_t reasonInGroup_;
     int64_t bundleAliveTimeoutTimeStamp_;
     int64_t bundleDailyTimeoutTimeStamp_;

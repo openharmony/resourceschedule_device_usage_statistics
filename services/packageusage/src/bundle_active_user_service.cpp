@@ -75,8 +75,7 @@ void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bu
 void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)
 {
     BUNDLE_ACTIVE_LOGI("RenewTableTime called");
-    BUNDLE_ACTIVE_LOGI("RenewTableTime called current event size is %{public}d",
-        currentStats_[0]->events_.Size());
+    BUNDLE_ACTIVE_LOGI("RenewTableTime called current event size is %{public}d", currentStats_[0]->events_.Size());
     database_.RenewTableTime(newTime - oldTime);
 }
 
@@ -199,7 +198,7 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
     }
     for (uint32_t intervalType = 0; intervalType < periodLength_.size(); intervalType++) {
         tmpCalendar.SetMilliseconds(timeStamp);
-        tmpCalendar.TruncateTo(static_cast<int>(intervalType));
+        tmpCalendar.TruncateTo(static_cast<int32_t>(intervalType));
         if (!force && currentStats_[intervalType] != nullptr &&
             currentStats_[intervalType]->beginTime_ == tmpCalendar.GetMilliseconds()) {
             continue;
@@ -306,8 +305,8 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
     RestoreStats(true);
 }
 
-std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats(int intervalType,
-    const int64_t beginTime, const int64_t endTime, const int userId, const std::string& bundleName)
+std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats(int32_t intervalType,
+    const int64_t beginTime, const int64_t endTime, const int32_t userId, const std::string& bundleName)
 {
     std::vector<BundleActivePackageStats> result;
     if (intervalType == BundleActivePeriodStats::PERIOD_BEST) {
@@ -316,7 +315,7 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
             intervalType = BundleActivePeriodStats::PERIOD_DAILY;
         }
     }
-    if (intervalType < 0 || intervalType >= static_cast<int>(currentStats_.size())) {
+    if (intervalType < 0 || intervalType >= static_cast<int32_t>(currentStats_.size())) {
         return result;
     }
     auto currentStats = currentStats_[intervalType];
@@ -336,7 +335,7 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
     result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
-    BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}d", static_cast<int>(result.size()));
+    BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}zu", result.size());
     PrintInMemPackageStats(intervalType, debugUserService_);
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
@@ -360,7 +359,7 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
 }
 
 std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_t beginTime, const int64_t endTime,
-    const int userId, const std::string& bundleName)
+    const int32_t userId, const std::string& bundleName)
 {
     BUNDLE_ACTIVE_LOGI("QueryEvents called");
     std::vector<BundleActiveEvent> result;
@@ -379,9 +378,9 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryEvents need in memory stats");
-        int eventBeginIdx = currentStats->events_.FindBestIndex(beginTime);
-        int eventSize = currentStats->events_.Size();
-        for (int i = eventBeginIdx; i < eventSize; i++) {
+        int32_t eventBeginIdx = currentStats->events_.FindBestIndex(beginTime);
+        int32_t eventSize = currentStats->events_.Size();
+        for (int32_t i = eventBeginIdx; i < eventSize; i++) {
             if (currentStats->events_.events_[i].timeStamp_ <= endTime) {
                 if (bundleName.empty() || currentStats->events_.events_[i].bundleName_ == bundleName) {
                     result.push_back(currentStats->events_.events_[i]);
@@ -392,7 +391,7 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryEvents(const int64_
     return result;
 }
 
-int BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
+int32_t BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)
 {
     BUNDLE_ACTIVE_LOGI("QueryFormStatistics called, MAX IS %{public}d", maxNum);
     for (auto oneModuleRecord = moduleRecords_.begin(); oneModuleRecord != moduleRecords_.end(); oneModuleRecord++) {
@@ -411,7 +410,7 @@ int BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector<Bun
     return 0;
 }
 
-void BundleActiveUserService::PrintInMemPackageStats(const int idx, const bool debug)
+void BundleActiveUserService::PrintInMemPackageStats(const int32_t idx, const bool debug)
 {
     if (!debug) {
         return;
@@ -436,13 +435,13 @@ void BundleActiveUserService::PrintInMemEventStats(const bool debug)
         return;
     }
     BUNDLE_ACTIVE_LOGI("PrintInMemEventStats called");
-    int idx = 0;
-    int size = static_cast<int>(currentStats_[idx]->events_.events_.size());
-    for (int i = 0; i < size; i++) {
+    int32_t idx = 0;
+    int32_t size = static_cast<int32_t>(currentStats_[idx]->events_.events_.size());
+    for (int32_t i = 0; i < size; i++) {
         std::string abilityId = currentStats_[idx]->events_.events_[i].abilityId_;
         std::string abilityname = currentStats_[idx]->events_.events_[i].abilityName_;
         std::string bundlename = currentStats_[idx]->events_.events_[i].bundleName_;
-        int eventid = currentStats_[idx]->events_.events_[i].eventId_;
+        int32_t eventid = currentStats_[idx]->events_.events_[i].eventId_;
         int64_t timestamp = currentStats_[idx]->events_.events_[i].timeStamp_;
         BUNDLE_ACTIVE_LOGI("In mem, event stat is, abilityid is %{public}s, abilityname is %{public}s, "
             "bundlename is %{public}s, eventid is %{public}d, timestamp is %{public}lld",

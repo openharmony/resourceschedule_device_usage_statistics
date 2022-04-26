@@ -47,22 +47,22 @@ void BundleActiveCalendar::TruncateToYear()
     time_ -= time_ % yearMilliseconds_;
 }
 
-void BundleActiveCalendar::IncreaseDays(const int val)
+void BundleActiveCalendar::IncreaseDays(const int64_t val)
 {
     time_ += val * dayMilliseconds_;
 }
 
-void BundleActiveCalendar::IncreaseWeeks(const int val)
+void BundleActiveCalendar::IncreaseWeeks(const int64_t val)
 {
     time_ += val* weekMilliseconds_;
 }
 
-void BundleActiveCalendar::IncreaseMonths(const int val)
+void BundleActiveCalendar::IncreaseMonths(const int64_t val)
 {
     time_ += val * monthMilliseconds_;
 }
 
-void BundleActiveCalendar::IncreaseYears(const int val)
+void BundleActiveCalendar::IncreaseYears(const int64_t val)
 {
     time_ += val * yearMilliseconds_;
 }
@@ -85,7 +85,7 @@ void BundleActiveCalendar::ChangeToDebug()
         yearMilliseconds_ = ONE_YEAR_TIME_DEBUG;
 }
 
-void BundleActiveCalendar::TruncateTo(int intervalType)
+void BundleActiveCalendar::TruncateTo(int32_t intervalType)
 {
     switch (intervalType) {
         case BundleActivePeriodStats::PERIOD_DAILY:

@@ -29,16 +29,16 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActivePeriodStats {
 public:
-    static const int PERIOD_DAILY = 0;
-    static const int PERIOD_WEEKLY = 1;
-    static const int PERIOD_MONTHLY = 2;
-    static const int PERIOD_YEARLY = 3;
-    static const int PERIOD_BEST = 4;
-    static const int PERIOD_COUNT = 4;
+    static const int32_t PERIOD_DAILY = 0;
+    static const int32_t PERIOD_WEEKLY = 1;
+    static const int32_t PERIOD_MONTHLY = 2;
+    static const int32_t PERIOD_YEARLY = 3;
+    static const int32_t PERIOD_BEST = 4;
+    static const int32_t PERIOD_COUNT = 4;
     int64_t beginTime_;
     int64_t endTime_;
     int64_t lastTimeSaved_;
-    int userId_;
+    int32_t userId_;
     std::map<std::string, std::shared_ptr<BundleActivePackageStats>> bundleStats_;
     BundleActiveEventList events_;
     std::set<std::string> packetNamesCache_;
@@ -61,7 +61,7 @@ public:
     * parameters: bundleName, longTimeTaskName, timeStamp, eventId, abilityId
     */
     void Update(const std::string bundleName, const std::string longTimeTaskName, const int64_t timeStamp,
-        const int eventId, const std::string abilityId);
+        const int32_t eventId, const std::string abilityId);
     /*
     * function: AddEvent, add a event to member events_.
     * parameters: event

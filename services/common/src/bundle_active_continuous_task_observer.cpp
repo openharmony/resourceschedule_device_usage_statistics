@@ -26,7 +26,7 @@ namespace DeviceUsageStats {
 void BundleActiveContinuousTaskObserver::Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
 {
     if (reportHandler != nullptr) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveAppStateObserver::Init report handler is not null, init success");
+        BUNDLE_ACTIVE_LOGI("report handler is not null, init success");
         reportHandler_ = reportHandler;
     }
 }
@@ -75,10 +75,10 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
     const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>& continuousTaskCallbackInfo,
     const bool isStart)
 {
-    int uid = continuousTaskCallbackInfo->GetCreatorUid();
-    int pid = continuousTaskCallbackInfo->GetCreatorPid();
+    int32_t uid = continuousTaskCallbackInfo->GetCreatorUid();
+    pid_t pid = continuousTaskCallbackInfo->GetCreatorPid();
     std::string continuousTaskAbilityName_ = continuousTaskCallbackInfo->GetAbilityName();
-    int userId = -1;
+    int32_t userId = -1;
     std::string bundleName = "";
     if (GetBundleMgr()) {
         bundleMgr_->GetBundleNameForUid(uid, bundleName);

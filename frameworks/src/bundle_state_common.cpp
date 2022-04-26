@@ -39,7 +39,7 @@ void BundleStateCommon::GetCallbackPromiseResult(const napi_env &env,
 }
 
 void BundleStateCommon::SetCallbackInfo(
-    const napi_env &env, const napi_ref &callbackIn, const int &errorCode, const napi_value &result)
+    const napi_env &env, const napi_ref &callbackIn, const int32_t &errorCode, const napi_value &result)
 {
     napi_value undefined = nullptr;
     napi_get_undefined(env, &undefined);
@@ -227,7 +227,7 @@ void BundleStateCommon::GetModuleRecordForResult(napi_env env,
 }
 
 void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred &deferred,
-    const napi_value &result, const int &errorCode)
+    const napi_value &result, const int32_t &errorCode)
 {
     if (errorCode == ERR_OK) {
         napi_resolve_deferred(env, deferred, result);
@@ -236,7 +236,7 @@ void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred 
     }
 }
 
-napi_value BundleStateCommon::GetErrorValue(napi_env env, int errCode)
+napi_value BundleStateCommon::GetErrorValue(napi_env env, int32_t errCode)
 {
     if (errCode == ERR_OK) {
         return NapiGetNull(env);
@@ -249,7 +249,7 @@ napi_value BundleStateCommon::GetErrorValue(napi_env env, int errCode)
     return result;
 }
 
-napi_value BundleStateCommon::JSParaError(const napi_env &env, const napi_ref &callback, const int &errorCode)
+napi_value BundleStateCommon::JSParaError(const napi_env &env, const napi_ref &callback, const int32_t &errorCode)
 {
     if (callback) {
         napi_value result = nullptr;

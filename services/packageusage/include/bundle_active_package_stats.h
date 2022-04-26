@@ -30,13 +30,13 @@ public:
     int64_t totalInFrontTime_; // the total time of using the bundle
     int64_t lastContiniousTaskUsed_;
     int64_t totalContiniousTaskUsedTime_;
-    int startCount_;
-    int bundleStartedCount_;
-    int lastEvent_;
+    int32_t startCount_;
+    int32_t bundleStartedCount_;
+    int32_t lastEvent_;
     // key is abilityId, value is the last event of this ability. Restore all abilities' last event of bundle.
-    std::map<std::string, int> abilities_;
+    std::map<std::string, int32_t> abilities_;
     // key is name of continuous task, value is last event of this last continuous task.
-    std::map<std::string, int> longTimeTasks_;
+    std::map<std::string, int32_t> longTimeTasks_;
     /*
     * function: BundleActivePackageStats, default constructor.
     */
@@ -54,7 +54,7 @@ public:
     * function: Update, update one bundle statistics.
     * parameters: longTimeTaskName timeStamp eventId abilityId
     */
-    void Update(const std::string& longTimeTaskName, const int64_t timeStamp, const int eventId,
+    void Update(const std::string& longTimeTaskName, const int64_t timeStamp, const int32_t eventId,
         const std::string& abilityId);
     /*
     * function: IncrementTimeUsed, increase bundle's use time.
@@ -92,8 +92,8 @@ public:
 private:
     bool HasFrontAbility();
     bool AnyLongTimeTaskStarted();
-    void UpdateAbility(const int64_t timeStamp, const int eventId, const std::string& abilityId);
-    void UpdateLongTimeTask(const std::string& longTimeTaskName, const int64_t timeStamp, const int eventId);
+    void UpdateAbility(const int64_t timeStamp, const int32_t eventId, const std::string& abilityId);
+    void UpdateLongTimeTask(const std::string& longTimeTaskName, const int64_t timeStamp, const int32_t eventId);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

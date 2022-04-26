@@ -22,12 +22,12 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveEventStats {
 public:
-    int eventId_;
+    int32_t eventId_;
     int64_t beginTimeStamp_;
     int64_t endTimeStamp_;
     int64_t lastEventTime_;
     int64_t totalTime_;
-    int count_;
+    int32_t count_;
     /*
     * function: BundleActiveEventStats, default constructor.
     */
@@ -41,32 +41,32 @@ public:
     * function: GetEventId, get eventId.
     * return: member eventId_.
     */
-    int GetEventId();
+    int32_t GetEventId();
     /*
     * function: GetFirstTimeStamp, get first time stamp.
     * return: member beginTimeStamp_.
     */
-    int GetFirstTimeStamp();
+    int64_t GetFirstTimeStamp();
     /*
     * function: GetLastTimeStamp, get last time stamp.
     * return: member endTimeStamp_.
     */
-    int GetLastTimeStamp();
+    int64_t GetLastTimeStamp();
     /*
     * function: GetLastEventTime, get last event time.
     * return: member lastEventTime_.
     */
-    int GetLastEventTime();
+    int64_t GetLastEventTime();
     /*
     * function: GetTotalTime, get total time.
     * return: member totalTime_.
     */
-    int GetTotalTime();
+    int64_t GetTotalTime();
     /*
     * function: GetCount, get count.
     * return: member count_.
     */
-    int GetCount();
+    int32_t GetCount();
     /*
     * function: add, add statistics from another BundleActvieEventStats object.
     * parameters: right

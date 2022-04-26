@@ -35,9 +35,9 @@ class BundleActiveCore;
 class BundleActiveUserService {
 public:
     BundleActiveUserService() = delete;
-    BundleActiveUserService(const int userId, BundleActiveCore& listener, const bool debug):listener_(listener)
+    BundleActiveUserService(const int32_t userId, BundleActiveCore& listener, const bool debug):listener_(listener)
     {
-        for (int i = 0; i < BundleActivePeriodStats::PERIOD_COUNT; i++) {
+        for (int32_t i = 0; i < BundleActivePeriodStats::PERIOD_COUNT; i++) {
             currentStats_.push_back(nullptr);
         }
         userId_ = userId;
@@ -64,13 +64,13 @@ public:
     void RenewTableTime(int64_t oldTime, int64_t newTime);
     void OnUserRemoved();
     void DeleteUninstalledBundleStats(const std::string& bundleName);
-    int userId_;
+    int32_t userId_;
     BundleActiveCalendar dailyExpiryDate_;
-    std::vector<BundleActivePackageStats> QueryPackageStats(int intervalType, const int64_t beginTime,
-        const int64_t endTime, const int userId, const std::string& bundleName);
-    std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, const int userId,
+    std::vector<BundleActivePackageStats> QueryPackageStats(int32_t intervalType, const int64_t beginTime,
+        const int64_t endTime, const int32_t userId, const std::string& bundleName);
+    std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, const int32_t userId,
         const std::string& bundleName);
-    int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results);
+    int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results);
     void LoadActiveStats(const int64_t timeStamp, const bool& force, const bool& timeChanged);
     void LoadModuleAndFormStats();
 
@@ -87,7 +87,7 @@ private:
     void NotifyStatsChanged();
     void NotifyNewUpdate();
     std::shared_ptr<BundleActiveModuleRecord> GetOrCreateModuleRecord(const BundleActiveEvent& event);
-    void PrintInMemPackageStats(const int idx, const bool debug);
+    void PrintInMemPackageStats(const int32_t idx, const bool debug);
     void PrintInMemEventStats(const bool debug);
     void PrintInMemFormStats(const bool debug, const bool printform);
 };
