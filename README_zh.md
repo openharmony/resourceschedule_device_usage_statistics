@@ -88,10 +88,11 @@
 
 全局资源调度子系统
 
-**device\_usage\_statistics**
+**[resourceschedule_device_usage_statistics](https://gitee.com/openharmony/resourceschedule_device_usage_statistics)**
 
-resource_schedule_service
+[resourceschedule_resource_schedule_service](https://gitee.com/openharmony/resourceschedule_resource_schedule_service)
 
-appexecfwk_standard
+[appexecfwk_standard](https://gitee.com/openharmony/appexecfwk_standard)
 
-native_appdatamgr
+[distributeddatamgr_appdatamgr](https://gitee.com/openharmony/distributeddatamgr_appdatamgr)
+
