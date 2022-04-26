@@ -335,8 +335,9 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
     if (actualSystemTime == -1 || actualRealTime == -1) {
         return -1;
     }
-    BUNDLE_ACTIVE_LOGI("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, diff is %{public}lld",
-        (long long)actualSystemTime, (long long)actualRealTime, (long long)expectedSystemTime, (long long)diffSystemTime);
+    BUNDLE_ACTIVE_LOGI("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, "
+        "diff is %{public}lld", (long long)actualSystemTime,
+        (long long)actualRealTime, (long long)expectedSystemTime, (long long)diffSystemTime);
     if (std::abs(diffSystemTime) > TIME_CHANGE_THRESHOLD_MILLIS) {
         // 时区变换逻辑
         auto it = userStatServices_.find(userId);
