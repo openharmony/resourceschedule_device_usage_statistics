@@ -178,7 +178,8 @@ void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "launchedCount", launchedCount));
         napi_value lastModuleUsedTime = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, oneModuleRecord.lastModuleUsedTime_, &lastModuleUsedTime));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "lastModuleUsedTime", lastModuleUsedTime));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject,
+            "lastModuleUsedTime", lastModuleUsedTime));
 }
 
 void BundleStateCommon::GetModuleRecordForResult(napi_env env,
