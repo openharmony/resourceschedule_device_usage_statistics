@@ -43,7 +43,7 @@ void BundleActiveEventTracker::Update(int64_t timeStamp)
     lastEventTime_ = timeStamp;
 }
 
-void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, int eventId,
+void BundleActiveEventTracker::AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, int32_t eventId,
     int64_t beginTime, int64_t endTime)
 {
     if (count_ || duration_) {

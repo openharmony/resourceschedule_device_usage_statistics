@@ -120,7 +120,7 @@ void BundleActiveUsageDatabase::InitUsageGroupDatabase(const int32_t databaseTyp
 int32_t BundleActiveUsageDatabase::CreateDatabasePath()
 {
     if (access(BUNDLE_ACTIVE_DATABASE_DIR.c_str(), F_OK) != 0) {
-        int createDir = mkdir(BUNDLE_ACTIVE_DATABASE_DIR.c_str(), S_IRWXU);
+        int32_t createDir = mkdir(BUNDLE_ACTIVE_DATABASE_DIR.c_str(), S_IRWXU);
         if (createDir != 0) {
             BUNDLE_ACTIVE_LOGE("failed to create directory %{public}s", BUNDLE_ACTIVE_DATABASE_DIR.c_str());
             return BUNDLE_ACTIVE_FAIL;
@@ -137,11 +137,11 @@ void BundleActiveUsageDatabase::InitDatabaseTableInfo(int64_t currentTime)
         return;
     }
     CheckDatabaseVersion();
-    for (unsigned int i = 0; i < databaseFiles_.size(); i++) {
+    for (uint32_t i = 0; i < databaseFiles_.size(); i++) {
         HandleTableInfo(i);
         DeleteExcessiveTableData(i);
     }
-    for (unsigned int i = 0; i < sortedTableArray_.size(); i++) {
+    for (uint32_t i = 0; i < sortedTableArray_.size(); i++) {
         int32_t startIndex = NearIndexOnOrAfterCurrentTime(currentTime, sortedTableArray_.at(i));
         if (startIndex < BUNDLE_ACTIVE_SUCCESS) {
             continue;
@@ -201,7 +201,7 @@ int32_t BundleActiveUsageDatabase::NearIndexOnOrBeforeCurrentTime(int64_t curren
     return index - 1;
 }
 
-unique_ptr<NativeRdb::ResultSet> BundleActiveUsageDatabase::QueryStatsInfoByStep(unsigned int databaseType,
+unique_ptr<NativeRdb::ResultSet> BundleActiveUsageDatabase::QueryStatsInfoByStep(uint32_t databaseType,
     const string &sql, const vector<string> &selectionArgs)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
@@ -218,7 +218,7 @@ unique_ptr<NativeRdb::ResultSet> BundleActiveUsageDatabase::QueryStatsInfoByStep
     return result;
 }
 
-void BundleActiveUsageDatabase::HandleTableInfo(unsigned int databaseType)
+void BundleActiveUsageDatabase::HandleTableInfo(uint32_t databaseType)
 {
     string queryDatabaseTableNames = "select * from sqlite_master where type = ?";
     vector<string> queryCondition;
@@ -262,7 +262,7 @@ void BundleActiveUsageDatabase::HandleTableInfo(unsigned int databaseType)
     }
 }
 
-void BundleActiveUsageDatabase::DeleteExcessiveTableData(unsigned int databaseType)
+void BundleActiveUsageDatabase::DeleteExcessiveTableData(uint32_t databaseType)
 {
     if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
         if (sortedTableArray_.at(databaseType).empty()) {
@@ -313,7 +313,7 @@ void BundleActiveUsageDatabase::DeleteExcessiveTableData(unsigned int databaseTy
     }
 }
 
-std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTableCreateTime(unsigned int databaseType,
+std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTableCreateTime(uint32_t databaseType,
     int64_t currentTimeMillis)
 {
     std::unique_ptr<std::vector<int64_t>> overdueTableCreateTime = std::make_unique<std::vector<int64_t>>();
@@ -349,7 +349,7 @@ std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTable
     return overdueTableCreateTime;
 }
 
-int32_t BundleActiveUsageDatabase::DeleteInvalidTable(unsigned int databaseType, int64_t tableTimeMillis)
+int32_t BundleActiveUsageDatabase::DeleteInvalidTable(uint32_t databaseType, int64_t tableTimeMillis)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
@@ -405,12 +405,12 @@ void BundleActiveUsageDatabase::CheckDatabaseVersion()
     }
 }
 
-shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbStore(unsigned int databaseType)
+shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbStore(uint32_t databaseType)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore;
     string file = databaseFiles_.at(databaseType);
     if (bundleActiveRdbStoreCache_.find(file) == bundleActiveRdbStoreCache_.end()) {
-        int errCode(BUNDLE_ACTIVE_FAIL);
+        int32_t errCode(BUNDLE_ACTIVE_FAIL);
         string currDatabaseFileConfig = BUNDLE_ACTIVE_DATABASE_DIR + databaseFiles_.at(databaseType);
         RdbStoreConfig config(currDatabaseFileConfig);
         BundleActiveOpenCallback rdbDataCallBack;
@@ -430,7 +430,7 @@ shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbSto
     return rdbStore;
 }
 
-void BundleActiveUsageDatabase::CheckDatabaseFile(unsigned int databaseType)
+void BundleActiveUsageDatabase::CheckDatabaseFile(uint32_t databaseType)
 {
     std::string databaseFileName = databaseFiles_.at(databaseType);
     std::string dbFile;
@@ -456,7 +456,7 @@ void BundleActiveUsageDatabase::CheckDatabaseFile(unsigned int databaseType)
     }
 }
 
-int32_t BundleActiveUsageDatabase::CreateEventLogTable(unsigned int databaseType, int64_t currentTimeMillis)
+int32_t BundleActiveUsageDatabase::CreateEventLogTable(uint32_t databaseType, int64_t currentTimeMillis)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
@@ -487,7 +487,7 @@ int32_t BundleActiveUsageDatabase::CreateEventLogTable(unsigned int databaseType
     return BUNDLE_ACTIVE_SUCCESS;
 }
 
-int32_t BundleActiveUsageDatabase::CreatePackageLogTable(unsigned int databaseType, int64_t currentTimeMillis)
+int32_t BundleActiveUsageDatabase::CreatePackageLogTable(uint32_t databaseType, int64_t currentTimeMillis)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
@@ -519,7 +519,7 @@ int32_t BundleActiveUsageDatabase::CreatePackageLogTable(unsigned int databaseTy
     return BUNDLE_ACTIVE_SUCCESS;
 }
 
-int32_t BundleActiveUsageDatabase::CreateModuleRecordTable(unsigned int databaseType, int64_t timeStamp)
+int32_t BundleActiveUsageDatabase::CreateModuleRecordTable(uint32_t databaseType, int64_t timeStamp)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
@@ -550,7 +550,7 @@ int32_t BundleActiveUsageDatabase::CreateModuleRecordTable(unsigned int database
     return BUNDLE_ACTIVE_SUCCESS;
 }
 
-int32_t BundleActiveUsageDatabase::CreateFormRecordTable(unsigned int databaseType, int64_t timeStamp)
+int32_t BundleActiveUsageDatabase::CreateFormRecordTable(uint32_t databaseType, int64_t timeStamp)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
@@ -584,7 +584,7 @@ int32_t BundleActiveUsageDatabase::CreateFormRecordTable(unsigned int databaseTy
     return BUNDLE_ACTIVE_SUCCESS;
 }
 
-int32_t BundleActiveUsageDatabase::CreateDurationTable(unsigned int databaseType)
+int32_t BundleActiveUsageDatabase::CreateDurationTable(uint32_t databaseType)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
@@ -604,7 +604,7 @@ int32_t BundleActiveUsageDatabase::CreateDurationTable(unsigned int databaseType
     return BUNDLE_ACTIVE_SUCCESS;
 }
 
-int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(unsigned int databaseType)
+int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(uint32_t databaseType)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
@@ -637,7 +637,7 @@ int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(unsigned int databas
     return BUNDLE_ACTIVE_SUCCESS;
 }
 
-void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
+void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userHistory)
 {
     lock_guard<mutex> lock(databaseMutex_);
@@ -658,8 +658,8 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
     NativeRdb::ValuesBucket valuesBucket;
     vector<string> queryCondition;
-    int updatedcount = 0;
-    int unupdatedcount = 0;
+    int32_t updatedcount = 0;
+    int32_t unupdatedcount = 0;
     for (auto iter = userHistory->begin(); iter != userHistory->end(); iter++) {
         if (iter->second == nullptr || !iter->second->isChanged_) {
             unupdatedcount++;
@@ -670,7 +670,7 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_BOOT_FROM_USED_TIME, iter->second->lastBootFromUsedTimeStamp_);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_SCREEN_USED_TIME, iter->second->lastScreenUsedTimeStamp_);
         valuesBucket.PutInt(BUNDLE_ACTIVE_DB_CURRENT_GROUP, iter->second->currentGroup_);
-        valuesBucket.PutInt(BUNDLE_ACTIVE_DB_REASON_IN_GROUP, static_cast<int>(iter->second->reasonInGroup_));
+        valuesBucket.PutInt(BUNDLE_ACTIVE_DB_REASON_IN_GROUP, static_cast<int32_t>(iter->second->reasonInGroup_));
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_ALIVE_TIMEOUT_TIME, iter->second->bundleAliveTimeoutTimeStamp_);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_DAILY_TIMEOUT_TIME, iter->second->bundleDailyTimeoutTimeStamp_);
         rdbStore->Update(changeRow, BUNDLE_HISTORY_LOG_TABLE, valuesBucket, "userId = ? and bundleName = ?",
@@ -693,7 +693,7 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int userId,
 }
 
 shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsageDatabase::GetBundleHistoryData(
-    int userId)
+    int32_t userId)
 {
     lock_guard<mutex> lock(databaseMutex_);
     if (bundleHistoryTableName_ == UNKNOWN_TABLE_NAME) {
@@ -716,7 +716,7 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userUsageHistory =
         make_shared<map<string, shared_ptr<BundleActivePackageHistory>>>();
     shared_ptr<BundleActivePackageHistory> usageHistory;
-    int currentBundleGroupReason = 0;
+    int32_t currentBundleGroupReason = 0;
     for (int32_t i = 0; i < tableRowNumber; i++) {
         bundleActiveResult->GoToRow(i);
         bundleActiveResult->GetString(BUNDLE_NAME_COLUMN_INDEX, bundleName);
@@ -783,7 +783,7 @@ pair<int64_t, int64_t> BundleActiveUsageDatabase::GetDurationData()
     return durationData;
 }
 
-void BundleActiveUsageDatabase::FlushPackageInfo(unsigned int databaseType, const BundleActivePeriodStats &stats)
+void BundleActiveUsageDatabase::FlushPackageInfo(uint32_t databaseType, const BundleActivePeriodStats &stats)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     string tableName = PACKAGE_LOG_TABLE + to_string(stats.beginTime_);
@@ -822,7 +822,7 @@ void BundleActiveUsageDatabase::FlushPackageInfo(unsigned int databaseType, cons
 }
 
 shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageData(int32_t databaseType,
-    int userId)
+    int32_t userId)
 {
     lock_guard<mutex> lock(databaseMutex_);
     if (databaseType < 0 || databaseType >= static_cast<int32_t>(sortedTableArray_.size())) {
@@ -830,7 +830,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         return nullptr;
     }
 
-    int tableNumber = static_cast<int>(sortedTableArray_.at(databaseType).size());
+    int32_t tableNumber = static_cast<int32_t>(sortedTableArray_.at(databaseType).size());
     if (tableNumber == TABLE_NOT_EXIST) {
         return nullptr;
     }
@@ -880,7 +880,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
     return intervalStats;
 }
 
-void BundleActiveUsageDatabase::FlushEventInfo(unsigned int databaseType, BundleActivePeriodStats &stats)
+void BundleActiveUsageDatabase::FlushEventInfo(uint32_t databaseType, BundleActivePeriodStats &stats)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
@@ -904,7 +904,7 @@ void BundleActiveUsageDatabase::FlushEventInfo(unsigned int databaseType, Bundle
     }
 }
 
-string BundleActiveUsageDatabase::GetTableIndexSql(unsigned int databaseType, int64_t tableTime, bool createFlag,
+string BundleActiveUsageDatabase::GetTableIndexSql(uint32_t databaseType, int64_t tableTime, bool createFlag,
     int32_t indexFlag)
 {
     string tableIndexSql;
@@ -954,7 +954,7 @@ string BundleActiveUsageDatabase::GetTableIndexSql(unsigned int databaseType, in
     return tableIndexSql;
 }
 
-int32_t BundleActiveUsageDatabase::SetNewIndexWhenTimeChanged(unsigned int databaseType, int64_t tableOldTime,
+int32_t BundleActiveUsageDatabase::SetNewIndexWhenTimeChanged(uint32_t databaseType, int64_t tableOldTime,
     int64_t tableNewTime, std::shared_ptr<NativeRdb::RdbStore> rdbStore)
 {
     if (rdbStore == nullptr) {
@@ -1000,7 +1000,7 @@ int32_t BundleActiveUsageDatabase::SetNewIndexWhenTimeChanged(unsigned int datab
     return BUNDLE_ACTIVE_SUCCESS;
 }
 
-int32_t BundleActiveUsageDatabase::RenameTableName(unsigned int databaseType, int64_t tableOldTime,
+int32_t BundleActiveUsageDatabase::RenameTableName(uint32_t databaseType, int64_t tableOldTime,
     int64_t tableNewTime)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
@@ -1016,7 +1016,7 @@ int32_t BundleActiveUsageDatabase::RenameTableName(unsigned int databaseType, in
         if (renamePackageTableName != NativeRdb::E_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
-        int setResult = SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
+        int32_t setResult = SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
         if (setResult != BUNDLE_ACTIVE_SUCCESS) {
             return BUNDLE_ACTIVE_FAIL;
         }
@@ -1028,7 +1028,7 @@ int32_t BundleActiveUsageDatabase::RenameTableName(unsigned int databaseType, in
         if (renameEventTableName != NativeRdb::E_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
-        int setResult = SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
+        int32_t setResult = SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
         if (setResult != BUNDLE_ACTIVE_SUCCESS) {
             return BUNDLE_ACTIVE_FAIL;
         }
@@ -1047,7 +1047,7 @@ int32_t BundleActiveUsageDatabase::RenameTableName(unsigned int databaseType, in
         if (renameFormTableName != NativeRdb::E_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
-        int setResult = SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
+        int32_t setResult = SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
         if (setResult != BUNDLE_ACTIVE_SUCCESS) {
             return BUNDLE_ACTIVE_FAIL;
         }
@@ -1083,7 +1083,7 @@ void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
     std::unique_ptr<std::vector<int64_t>> overdueYearsTableCreateTime = GetOverdueTableCreateTime(YEARLY_DATABASE_INDEX,
         calendar_->GetMilliseconds());
     if (overdueYearsTableCreateTime != nullptr) {
-        for (unsigned int i = 0; i < overdueYearsTableCreateTime->size(); i++) {
+        for (uint32_t i = 0; i < overdueYearsTableCreateTime->size(); i++) {
             DeleteInvalidTable(YEARLY_DATABASE_INDEX, overdueYearsTableCreateTime->at(i));
         }
     }
@@ -1092,7 +1092,7 @@ void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
     std::unique_ptr<std::vector<int64_t>> overdueMonthsTableCreateTime
         = GetOverdueTableCreateTime(MONTHLY_DATABASE_INDEX, calendar_->GetMilliseconds());
     if (overdueMonthsTableCreateTime != nullptr) {
-        for (unsigned int i = 0; i < overdueMonthsTableCreateTime->size(); i++) {
+        for (uint32_t i = 0; i < overdueMonthsTableCreateTime->size(); i++) {
             DeleteInvalidTable(MONTHLY_DATABASE_INDEX, overdueMonthsTableCreateTime->at(i));
         }
     }
@@ -1101,7 +1101,7 @@ void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
     std::unique_ptr<std::vector<int64_t>> overdueWeeksTableCreateTime = GetOverdueTableCreateTime(WEEKLY_DATABASE_INDEX,
         calendar_->GetMilliseconds());
     if (overdueWeeksTableCreateTime != nullptr) {
-        for (unsigned int i = 0; i < overdueWeeksTableCreateTime->size(); i++) {
+        for (uint32_t i = 0; i < overdueWeeksTableCreateTime->size(); i++) {
             DeleteInvalidTable(WEEKLY_DATABASE_INDEX, overdueWeeksTableCreateTime->at(i));
         }
     }
@@ -1110,11 +1110,11 @@ void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
     std::unique_ptr<std::vector<int64_t>> overdueDaysTableCreateTime = GetOverdueTableCreateTime(DAILY_DATABASE_INDEX,
         calendar_->GetMilliseconds());
     if (overdueDaysTableCreateTime != nullptr) {
-        for (unsigned int i = 0; i < overdueDaysTableCreateTime->size(); i++) {
+        for (uint32_t i = 0; i < overdueDaysTableCreateTime->size(); i++) {
             DeleteInvalidTable(DAILY_DATABASE_INDEX, overdueDaysTableCreateTime->at(i));
         }
     }
-    for (unsigned int i = 0; i < sortedTableArray_.size(); i++) {
+    for (uint32_t i = 0; i < sortedTableArray_.size(); i++) {
         HandleTableInfo(i);
         DeleteExcessiveTableData(i);
     }
@@ -1123,12 +1123,12 @@ void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
 void BundleActiveUsageDatabase::RenewTableTime(int64_t changedTime)
 {
     lock_guard<mutex> lock(databaseMutex_);
-    for (unsigned int i = 0; i < sortedTableArray_.size(); i++) {
+    for (uint32_t i = 0; i < sortedTableArray_.size(); i++) {
         if (sortedTableArray_.at(i).empty()) {
             continue;
         }
         vector<int64_t> tableArray = sortedTableArray_.at(i);
-        for (unsigned int j = 0; j < tableArray.size(); j++) {
+        for (uint32_t j = 0; j < tableArray.size(); j++) {
             int64_t newTime = tableArray.at(j) + changedTime;
             BUNDLE_ACTIVE_LOGI("new table time is %{public}lld", (long long)newTime);
             if (newTime < 0) {
@@ -1200,7 +1200,7 @@ void BundleActiveUsageDatabase::UpdateUsageData(int32_t databaseType, BundleActi
 }
 
 vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageStats(int32_t databaseType,
-    int64_t beginTime, int64_t endTime, int userId)
+    int64_t beginTime, int64_t endTime, int32_t userId)
 {
     lock_guard<mutex> lock(databaseMutex_);
     vector<BundleActivePackageStats> databaseUsageStats;
@@ -1293,7 +1293,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
 }
 
 vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t beginTime, int64_t endTime,
-    int userId, string bundleName)
+    int32_t userId, string bundleName)
 {
     lock_guard<mutex> lock(databaseMutex_);
     vector<BundleActiveEvent> databaseEvents;
@@ -1350,7 +1350,7 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
     return databaseEvents;
 }
 
-void BundleActiveUsageDatabase::OnPackageUninstalled(const int userId, const string& bundleName)
+void BundleActiveUsageDatabase::OnPackageUninstalled(const int32_t userId, const string& bundleName)
 {
     lock_guard<mutex> lock(databaseMutex_);
     for (uint32_t i = 0; i < sortedTableArray_.size(); i++) {
@@ -1376,8 +1376,8 @@ void BundleActiveUsageDatabase::OnPackageUninstalled(const int userId, const str
     }
 }
 
-void BundleActiveUsageDatabase::DeleteUninstalledInfo(const int userId, const string& bundleName,
-    const string& tableName, unsigned int databaseType)
+void BundleActiveUsageDatabase::DeleteUninstalledInfo(const int32_t userId, const string& bundleName,
+    const string& tableName, uint32_t databaseType)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
@@ -1413,7 +1413,7 @@ int64_t BundleActiveUsageDatabase::GetSystemTimeMs()
     return static_cast<int64_t>(tarDate);
 }
 
-void BundleActiveUsageDatabase::UpdateModuleData(const int userId,
+void BundleActiveUsageDatabase::UpdateModuleData(const int32_t userId,
     std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords, const int64_t timeStamp)
 {
     lock_guard<mutex> lock(databaseMutex_);
@@ -1502,7 +1502,7 @@ void BundleActiveUsageDatabase::UpdateFormData(const int32_t userId, const std::
     }
 }
 
-void BundleActiveUsageDatabase::RemoveFormData(const int userId, const std::string bundleName,
+void BundleActiveUsageDatabase::RemoveFormData(const int32_t userId, const std::string bundleName,
     const std::string moduleName, const std::string formName, const int32_t formDimension,
     const int64_t formId)
 {
@@ -1521,12 +1521,12 @@ void BundleActiveUsageDatabase::RemoveFormData(const int userId, const std::stri
         queryCondition.emplace_back(formName);
         queryCondition.emplace_back(to_string(formDimension));
         queryCondition.emplace_back(to_string(formId));
-        int r = rdbStore->Delete(deletedRows, formRecordsTableName_,
+        int32_t ret = rdbStore->Delete(deletedRows, formRecordsTableName_,
             "userId = ? and bundleName = ? and moduleName = ? and formName = ? and formDimension = ? "
             "and formId = ?",
             queryCondition);
-        if (r != NativeRdb::E_OK) {
-            BUNDLE_ACTIVE_LOGE("delete event data failed, rdb error number: %{public}d", r);
+        if (ret != NativeRdb::E_OK) {
+            BUNDLE_ACTIVE_LOGE("delete event data failed, rdb error number: %{public}d", ret);
         }
     }
 }

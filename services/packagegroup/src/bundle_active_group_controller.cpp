@@ -46,13 +46,13 @@ void BundleActiveGroupController::RestoreDurationToDatabase()
     bundleUserHistory_->WriteDeviceDuration();
 }
 
-void BundleActiveGroupController::RestoreToDatabase(const int userId)
+void BundleActiveGroupController::RestoreToDatabase(const int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     bundleUserHistory_->WriteBundleUsage(userId);
 }
 
-void BundleActiveGroupController::OnUserRemoved(const int userId)
+void BundleActiveGroupController::OnUserRemoved(const int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     bundleUserHistory_->userHistory_.erase(userId);
@@ -61,7 +61,7 @@ void BundleActiveGroupController::OnUserRemoved(const int userId)
     }
 }
 
-void BundleActiveGroupController::OnUserSwitched(const int userId, const int currentUsedUser)
+void BundleActiveGroupController::OnUserSwitched(const int32_t userId, const int32_t currentUsedUser)
 {
     BUNDLE_ACTIVE_LOGI("last time check for user %{public}d", currentUsedUser);
     CheckEachBundleState(currentUsedUser);
@@ -92,7 +92,7 @@ void BundleActiveGroupController::SetHandlerAndCreateUserHistory(
     activeGroupHandler_ = groupHandler;
 }
 
-void BundleActiveGroupController::OnBundleUninstalled(const int userId, const std::string bundleName)
+void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, const std::string bundleName)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     BUNDLE_ACTIVE_LOGI("OnBundleUninstalled called, userId is %{public}d, bundlename is %{public}s",
@@ -128,7 +128,7 @@ bool BundleActiveGroupController::GetBundleMgrProxy()
     return true;
 }
 
-void BundleActiveGroupController::PeriodCheckBundleState(const int userId)
+void BundleActiveGroupController::PeriodCheckBundleState(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("PeriodCheckBundleState called");
     if (!activeGroupHandler_.expired()) {
@@ -142,7 +142,7 @@ void BundleActiveGroupController::PeriodCheckBundleState(const int userId)
     }
 }
 
-bool BundleActiveGroupController::CheckEachBundleState(const int userId)
+bool BundleActiveGroupController::CheckEachBundleState(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("CheckEachBundleState called, userid is %{public}d", userId);
     std::vector<ApplicationInfo> allBundlesForUser;
@@ -172,10 +172,10 @@ void BundleActiveGroupController::CheckIdleStatsOneTime()
     }
 }
 
-int BundleActiveGroupController::GetNewGroup(const std::string& bundleName, const int userId,
+int32_t BundleActiveGroupController::GetNewGroup(const std::string& bundleName, const int32_t userId,
     const int64_t bootBasedTimeStamp)
 {
-    int groupIndex = bundleUserHistory_->GetLevelIndex(bundleName, userId, bootBasedTimeStamp, screenTimeLevel_,
+    int32_t groupIndex = bundleUserHistory_->GetLevelIndex(bundleName, userId, bootBasedTimeStamp, screenTimeLevel_,
         bootTimeLevel_);
     if (groupIndex < 0) {
         return -1;
@@ -194,7 +194,7 @@ bool BundleActiveGroupController::calculationTimeOut(
         - lastGroupCalculatedTimeStamp > timeoutCalculated_;
 }
 
-uint32_t BundleActiveGroupController::EventToGroupReason(const int eventId)
+uint32_t BundleActiveGroupController::EventToGroupReason(const int32_t eventId)
 {
     switch (eventId) {
         case BundleActiveEvent::ABILITY_FOREGROUND:
@@ -215,7 +215,7 @@ uint32_t BundleActiveGroupController::EventToGroupReason(const int eventId)
 }
 
 void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp,
-    const int userId)
+    const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("ReportEvent called");
     if (bundleGroupEnable_ == false) {
@@ -225,7 +225,7 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
     if (IsBundleInstalled(event.bundleName_, userId) == false) {
         return;
     }
-    int eventId = event.eventId_;
+    int32_t eventId = event.eventId_;
     if (eventId == BundleActiveEvent::ABILITY_FOREGROUND ||
         eventId == BundleActiveEvent::ABILITY_BACKGROUND ||
         eventId == BundleActiveEvent::SYSTEM_INTERACTIVE ||
@@ -269,7 +269,7 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
     }
 }
 
-void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleName, const int userId,
+void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleName, const int32_t userId,
     const int64_t bootBasedTimeStamp)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -282,8 +282,8 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     if (oldGroupControlReason == GROUP_CONTROL_REASON_FORCED) {
         return;
     }
-    int oldGroup = oneBundleHistory->currentGroup_;
-    int newGroup = std::max(oldGroup, ACTIVE_GROUP_ALIVE);
+    int32_t oldGroup = oneBundleHistory->currentGroup_;
+    int32_t newGroup = std::max(oldGroup, ACTIVE_GROUP_ALIVE);
     if (oldGroupControlReason == GROUP_CONTROL_REASON_DEFAULT ||
         oldGroupControlReason == GROUP_CONTROL_REASON_USAGE ||
         oldGroupControlReason == GROUP_CONTROL_REASON_TIMEOUT) {
@@ -313,7 +313,7 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     }
 }
 
-void BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int userId, int newGroup,
+void BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int32_t userId, int32_t newGroup,
     uint32_t reason, const int64_t bootBasedTimeStamp, const bool& resetTimeout)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -345,7 +345,7 @@ void BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, 
     bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, reason, false);
 }
 
-int BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, const int userId)
+int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, const int32_t userId)
 {
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     if (IsBundleInstalled(bundleName, userId) == false) {
@@ -357,17 +357,15 @@ int BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, con
     if (oneBundleHistory == nullptr) {
         return 1;
     } else if (oneBundleHistory->currentGroup_ >= ACTIVE_GROUP_RARE) {
-        BUNDLE_ACTIVE_LOGI("IsBundleIdle, bundle group is %{public}d",
-            oneBundleHistory->currentGroup_);
+        BUNDLE_ACTIVE_LOGI("IsBundleIdle, bundle group is %{public}d", oneBundleHistory->currentGroup_);
         return 1;
     } else {
-        BUNDLE_ACTIVE_LOGI("IsBundleIdle, bundle group is %{public}d",
-            oneBundleHistory->currentGroup_);
+        BUNDLE_ACTIVE_LOGI("IsBundleIdle, bundle group is %{public}d", oneBundleHistory->currentGroup_);
         return 0;
     }
 }
 
-int BundleActiveGroupController::QueryPackageGroup(const int userId, const std::string& bundleName)
+int32_t BundleActiveGroupController::QueryPackageGroup(const int32_t userId, const std::string& bundleName)
 {
     BUNDLE_ACTIVE_LOGI("QueryPackageGroup called");
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
@@ -384,7 +382,7 @@ int BundleActiveGroupController::QueryPackageGroup(const int userId, const std::
     }
 }
 
-bool BundleActiveGroupController::IsBundleInstalled(const std::string& bundleName, const int userId)
+bool BundleActiveGroupController::IsBundleInstalled(const std::string& bundleName, const int32_t userId)
 {
     ApplicationInfo bundleInfo;
     if (sptrBundleMgr_ != nullptr && sptrBundleMgr_->GetApplicationInfo(
@@ -395,7 +393,7 @@ bool BundleActiveGroupController::IsBundleInstalled(const std::string& bundleNam
     return true;
 }
 
-void BundleActiveGroupController::ShutDown(const int64_t bootBasedTimeStamp, const int userId)
+void BundleActiveGroupController::ShutDown(const int64_t bootBasedTimeStamp, const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("ShutDown called");
     CheckEachBundleState(userId);

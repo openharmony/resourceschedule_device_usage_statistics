@@ -26,10 +26,10 @@ public:
     int64_t curStartTime_;
     int64_t lastEventTime_;
     int64_t duration_;
-    int64_t count_;
+    int32_t count_;
     void CommitTime(const int64_t timeStamp);
     void Update(int64_t timeStamp);
-    void AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, int eventId, int64_t beginTime,
+    void AddToEventStats(std::vector<BundleActiveEventStats>& eventStatsList, int32_t eventId, int64_t beginTime,
         int64_t endTime);
     BundleActiveEventTracker();
 };

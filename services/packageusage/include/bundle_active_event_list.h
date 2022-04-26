@@ -35,7 +35,7 @@ public:
     * function: Size, get size of member events_.
     * return: size of member events_
     */
-    int Size();
+    int32_t Size();
     /*
     * function: Clear, clear all event in member events_.
     */
@@ -50,7 +50,7 @@ public:
     * parameters: timeStamp
     * return: the index of inserting.
     */
-    int FindBestIndex(const int64_t timeStamp);
+    int32_t FindBestIndex(const int64_t timeStamp);
     /*
     * function: Merge, merge two BundleActiveEventList.
     * parameters: right

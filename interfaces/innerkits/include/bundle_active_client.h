@@ -27,13 +27,13 @@ namespace DeviceUsageStats {
 class BundleActiveClient {
 public:
     // max number of query modules result.
-    const int MAXNUM_UP_LIMIT = 1000;
+    const int32_t MAXNUM_UP_LIMIT = 1000;
     /*
     * function: ReportEvent, used to report event.
     * parameters: event, userId
     * return: errorcode.
     */
-    int ReportEvent(BundleActiveEvent event, const int userId);
+    int32_t ReportEvent(BundleActiveEvent event, const int32_t userId);
     /*
     * function: IsBundleIdle, used to check whether specific bundle is idle.
     * parameters: bundleName
@@ -45,26 +45,26 @@ public:
     * parameters: intervalType, beginTime, endTime, errCode
     * return: vector of bundle usage statistics.
     */
-    std::vector<BundleActivePackageStats> QueryPackageStats(const int intervalType, const int64_t beginTime,
-        const int64_t endTime, int32_t& errCode, int userId = -1);
+    std::vector<BundleActivePackageStats> QueryPackageStats(const int32_t intervalType, const int64_t beginTime,
+        const int64_t endTime, int32_t& errCode, int32_t userId = -1);
     /*
     * function: QueryEvents, query all events in specific time span for calling user.
     * parameters: beginTime, endTime, errCode
     * return: vector of events.
     */
-    std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime,
-        int32_t& errCode, int userId = -1);
+    std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, int32_t& errCode,
+        int32_t userId = -1);
     /*
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    void SetBundleGroup(std::string bundleName, const int newGroup, const int userId);
+    void SetBundleGroup(std::string bundleName, const int32_t newGroup, const int32_t userId);
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
     * return: vector of calling bundle usage statistics.
     */
-    std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int intervalType, const int64_t beginTime,
+    std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int32_t intervalType, const int64_t beginTime,
         const int64_t endTime);
     /*
     * function: QueryCurrentEvents, query bundle usage statistics in specific time span for calling bundle.
@@ -76,14 +76,14 @@ public:
     * function: QueryPackageGroup, query bundle priority group calling bundle.
     * return: the priority group of calling bundle.
     */
-    int QueryPackageGroup();
+    int32_t QueryPackageGroup();
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId
     * return: errorcode.
     */
-    int QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId = -1);
+    int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId = -1);
     /*
     * function: GetInstance, get instance of client.
     * return: object of BundleActiveClient.

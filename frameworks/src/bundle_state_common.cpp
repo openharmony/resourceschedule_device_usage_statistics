@@ -39,7 +39,7 @@ void BundleStateCommon::GetCallbackPromiseResult(const napi_env &env,
 }
 
 void BundleStateCommon::SetCallbackInfo(
-    const napi_env &env, const napi_ref &callbackIn, const int &errorCode, const napi_value &result)
+    const napi_env &env, const napi_ref &callbackIn, const int32_t &errorCode, const napi_value &result)
 {
     napi_value undefined = nullptr;
     napi_get_undefined(env, &undefined);
@@ -151,7 +151,7 @@ void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
         napi_value moduleName = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, oneModuleRecord.moduleName_.c_str(), NAPI_AUTO_LENGTH,
             &moduleName));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "moduleName", moduleName));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "name", moduleName));
         napi_value labelId = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, oneModuleRecord.labelId_, &labelId));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "labelId", labelId));
@@ -178,8 +178,10 @@ void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "launchedCount", launchedCount));
         napi_value lastModuleUsedTime = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, oneModuleRecord.lastModuleUsedTime_, &lastModuleUsedTime));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject,
-            "lastModuleUsedTime", lastModuleUsedTime));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "lastLaunchTime", lastModuleUsedTime));
+        napi_value removed = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_get_boolean(env, oneModuleRecord.removed_, &removed));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "isRemoved", removed));
 }
 
 void BundleStateCommon::GetModuleRecordForResult(napi_env env,
@@ -216,7 +218,7 @@ void BundleStateCommon::GetModuleRecordForResult(napi_env env,
 
             napi_value count = nullptr;
             NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, oneFormRecord.count_, &count));
-            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, formObject, "count", count));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, formObject, "formTouchedCount", count));
             NAPI_CALL_RETURN_VOID(env, napi_set_element(env, formRecords, formIdx, formObject));
             formIdx++;
         }
@@ -227,7 +229,7 @@ void BundleStateCommon::GetModuleRecordForResult(napi_env env,
 }
 
 void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred &deferred,
-    const napi_value &result, const int &errorCode)
+    const napi_value &result, const int32_t &errorCode)
 {
     if (errorCode == ERR_OK) {
         napi_resolve_deferred(env, deferred, result);
@@ -236,7 +238,7 @@ void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred 
     }
 }
 
-napi_value BundleStateCommon::GetErrorValue(napi_env env, int errCode)
+napi_value BundleStateCommon::GetErrorValue(napi_env env, int32_t errCode)
 {
     if (errCode == ERR_OK) {
         return NapiGetNull(env);
@@ -249,7 +251,7 @@ napi_value BundleStateCommon::GetErrorValue(napi_env env, int errCode)
     return result;
 }
 
-napi_value BundleStateCommon::JSParaError(const napi_env &env, const napi_ref &callback, const int &errorCode)
+napi_value BundleStateCommon::JSParaError(const napi_env &env, const napi_ref &callback, const int32_t &errorCode)
 {
     if (callback) {
         napi_value result = nullptr;

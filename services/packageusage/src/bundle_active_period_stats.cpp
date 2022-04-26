@@ -43,7 +43,7 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePeriodStats::GetOrCreateUs
 }
 
 void BundleActivePeriodStats::Update(const std::string bundleName, const std::string longTimeTaskName,
-    const int64_t timeStamp, const int eventId, const std::string abilityId)
+    const int64_t timeStamp, const int32_t eventId, const std::string abilityId)
 {
     if (eventId == BundleActiveEvent::SHUTDOWN || eventId == BundleActiveEvent::FLUSH) {
         for (std::map<std::string, std::shared_ptr<BundleActivePackageStats>>::iterator it = bundleStats_.begin();

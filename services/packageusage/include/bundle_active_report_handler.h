@@ -35,11 +35,11 @@ public:
      */
     void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
     void Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
-    static const int MSG_REPORT_EVENT = 0;
-    static const int MSG_FLUSH_TO_DISK = 1;
-    static const int MSG_REMOVE_USER = 2;
-    static const int MSG_BUNDLE_UNINSTALLED = 3;
-    static const int MSG_SWITCH_USER = 4;
+    static const int32_t MSG_REPORT_EVENT = 0;
+    static const int32_t MSG_FLUSH_TO_DISK = 1;
+    static const int32_t MSG_REMOVE_USER = 2;
+    static const int32_t MSG_BUNDLE_UNINSTALLED = 3;
+    static const int32_t MSG_SWITCH_USER = 4;
 
 private:
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;

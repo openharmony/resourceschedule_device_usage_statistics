@@ -23,22 +23,22 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-const u_int32_t IS_IDLE_STATE_MIN_PARAMS = 1;
-const u_int32_t IS_IDLE_STATE_PARAMS = 2;
-const u_int32_t PRIORITY_GROUP_MIN_PARAMS = 0;
-const u_int32_t PRIORITY_GROUP_PARAMS = 1;
-const u_int32_t STATES_MIN_PARAMS = 2;
-const u_int32_t STATES_PARAMS = 3;
-const u_int32_t APP_USAGE_MIN_PARAMS_BY_INTERVAL = 3;
-const u_int32_t APP_USAGE_PARAMS_BY_INTERVAL = 4;
-const u_int32_t APP_USAGE_MIN_PARAMS = 2;
-const u_int32_t APP_USAGE_PARAMS = 3;
-const u_int32_t MODULE_RECORDS_MIN_PARAMS = 0;
-const u_int32_t MODULE_RECORDS_MIDDLE_PARAMS = 1;
-const u_int32_t MODULE_RECORDS_PARAMS = 2;
-const u_int32_t SECOND_ARG = 2;
-const u_int32_t THIRD_ARG = 3;
-const int MAXNUM_UP_LIMIT = 1000;
+const uint32_t IS_IDLE_STATE_MIN_PARAMS = 1;
+const uint32_t IS_IDLE_STATE_PARAMS = 2;
+const uint32_t PRIORITY_GROUP_MIN_PARAMS = 0;
+const uint32_t PRIORITY_GROUP_PARAMS = 1;
+const uint32_t STATES_MIN_PARAMS = 2;
+const uint32_t STATES_PARAMS = 3;
+const uint32_t APP_USAGE_MIN_PARAMS_BY_INTERVAL = 3;
+const uint32_t APP_USAGE_PARAMS_BY_INTERVAL = 4;
+const uint32_t APP_USAGE_MIN_PARAMS = 2;
+const uint32_t APP_USAGE_PARAMS = 3;
+const uint32_t MODULE_RECORDS_MIN_PARAMS = 0;
+const uint32_t MODULE_RECORDS_MIDDLE_PARAMS = 1;
+const uint32_t MODULE_RECORDS_PARAMS = 2;
+const uint32_t SECOND_ARG = 2;
+const uint32_t THIRD_ARG = 3;
+const int32_t MAXNUM_UP_LIMIT = 1000;
 
 napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback_info &info,
     ModuleRecordParamsInfo &params)
@@ -205,8 +205,8 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoIsIdleState), 0, sizeof(AsyncCallbackInfoIsIdleState)) !=
-        EOK) {
+    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoIsIdleState), 0, sizeof(AsyncCallbackInfoIsIdleState))
+        != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
@@ -676,8 +676,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters failed, beginTime type is invalid.");
         params.errorCode = ERR_USAGE_STATS_BEGIN_TIME_INVALID;
     }
-    if ((params.errorCode == ERR_OK)
-        && (params.beginTime < TIME_NUMBER_MIN)) {
+    if ((params.errorCode == ERR_OK) && (params.beginTime < TIME_NUMBER_MIN)) {
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters failed failed, beginTime value is invalid.");
         params.errorCode = ERR_USAGE_STATS_BEGIN_TIME_INVALID;
     }
@@ -688,8 +687,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters failed, endTime type is invalid.");
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }
-    if ((params.errorCode == ERR_OK)
-        && (params.endTime < TIME_NUMBER_MIN)) {
+    if ((params.errorCode == ERR_OK) && (params.endTime < TIME_NUMBER_MIN)) {
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters failed failed, endTime value is invalid.");
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }

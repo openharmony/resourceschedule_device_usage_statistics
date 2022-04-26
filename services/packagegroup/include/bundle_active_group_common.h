@@ -19,16 +19,16 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 namespace DeviceUsageStatsGroupConst {
-const int ACTIVE_GROUP_UNKNOWN = -1;
-const int ACTIVE_GROUP_FORCED_SET = 5;
-const int ACTIVE_GROUP_ALIVE = 10;
-const int ACTIVE_GROUP_DAILY = 20;
-const int ACTIVE_GROUP_FIXED = 30;
-const int ACTIVE_GROUP_RARE = 40;
-const int ACTIVE_GROUP_LIMIT = 50;
-const int ACTIVE_GROUP_NEVER = 60;
-const int64_t FIVE_SECOND = 5 * 1000;
-const int64_t ONE_MINUTE = 60 * 1000;
+const int32_t ACTIVE_GROUP_UNKNOWN = -1;
+const int32_t ACTIVE_GROUP_FORCED_SET = 5;
+const int32_t ACTIVE_GROUP_ALIVE = 10;
+const int32_t ACTIVE_GROUP_DAILY = 20;
+const int32_t ACTIVE_GROUP_FIXED = 30;
+const int32_t ACTIVE_GROUP_RARE = 40;
+const int32_t ACTIVE_GROUP_LIMIT = 50;
+const int32_t ACTIVE_GROUP_NEVER = 60;
+const int64_t FIVE_SECOND = 5 * 1000LL;
+const int64_t ONE_MINUTE = 60 * 1000LL;
 const int64_t TWO_MINUTE = 2 * ONE_MINUTE;
 const int64_t THREE_MINUTE = 3 * ONE_MINUTE;
 const int64_t FOUR_MINUTE = 4 * ONE_MINUTE;

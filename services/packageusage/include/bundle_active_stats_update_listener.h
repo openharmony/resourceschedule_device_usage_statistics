@@ -19,9 +19,9 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveStatsUpdateListener {
-    virtual void OnStatsChanged(const int userId) = 0;
+    virtual void OnStatsChanged(const int32_t userId) = 0;
     virtual void OnStatsReload() = 0;
-    virtual void OnSystemUpdate(int userId) = 0;
+    virtual void OnSystemUpdate(int32_t userId) = 0;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

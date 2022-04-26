@@ -28,7 +28,7 @@ public:
     BundleActiveOpenCallback();
     ~BundleActiveOpenCallback();
     int32_t OnCreate(NativeRdb::RdbStore &rdbStore) override;
-    int32_t OnUpgrade(NativeRdb::RdbStore &rdbStore, int oldVersion, int newVersion) override;
+    int32_t OnUpgrade(NativeRdb::RdbStore &rdbStore, int32_t oldVersion, int32_t newVersion) override;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

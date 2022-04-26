@@ -43,13 +43,13 @@ public:
     void TruncateToWeek();
     void TruncateToMonth();
     void TruncateToYear();
-    void IncreaseDays(const int val);
-    void IncreaseWeeks(const int val);
-    void IncreaseMonths(const int val);
-    void IncreaseYears(const int val);
+    void IncreaseDays(const int64_t val);
+    void IncreaseWeeks(const int64_t val);
+    void IncreaseMonths(const int64_t val);
+    void IncreaseYears(const int64_t val);
     void SetMilliseconds(const int64_t timeStamp);
     int64_t GetMilliseconds();
-    void TruncateTo(int intervalType);
+    void TruncateTo(int32_t intervalType);
 
 private:
     int64_t time_;

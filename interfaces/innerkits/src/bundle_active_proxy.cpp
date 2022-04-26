@@ -17,7 +17,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-int BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int userId)
+int32_t BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -48,8 +48,8 @@ bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName)
     return result;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const int intervalType,
-    const int64_t beginTime, const int64_t endTime, int32_t& errCode, int userId)
+std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const int32_t intervalType,
+    const int64_t beginTime, const int64_t endTime, int32_t& errCode, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -67,7 +67,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
     errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActivePackageStats> tmp;
-    for (int i = 0; i < size; i++) {
+    for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
         if (tmp == nullptr) {
             continue;
@@ -86,7 +86,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
 }
 
 std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t beginTime,
-    const int64_t endTime, int32_t& errCode, int userId)
+    const int64_t endTime, int32_t& errCode, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -103,7 +103,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
     errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEvent> tmp;
-    for (int i = 0; i < size; i++) {
+    for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
         if (tmp == nullptr) {
             continue;
@@ -116,7 +116,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
     return result;
 }
 
-void BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int newGroup, int userId)
+void BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -130,7 +130,7 @@ void BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int newGro
     Remote() -> SendRequest(SET_BUNDLE_GROUP, data, reply, option);
 }
 
-std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStats(const int intervalType,
+std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStats(const int32_t intervalType,
     const int64_t beginTime, const int64_t endTime)
 {
     MessageParcel data;
@@ -146,7 +146,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStat
     Remote() -> SendRequest(QUERY_CURRENT_USAGE_STATS, data, reply, option);
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActivePackageStats> tmp;
-    for (int i = 0; i < size; i++) {
+    for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
         if (tmp == nullptr) {
             continue;
@@ -178,7 +178,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64
     Remote() -> SendRequest(QUERY_CURRENT_EVENTS, data, reply, option);
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEvent> tmp;
-    for (int i = 0; i < size; i++) {
+    for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
         if (tmp == nullptr) {
             continue;
@@ -193,7 +193,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64
     return result;
 }
 
-int BundleActiveProxy::QueryPackageGroup()
+int32_t BundleActiveProxy::QueryPackageGroup()
 {
     MessageParcel data;
     MessageParcel reply;
@@ -207,7 +207,8 @@ int BundleActiveProxy::QueryPackageGroup()
     return packageGroup;
 }
 
-int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId)
+int32_t BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
+    int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -221,7 +222,7 @@ int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleAct
     int32_t errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveModuleRecord> tmp;
-    for (int i = 0; i < size; i++) {
+    for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
         if (tmp == nullptr) {
             continue;
@@ -231,13 +232,12 @@ int BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleAct
     for (const auto& oneModule : results) {
         BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, "
             "lastusedtime is %{public}lld, launchcount is %{public}d", oneModule.bundleName_.c_str(),
-            oneModule.moduleName_.c_str(),
-            (long long)oneModule.lastModuleUsedTime_, oneModule.launchedCount_);
-            for (const auto& oneForm : oneModule.formRecords_) {
-                BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, "
-                    "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
-                    oneForm.formDimension_, (long long)oneForm.formId_,
-                    (long long)oneForm.formLastUsedTime_, oneForm.count_);
+            oneModule.moduleName_.c_str(), (long long)oneModule.lastModuleUsedTime_, oneModule.launchedCount_);
+        for (const auto& oneForm : oneModule.formRecords_) {
+            BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, "
+                "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
+                oneForm.formDimension_, (long long)oneForm.formId_,
+                (long long)oneForm.formLastUsedTime_, oneForm.count_);
         }
     }
     return errCode;

@@ -47,7 +47,7 @@ struct CallbackPromiseInfo {
     napi_ref callback = nullptr;
     napi_deferred deferred = nullptr;
     bool isCallback = false;
-    int errorCode = 0;
+    int32_t errorCode = 0;
 };
 
 struct AsyncCallbackInfoIsIdleState {
@@ -104,19 +104,19 @@ struct AsyncCallbackInfoModuleRecord {
 struct IsIdleStateParamsInfo {
     std::string bundleName;
     napi_ref callback = nullptr;
-    int errorCode = 0;
+    int32_t errorCode = 0;
 };
 
 struct PriorityGroupParamsInfo {
     napi_ref callback = nullptr;
-    int errorCode = 0;
+    int32_t errorCode = 0;
 };
 
 struct StatesParamsInfo {
     int64_t beginTime;
     int64_t endTime;
     napi_ref callback = nullptr;
-    int errorCode = 0;
+    int32_t errorCode = 0;
 };
 
 struct AppUsageParamsByIntervalInfo {
@@ -124,20 +124,20 @@ struct AppUsageParamsByIntervalInfo {
     int64_t beginTime;
     int64_t endTime;
     napi_ref callback = nullptr;
-    int errorCode = 0;
+    int32_t errorCode = 0;
 };
 
 struct AppUsageParamsInfo {
     int64_t beginTime;
     int64_t endTime;
     napi_ref callback = nullptr;
-    int errorCode = 0;
+    int32_t errorCode = 0;
 };
 
 struct ModuleRecordParamsInfo {
     int32_t maxNum;
     napi_ref callback = nullptr;
-    int errorCode = 0;
+    int32_t errorCode = 0;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

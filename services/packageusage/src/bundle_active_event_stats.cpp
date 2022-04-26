@@ -37,32 +37,32 @@ BundleActiveEventStats::BundleActiveEventStats(const BundleActiveEventStats& ori
     count_ = orig.count_;
 }
 
-int BundleActiveEventStats::GetEventId()
+int32_t BundleActiveEventStats::GetEventId()
 {
     return eventId_;
 }
 
-int BundleActiveEventStats::GetFirstTimeStamp()
+int64_t BundleActiveEventStats::GetFirstTimeStamp()
 {
     return beginTimeStamp_;
 }
 
-int BundleActiveEventStats::GetLastTimeStamp()
+int64_t BundleActiveEventStats::GetLastTimeStamp()
 {
     return endTimeStamp_;
 }
 
-int BundleActiveEventStats::GetLastEventTime()
+int64_t BundleActiveEventStats::GetLastEventTime()
 {
     return lastEventTime_;
 }
 
-int BundleActiveEventStats::GetTotalTime()
+int64_t BundleActiveEventStats::GetTotalTime()
 {
     return totalTime_;
 }
 
-int BundleActiveEventStats::GetCount()
+int32_t BundleActiveEventStats::GetCount()
 {
     return count_;
 }

@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "bundle_active_core.h"
 
 #include "time_service_client.h"
 
@@ -19,7 +20,6 @@
 #include "bundle_active_report_handler.h"
 #include "bundle_active_group_common.h"
 #include "bundle_active_constant.h"
-#include "bundle_active_core.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -34,7 +34,7 @@ BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
         bundleName_ = "";
 }
 
-BundleActiveReportHandlerObject::BundleActiveReportHandlerObject(const int userId, const std::string bundleName)
+BundleActiveReportHandlerObject::BundleActiveReportHandlerObject(const int32_t userId, const std::string bundleName)
 {
     userId_ = userId;
     bundleName_ = bundleName;
@@ -170,7 +170,7 @@ void BundleActiveCore::InitBundleGroupController()
         return;
     }
     RegisterSubscriber();
-    std::vector<int> activatedOsAccountIds;
+    std::vector<int32_t> activatedOsAccountIds;
     bundleGroupController_->bundleGroupEnable_ = true;
     GetAllActiveUser(activatedOsAccountIds);
     if (activatedOsAccountIds.size() == 0) {
@@ -187,7 +187,7 @@ void BundleActiveCore::SetHandler(const std::shared_ptr<BundleActiveReportHandle
     handler_ = reportHandler;
 }
 
-std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitializeIfNeeded(const int userId,
+std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitializeIfNeeded(const int32_t userId,
     const int64_t timeStamp, const bool debug)
 {
     BUNDLE_ACTIVE_LOGI("GetUserDataAndInitializeIfNeeded called");
@@ -207,7 +207,7 @@ std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitial
     return it->second;
 }
 
-void BundleActiveCore::OnBundleUninstalled(const int userId, const std::string& bundleName)
+void BundleActiveCore::OnBundleUninstalled(const int32_t userId, const std::string& bundleName)
 {
     BUNDLE_ACTIVE_LOGI("OnBundleUninstalled CALLED");
     std::lock_guard<std::mutex> lock(mutex_);
@@ -223,7 +223,7 @@ void BundleActiveCore::OnBundleUninstalled(const int userId, const std::string& 
     bundleGroupController_->OnBundleUninstalled(userId, bundleName);
 }
 
-void BundleActiveCore::OnStatsChanged(const int userId)
+void BundleActiveCore::OnStatsChanged(const int32_t userId)
 {
     if (!handler_.expired()) {
         BundleActiveReportHandlerObject tmpHandlerObject;
@@ -262,7 +262,7 @@ void BundleActiveCore::RestoreAllData()
     }
 }
 
-void BundleActiveCore::RestoreToDatabase(const int userId)
+void BundleActiveCore::RestoreToDatabase(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("RestoreToDatabase called");
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
@@ -277,7 +277,7 @@ void BundleActiveCore::RestoreToDatabase(const int userId)
     RestoreToDatabaseLocked(userId);
 }
 
-void BundleActiveCore::RestoreToDatabaseLocked(const int userId)
+void BundleActiveCore::RestoreToDatabaseLocked(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("RestoreToDatabaseLocked called");
     auto it = userStatServices_.find(userId);
@@ -301,7 +301,7 @@ void BundleActiveCore::ShutDown()
     int64_t timeStamp = timer->GetBootTimeMs();
     BundleActiveEvent event(BundleActiveEvent::SHUTDOWN, timeStamp);
     event.bundleName_ = BundleActiveEvent::DEVICE_EVENT_PACKAGE_NAME;
-    std::vector<int> activatedOsAccountIds;
+    std::vector<int32_t> activatedOsAccountIds;
     GetAllActiveUser(activatedOsAccountIds);
     if (activatedOsAccountIds.size() == 0) {
         BUNDLE_ACTIVE_LOGI("query activated account failed, no account activated");
@@ -320,11 +320,11 @@ void BundleActiveCore::OnStatsReload()
     bundleGroupController_->CheckIdleStatsOneTime();
 }
 
-void BundleActiveCore::OnSystemUpdate(int userId)
+void BundleActiveCore::OnSystemUpdate(int32_t userId)
 {
 }
 
-int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
+int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("CheckTimeChangeAndGetWallTime called, userId is %{public}d", userId);
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
@@ -335,10 +335,8 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int userId)
     if (actualSystemTime == -1 || actualRealTime == -1) {
         return -1;
     }
-    BUNDLE_ACTIVE_LOGI("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, "
-        "diff is %{public}lld",
-        (long long)actualSystemTime, (long long)actualRealTime,
-        (long long)expectedSystemTime, (long long)diffSystemTime);
+    BUNDLE_ACTIVE_LOGI("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, diff is %{public}lld",
+        (long long)actualSystemTime, (long long)actualRealTime, (long long)expectedSystemTime, (long long)diffSystemTime);
     if (std::abs(diffSystemTime) > TIME_CHANGE_THRESHOLD_MILLIS) {
         // 时区变换逻辑
         auto it = userStatServices_.find(userId);
@@ -369,7 +367,7 @@ void BundleActiveCore::ConvertToSystemTimeLocked(BundleActiveEvent& event)
     event.timeStamp_ = std::max((int64_t)0, event.timeStamp_ - realTimeShot_) + systemTimeShot_;
 }
 
-void BundleActiveCore::OnUserRemoved(const int userId)
+void BundleActiveCore::OnUserRemoved(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("OnUserRemoved called");
     std::lock_guard<std::mutex> lock(mutex_);
@@ -383,7 +381,7 @@ void BundleActiveCore::OnUserRemoved(const int userId)
     bundleGroupController_->OnUserRemoved(userId);
 }
 
-void BundleActiveCore::OnUserSwitched(const int userId)
+void BundleActiveCore::OnUserSwitched(const int32_t userId)
 {
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     auto it = userStatServices_.find(currentUsedUser_);
@@ -397,7 +395,7 @@ void BundleActiveCore::OnUserSwitched(const int userId)
         it->second->ReportEvent(event);
         it->second->RestoreStats(true);
     }
-    std::vector<int> activatedOsAccountIds;
+    std::vector<int32_t> activatedOsAccountIds;
     GetAllActiveUser(activatedOsAccountIds);
     if (activatedOsAccountIds.size() == 0) {
         BUNDLE_ACTIVE_LOGI("query activated account failed, no account activated");
@@ -411,7 +409,7 @@ void BundleActiveCore::OnUserSwitched(const int userId)
     OnStatsChanged(userId);
 }
 
-int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
+int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("FLUSH interval is %{public}lld, debug is %{public}d", (long long)flushInterval_, debugCore_);
     event.PrintEvent(debugCore_);
@@ -456,7 +454,7 @@ int BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int userId)
     return 0;
 }
 
-int BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
+int32_t BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
 {
     BUNDLE_ACTIVE_LOGI("ReportEventToAllUserId called");
     int64_t timeNow = CheckTimeChangeAndGetWallTime();
@@ -475,16 +473,15 @@ int BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
             BUNDLE_ACTIVE_LOGE("get user data service failed!");
             return -1;
         }
-        BUNDLE_ACTIVE_LOGI("ReportEventToAllUserId SERVICE user ID IS userId %{public}d",
-            service->userId_);
+        BUNDLE_ACTIVE_LOGI("ReportEventToAllUserId SERVICE user ID IS userId %{public}d", service->userId_);
         service->ReportForShutdown(event);
         return 0;
     }
     return 0;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const int userId, const int intervalType,
-    const int64_t beginTime, const int64_t endTime, std::string bundleName)
+std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const int32_t userId,
+    const int32_t intervalType, const int64_t beginTime, const int64_t endTime, std::string bundleName)
 {
     BUNDLE_ACTIVE_LOGI("QueryPackageStats called");
     std::lock_guard<std::mutex> lock(mutex_);
@@ -508,7 +505,7 @@ std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const 
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int userId, const int64_t beginTime,
+std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int32_t userId, const int64_t beginTime,
     const int64_t endTime, std::string bundleName)
 {
     BUNDLE_ACTIVE_LOGI("QueryEvents called");
@@ -529,7 +526,8 @@ std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int userId, c
     return result;
 }
 
-int BundleActiveCore::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int userId)
+int32_t BundleActiveCore::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
+    int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
@@ -540,29 +538,29 @@ int BundleActiveCore::QueryFormStatistics(int32_t maxNum, std::vector<BundleActi
     if (service == nullptr) {
         return -1;
     }
-    int errCode = service->QueryFormStatistics(maxNum, results);
+    int32_t errCode = service->QueryFormStatistics(maxNum, results);
     return errCode;
 }
 
-void BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int newGroup, const int userId)
+void BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId)
 {
-    int newReason = GROUP_CONTROL_REASON_FORCED;
+    int32_t newReason = GROUP_CONTROL_REASON_FORCED;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     bundleGroupController_->SetBundleGroup(bundleName, userId, newGroup, newReason, bootBasedTimeStamp, false);
 }
 
-int BundleActiveCore::QueryPackageGroup(const int userId, const std::string bundleName)
+int32_t BundleActiveCore::QueryPackageGroup(const int32_t userId, const std::string bundleName)
 {
     return bundleGroupController_->QueryPackageGroup(userId, bundleName);
 }
 
-int BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int userId)
+int32_t BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int32_t userId)
 {
     return bundleGroupController_->IsBundleIdle(bundleName, userId);
 }
 
-void BundleActiveCore::GetAllActiveUser(std::vector<int>& activatedOsAccountIds)
+void BundleActiveCore::GetAllActiveUser(std::vector<int32_t>& activatedOsAccountIds)
 {
 #ifdef OS_ACCOUNT_PART_ENABLED
     if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {

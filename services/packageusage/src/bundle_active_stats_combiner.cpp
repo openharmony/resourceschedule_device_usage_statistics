@@ -30,13 +30,12 @@ void BundleActiveStatsCombiner<BundleActivePackageStats>::combine(
 }
 
 void BundleActiveStatsCombiner<BundleActiveEvent>::combine(const std::shared_ptr<BundleActivePeriodStats>& stats,
-    std::vector<BundleActiveEvent>& accumulatedResult,
-    int64_t beginTime)
+    std::vector<BundleActiveEvent>& accumulatedResult, int64_t beginTime)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveEvent combine called");
-    int startIndex = stats->events_.FindBestIndex(beginTime);
-    int size = static_cast<int>(stats->events_.events_.size());
-    for (int i = startIndex; i < size; i++) {
+    int32_t startIndex = stats->events_.FindBestIndex(beginTime);
+    int32_t size = static_cast<int32_t>(stats->events_.events_.size());
+    for (int32_t i = startIndex; i < size; i++) {
         accumulatedResult.push_back(stats->events_.events_[i]);
     }
 }

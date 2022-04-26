@@ -25,7 +25,7 @@ namespace DeviceUsageStats {
 #ifndef OS_ACCOUNT_PART_ENABLED
 namespace {
 constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
-void GetOsAccountIdFromUid(int uid, int &osAccountId)
+void GetOsAccountIdFromUid(int32_t uid, int32_t &osAccountId)
 {
     osAccountId = uid / UID_TRANSFORM_DIVISOR;
 }
@@ -43,13 +43,13 @@ void BundleActiveAppStateObserver::Init(const std::shared_ptr<BundleActiveReport
 void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData &abilityStateData)
 {
     if (!ValidateAbilityStateData(abilityStateData)) {
-        BUNDLE_ACTIVE_LOGE("%{public}s : validate ability state data failed!", __func__);
+        BUNDLE_ACTIVE_LOGE("validate ability state data failed!");
         return;
     }
     if (abilityStateData.abilityType != 1) {
         return;
     }
-    int userId = -1;
+    int32_t userId = -1;
     OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(abilityStateData.uid, userId);
     if (ret == ERR_OK && userId != -1) {
         std::stringstream stream;

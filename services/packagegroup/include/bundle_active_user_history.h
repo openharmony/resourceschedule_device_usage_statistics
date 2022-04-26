@@ -38,27 +38,27 @@ public:
     BundleActiveUsageDatabase database_;
     BundleActiveUserHistory(const int64_t bootBasedTimeStamp);
     std::shared_ptr<BundleActivePackageHistory> GetUsageHistoryForBundle(const std::string& bundleName,
-        const int userId, const int64_t bootBasedTimeStamp, const bool& create);
+        const int32_t userId, const int64_t bootBasedTimeStamp, const bool& create);
     std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>> GetUserHistory(
-            const int userId, const bool& create);
+            const int32_t userId, const bool& create);
     std::shared_ptr<BundleActivePackageHistory> GetUsageHistoryInUserHistory(std::shared_ptr<std::map<std::string,
         std::shared_ptr<BundleActivePackageHistory>>> oneUserHistory, std::string bundleName,
         int64_t bootBasedTimeStamp, bool create);
     int64_t GetBootBasedTimeStamp(int64_t bootBasedTimeStamp);
     int64_t GetScreenOnTimeStamp(int64_t bootBasedTimeStamp);
     void ReportUsage(std::shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory, const std::string& bundleName,
-        const int newGroup, const uint32_t groupReason, const int64_t bootBasedTimeStamp,
+        const int32_t newGroup, const uint32_t groupReason, const int64_t bootBasedTimeStamp,
         const int64_t timeUntilNextCheck);
-    void SetBundleGroup(const std::string& bundleName, const int userId, const int64_t bootBasedTimeStamp,
-        int newGroup, uint32_t groupReason, const bool& resetTimeout);
-    int GetLevelIndex(const std::string& bundleName, const int userId, const int64_t bootBasedTimeStamp,
+    void SetBundleGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
+        int32_t newGroup, uint32_t groupReason, const bool& resetTimeout);
+    int32_t GetLevelIndex(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
         const std::vector<int64_t> screenTimeLeve, const std::vector<int64_t> bootFromTimeLevel);
     void WriteDeviceDuration();
-    void WriteBundleUsage(const int userId);
-    void PrintData(int userId);
+    void WriteBundleUsage(const int32_t userId);
+    void PrintData(int32_t userId);
     void UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t bootBasedTimeStamp,
         const bool& isShutdown = false);
-    void OnBundleUninstalled(const int userId, const std::string bundleName);
+    void OnBundleUninstalled(const int32_t userId, const std::string bundleName);
 
 private:
     bool isScreenOn_;

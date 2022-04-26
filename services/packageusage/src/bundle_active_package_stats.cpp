@@ -83,7 +83,7 @@ void BundleActivePackageStats::IncrementBundleLaunchedCount()
     bundleStartedCount_ += 1;
 }
 
-void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int eventId,
+void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int32_t eventId,
     const std::string& abilityId)
 {
     if (eventId != BundleActiveEvent::ABILITY_FOREGROUND && eventId != BundleActiveEvent::ABILITY_BACKGROUND &&
@@ -95,7 +95,7 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int 
     }
     std::map<std::string, int>::iterator it = abilities_.find(abilityId);
     if (it != abilities_.end()) {
-        int lastEventId = it->second;
+        int32_t lastEventId = it->second;
         // When we receive a new event, first update the time stats according to the last event in map.
         switch (lastEventId) {
             case BundleActiveEvent::ABILITY_FOREGROUND:
@@ -124,7 +124,7 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int 
 }
 
 void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTaskName, const int64_t timeStamp,
-    const int eventId)
+    const int32_t eventId)
 {
     if (eventId != BundleActiveEvent::LONG_TIME_TASK_STARTTED && eventId != BundleActiveEvent::LONG_TIME_TASK_ENDED) {
         return;
@@ -133,7 +133,7 @@ void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTas
     // When we receive a new event, first update the time stats according to the last service event in map.
     std::map<std::string, int>::iterator it = longTimeTasks_.find(longTimeTaskName);
     if (it != longTimeTasks_.end()) {
-        int lastEventId = it->second;
+        int32_t lastEventId = it->second;
         switch (lastEventId) {
             case BundleActiveEvent::LONG_TIME_TASK_STARTTED:
                 IncrementServiceTimeUsed(timeStamp);
@@ -157,7 +157,7 @@ void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTas
 }
 
 void BundleActivePackageStats::Update(const std::string& longTimeTaskName, const int64_t timeStamp,
-    const int eventId, const std::string& abilityId)
+    const int32_t eventId, const std::string& abilityId)
 {
     switch (eventId) {
         case BundleActiveEvent::ABILITY_FOREGROUND:

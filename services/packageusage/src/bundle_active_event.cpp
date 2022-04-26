@@ -45,7 +45,7 @@ BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig)
     eventId_ = orig.eventId_;
 }
 
-BundleActiveEvent::BundleActiveEvent(int eventId, int64_t timeStamp)
+BundleActiveEvent::BundleActiveEvent(int32_t eventId, int64_t timeStamp)
 {
     bundleName_.clear();
     continuousTaskAbilityName_.clear();
@@ -90,7 +90,7 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
 
 BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string moduleName,
     const std::string formName, const int32_t formDimension,
-    const int64_t formId, const int eventId)
+    const int64_t formId, const int32_t eventId)
 {
     bundleName_ = bundleName;
     continuousTaskAbilityName_.clear();

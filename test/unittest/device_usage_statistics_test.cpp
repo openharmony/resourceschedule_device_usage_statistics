@@ -37,7 +37,7 @@ static int32_t DEFAULT_DIMENSION = 4;
 static int64_t DEFAULT_FORMID = 1;
 static std::string DEFAULT_ABILITYID = "1234";
 static std::string DEFAULT_ABILITYNAME = "testability";
-static int DEFAULT_USERID = 0;
+static int32_t DEFAULT_USERID = 0;
 static int64_t LARGE_NUM = 20000000000000;
 
 class DeviceUsageStatisticsTest : public testing::Test {
@@ -156,7 +156,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleIdle_001, 
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_001, Function | MediumTest | Level0)
 {
-    int result = BundleActiveClient::GetInstance().QueryPackageGroup();
+    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup();
     EXPECT_EQ(result, -1);
 }
 
@@ -168,12 +168,12 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistics_001, Function | MediumTest | Level0)
 {
-    int maxNum = 1;
+    int32_t maxNum = 1;
     BundleActiveEvent eventA(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME, DEFAULT_FORM_NAME,
         DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_CLICKED);
     BundleActiveClient::GetInstance().ReportEvent(eventA, DEFAULT_USERID);
     std::vector<BundleActiveModuleRecord> results;
-    int errCode = BundleActiveClient::GetInstance().QueryFormStatistics(maxNum, results, DEFAULT_USERID);
+    int32_t errCode = BundleActiveClient::GetInstance().QueryFormStatistics(maxNum, results, DEFAULT_USERID);
     EXPECT_EQ(errCode, 0);
     EXPECT_EQ(results.size(), 0);
 }
