@@ -151,7 +151,7 @@ void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
         napi_value moduleName = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, oneModuleRecord.moduleName_.c_str(), NAPI_AUTO_LENGTH,
             &moduleName));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "name", moduleName));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "moduleName", moduleName));
         napi_value labelId = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_uint32(env, oneModuleRecord.labelId_, &labelId));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "labelId", labelId));
@@ -178,10 +178,7 @@ void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "launchedCount", launchedCount));
         napi_value lastModuleUsedTime = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, oneModuleRecord.lastModuleUsedTime_, &lastModuleUsedTime));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "lastLaunchTime", lastModuleUsedTime));
-        napi_value removed = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_get_boolean(env, oneModuleRecord.removed_, &removed));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "isRemoved", removed));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, moduleObject, "lastModuleUsedTime", lastModuleUsedTime));
 }
 
 void BundleStateCommon::GetModuleRecordForResult(napi_env env,
@@ -218,7 +215,7 @@ void BundleStateCommon::GetModuleRecordForResult(napi_env env,
 
             napi_value count = nullptr;
             NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, oneFormRecord.count_, &count));
-            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, formObject, "formTouchedCount", count));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, formObject, "count", count));
             NAPI_CALL_RETURN_VOID(env, napi_set_element(env, formRecords, formIdx, formObject));
             formIdx++;
         }
