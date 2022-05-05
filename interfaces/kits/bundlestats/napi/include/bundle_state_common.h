@@ -35,10 +35,10 @@ public:
 
     static napi_value GetErrorValue(napi_env env, int32_t errCode);
 
-    static void SettingCallbackPromiseInfo(
-        const napi_env &env, const napi_ref &callback, CallbackPromiseInfo &info, napi_value &promise);
+    static void SettingAsyncWorkData(
+        const napi_env &env, const napi_ref &callback, AsyncWorkData &workData, napi_value &promise);
 
-    static void GetCallbackPromiseResult(const napi_env &env, const CallbackPromiseInfo &info,
+    static void GetCallbackPromiseResult(const napi_env &env, const AsyncWorkData &workData,
         const napi_value &result);
 
     static void SetCallbackInfo(

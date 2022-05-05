@@ -43,62 +43,61 @@ namespace DeviceUsageStats {
 #define INTERVAL_NUMBER_MAX 4
 #define TIME_NUMBER_MIN 0
 
-struct CallbackPromiseInfo {
-    napi_ref callback = nullptr;
+struct AsyncWorkData {
+    explicit AsyncWorkData(napi_env napiEnv);
+    virtual ~AsyncWorkData();
+    napi_env env = nullptr;
+    napi_async_work asyncWork = nullptr;
     napi_deferred deferred = nullptr;
+    napi_ref callback = nullptr;
     bool isCallback = false;
     int32_t errorCode = 0;
 };
 
-struct AsyncCallbackInfoIsIdleState {
-    napi_env env = nullptr;
-    napi_async_work asyncWork = nullptr;
+/*struct CallbackPromiseInfo {
+    napi_ref callback = nullptr;
+    napi_deferred deferred = nullptr;
+    bool isCallback = false;
+    int32_t errorCode = 0;
+};*/
+
+struct AsyncCallbackInfoIsIdleState : public AsyncWorkData {
+    explicit AsyncCallbackInfoIsIdleState(napi_env env) : AsyncWorkData(env) {}
     std::string bundleName;
     bool state;
-    CallbackPromiseInfo info;
 };
 
-struct AsyncCallbackInfoPriorityGroup {
-    napi_env env = nullptr;
-    napi_async_work asyncWork = nullptr;
+struct AsyncCallbackInfoPriorityGroup : public AsyncWorkData {
+    explicit AsyncCallbackInfoPriorityGroup(napi_env env) : AsyncWorkData(env) {}
     int32_t priorityGroup;
-    CallbackPromiseInfo info;
 };
 
-struct AsyncCallbackInfoStates {
-    napi_env env = nullptr;
-    napi_async_work asyncWork = nullptr;
+struct AsyncCallbackInfoStates : public AsyncWorkData {
+    explicit AsyncCallbackInfoStates(napi_env env) : AsyncWorkData(env) {}
     int64_t beginTime;
     int64_t endTime;
     std::vector<BundleActiveEvent> BundleActiveState;
-    CallbackPromiseInfo info;
 };
 
-struct AsyncCallbackInfoAppUsageByInterval {
-    napi_env env = nullptr;
-    napi_async_work asyncWork = nullptr;
+struct AsyncCallbackInfoAppUsageByInterval : public AsyncWorkData {
+    explicit AsyncCallbackInfoAppUsageByInterval(napi_env env) : AsyncWorkData(env) {}
     int32_t intervalType;
     int64_t beginTime;
     int64_t endTime;
     std::vector<BundleActivePackageStats> packageStats;
-    CallbackPromiseInfo info;
 };
 
-struct AsyncCallbackInfoAppUsage {
-    napi_env env = nullptr;
-    napi_async_work asyncWork = nullptr;
+struct AsyncCallbackInfoAppUsage : public AsyncWorkData {
+    explicit AsyncCallbackInfoAppUsage(napi_env env) : AsyncWorkData(env) {}
     int64_t beginTime;
     int64_t endTime;
     std::shared_ptr<std::map<std::string, BundleActivePackageStats>> packageStats;
-    CallbackPromiseInfo info;
 };
 
-struct AsyncCallbackInfoModuleRecord {
-    napi_env env = nullptr;
-    napi_async_work asyncWork = nullptr;
+struct AsyncCallbackInfoModuleRecord : public AsyncWorkData {
+    explicit AsyncCallbackInfoModuleRecord(napi_env env) : AsyncWorkData(env) {}
     int32_t maxNum;
     std::vector<BundleActiveModuleRecord> moduleRecords;
-    CallbackPromiseInfo info;
 };
 
 struct IsIdleStateParamsInfo {
@@ -139,6 +138,7 @@ struct ModuleRecordParamsInfo {
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };
+
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_DATA_H
