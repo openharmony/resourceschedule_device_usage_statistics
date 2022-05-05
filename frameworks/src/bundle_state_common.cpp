@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-
 AsyncWorkData::AsyncWorkData(napi_env napiEnv)
 {
     env = napiEnv;

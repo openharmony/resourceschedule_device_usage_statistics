@@ -54,13 +54,6 @@ struct AsyncWorkData {
     int32_t errorCode = 0;
 };
 
-/*struct CallbackPromiseInfo {
-    napi_ref callback = nullptr;
-    napi_deferred deferred = nullptr;
-    bool isCallback = false;
-    int32_t errorCode = 0;
-};*/
-
 struct AsyncCallbackInfoIsIdleState : public AsyncWorkData {
     explicit AsyncCallbackInfoIsIdleState(napi_env env) : AsyncWorkData(env) {}
     std::string bundleName;
@@ -138,7 +131,6 @@ struct ModuleRecordParamsInfo {
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };
-
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_DATA_H
