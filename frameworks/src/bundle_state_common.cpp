@@ -35,7 +35,7 @@ AsyncWorkData::~AsyncWorkData()
     }
     if (asyncWork) {
         BUNDLE_ACTIVE_LOGI("delete asyncwork");
-        napi_delete_reference(env, asyncWork);
+        napi_delete_async_work(env, asyncWork);
         asyncWork = nullptr;
     }
 }
