@@ -35,7 +35,7 @@ AsyncWorkData::~AsyncWorkData()
         callback = nullptr;
     }
     if (asyncWork) {
-        BUNDLE_ACTIVE_LOGI("delete asyncwork")
+        BUNDLE_ACTIVE_LOGI("delete asyncwork");
         napi_delete_reference(env, asyncWork);
         asyncWork = nullptr;
     }
@@ -51,7 +51,7 @@ napi_value BundleStateCommon::NapiGetNull(napi_env env)
 void BundleStateCommon::GetCallbackPromiseResult(const napi_env &env,
     const AsyncWorkData &workData, const napi_value &result)
 {
-    if (info.isCallback) {
+    if (workData.isCallback) {
         SetCallbackInfo(env, workData.callback, workData.errorCode, result);
     } else {
         SetPromiseInfo(env, workData.deferred, result, workData.errorCode);
