@@ -17,6 +17,7 @@
 #define BUNDLE_ACTIVE_SERVICE_H
 
 #include "bundle_mgr_interface.h"
+#include "singleton.h"
 
 #include "ibundle_active_service.h"
 #include "bundle_active_stub.h"
@@ -31,6 +32,8 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveService : public SystemAbility, public BundleActiveStub {
     DECLARE_SYSTEM_ABILITY(BundleActiveService);
+    DECLARE_DELAYED_SINGLETON(BundleActiveService);
+
 public:
     using IBundleMgr = OHOS::AppExecFwk::IBundleMgr;
     using BundleInfo = OHOS::AppExecFwk::BundleInfo;
@@ -101,8 +104,7 @@ public:
     * function: BundleActiveService, default constructor.
     * parameters: systemAbilityId, runOnCreate
     */
-    BundleActiveService(int32_t systemAbilityId, int32_t runOnCreate)
-        : SystemAbility(systemAbilityId, runOnCreate) {}
+    BundleActiveService();
     /*
     * function: ~BundleActiveService, default destructor.
     */

@@ -32,9 +32,14 @@ static const int32_t PERIOD_YEARLY_JS = 4;
 static const int32_t PERIOD_BEST_SERVICE = 4;
 static const int32_t DELAY_TIME = 2000;
 static const std::string PERMITTED_PROCESS_NAME = "foundation";
-
-REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
+const bool REGISTER_RESULT =
+    SystemAbility::MakeAndRegisterAbility(DelayedSingleton<BundleActiveService>::GetInstance().get());
+
+BundleActiveService::BundleActiveService() : SystemAbility(DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true)
+{
+
+}
 
 void BundleActiveService::OnStart()
 {
@@ -51,7 +56,7 @@ void BundleActiveService::OnStart()
     }
 
     InitNecessaryState();
-    int32_t ret = Publish(this);
+    int32_t ret = Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get()));
     if (!ret) {
         BUNDLE_ACTIVE_LOGE("[Server] OnStart, Register SystemAbility[1907] FAIL.");
         return;
