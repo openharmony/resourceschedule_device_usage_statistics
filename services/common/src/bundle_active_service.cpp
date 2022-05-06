@@ -38,7 +38,6 @@ const bool REGISTER_RESULT =
 
 BundleActiveService::BundleActiveService() : SystemAbility(DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true)
 {
-
 }
 
 void BundleActiveService::OnStart()
@@ -56,7 +55,7 @@ void BundleActiveService::OnStart()
     }
 
     InitNecessaryState();
-    int32_t ret = Publish(DelayedSingleton<BackgroundTaskMgrService>::GetInstance().get()));
+    int32_t ret = Publish(DelayedSingleton<BundleActiveService>::GetInstance().get()));
     if (!ret) {
         BUNDLE_ACTIVE_LOGE("[Server] OnStart, Register SystemAbility[1907] FAIL.");
         return;

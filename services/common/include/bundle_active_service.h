@@ -30,7 +30,9 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveService : public SystemAbility, public BundleActiveStub {
+class BundleActiveService : public SystemAbility, public BundleActiveStub,
+    public std::enable_shared_from_this<BundleActiveService> {
+    DISALLOW_COPY_AND_MOVE(BundleActiveService);
     DECLARE_SYSTEM_ABILITY(BundleActiveService);
     DECLARE_DELAYED_SINGLETON(BundleActiveService);
 
@@ -104,7 +106,7 @@ public:
     * function: BundleActiveService, default constructor.
     * parameters: systemAbilityId, runOnCreate
     */
-    BundleActiveService();
+    BundleActiveService(const int32_t systemAbilityId, bool runOnCreate);
     /*
     * function: ~BundleActiveService, default destructor.
     */
