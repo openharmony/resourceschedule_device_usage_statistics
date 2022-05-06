@@ -22,6 +22,8 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveStub : public IRemoteStub<IBundleActiveService> {
 public:
+    BundleActiveStub() = default;
+    ~BundleActiveStub() override = default;
     /*
     * function: OnRemoteRequest, handle message from proxy.
     * parameters: code, data, reply, option

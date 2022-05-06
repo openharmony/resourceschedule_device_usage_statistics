@@ -44,6 +44,8 @@ class BundleActiveModuleRecord;
 
 class IBundleActiveService : public IRemoteBroker {
 public:
+    IBundleActiveService() = default;
+    ~IBundleActiveService() override = default;
     /*
     * function: ReportEvent, used to report event.
     * parameters: event, userId
