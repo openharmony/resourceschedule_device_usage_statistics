@@ -107,10 +107,6 @@ public:
     * parameters: systemAbilityId, runOnCreate
     */
     BundleActiveService(const int32_t systemAbilityId, bool runOnCreate);
-    /*
-    * function: ~BundleActiveService, default destructor.
-    */
-    ~BundleActiveService() {}
 
 protected:
     void OnStart() override;

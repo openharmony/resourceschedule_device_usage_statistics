@@ -55,7 +55,7 @@ void BundleActiveService::OnStart()
     }
 
     InitNecessaryState();
-    int32_t ret = Publish(DelayedSingleton<BundleActiveService>::GetInstance().get()));
+    int32_t ret = Publish(DelayedSingleton<BundleActiveService>::GetInstance().get());
     if (!ret) {
         BUNDLE_ACTIVE_LOGE("[Server] OnStart, Register SystemAbility[1907] FAIL.");
         return;
