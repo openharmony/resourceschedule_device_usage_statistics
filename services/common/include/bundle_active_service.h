@@ -107,6 +107,7 @@ public:
     * parameters: systemAbilityId, runOnCreate
     */
     BundleActiveService(const int32_t systemAbilityId, bool runOnCreate);
+    virtual BundleActiveService() = 0;
 
 protected:
     void OnStart() override;

@@ -46,6 +46,7 @@ class IBundleActiveService : public IRemoteBroker {
 public:
     IBundleActiveService() = default;
     ~IBundleActiveService() override = default;
+    DISALLOW_COPY_AND_MOVE(IBundleActiveService);
     /*
     * function: ReportEvent, used to report event.
     * parameters: event, userId

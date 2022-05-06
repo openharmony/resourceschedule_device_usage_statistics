@@ -24,6 +24,7 @@ class BundleActiveStub : public IRemoteStub<IBundleActiveService> {
 public:
     BundleActiveStub() = default;
     ~BundleActiveStub() override = default;
+    DISALLOW_COPY_AND_MOVE(BundleActiveStub);
     /*
     * function: OnRemoteRequest, handle message from proxy.
     * parameters: code, data, reply, option
