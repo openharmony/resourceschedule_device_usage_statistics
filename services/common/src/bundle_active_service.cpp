@@ -40,7 +40,7 @@ BundleActiveService::BundleActiveService() : SystemAbility(DEVICE_USAGE_STATISTI
 {
 }
 
-BundleActiveService::~BundleActiveService() 
+BundleActiveService::~BundleActiveService()
 {
 }
 
