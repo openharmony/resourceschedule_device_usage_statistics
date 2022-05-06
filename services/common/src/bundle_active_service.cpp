@@ -40,6 +40,10 @@ BundleActiveService::BundleActiveService() : SystemAbility(DEVICE_USAGE_STATISTI
 {
 }
 
+BundleActiveService::~BundleActiveService() 
+{
+}
+
 void BundleActiveService::OnStart()
 {
     BUNDLE_ACTIVE_LOGI("OnStart() called");
