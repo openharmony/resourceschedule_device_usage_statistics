@@ -283,6 +283,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
         if (isSystemAppAndHasPermission == true ||
             AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
             AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
+            errCode = 0;
             int32_t convertedIntervalType = ConvertIntervalType(intervalType);
             result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime, "");
         }
@@ -314,6 +315,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
         if (isSystemAppAndHasPermission == true ||
             AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
             AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
+            errCode = 0;
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, "");
         }
     }
