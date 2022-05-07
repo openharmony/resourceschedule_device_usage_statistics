@@ -22,16 +22,6 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-#ifndef OS_ACCOUNT_PART_ENABLED
-namespace {
-constexpr int32_t UID_TRANSFORM_DIVISOR = 200000;
-void GetOsAccountIdFromUid(int32_t uid, int32_t &osAccountId)
-{
-    osAccountId = uid / UID_TRANSFORM_DIVISOR;
-}
-} // namespace
-#endif // OS_ACCOUNT_PART_ENABLED
-
 void BundleActiveAppStateObserver::Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
 {
     if (reportHandler != nullptr) {
