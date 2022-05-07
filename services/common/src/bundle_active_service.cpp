@@ -125,14 +125,11 @@ void BundleActiveService::InitService()
     } else {
         return;
     }
-    try {
-        shutdownCallback_ = new BundleActiveShutdownCallbackService(bundleActiveCore_);
-    } catch (const std::bad_alloc &e) {
-        BUNDLE_ACTIVE_LOGE("Memory allocation failed");
-        return;
-    }
+    shutdownCallback_ = new (std::nothrow) BundleActiveShutdownCallbackService(bundleActiveCore_);
     auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
-    powerManagerClient.RegisterShutdownCallback(shutdownCallback_);
+    if (shutdownCallback_) {
+        powerManagerClient.RegisterShutdownCallback(shutdownCallback_);
+    }
     InitAppStateSubscriber(reportHandler_);
     InitContinuousSubscriber(reportHandler_);
     bundleActiveCore_->InitBundleGroupController();
