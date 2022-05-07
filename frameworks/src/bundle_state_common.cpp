@@ -21,6 +21,25 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+AsyncWorkData::AsyncWorkData(napi_env napiEnv)
+{
+    env = napiEnv;
+}
+
+AsyncWorkData::~AsyncWorkData()
+{
+    if (callback) {
+        BUNDLE_ACTIVE_LOGI("delete callback");
+        napi_delete_reference(env, callback);
+        callback = nullptr;
+    }
+    if (asyncWork) {
+        BUNDLE_ACTIVE_LOGI("delete asyncwork");
+        napi_delete_async_work(env, asyncWork);
+        asyncWork = nullptr;
+    }
+}
+
 napi_value BundleStateCommon::NapiGetNull(napi_env env)
 {
     napi_value result = nullptr;
@@ -29,12 +48,12 @@ napi_value BundleStateCommon::NapiGetNull(napi_env env)
 }
 
 void BundleStateCommon::GetCallbackPromiseResult(const napi_env &env,
-    const CallbackPromiseInfo &info, const napi_value &result)
+    const AsyncWorkData &workData, const napi_value &result)
 {
-    if (info.isCallback) {
-        SetCallbackInfo(env, info.callback, info.errorCode, result);
+    if (workData.isCallback) {
+        SetCallbackInfo(env, workData.callback, workData.errorCode, result);
     } else {
-        SetPromiseInfo(env, info.deferred, result, info.errorCode);
+        SetPromiseInfo(env, workData.deferred, result, workData.errorCode);
     }
 }
 
@@ -325,17 +344,17 @@ napi_value BundleStateCommon::GetInt32NumberValue(const napi_env &env, const nap
     return BundleStateCommon::NapiGetNull(env);
 }
 
-void BundleStateCommon::SettingCallbackPromiseInfo(
-    const napi_env &env, const napi_ref &callback, CallbackPromiseInfo &info, napi_value &promise)
+void BundleStateCommon::SettingAsyncWorkData(
+    const napi_env &env, const napi_ref &callback, AsyncWorkData &workData, napi_value &promise)
 {
     if (callback) {
-        info.callback = callback;
-        info.isCallback = true;
+        workData.callback = callback;
+        workData.isCallback = true;
     } else {
         napi_deferred deferred = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_promise(env, &deferred, &promise));
-        info.deferred = deferred;
-        info.isCallback = false;
+        workData.deferred = deferred;
+        workData.isCallback = false;
     }
 }
 

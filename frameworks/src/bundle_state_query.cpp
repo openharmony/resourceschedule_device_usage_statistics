@@ -98,7 +98,7 @@ napi_value GetModuleUsageRecord(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoModuleRecord *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoModuleRecord;
+        new (std::nothrow) AsyncCallbackInfoModuleRecord(env);
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
@@ -110,22 +110,20 @@ napi_value GetModuleUsageRecord(napi_env env, napi_callback_info info)
         asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    asyncCallbackInfo->env = env;
-    asyncCallbackInfo->asyncWork = nullptr;
-    asyncCallbackInfo->maxNum = params.maxNum;
-    BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
+    std::unique_ptr<AsyncCallbackInfoModuleRecord> callbackPtr {asyncCallbackInfo};
+    callbackPtr->maxNum = params.maxNum;
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
-    napi_create_string_latin1(env, "GetModuleUsageRecord", NAPI_AUTO_LENGTH, &resourceName);
-    napi_create_async_work(env,
+    NAPI_CALL(env, napi_create_string_latin1(env, "GetModuleUsageRecord", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
             AsyncCallbackInfoModuleRecord *asyncCallbackInfo = (AsyncCallbackInfoModuleRecord *)data;
             if (asyncCallbackInfo != nullptr) {
-                asyncCallbackInfo->info.errorCode =
-                    asyncCallbackInfo->info.errorCode =
-                        BundleActiveClient::GetInstance().QueryFormStatistics(asyncCallbackInfo->maxNum,
-                        asyncCallbackInfo->moduleRecords);
+                asyncCallbackInfo->errorCode =
+                    BundleActiveClient::GetInstance().QueryFormStatistics(asyncCallbackInfo->maxNum,
+                    asyncCallbackInfo->moduleRecords);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleStateInfoByInterval, asyncCallbackInfo == nullptr");
             }
@@ -136,23 +134,17 @@ napi_value GetModuleUsageRecord(napi_env env, napi_callback_info info)
                 napi_value result = nullptr;
                 napi_create_array(env, &result);
                 BundleStateCommon::GetModuleRecordForResult(env, asyncCallbackInfo->moduleRecords, result);
-                BundleStateCommon::GetCallbackPromiseResult(env, asyncCallbackInfo->info, result);
-
-                if (asyncCallbackInfo->info.callback != nullptr) {
-                    napi_delete_reference(env, asyncCallbackInfo->info.callback);
-                }
-
-                napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-                delete asyncCallbackInfo;
-                asyncCallbackInfo = nullptr;
+                BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-    if (asyncCallbackInfo->info.isCallback) {
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }
@@ -200,7 +192,7 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoIsIdleState *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoIsIdleState;
+        new (std::nothrow) AsyncCallbackInfoIsIdleState(env);
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
@@ -212,13 +204,12 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
         asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    asyncCallbackInfo->env = env;
-    asyncCallbackInfo->asyncWork = nullptr;
-    asyncCallbackInfo->bundleName = params.bundleName;
-    BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
+    std::unique_ptr<AsyncCallbackInfoIsIdleState> callbackPtr {asyncCallbackInfo};
+    callbackPtr->bundleName = params.bundleName;
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
-    napi_create_string_latin1(env, "IsIdleState", NAPI_AUTO_LENGTH, &resourceName);
-    napi_create_async_work(env,
+    NAPI_CALL(env, napi_create_string_latin1(env, "IsIdleState", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
@@ -235,23 +226,17 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
                 napi_get_boolean(env, asyncCallbackInfo->state, &result);
-                BundleStateCommon::GetCallbackPromiseResult(env, asyncCallbackInfo->info, result);
-
-                if (asyncCallbackInfo->info.callback != nullptr) {
-                    napi_delete_reference(env, asyncCallbackInfo->info.callback);
-                }
-
-                napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-                delete asyncCallbackInfo;
-                asyncCallbackInfo = nullptr;
+                BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-    if (asyncCallbackInfo->info.isCallback) {
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }
@@ -282,7 +267,7 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
     ParsePriorityGroupParameters(env, info, params);
     napi_value promise = nullptr;
     AsyncCallbackInfoPriorityGroup *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoPriorityGroup;
+        new (std::nothrow) AsyncCallbackInfoPriorityGroup(env);
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
@@ -294,12 +279,11 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
         asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    asyncCallbackInfo->env = env;
-    asyncCallbackInfo->asyncWork = nullptr;
-    BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
+    std::unique_ptr<AsyncCallbackInfoPriorityGroup> callbackPtr {asyncCallbackInfo};
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
-    napi_create_string_latin1(env, "QueryAppUsagePriorityGroup", NAPI_AUTO_LENGTH, &resourceName);
-    napi_create_async_work(env,
+    NAPI_CALL(env, napi_create_string_latin1(env, "QueryAppUsagePriorityGroup", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
@@ -315,21 +299,17 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
                 napi_create_int32(env, asyncCallbackInfo->priorityGroup, &result);
-                BundleStateCommon::GetCallbackPromiseResult(env, asyncCallbackInfo->info, result);
-                if (asyncCallbackInfo->info.callback != nullptr) {
-                    napi_delete_reference(env, asyncCallbackInfo->info.callback);
-                }
-                napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-                delete asyncCallbackInfo;
-                asyncCallbackInfo = nullptr;
+                BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-    if (asyncCallbackInfo->info.isCallback) {
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }
@@ -390,7 +370,7 @@ napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoStates *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoStates;
+        new (std::nothrow) AsyncCallbackInfoStates(env);
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
@@ -402,20 +382,18 @@ napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info)
         asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    asyncCallbackInfo->env = env;
-    asyncCallbackInfo->asyncWork = nullptr;
-    asyncCallbackInfo->beginTime = params.beginTime;
-    BUNDLE_ACTIVE_LOGI("QueryCurrentBundleActiveStates asyncCallbackInfo->beginTime: %{public}lld",
-        (long long)asyncCallbackInfo->beginTime);
-    asyncCallbackInfo->endTime = params.endTime;
-    BUNDLE_ACTIVE_LOGI("QueryCurrentBundleActiveStates asyncCallbackInfo->endTime: %{public}lld",
-        (long long)asyncCallbackInfo->endTime);
-    BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
+    std::unique_ptr<AsyncCallbackInfoStates> callbackPtr {asyncCallbackInfo};
+    callbackPtr->beginTime = params.beginTime;
+    BUNDLE_ACTIVE_LOGI("QueryCurrentBundleActiveStates callbackPtr->beginTime: %{public}lld",
+        (long long)callbackPtr->beginTime);
+    callbackPtr->endTime = params.endTime;
+    BUNDLE_ACTIVE_LOGI("QueryCurrentBundleActiveStates callbackPtr->endTime: %{public}lld",
+        (long long)callbackPtr->endTime);
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
 
     napi_value resourceName = nullptr;
-    napi_create_string_latin1(env, "QueryCurrentBundleActiveStates", NAPI_AUTO_LENGTH, &resourceName);
-
-    napi_create_async_work(env,
+    NAPI_CALL(env, napi_create_string_latin1(env, "QueryCurrentBundleActiveStates", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
@@ -434,24 +412,18 @@ napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info)
                 napi_value result = nullptr;
                 napi_create_array(env, &result);
                 BundleStateCommon::GetBundleActiveEventForResult(env, asyncCallbackInfo->BundleActiveState, result);
-                BundleStateCommon::GetCallbackPromiseResult(env, asyncCallbackInfo->info, result);
-
-                if (asyncCallbackInfo->info.callback != nullptr) {
-                    napi_delete_reference(env, asyncCallbackInfo->info.callback);
-                }
-                napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-                delete asyncCallbackInfo;
-                asyncCallbackInfo = nullptr;
+                BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
+        &asyncCallbackInfo->asyncWork));
 
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-
-    if (asyncCallbackInfo->info.isCallback) {
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }
@@ -465,7 +437,7 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoStates *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoStates;
+        new (std::nothrow) AsyncCallbackInfoStates(env);
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
@@ -477,20 +449,19 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
         asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    asyncCallbackInfo->env = env;
-    asyncCallbackInfo->asyncWork = nullptr;
-    asyncCallbackInfo->beginTime = params.beginTime;
-    BUNDLE_ACTIVE_LOGI("QueryBundleActiveStates asyncCallbackInfo->beginTime: %{public}lld",
-        (long long)asyncCallbackInfo->beginTime);
-    asyncCallbackInfo->endTime = params.endTime;
-    BUNDLE_ACTIVE_LOGI("QueryBundleActiveStates asyncCallbackInfo->endTime: %{public}lld",
-        (long long)asyncCallbackInfo->endTime);
-    BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
+    std::unique_ptr<AsyncCallbackInfoStates> callbackPtr {asyncCallbackInfo};
+    callbackPtr->beginTime = params.beginTime;
+    BUNDLE_ACTIVE_LOGI("QueryBundleActiveStates callbackPtr->beginTime: %{public}lld",
+        (long long)callbackPtr->beginTime);
+    callbackPtr->endTime = params.endTime;
+    BUNDLE_ACTIVE_LOGI("QueryBundleActiveStates callbackPtr->endTime: %{public}lld",
+        (long long)callbackPtr->endTime);
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
 
     napi_value resourceName = nullptr;
-    napi_create_string_latin1(env, "QueryBundleActiveStates", NAPI_AUTO_LENGTH, &resourceName);
+    NAPI_CALL(env, napi_create_string_latin1(env, "QueryBundleActiveStates", NAPI_AUTO_LENGTH, &resourceName));
 
-    napi_create_async_work(env,
+    NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
@@ -498,7 +469,7 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->BundleActiveState =
                     BundleActiveClient::GetInstance().QueryEvents(asyncCallbackInfo->beginTime,
-                        asyncCallbackInfo->endTime, asyncCallbackInfo->info.errorCode);
+                        asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleActiveStates, asyncCallbackInfo == nullptr");
             }
@@ -509,21 +480,17 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
                 napi_value result = nullptr;
                 napi_create_array(env, &result);
                 BundleStateCommon::GetBundleActiveEventForResult(env, asyncCallbackInfo->BundleActiveState, result);
-                BundleStateCommon::GetCallbackPromiseResult(env, asyncCallbackInfo->info, result);
-                if (asyncCallbackInfo->info.callback != nullptr) {
-                    napi_delete_reference(env, asyncCallbackInfo->info.callback);
-                }
-                napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-                delete asyncCallbackInfo;
-                asyncCallbackInfo = nullptr;
+                BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-    if (asyncCallbackInfo->info.isCallback) {
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }
@@ -597,7 +564,7 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoAppUsageByInterval *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoAppUsageByInterval;
+        new (std::nothrow) AsyncCallbackInfoAppUsageByInterval(env);
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
@@ -609,21 +576,20 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
         asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    asyncCallbackInfo->env = env;
-    asyncCallbackInfo->asyncWork = nullptr;
-    asyncCallbackInfo->intervalType = params.intervalType;
-    BUNDLE_ACTIVE_LOGI("QueryBundleStateInfoByInterval asyncCallbackInfo->intervalType: %{public}d",
-        asyncCallbackInfo->intervalType);
-    asyncCallbackInfo->beginTime = params.beginTime;
-    BUNDLE_ACTIVE_LOGI("QueryBundleStateInfoByInterval asyncCallbackInfo->beginTime: %{public}lld",
-        (long long)asyncCallbackInfo->beginTime);
-    asyncCallbackInfo->endTime = params.endTime;
-    BUNDLE_ACTIVE_LOGI("QueryBundleStateInfoByInterval asyncCallbackInfo->endTime: %{public}lld",
-        (long long)asyncCallbackInfo->endTime);
-    BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
+    std::unique_ptr<AsyncCallbackInfoAppUsageByInterval> callbackPtr {asyncCallbackInfo};
+    callbackPtr->intervalType = params.intervalType;
+    BUNDLE_ACTIVE_LOGI("QueryBundleStateInfoByInterval callbackPtr->intervalType: %{public}d",
+        callbackPtr->intervalType);
+    callbackPtr->beginTime = params.beginTime;
+    BUNDLE_ACTIVE_LOGI("QueryBundleStateInfoByInterval callbackPtr->beginTime: %{public}lld",
+        (long long)callbackPtr->beginTime);
+    callbackPtr->endTime = params.endTime;
+    BUNDLE_ACTIVE_LOGI("QueryBundleStateInfoByInterval callbackPtr->endTime: %{public}lld",
+        (long long)callbackPtr->endTime);
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
-    napi_create_string_latin1(env, "QueryBundleStateInfoByInterval", NAPI_AUTO_LENGTH, &resourceName);
-    napi_create_async_work(env,
+    NAPI_CALL(env, napi_create_string_latin1(env, "QueryBundleStateInfoByInterval", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
@@ -631,7 +597,7 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->packageStats =
                     BundleActiveClient::GetInstance().QueryPackageStats(asyncCallbackInfo->intervalType,
-                        asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime, asyncCallbackInfo->info.errorCode);
+                        asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleStateInfoByInterval, asyncCallbackInfo == nullptr");
             }
@@ -642,23 +608,17 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
                 napi_value result = nullptr;
                 napi_create_array(env, &result);
                 BundleStateCommon::GetBundleStateInfoByIntervalForResult(env, asyncCallbackInfo->packageStats, result);
-                BundleStateCommon::GetCallbackPromiseResult(env, asyncCallbackInfo->info, result);
-
-                if (asyncCallbackInfo->info.callback != nullptr) {
-                    napi_delete_reference(env, asyncCallbackInfo->info.callback);
-                }
-
-                napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-                delete asyncCallbackInfo;
-                asyncCallbackInfo = nullptr;
+                BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-    if (asyncCallbackInfo->info.isCallback) {
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }
@@ -717,7 +677,7 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     AsyncCallbackInfoAppUsage *asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfoAppUsage;
+        new (std::nothrow) AsyncCallbackInfoAppUsage(env);
     if (!asyncCallbackInfo) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
@@ -729,25 +689,24 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
         asyncCallbackInfo = nullptr;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    asyncCallbackInfo->env = env;
-    asyncCallbackInfo->asyncWork = nullptr;
-    asyncCallbackInfo->beginTime = params.beginTime;
-    BUNDLE_ACTIVE_LOGI("QueryBundleStateInfos asyncCallbackInfo->beginTime: %{public}lld",
-        (long long)asyncCallbackInfo->beginTime);
-    asyncCallbackInfo->endTime = params.endTime;
-    BUNDLE_ACTIVE_LOGI("QueryBundleStateInfos asyncCallbackInfo->endTime: %{public}lld",
-        (long long)asyncCallbackInfo->endTime);
-    BundleStateCommon::SettingCallbackPromiseInfo(env, params.callback, asyncCallbackInfo->info, promise);
+    std::unique_ptr<AsyncCallbackInfoAppUsage> callbackPtr {asyncCallbackInfo};
+    callbackPtr->beginTime = params.beginTime;
+    BUNDLE_ACTIVE_LOGI("QueryBundleStateInfos callbackPtr->beginTime: %{public}lld",
+        (long long)callbackPtr->beginTime);
+    callbackPtr->endTime = params.endTime;
+    BUNDLE_ACTIVE_LOGI("QueryBundleStateInfos callbackPtr->endTime: %{public}lld",
+        (long long)callbackPtr->endTime);
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
-    napi_create_string_latin1(env, "QueryBundleStateInfos", NAPI_AUTO_LENGTH, &resourceName);
-    napi_create_async_work(env,
+    NAPI_CALL(env, napi_create_string_latin1(env, "QueryBundleStateInfos", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
             AsyncCallbackInfoAppUsage *asyncCallbackInfo = (AsyncCallbackInfoAppUsage *)data;
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->packageStats = BundleStateCommon::GetPackageStats(asyncCallbackInfo->beginTime,
-                    asyncCallbackInfo->endTime, asyncCallbackInfo->info.errorCode);
+                    asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleStateInfos asyncCallbackInfo == nullptr");
             }
@@ -758,21 +717,17 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
                 napi_value result = nullptr;
                 napi_create_object(env, &result);
                 BundleStateCommon::GetBundleStateInfoForResult(env, asyncCallbackInfo->packageStats, result);
-                BundleStateCommon::GetCallbackPromiseResult(env, asyncCallbackInfo->info, result);
-                if (asyncCallbackInfo->info.callback != nullptr) {
-                    napi_delete_reference(env, asyncCallbackInfo->info.callback);
-                }
-                napi_delete_async_work(env, asyncCallbackInfo->asyncWork);
-                delete asyncCallbackInfo;
-                asyncCallbackInfo = nullptr;
+                BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
         (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork);
-    NAPI_CALL(env, napi_queue_async_work(env, asyncCallbackInfo->asyncWork));
-    if (asyncCallbackInfo->info.isCallback) {
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }
