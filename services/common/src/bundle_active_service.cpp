@@ -32,9 +32,17 @@ static const int32_t PERIOD_YEARLY_JS = 4;
 static const int32_t PERIOD_BEST_SERVICE = 4;
 static const int32_t DELAY_TIME = 2000;
 static const std::string PERMITTED_PROCESS_NAME = "foundation";
-
-REGISTER_SYSTEM_ABILITY_BY_ID(BundleActiveService, DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true);
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
+const bool REGISTER_RESULT =
+    SystemAbility::MakeAndRegisterAbility(DelayedSingleton<BundleActiveService>::GetInstance().get());
+
+BundleActiveService::BundleActiveService() : SystemAbility(DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID, true)
+{
+}
+
+BundleActiveService::~BundleActiveService()
+{
+}
 
 void BundleActiveService::OnStart()
 {
@@ -51,7 +59,7 @@ void BundleActiveService::OnStart()
     }
 
     InitNecessaryState();
-    int32_t ret = Publish(this);
+    int32_t ret = Publish(DelayedSingleton<BundleActiveService>::GetInstance().get());
     if (!ret) {
         BUNDLE_ACTIVE_LOGE("[Server] OnStart, Register SystemAbility[1907] FAIL.");
         return;
@@ -117,14 +125,11 @@ void BundleActiveService::InitService()
     } else {
         return;
     }
-    try {
-        shutdownCallback_ = new BundleActiveShutdownCallbackService(bundleActiveCore_);
-    } catch (const std::bad_alloc &e) {
-        BUNDLE_ACTIVE_LOGE("Memory allocation failed");
-        return;
-    }
+    shutdownCallback_ = new (std::nothrow) BundleActiveShutdownCallbackService(bundleActiveCore_);
     auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
-    powerManagerClient.RegisterShutdownCallback(shutdownCallback_);
+    if (shutdownCallback_) {
+        powerManagerClient.RegisterShutdownCallback(shutdownCallback_);
+    }
     InitAppStateSubscriber(reportHandler_);
     InitContinuousSubscriber(reportHandler_);
     bundleActiveCore_->InitBundleGroupController();
@@ -275,6 +280,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
         if (isSystemAppAndHasPermission == true ||
             AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
             AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
+            errCode = 0;
             int32_t convertedIntervalType = ConvertIntervalType(intervalType);
             result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime, "");
         }
@@ -306,6 +312,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
         if (isSystemAppAndHasPermission == true ||
             AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
             AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
+            errCode = 0;
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, "");
         }
     }

@@ -22,6 +22,9 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveStub : public IRemoteStub<IBundleActiveService> {
 public:
+    BundleActiveStub() = default;
+    ~BundleActiveStub() override = default;
+    DISALLOW_COPY_AND_MOVE(BundleActiveStub);
     /*
     * function: OnRemoteRequest, handle message from proxy.
     * parameters: code, data, reply, option
@@ -29,14 +32,6 @@ public:
     */
     int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
         MessageOption &option) override;
-    /*
-    * function: BundleActiveStub, default constructor.
-    */
-    BundleActiveStub() {}
-    /*
-    * function: ~BundleActiveStub, default constructor.
-    */
-    ~BundleActiveStub() {}
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
