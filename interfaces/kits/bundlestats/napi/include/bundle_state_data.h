@@ -120,7 +120,7 @@ struct AppUsageParamsByIntervalInfo {
 };
 
 struct AppUsageParamsInfo {
-    int64_t beginTime= -1;
+    int64_t beginTime = -1;
     int64_t endTime = -1;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
