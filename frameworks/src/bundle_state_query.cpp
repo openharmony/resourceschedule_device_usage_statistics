@@ -103,8 +103,7 @@ napi_value GetModuleUsageRecord(napi_env env, napi_callback_info info)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoModuleRecord), 0,
-        sizeof(AsyncCallbackInfoModuleRecord)) != EOK) {
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
@@ -197,8 +196,7 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoIsIdleState), 0, sizeof(AsyncCallbackInfoIsIdleState))
-        != EOK) {
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
@@ -272,8 +270,7 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoPriorityGroup), 0, sizeof(AsyncCallbackInfoPriorityGroup))
-        != EOK) {
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
@@ -375,8 +372,7 @@ napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoStates), 0, sizeof(AsyncCallbackInfoStates))
-        != EOK) {
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
@@ -442,8 +438,7 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoStates), 0, sizeof(AsyncCallbackInfoStates))
-        != EOK) {
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
@@ -569,8 +564,7 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoAppUsageByInterval), 0,
-        sizeof(AsyncCallbackInfoAppUsageByInterval)) != EOK) {
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
@@ -682,8 +676,7 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoAppUsage), 0, sizeof(AsyncCallbackInfoAppUsage))
-        != EOK) {
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
