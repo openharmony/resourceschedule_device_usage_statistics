@@ -56,45 +56,45 @@ struct AsyncWorkData {
 
 struct AsyncCallbackInfoIsIdleState : public AsyncWorkData {
     explicit AsyncCallbackInfoIsIdleState(napi_env env) : AsyncWorkData(env) {}
-    std::string bundleName;
-    bool state;
+    std::string bundleName = "";
+    bool state = true;
 };
 
 struct AsyncCallbackInfoPriorityGroup : public AsyncWorkData {
     explicit AsyncCallbackInfoPriorityGroup(napi_env env) : AsyncWorkData(env) {}
-    int32_t priorityGroup;
+    int32_t priorityGroup = 60;
 };
 
 struct AsyncCallbackInfoStates : public AsyncWorkData {
     explicit AsyncCallbackInfoStates(napi_env env) : AsyncWorkData(env) {}
-    int64_t beginTime;
-    int64_t endTime;
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
     std::vector<BundleActiveEvent> BundleActiveState;
 };
 
 struct AsyncCallbackInfoAppUsageByInterval : public AsyncWorkData {
     explicit AsyncCallbackInfoAppUsageByInterval(napi_env env) : AsyncWorkData(env) {}
-    int32_t intervalType;
-    int64_t beginTime;
-    int64_t endTime;
+    int32_t intervalType = -1;
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
     std::vector<BundleActivePackageStats> packageStats;
 };
 
 struct AsyncCallbackInfoAppUsage : public AsyncWorkData {
     explicit AsyncCallbackInfoAppUsage(napi_env env) : AsyncWorkData(env) {}
-    int64_t beginTime;
-    int64_t endTime;
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
     std::shared_ptr<std::map<std::string, BundleActivePackageStats>> packageStats;
 };
 
 struct AsyncCallbackInfoModuleRecord : public AsyncWorkData {
     explicit AsyncCallbackInfoModuleRecord(napi_env env) : AsyncWorkData(env) {}
-    int32_t maxNum;
+    int32_t maxNum = -1;
     std::vector<BundleActiveModuleRecord> moduleRecords;
 };
 
 struct IsIdleStateParamsInfo {
-    std::string bundleName;
+    std::string bundleName = "";
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };
@@ -105,29 +105,29 @@ struct PriorityGroupParamsInfo {
 };
 
 struct StatesParamsInfo {
-    int64_t beginTime;
-    int64_t endTime;
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };
 
 struct AppUsageParamsByIntervalInfo {
-    int32_t intervalType;
-    int64_t beginTime;
-    int64_t endTime;
+    int32_t intervalType = -1;
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };
 
 struct AppUsageParamsInfo {
-    int64_t beginTime;
-    int64_t endTime;
+    int64_t beginTime= -1;
+    int64_t endTime = -1;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };
 
 struct ModuleRecordParamsInfo {
-    int32_t maxNum;
+    int32_t maxNum = -1;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };
