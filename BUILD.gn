@@ -144,7 +144,7 @@ ohos_shared_library("usagestatservice") {
     "power_manager_native:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
-    "startup_l2:syspara",
+    "init:libbegetutil",
     "time_native:time_service",
     "utils_base:utils",
   ]
