@@ -492,7 +492,6 @@ int32_t BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<Bun
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     BUNDLE_ACTIVE_LOGI("QueryFormStatistics UID is %{public}d", callingUid);
     // get userid when userId is -1
-
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
         if (ret != ERR_OK) {
