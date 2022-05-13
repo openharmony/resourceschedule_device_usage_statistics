@@ -107,9 +107,13 @@ public:
     * parameters: systemAbilityId, runOnCreate
     */
     BundleActiveService(const int32_t systemAbilityId, bool runOnCreate);
-
-protected:
+    /**
+     * @brief The OnStart callback.
+     */
     void OnStart() override;
+    /**
+     * @brief The OnStop callback.
+     */
     void OnStop() override;
 
 private:
@@ -121,6 +125,7 @@ private:
     sptr<BundleActiveShutdownCallbackService> shutdownCallback_;
     std::shared_ptr<AppExecFwk::EventRunner> runner_;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
+    bool ready_ {false};
     int32_t ConvertIntervalType(const int32_t intervalType);
     void InitNecessaryState();
     void InitService();

@@ -32,6 +32,7 @@ static const int32_t PERIOD_YEARLY_JS = 4;
 static const int32_t PERIOD_BEST_SERVICE = 4;
 static const int32_t DELAY_TIME = 2000;
 static const std::string PERMITTED_PROCESS_NAME = "foundation";
+static const int32_t MAXNUM_UP_LIMIT = 1000;
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 const bool REGISTER_RESULT =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<BundleActiveService>::GetInstance().get());
@@ -47,6 +48,10 @@ BundleActiveService::~BundleActiveService()
 void BundleActiveService::OnStart()
 {
     BUNDLE_ACTIVE_LOGI("OnStart() called");
+    if (ready_) {
+        BUNDLE_ACTIVE_LOGI("service is ready. nothing to do.");
+        return;
+    }
     runner_ = AppExecFwk::EventRunner::Create("device_usage_stats_init_handler");
     if (runner_ == nullptr) {
         BUNDLE_ACTIVE_LOGI("BundleActiveService runner create failed!");
@@ -65,6 +70,7 @@ void BundleActiveService::OnStart()
         return;
     }
     BUNDLE_ACTIVE_LOGI("[Server] OnStart, Register SystemAbility[1907] SUCCESS.");
+    ready_ = true;
     return;
 }
 
@@ -206,6 +212,7 @@ void BundleActiveService::OnStop()
         return;
     }
     BUNDLE_ACTIVE_LOGI("[Server] OnStop");
+    ready_ = false;
 }
 
 int32_t BundleActiveService::ReportEvent(BundleActiveEvent& event, const int32_t userId)
@@ -476,10 +483,16 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_t u
 int32_t BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
     int32_t userId)
 {
+    int32_t errCode = 0;
+    if (maxNum > MAXNUM_UP_LIMIT || maxNum < 0) {
+        BUNDLE_ACTIVE_LOGE("MaxNum is Invalid!");
+        errCode = -1;
+        return errCode;
+    }
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     BUNDLE_ACTIVE_LOGI("QueryFormStatistics UID is %{public}d", callingUid);
     // get userid when userId is -1
-    int32_t errCode = 0;
+
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
         if (ret != ERR_OK) {
