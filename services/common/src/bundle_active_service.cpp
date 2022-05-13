@@ -484,7 +484,7 @@ int32_t BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<Bun
     int32_t userId)
 {
     int32_t errCode = 0;
-    if (maxNum > MAXNUM_UP_LIMIT || maxNum < 0) {
+    if (maxNum > MAXNUM_UP_LIMIT || maxNum <= 0) {
         BUNDLE_ACTIVE_LOGE("MaxNum is Invalid!");
         errCode = -1;
         return errCode;
