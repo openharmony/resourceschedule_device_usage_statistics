@@ -70,7 +70,6 @@ void BundleActiveService::OnStart()
         return;
     }
     BUNDLE_ACTIVE_LOGI("[Server] OnStart, Register SystemAbility[1907] SUCCESS.");
-    ready_ = true;
     return;
 }
 
@@ -102,8 +101,8 @@ void BundleActiveService::InitNecessaryState()
         handler_->PostTask(task, DELAY_TIME);
         return;
     }
-
     InitService();
+    ready_ = true;
 }
 
 void BundleActiveService::InitService()
@@ -181,7 +180,6 @@ bool BundleActiveService::SubscribeAppState()
     int32_t err = appManager->RegisterApplicationStateObserver(appStateObserver_.get());
     if (err != 0) {
         BUNDLE_ACTIVE_LOGE("RegisterApplicationStateObserver failed. err:%{public}d", err);
-        appStateObserver_ = nullptr;
         return false;
     }
     BUNDLE_ACTIVE_LOGI("RegisterApplicationStateObserver success.");
@@ -207,8 +205,6 @@ void BundleActiveService::OnStop()
     if (shutdownCallback_ != nullptr) {
         auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
         powerManagerClient.UnRegisterShutdownCallback(shutdownCallback_);
-        delete shutdownCallback_;
-        shutdownCallback_ = nullptr;
         return;
     }
     BUNDLE_ACTIVE_LOGI("[Server] OnStop");
