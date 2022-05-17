@@ -139,7 +139,7 @@ ohos_shared_library("usagestatservice") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "native_appdatamgr:native_rdb",
+    "relational_store:native_rdb",
     "permission_standard:libpermissionsdk_standard",
     "power_manager_native:powermgr_client",
     "safwk:system_ability_fwk",
