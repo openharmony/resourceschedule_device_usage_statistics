@@ -458,20 +458,15 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_t u
     }
     std::string bundleName = "";
     sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
-    bool bundleIsSystemApp = sptrBundleMgr_->CheckIsSystemAppByUid(uid);
 
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
-    if (!bundleIsSystemApp) {
-        errCode = BUNDLE_ACTIVE_FAIL;
-        BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
-        return false;
-    } else if (bundleHasPermission != 0) {
+    if (bundleHasPermission != 0) {
         errCode = bundleHasPermission;
         BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
         return false;
     } else {
-        BUNDLE_ACTIVE_LOGI(" %{public}s is system app %{public}d, has permission %{public}d",
-            bundleName.c_str(), bundleIsSystemApp, bundleHasPermission);
+        BUNDLE_ACTIVE_LOGI(" %{public}s has permission %{public}d",
+            bundleName.c_str(), bundleHasPermission);
         return true;
     }
 }
