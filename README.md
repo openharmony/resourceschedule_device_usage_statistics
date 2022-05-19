@@ -97,4 +97,4 @@ resource_schedule_service
 
 appexecfwk_standard
 
-native_appdatamgr
+relational_store
