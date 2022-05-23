@@ -26,24 +26,26 @@ namespace OHOS {
 namespace DeviceUsageStats {
     constexpr int32_t MIN_LEN = 4;
     constexpr int32_t MAX_CODE_TEST = 15; // current max code is 9
+    static bool isInited = false;
 
-    void DoInit()
+    bool DoInit()
     {
         auto instance = DelayedSingleton<BundleActiveService>::GetInstance();
         if (!instance->runner_) {
             instance->runner_ = AppExecFwk::EventRunner::Create("device_usage_stats_init_handler");
         }
         if (!instance->runner_) {
-            return;
+            return false;
         }
 
         if (!instance->handler_) {
             instance->handler_ = std::make_shared<OHOS::AppExecFwk::EventHandler>(instance->runner_);
         }
         if (!instance->handler_) {
-            return;
+            return false;
         }
         instance->InitNecessaryState();
+        return true;
     }
 
     int32_t OnRemoteRequest(uint32_t code, MessageParcel& data)
@@ -75,9 +77,12 @@ namespace DeviceUsageStats {
         dataMessageParcel.WriteBuffer(data + sizeof(uint32_t), size);
         dataMessageParcel.RewindRead(0);
 
-        DoInit();
-        OnRemoteRequest(code, dataMessageParcel);
-        DelayedSingleton<BundleActiveService>::GetInstance()->OnStop();
+        if (!isInited) {
+            isInited = DoInit();
+        }
+        if (isInited) {
+            OnRemoteRequest(code, dataMessageParcel);
+        }
     }
 } // namespace DeviceUsageStats
 } // namespace OHOS
