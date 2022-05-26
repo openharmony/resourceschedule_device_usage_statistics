@@ -237,7 +237,7 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
     if (!timeChanged) {
         dailyExpiryDate_.TruncateToDay();
     }
-    listener_.CheckTimeChangeAndGetWallTime();
+    listener_.OnStatsReload();
     BUNDLE_ACTIVE_LOGI("LoadActiveStats current expire time is %{public}lld, "
         "begin time is %{public}lld", (long long)dailyExpiryDate_.GetMilliseconds(),
         (long long)tmpCalendar.GetMilliseconds());

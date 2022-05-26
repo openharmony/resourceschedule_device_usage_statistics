@@ -414,6 +414,7 @@ shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbSto
         string currDatabaseFileConfig = BUNDLE_ACTIVE_DATABASE_DIR + databaseFiles_.at(databaseType);
         RdbStoreConfig config(currDatabaseFileConfig);
         BundleActiveOpenCallback rdbDataCallBack;
+        config.SetJournalMode(NativeRdb::JournalMode::MODE_OFF);
         rdbStore = RdbHelper::GetRdbStore(config, BUNDLE_ACTIVE_RDB_VERSION, rdbDataCallBack, errCode);
         if ((rdbStore == nullptr)) {
             BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
