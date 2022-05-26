@@ -85,17 +85,13 @@ void BundleActiveUserService::NotifyStatsChanged()
     if (!statsChanged_) {
         BUNDLE_ACTIVE_LOGI("NotifyStatsChanged() set stats changed to true");
         statsChanged_ = true;
-        if (!listener_.expired()) {
-            listener_.lock()->OnStatsChanged(userId_);
-        }
+        listener_.OnStatsChanged(userId_);
     }
 }
 
 void BundleActiveUserService::NotifyNewUpdate()
 {
-    if (!listener_.expired()) {
-        listener_.lock()->OnSystemUpdate(userId_);
-    }
+    listener_.OnSystemUpdate(userId_);
 }
 
 void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
@@ -241,9 +237,7 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
     if (!timeChanged) {
         dailyExpiryDate_.TruncateToDay();
     }
-    if (!listener_.expired()) {
-        listener_.lock()->CheckTimeChangeAndGetWallTime();
-    }
+    listener_.CheckTimeChangeAndGetWallTime();
     BUNDLE_ACTIVE_LOGI("LoadActiveStats current expire time is %{public}lld, "
         "begin time is %{public}lld", (long long)dailyExpiryDate_.GetMilliseconds(),
         (long long)tmpCalendar.GetMilliseconds());

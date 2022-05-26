@@ -126,7 +126,7 @@ const std::string BUNDLE_ACTIVE_VERSION_FILE = "/version";
 const std::string DATABASE_FILE_TABLE_NAME = "table";
 const std::string SQLITE_MASTER_NAME = "name";
 const std::string DATABASE_TYPE[] = {"daily", "weekly", "monthly", "yearly", "event", "usageGroup"};
-const std::string SUFFIX_TYPE[] = {".db", ".db-shm", ".db-wal"};
+const std::string SUFFIX_TYPE[] = {".db"};
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_CONSTANT_H

@@ -35,7 +35,7 @@ class BundleActiveCore;
 class BundleActiveUserService {
 public:
     BundleActiveUserService() = delete;
-    BundleActiveUserService(const int32_t userId, std::shared_ptr<BundleActiveCore> listener, const bool debug):listener_(listener)
+    BundleActiveUserService(const int32_t userId, BundleActiveCore& listener, const bool debug):listener_(listener)
     {
         for (int32_t i = 0; i < BundleActivePeriodStats::PERIOD_COUNT; i++) {
             currentStats_.push_back(nullptr);
@@ -82,7 +82,7 @@ private:
     bool statsChanged_;
     bool debugUserService_;
     std::string lastForegroundBundle_;
-    std::weak_ptr<BundleActiveCore> listener_;
+    BundleActiveCore& listener_;
     std::vector<int64_t> periodLength_ = {0, 0, 0, 0};
     void NotifyStatsChanged();
     void NotifyNewUpdate();
