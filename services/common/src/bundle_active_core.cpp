@@ -194,7 +194,7 @@ std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitial
     std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.find(userId);
     if (it == userStatServices_.end()) {
         BUNDLE_ACTIVE_LOGI("first initialize user service");
-        std::shared_ptr<BundleActiveUserService> service = std::make_shared<BundleActiveUserService>(userId, *this,
+        std::shared_ptr<BundleActiveUserService> service = std::make_shared<BundleActiveUserService>(userId, shared_from_this(),
             debug);
         if (service == nullptr) {
             return nullptr;
