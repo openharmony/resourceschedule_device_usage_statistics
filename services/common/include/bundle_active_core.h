@@ -46,7 +46,7 @@ public:
 
 class BundleActiveReportHandler;
 
-class BundleActiveCore : public BundleActiveStatsUpdateListener, public std::enable_shared_from_this<BundleActiveCore>{
+class BundleActiveCore : public BundleActiveStatsUpdateListener, public std::enable_shared_from_this<BundleActiveCore> {
 public:
     BundleActiveCore();
     virtual ~BundleActiveCore();
