@@ -16,6 +16,7 @@
 #include "bundle_active_stub.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_event.h"
+#include "bundle_active_event_stats.h"
 #include "bundle_active_module_record.h"
 
 namespace OHOS {
@@ -137,6 +138,40 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             for (int32_t i = 0; i < size; i++) {
                 bool tmp = results[i].Marshalling(reply);
                 if (tmp == false) {
+                    return 1;
+                }
+            }
+            return size == 0;
+        }
+        case QUERY_EVENT_STATS: {
+            std::vector<BundleActiveEventStats> result;
+            int64_t beginTime = data.ReadInt64();
+            int64_t endTime = data.ReadInt64();
+            int32_t userId = data.ReadInt32();
+            int32_t errCode = QueryEventStats(beginTime, endTime, result, userId);
+            int32_t size = static_cast<int32_t>(result.size());
+            reply.WriteInt32(errCode);
+            reply.WriteInt32(size);
+            for (int32_t i = 0; i < size; i++) {
+                bool tmp = result[i].Marshalling(reply);
+                if (!tmp) {
+                    return 1;
+                }
+            }
+            return size == 0;
+        }
+        case QUERY_APP_NOTIFICATION_NUMBER: {
+            std::vector<BundleActiveEventStats> result;
+            int64_t beginTime = data.ReadInt64();
+            int64_t endTime = data.ReadInt64();
+            int32_t userId = data.ReadInt32();
+            int32_t errCode = QueryAppNotificationNumber(beginTime, endTime, result, userId);
+            int32_t size = static_cast<int32_t>(result.size());
+            reply.WriteInt32(errCode);
+            reply.WriteInt32(size);
+            for (int32_t i = 0; i < size; i++) {
+                bool tmp = result[i].Marshalling(reply);
+                if (!tmp) {
                     return 1;
                 }
             }

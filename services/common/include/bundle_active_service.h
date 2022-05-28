@@ -24,6 +24,7 @@
 #include "bundle_active_core.h"
 #include "bundle_active_report_handler.h"
 #include "bundle_active_shutdown_callback_service.h"
+#include "bundle_active_power_state_callback_service.h"
 #include "bundle_active_app_state_observer.h"
 #include "bundle_active_continuous_task_observer.h"
 #include "bundle_active_account_helper.h"
@@ -35,7 +36,6 @@ class BundleActiveService : public SystemAbility, public BundleActiveStub,
     DISALLOW_COPY_AND_MOVE(BundleActiveService);
     DECLARE_SYSTEM_ABILITY(BundleActiveService);
     DECLARE_DELAYED_SINGLETON(BundleActiveService);
-
 public:
     using IBundleMgr = OHOS::AppExecFwk::IBundleMgr;
     using BundleInfo = OHOS::AppExecFwk::BundleInfo;
@@ -97,11 +97,27 @@ public:
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
-    * if other SAs call this API, they should explicit define userId
+    * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
     int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
         int32_t userId = -1) override;
+    /*
+    * function: QueryEventStats, query all from event stats in specific time span for calling user.
+    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    int32_t QueryEventStats(int64_t beginTime, int64_t endTime,
+        std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
+    /*
+    * function: QueryAppNotificationNumber, query all app notification number in specific time span for calling user.
+    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    int32_t QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+        std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
     /*
     * function: BundleActiveService, default constructor.
     * parameters: systemAbilityId, runOnCreate
@@ -123,6 +139,7 @@ private:
     std::shared_ptr<BundleActiveContinuousTaskObserver> continuousTaskObserver_;
     sptr<IBundleMgr> sptrBundleMgr_;
     sptr<BundleActiveShutdownCallbackService> shutdownCallback_;
+    sptr<BundleActivePowerStateCallbackService> powerStateCallback_;
     std::shared_ptr<AppExecFwk::EventRunner> runner_;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
     bool ready_ {false};

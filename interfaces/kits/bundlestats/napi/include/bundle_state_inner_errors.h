@@ -50,6 +50,8 @@ enum : int32_t {
     ERR_USAGE_STATS_INTERVAL_TYPE,
     ERR_USAGE_STATS_INTERVAL_NUMBER,
     ERR_MODULE_STATS_MAXNUM_INVALID,
+    ERR_EVENT_TYPE,
+    ERR_EVENT_TYPE_NUMBER,
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

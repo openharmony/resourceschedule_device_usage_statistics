@@ -20,7 +20,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveEventStats {
+class BundleActiveEventStats : public Parcelable {
 public:
     int32_t eventId_;
     int64_t beginTimeStamp_;
@@ -28,6 +28,8 @@ public:
     int64_t lastEventTime_;
     int64_t totalTime_;
     int32_t count_;
+    std::string name_;
+
     /*
     * function: BundleActiveEventStats, default constructor.
     */
@@ -72,6 +74,20 @@ public:
     * parameters: right
     */
     void add(const BundleActiveEventStats& right);
+
+    /*
+    * function: Marshalling, mashalling event stats object to parcel.
+    * parameters: parcel
+    * return: result of mashalling, true means successful, flase means failed.
+    */
+    virtual bool Marshalling(Parcel &parcel) const override;
+
+    /*
+    * function: UnMarshalling, Unmashalling event stats object from parcel.
+    * parameters: parcel
+    * return: point to a BundleActiveEventStats.
+    */
+    std::shared_ptr<BundleActiveEventStats> UnMarshalling(Parcel &parcel);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

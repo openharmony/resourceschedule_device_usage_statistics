@@ -38,11 +38,15 @@ public:
     static const int32_t FLUSH = 12;
     static const int32_t SCREEN_INTERACTIVE = 13;
     static const int32_t SCREEN_NON_INTERACTIVE = 14;
-    static const int32_t KEYGUARD_SHOWN = 15;
-    static const int32_t KEYGUARD_HIDDEN = 16;
-    static const int32_t NOTIFICATION_SEEN = 17;
-    static const int32_t FORM_IS_CLICKED = 18;
-    static const int32_t FORM_IS_REMOVED = 19;
+    static const int32_t FORM_IS_CLICKED = 15;
+    static const int32_t FORM_IS_REMOVED = 16;
+    static const int32_t KEYGUARD_SHOWN = 17;
+    static const int32_t KEYGUARD_HIDDEN = 18;
+    static const int32_t NOTIFICATION_SEEN = 19;
+    static const int32_t SYSTEM_LOCK = 20;
+    static const int32_t SYSTEM_UNLOCK = 21;
+    static const int32_t SYSTEM_SLEEP = 22;
+    static const int32_t SYSTEM_WAKEUP = 23;
     inline static const std::string DEVICE_EVENT_PACKAGE_NAME = "openharmony";
     std::string bundleName_;
     std::string continuousTaskAbilityName_;
@@ -70,6 +74,11 @@ public:
     * parameters: eventId, timeStamp
     */
     BundleActiveEvent(int32_t eventId, int64_t timeStamp);
+    /*
+    * function: BundleActiveEvent, constructor using event Id, time stamp.
+    * parameters: eventId, bundleName.
+    */
+    BundleActiveEvent(const int32_t eventId, const std::string bundleName);
     /*
     * function: BundleActiveEvent, constructor of continuous task event.
     * parameters: bundleName, continuousTaskAbilityName

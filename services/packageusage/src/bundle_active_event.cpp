@@ -59,6 +59,20 @@ BundleActiveEvent::BundleActiveEvent(int32_t eventId, int64_t timeStamp)
     eventId_ = eventId;
 }
 
+BundleActiveEvent::BundleActiveEvent(const int32_t eventId, const std::string bundleName)
+{
+    bundleName_ = bundleName;
+    continuousTaskAbilityName_.clear();
+    abilityName_.clear();
+    abilityId_.clear();
+    moduleName_.clear();
+    formName_.clear();
+    formDimension_ = 0;
+    formId_ = 0;
+    timeStamp_ = 0;
+    eventId_ = eventId;
+}
+
 BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string continuousTaskAbilityName)
 {
     bundleName_ = bundleName;
