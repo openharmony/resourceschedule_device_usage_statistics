@@ -17,6 +17,7 @@
 #include "time_service_client.h"
 
 #include "bundle_active_event.h"
+#include "bundle_active_event_stats.h"
 #include "bundle_active_report_handler.h"
 #include "bundle_active_group_common.h"
 #include "bundle_active_constant.h"
@@ -111,7 +112,30 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
                 handlerobjToPtr);
             bundleActiveReportHandler_.lock()->SendEvent(event);
         }
+    } else if (action == COMMON_EVENT_UNLOCK_SCREEN || action == COMMON_EVENT_LOCK_SCREEN) {
+        HandleLockEvent(action);
     }
+}
+
+void BundleActiveCommonEventSubscriber::HandleLockEvent(const std::string& action)
+{
+    if (bundleActiveReportHandler_.expired()) {
+        return;
+    }
+    BundleActiveReportHandlerObject tmpHandlerObject(-1, "");
+    BundleActiveEvent newEvent;
+    tmpHandlerObject.event_ = newEvent;
+    if (action == COMMON_EVENT_UNLOCK_SCREEN) {
+        tmpHandlerObject.event_.eventId_ = BundleActiveEvent::SYSTEM_UNLOCK;
+    } else {
+        tmpHandlerObject.event_.eventId_ = BundleActiveEvent::SYSTEM_LOCK;
+    }
+    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+    tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
+    auto handlerobjToPtr = std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+    auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT,
+        handlerobjToPtr);
+    bundleActiveReportHandler_.lock()->SendEvent(event);
 }
 
 void BundleActiveCore::RegisterSubscriber()
@@ -124,6 +148,8 @@ void BundleActiveCore::RegisterSubscriber()
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);
+    matchingSkills.AddEvent(COMMON_EVENT_UNLOCK_SCREEN);
+    matchingSkills.AddEvent(COMMON_EVENT_LOCK_SCREEN);
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     commonEventSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
         bundleGroupController_, handler_);
@@ -293,6 +319,28 @@ void BundleActiveCore::RestoreToDatabaseLocked(const int32_t userId)
     }
 }
 
+void BundleActiveCore::PreservePowerStateInfo(const int32_t eventId)
+{
+    if (!handler_.expired()) {
+        int32_t userId = -1;
+        std::vector<int32_t> currentActiveUser;
+        BundleActiveCore::GetAllActiveUser(currentActiveUser);
+        if (currentActiveUser.size() == 1) {
+            userId = currentActiveUser.front();
+        }
+        BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
+        BundleActiveEvent newEvent;
+        tmpHandlerObject.event_ = newEvent;
+        tmpHandlerObject.event_.eventId_ = eventId;
+        sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+        tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
+        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+        auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
+        handler_.lock()->SendEvent(event);
+    }
+}
+
 void BundleActiveCore::ShutDown()
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -410,11 +458,19 @@ void BundleActiveCore::OnUserSwitched(const int32_t userId)
     OnStatsChanged(userId);
 }
 
-int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int32_t userId)
+int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("FLUSH interval is %{public}lld, debug is %{public}d", (long long)flushInterval_, debugCore_);
     event.PrintEvent(debugCore_);
     std::lock_guard<std::mutex> lock(mutex_);
+    if (event.eventId_ == BundleActiveEvent::SYSTEM_LOCK || event.eventId_ == BundleActiveEvent::SYSTEM_UNLOCK) {
+        std::vector<int32_t> currentActiveUser;
+        BundleActiveCore::GetAllActiveUser(currentActiveUser);
+        if (currentActiveUser.size() == 1) {
+            userId = currentActiveUser.front();
+        }
+    }
+    ObtainSystemEventName(event);
     if (userId == 0 || userId == -1) {
         return -1;
     }
@@ -422,7 +478,6 @@ int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int32_t us
         currentUsedUser_ = userId;
         BUNDLE_ACTIVE_LOGI("last used id change to %{public}d", currentUsedUser_);
     }
-
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     if (event.bundleName_ == LAUNCHER_BUNDLE_NAME) {
@@ -430,7 +485,6 @@ int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int32_t us
         bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
         return 0;
     }
-
     BUNDLE_ACTIVE_LOGI("report event called, bundle name %{public}s time %{public}lld userId %{public}d, "
         "eventid %{public}d, in lock range", event.bundleName_.c_str(),
         (long long)event.timeStamp_, userId, event.eventId_);
@@ -453,6 +507,26 @@ int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, const int32_t us
     service->ReportEvent(event);
     bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
     return 0;
+}
+
+void BundleActiveCore::ObtainSystemEventName(BundleActiveEvent& event)
+{
+    switch (event.eventId_) {
+        case BundleActiveEvent::SYSTEM_LOCK:
+            event.bundleName_ = OPERATION_SYSTEM_LOCK;
+            break;
+        case BundleActiveEvent::SYSTEM_UNLOCK:
+            event.bundleName_ = OPERATION_SYSTEM_UNLOCK;
+            break;
+        case BundleActiveEvent::SYSTEM_SLEEP:
+            event.bundleName_ = OPERATION_SYSTEM_SLEEP;
+            break;
+        case BundleActiveEvent::SYSTEM_WAKEUP:
+            event.bundleName_ = OPERATION_SYSTEM_WAKEUP;
+            break;
+        default:
+            break;
+    }
 }
 
 int32_t BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
@@ -540,6 +614,38 @@ int32_t BundleActiveCore::QueryFormStatistics(int32_t maxNum, std::vector<Bundle
         return -1;
     }
     int32_t errCode = service->QueryFormStatistics(maxNum, results);
+    return errCode;
+}
+
+int32_t BundleActiveCore::QueryEventStats(int64_t beginTime, int64_t endTime,
+    std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
+    if (timeNow == -1) {
+        return -1;
+    }
+    std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
+    if (!service) {
+        return -1;
+    }
+    int32_t errCode = service->QueryEventStats(beginTime, endTime, eventStats, userId);
+    return errCode;
+}
+
+int32_t BundleActiveCore::QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+    std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
+    if (timeNow == -1) {
+        return -1;
+    }
+    std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
+    if (!service) {
+        return -1;
+    }
+    int32_t errCode = service->QueryAppNotificationNumber(beginTime, endTime, eventStats, userId);
     return errCode;
 }
 

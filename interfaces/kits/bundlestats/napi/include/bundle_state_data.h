@@ -23,6 +23,7 @@
 #include "napi/native_node_api.h"
 
 #include "bundle_active_event.h"
+#include "bundle_active_event_stats.h"
 #include "bundle_active_package_stats.h"
 
 namespace OHOS {
@@ -80,6 +81,13 @@ struct AsyncCallbackInfoAppUsageByInterval : public AsyncWorkData {
     std::vector<BundleActivePackageStats> packageStats;
 };
 
+struct AsyncCallbackInfoEventStats : public AsyncWorkData {
+    explicit AsyncCallbackInfoEventStats(napi_env env) : AsyncWorkData(env) {}
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
+    std::vector<BundleActiveEventStats> eventStats;
+};
+
 struct AsyncCallbackInfoAppUsage : public AsyncWorkData {
     explicit AsyncCallbackInfoAppUsage(napi_env env) : AsyncWorkData(env) {}
     int64_t beginTime = -1;
@@ -128,6 +136,13 @@ struct AppUsageParamsInfo {
 
 struct ModuleRecordParamsInfo {
     int32_t maxNum = -1;
+    napi_ref callback = nullptr;
+    int32_t errorCode = 0;
+};
+
+struct EventStatesParamsInfo {
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };

@@ -50,6 +50,12 @@ public:
     static void GetBundleStateInfoByIntervalForResult(
         napi_env env, const std::vector<BundleActivePackageStats> &packageStats, napi_value result);
 
+    static void GetBundleActiveEventStatsForResult(napi_env env,
+        const std::vector<BundleActiveEventStats> &eventStats, napi_value result);
+
+    static void GetBundleActiveNotificationNumberForResult(napi_env env,
+        const std::vector<BundleActiveEventStats> &eventStats, napi_value result);
+
     static void GetBundleStateInfoForResult(napi_env env,
         const std::shared_ptr<std::map<std::string, BundleActivePackageStats>> &packageStats, napi_value result);
 
@@ -74,6 +80,9 @@ public:
 	    int64_t &beginTime, int64_t &endTime, int32_t &errCode);
 
     static void MergePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right);
+
+    static std::unique_ptr<AsyncCallbackInfoEventStats> HandleEventStatsInfo(
+        AsyncCallbackInfoEventStats *asyncCallbackInfo, EventStatesParamsInfo &params);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

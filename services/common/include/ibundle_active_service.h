@@ -40,6 +40,7 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActivePackageStats;
 class BundleActiveEvent;
+class BundleActiveEventStats;
 class BundleActiveModuleRecord;
 
 class IBundleActiveService : public IRemoteBroker {
@@ -99,12 +100,27 @@ public:
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
-    * if other SAs call this API, they should explicit define userId
+    * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
     virtual int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
         int32_t userId) = 0;
-
+    /*
+    * function: QueryEventStats, query all from event stats in specific time span for calling user.
+    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    virtual int32_t QueryEventStats(int64_t beginTime, int64_t endTime,
+        std::vector<BundleActiveEventStats>& eventStats, int32_t userId) = 0;
+    /*
+    * function: QueryAppNotificationNumber, query all app notification number in specific time span for calling user.
+    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    virtual int32_t QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+        std::vector<BundleActiveEventStats>& eventStats, int32_t userId) = 0;
 public:
     enum {
         REPORT_EVENT = 1,
@@ -115,7 +131,9 @@ public:
         QUERY_CURRENT_EVENTS = 6,
         QUERY_BUNDLE_GROUP = 7,
         SET_BUNDLE_GROUP = 8,
-        QUERY_FORM_STATS = 9
+        QUERY_FORM_STATS = 9,
+        QUERY_EVENT_STATS = 10,
+        QUERY_APP_NOTIFICATION_NUMBER = 11
     };
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"Resourceschedule.IBundleActiveService");

@@ -60,7 +60,7 @@ private:
     static BundleActiveLogLevel logLevel_;
 };
 
-#define PRINT_LOG(LEVEL, Level, fmt, ...)                                              \
+#define BUNDLE_ACTIVE_PRINT_LOG(LEVEL, Level, fmt, ...)                                \
     if (BundleActiveLog::JudgeValidLevel(BundleActiveLogLevel::LEVEL))                 \
     OHOS::HiviewDFX::HiLog::Level(BUNDLE_ACTIVE_LOG_LABEL,                             \
         "[%{public}s(%{public}s):%{public}d] " fmt,                                    \
@@ -69,11 +69,11 @@ private:
         __LINE__,                                                                      \
         ##__VA_ARGS__)
 
-#define BUNDLE_ACTIVE_LOGD(fmt, ...) PRINT_LOG(DEBUG, Debug, fmt, ##__VA_ARGS__)
-#define BUNDLE_ACTIVE_LOGI(fmt, ...) PRINT_LOG(INFO, Info, fmt, ##__VA_ARGS__)
-#define BUNDLE_ACTIVE_LOGW(fmt, ...) PRINT_LOG(WARN, Warn, fmt, ##__VA_ARGS__)
-#define BUNDLE_ACTIVE_LOGE(fmt, ...) PRINT_LOG(ERROR, Error, fmt, ##__VA_ARGS__)
-#define BUNDLE_ACTIVE_LOGF(fmt, ...) PRINT_LOG(FATAL, Fatal, fmt, ##__VA_ARGS__)
+#define BUNDLE_ACTIVE_LOGD(fmt, ...) BUNDLE_ACTIVE_PRINT_LOG(DEBUG, Debug, fmt, ##__VA_ARGS__)
+#define BUNDLE_ACTIVE_LOGI(fmt, ...) BUNDLE_ACTIVE_PRINT_LOG(INFO, Info, fmt, ##__VA_ARGS__)
+#define BUNDLE_ACTIVE_LOGW(fmt, ...) BUNDLE_ACTIVE_PRINT_LOG(WARN, Warn, fmt, ##__VA_ARGS__)
+#define BUNDLE_ACTIVE_LOGE(fmt, ...) BUNDLE_ACTIVE_PRINT_LOG(ERROR, Error, fmt, ##__VA_ARGS__)
+#define BUNDLE_ACTIVE_LOGF(fmt, ...) BUNDLE_ACTIVE_PRINT_LOG(FATAL, Fatal, fmt, ##__VA_ARGS__)
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_LOG_H
