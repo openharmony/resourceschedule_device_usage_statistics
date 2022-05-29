@@ -60,7 +60,7 @@ public:
     * function: ReportEvent, used to report ability fourground/background/destroy event.
     * parameters: event, userId
     */
-    int32_t ReportEvent(BundleActiveEvent& event, const int32_t userId);
+    int32_t ReportEvent(BundleActiveEvent& event, int32_t userId);
     /*
     * function: ReportEventToAllUserId, report flush to disk, end_of_day event to service.
     * parameters: event
@@ -118,6 +118,10 @@ public:
     */
     void ShutDown();
     /*
+    * function: PreservePowerStateInfo, called when device change power state, preserve power state info.
+    */
+    void PreservePowerStateInfo(const int32_t eventId);
+    /*
     * function: QueryPackageStats, query the package stat for calling user.
     * parameters: userId, intervalType, beginTime, endTime, bundleName
     * return: vector of BundleActivePackageStats
@@ -132,6 +136,23 @@ public:
     // query the app group for calling app.
     int32_t QueryPackageGroup(const std::string bundleName, const int32_t userId);
     int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId);
+    /*
+    * function: QueryEventStats, query all from event stats in specific time span for calling user.
+    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    int32_t QueryEventStats(int64_t beginTime, int64_t endTime,
+        std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
+
+    /*
+    * function: QueryAppNotificationNumber, query all app notification number in specific time span for calling user.
+    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    int32_t QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+        std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
     // get the wall time and check if the wall time is changed.
     int64_t CheckTimeChangeAndGetWallTime(int32_t userId = 0);
     // convert event timestamp from boot based time to wall time.
@@ -192,6 +213,7 @@ private:
     void RestoreAllData();
     std::map<AccessToken::AccessTokenID, sptr<IBundleActiveGroupCallback>> groupChangeObservers_;
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> recipientMap_;
+    void ObtainSystemEventName(BundleActiveEvent& event);
     bool debugCore_;
 };
 }  // namespace DeviceUsageStats

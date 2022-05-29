@@ -19,6 +19,11 @@
 #include "ibundle_active_service.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_event.h"
+<<<<<<< HEAD
+=======
+#include "bundle_active_event_stats.h"
+#include "bundle_active_package_stats.h"
+>>>>>>> c717d1a3e77206b75b1c62a1857e23a05d78014c
 #include "bundle_active_module_record.h"
 
 namespace OHOS {
@@ -81,7 +86,7 @@ public:
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
-    * if other SAs call this API, they should explicit define userId
+    * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
     int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId = -1);
@@ -97,6 +102,24 @@ public:
     * return: errorcode.
     */
     int32_t UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer);
+
+    /*
+    * function: QueryEventStats, query all from event stats in specific time span for calling user.
+    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    int32_t QueryEventStats(int64_t beginTime, int64_t endTime,
+        std::vector<BundleActiveEventStats>& eventStats, int32_t userId = -1);
+
+    /*
+    * function: QueryAppNotificationNumber, query all app notification number in specific time span for calling user.
+    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    int32_t QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+        std::vector<BundleActiveEventStats>& eventStats, int32_t userId = -1);
     /*
     * function: GetInstance, get instance of client.
     * return: object of BundleActiveClient.

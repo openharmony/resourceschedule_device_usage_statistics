@@ -16,7 +16,7 @@
 #include "securec.h"
 
 #include "bundle_active_log.h"
-#include "bundle_state_data.h"
+#include "bundle_state_inner_errors.h"
 #include "bundle_state_common.h"
 
 namespace OHOS {
@@ -124,6 +124,58 @@ void BundleStateCommon::GetBundleStateInfoByIntervalForResult(
             abilityInFgTotalTime));
 
         NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, index, packageObject));
+        index++;
+    }
+}
+
+void BundleStateCommon::GetBundleActiveEventStatsForResult(napi_env env,
+    const std::vector<BundleActiveEventStats> &eventStats, napi_value result)
+{
+    int32_t index = 0;
+    for (const auto &item : eventStats) {
+        napi_value eventStatsObject = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &eventStatsObject));
+
+        napi_value name = nullptr;
+        NAPI_CALL_RETURN_VOID(
+            env, napi_create_string_utf8(env, item.name_.c_str(), NAPI_AUTO_LENGTH, &name));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, eventStatsObject, "name", name));
+
+        napi_value eventId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.eventId_, &eventId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, eventStatsObject, "eventId", eventId));
+
+        napi_value count = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.count_, &count));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, eventStatsObject, "count", count));
+
+        NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, index, eventStatsObject));
+        index++;
+    }
+}
+
+void BundleStateCommon::GetBundleActiveNotificationNumberForResult(napi_env env,
+    const std::vector<BundleActiveEventStats> &eventStats, napi_value result)
+{
+    int32_t index = 0;
+    for (const auto &item : eventStats) {
+        napi_value eventStatsObject = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &eventStatsObject));
+
+        napi_value name = nullptr;
+        NAPI_CALL_RETURN_VOID(
+            env, napi_create_string_utf8(env, item.name_.c_str(), NAPI_AUTO_LENGTH, &name));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, eventStatsObject, "name", name));
+
+        napi_value eventId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.eventId_, &eventId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, eventStatsObject, "eventId", eventId));
+
+        napi_value count = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.count_, &count));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, eventStatsObject, "count", count));
+
+        NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, index, eventStatsObject));
         index++;
     }
 }
@@ -393,6 +445,27 @@ void BundleStateCommon::MergePackageStats(BundleActivePackageStats &left, const 
     left.totalInFrontTime_ += right.totalInFrontTime_;
     left.totalContiniousTaskUsedTime_ += right.totalContiniousTaskUsedTime_;
     left.bundleStartedCount_ += right.bundleStartedCount_;
+}
+
+std::unique_ptr<AsyncCallbackInfoEventStats> BundleStateCommon::HandleEventStatsInfo(
+    AsyncCallbackInfoEventStats *asyncCallbackInfo, EventStatesParamsInfo &params)
+{
+    if (!asyncCallbackInfo) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
+        return nullptr;
+    }
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+        return nullptr;
+    }
+    std::unique_ptr<AsyncCallbackInfoEventStats> callbackPtr {asyncCallbackInfo};
+    callbackPtr->beginTime = params.beginTime;
+    callbackPtr->endTime = params.endTime;
+    BUNDLE_ACTIVE_LOGI("CallbackPtr->beginTime: %{public}lld, callbackPtr->endTime: %{public}lld",
+        (long long)callbackPtr->beginTime, (long long)callbackPtr->endTime);
+    return callbackPtr;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

@@ -410,6 +410,117 @@ int32_t BundleActiveUserService::QueryFormStatistics(int32_t maxNum, std::vector
     return 0;
 }
 
+int32_t BundleActiveUserService::QueryEventStats(int64_t beginTime, int64_t endTime,
+    std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
+{
+    BUNDLE_ACTIVE_LOGI("QueryEventStats called");
+    auto currentStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
+    if (currentStats == nullptr) {
+        BUNDLE_ACTIVE_LOGE("current interval stat is null!");
+        return BUNDLE_ACTIVE_FAIL;
+    }
+    if (beginTime >= currentStats->endTime_) {
+        return BUNDLE_ACTIVE_FAIL;
+    }
+    std::map<std::string, BundleActiveEventStats> systemEventStats;
+    database_.QueryEventStats(BundleActiveEvent::SYSTEM_LOCK, beginTime, endTime, systemEventStats, userId);
+    database_.QueryEventStats(BundleActiveEvent::SYSTEM_UNLOCK, beginTime, endTime, systemEventStats, userId);
+    database_.QueryEventStats(BundleActiveEvent::SYSTEM_SLEEP, beginTime, endTime, systemEventStats, userId);
+    database_.QueryEventStats(BundleActiveEvent::SYSTEM_WAKEUP, beginTime, endTime, systemEventStats, userId);
+    BUNDLE_ACTIVE_LOGI("Query eventStats data in db result size is %{public}zu", systemEventStats.size());
+    PrintInMemEventStats(debugUserService_);
+    // if we need a in-memory stats, combine current stats with result from database.
+    if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
+        BUNDLE_ACTIVE_LOGI("QueryEventStats need in memory stats");
+        GetCachedSystemEvents(currentStats, beginTime, endTime, systemEventStats);
+    }
+    std::map<std::string, BundleActiveEventStats>::iterator iter;
+    for (iter = systemEventStats.begin(); iter != systemEventStats.end(); iter++) {
+        eventStats.push_back(iter->second);
+    }
+    return BUNDLE_ACTIVE_SUCCESS;
+}
+
+void BundleActiveUserService::GetCachedSystemEvents(std::shared_ptr<BundleActivePeriodStats> currentStats,
+    int64_t beginTime, int64_t endTime, std::map<std::string, BundleActiveEventStats>& systemEventStats)
+{
+    int32_t eventBeginIdx = currentStats->events_.FindBestIndex(beginTime);
+    int32_t eventSize = currentStats->events_.Size();
+    BundleActiveEventStats singleEventStats;
+    std::map<std::string, BundleActiveEventStats>::iterator iter;
+    for (int32_t i = eventBeginIdx; i < eventSize; i++) {
+        if ((currentStats->events_.events_[i].timeStamp_ <= endTime)
+            && ((currentStats->events_.events_[i].eventId_== BundleActiveEvent::SYSTEM_LOCK)
+            || (currentStats->events_.events_[i].eventId_== BundleActiveEvent::SYSTEM_UNLOCK)
+            || (currentStats->events_.events_[i].eventId_== BundleActiveEvent::SYSTEM_SLEEP)
+            || (currentStats->events_.events_[i].eventId_== BundleActiveEvent::SYSTEM_WAKEUP))) {
+            singleEventStats.name_ = currentStats->events_.events_[i].bundleName_;
+            iter = systemEventStats.find(singleEventStats.name_);
+            if (iter != systemEventStats.end()) {
+                iter->second.count_++;
+            } else {
+                singleEventStats.eventId_ = currentStats->events_.events_[i].eventId_;
+                singleEventStats.count_ = 1;
+                systemEventStats.insert(std::pair<std::string, BundleActiveEventStats>(
+                    singleEventStats.name_, singleEventStats));
+            }
+        }
+    }
+}
+
+int32_t BundleActiveUserService::QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+    std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
+{
+    BUNDLE_ACTIVE_LOGI("QueryAppNotificationNumber called");
+    auto currentStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
+    if (currentStats == nullptr) {
+        BUNDLE_ACTIVE_LOGE("current interval stat is null!");
+        return BUNDLE_ACTIVE_FAIL;
+    }
+    if (beginTime >= currentStats->endTime_) {
+        return BUNDLE_ACTIVE_FAIL;
+    }
+    std::map<std::string, BundleActiveEventStats> notificationEventStats;
+    database_.QueryAppNotificationNumber(BundleActiveEvent::NOTIFICATION_SEEN,
+        beginTime, endTime, notificationEventStats, userId);
+    BUNDLE_ACTIVE_LOGI("Query eventStats data in db result size is %{public}zu", notificationEventStats.size());
+    PrintInMemEventStats(debugUserService_);
+    // if we need a in-memory stats, combine current stats with result from database.
+    if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
+        BUNDLE_ACTIVE_LOGI("QueryAppNotificationNumber need in memory stats");
+        GetCachedNotificationEvents(currentStats, beginTime, endTime, notificationEventStats);
+    }
+    std::map<std::string, BundleActiveEventStats>::iterator iter;
+    for (iter = notificationEventStats.begin(); iter != notificationEventStats.end(); iter++) {
+        eventStats.push_back(iter->second);
+    }
+    return BUNDLE_ACTIVE_SUCCESS;
+}
+
+void BundleActiveUserService::GetCachedNotificationEvents(std::shared_ptr<BundleActivePeriodStats> currentStats,
+    int64_t beginTime, int64_t endTime, std::map<std::string, BundleActiveEventStats>& notificationEventStats)
+{
+    int32_t eventBeginIdx = currentStats->events_.FindBestIndex(beginTime);
+    int32_t eventSize = currentStats->events_.Size();
+    std::map<std::string, BundleActiveEventStats>::iterator iter;
+    BundleActiveEventStats singleEventStats;
+    for (int32_t i = eventBeginIdx; i < eventSize; i++) {
+        if ((currentStats->events_.events_[i].timeStamp_ <= endTime)
+            && (currentStats->events_.events_[i].eventId_== BundleActiveEvent::NOTIFICATION_SEEN)) {
+            singleEventStats.name_ = currentStats->events_.events_[i].bundleName_;
+            iter = notificationEventStats.find(singleEventStats.name_);
+            if (iter != notificationEventStats.end()) {
+                iter->second.count_++;
+            } else {
+                singleEventStats.eventId_ = BundleActiveEvent::NOTIFICATION_SEEN;
+                singleEventStats.count_ = 1;
+                notificationEventStats.insert(std::pair<std::string, BundleActiveEventStats>(
+                    singleEventStats.name_, singleEventStats));
+            }
+        }
+    }
+}
+
 void BundleActiveUserService::PrintInMemPackageStats(const int32_t idx, const bool debug)
 {
     if (!debug) {

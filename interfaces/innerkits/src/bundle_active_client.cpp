@@ -150,6 +150,24 @@ int32_t BundleActiveClient::UnregisterGroupCallBack(const sptr<IBundleActiveGrou
     return bundleActiveProxy_->UnregisterGroupCallBack(observer);
 }
 
+int32_t BundleActiveClient::QueryEventStats(int64_t beginTime, int64_t endTime,
+    std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
+{
+    if (!GetBundleActiveProxy()) {
+        return -1;
+    }
+    return bundleActiveProxy_->QueryEventStats(beginTime, endTime, eventStats, userId);
+}
+
+int32_t BundleActiveClient::QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+    std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
+{
+    if (!GetBundleActiveProxy()) {
+        return -1;
+    }
+    return bundleActiveProxy_->QueryAppNotificationNumber(beginTime, endTime, eventStats, userId);
+}
+
 int32_t BundleActiveClient::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     int32_t ret = -1;

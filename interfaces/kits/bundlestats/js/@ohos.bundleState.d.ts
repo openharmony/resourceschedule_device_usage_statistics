@@ -175,6 +175,27 @@ declare namespace bundleState {
     }
 
     /**
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     */
+    interface BundleActiveEventState {
+        /**
+         * the bundle name or system event name.
+         */
+        name?: string;
+
+        /**
+         * the event id.
+         */
+        eventId: number;
+
+        /**
+         * the the event occurrence number.
+         */
+        count: number;
+    }
+
+    /**
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      */
@@ -399,6 +420,34 @@ declare namespace bundleState {
      */
     function unRegisterGroupCallBack(callback: AsyncCallback<boolean>): void;
     function unRegisterGroupCallBack(): Promise<boolean>;
+
+    /*
+     * Queries system event states data within a specified period identified by the start and end time.
+     *
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @systemapi Hide this for inner system use.
+     * @param begin Indicates the start time of the query period, in milliseconds.
+     * @param end Indicates the end time of the query period, in milliseconds.
+     * @return Returns the {@link BundleActiveEventState} object Array containing the event states data.
+     */
+    function queryBundleActiveEventStates(begin: number, end: number, callback: AsyncCallback<Array<BundleActiveEventState>>): void;
+    function queryBundleActiveEventStates(begin: number, end: number): Promise<Array<BundleActiveEventState>>;
+
+    /**
+     * Queries app notification number within a specified period identified by the start and end time.
+     *
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @systemapi Hide this for inner system use.
+     * @param begin Indicates the start time of the query period, in milliseconds.
+     * @param end Indicates the end time of the query period, in milliseconds.
+     * @return Returns the {@link BundleActiveEventState} object Array containing the event states data.
+     */
+    function queryAppNotificationNumber(begin: number, end: number, callback: AsyncCallback<Array<BundleActiveEventState>>): void;
+    function queryAppNotificationNumber(begin: number, end: number): Promise<Array<BundleActiveEventState>>;
 }
 
 export default bundleState;

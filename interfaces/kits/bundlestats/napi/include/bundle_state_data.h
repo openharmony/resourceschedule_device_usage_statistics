@@ -23,6 +23,7 @@
 #include "napi/native_node_api.h"
 
 #include "bundle_active_event.h"
+#include "bundle_active_event_stats.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_group_observer.h"
 
@@ -92,6 +93,13 @@ struct AsyncCallbackInfoAppUsageByInterval : public AsyncWorkData {
     int64_t beginTime = -1;
     int64_t endTime = -1;
     std::vector<BundleActivePackageStats> packageStats;
+};
+
+struct AsyncCallbackInfoEventStats : public AsyncWorkData {
+    explicit AsyncCallbackInfoEventStats(napi_env env) : AsyncWorkData(env) {}
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
+    std::vector<BundleActiveEventStats> eventStats;
 };
 
 struct AsyncCallbackInfoAppUsage : public AsyncWorkData {
@@ -178,6 +186,13 @@ struct RegisterCallbackInfo {
 };
 
 struct UnRegisterCallbackInfo {
+    napi_ref callback = nullptr;
+    int32_t errorCode = 0;
+};
+
+struct EventStatesParamsInfo {
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };

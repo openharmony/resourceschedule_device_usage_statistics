@@ -45,6 +45,8 @@ static napi_value BundleStateInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("setBundleGroup", SetBundleGroup),
         DECLARE_NAPI_FUNCTION("registerGroupCallBack", RegisterGroupCallBack),
         DECLARE_NAPI_FUNCTION("unRegisterGroupCallBack", UnRegisterGroupCallBack),
+        DECLARE_NAPI_FUNCTION("queryBundleActiveEventStates", QueryBundleActiveEventStates),
+        DECLARE_NAPI_FUNCTION("queryAppNotificationNumber", QueryAppNotificationNumber)
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
