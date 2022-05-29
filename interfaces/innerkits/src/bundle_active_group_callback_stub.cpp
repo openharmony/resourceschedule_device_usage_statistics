@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-std::mutex BundleActiveGroupCallbackStub::callbackMutex_;
 int32_t BundleActiveGroupCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
     MessageOption &option)
 {

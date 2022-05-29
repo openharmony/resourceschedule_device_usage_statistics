@@ -12,8 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "bundle_active_group_common.h"
-#include "bundle_active_constant.h"
 #include "bundle_active_core.h"
 #include "bundle_active_group_callback_info.h"
 #include "bundle_active_user_history.h"
@@ -202,7 +200,7 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     }
 }
 
-int32_t BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int32_t userId,
+bool BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int32_t userId,
     const int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason)
 {
     std::lock_guard<std::mutex> lock(setGroupMutex_);

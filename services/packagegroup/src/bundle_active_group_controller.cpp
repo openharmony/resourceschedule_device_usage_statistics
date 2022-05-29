@@ -313,7 +313,7 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     }
 }
 
-int32_t BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int32_t userId,
+bool BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int32_t userId,
     int32_t newGroup, uint32_t reason, const int64_t bootBasedTimeStamp)
 {
     std::lock_guard<std::mutex> lock(mutex_);

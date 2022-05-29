@@ -327,7 +327,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
     return result;
 }
 
-bool BundleActiveService::SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t& errCode,
+bool BundleActiveService::SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode,
     int32_t userId)
 {
     bool result = false;

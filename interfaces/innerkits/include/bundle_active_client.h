@@ -19,11 +19,8 @@
 #include "ibundle_active_service.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_event.h"
-<<<<<<< HEAD
-=======
 #include "bundle_active_event_stats.h"
 #include "bundle_active_package_stats.h"
->>>>>>> c717d1a3e77206b75b1c62a1857e23a05d78014c
 #include "bundle_active_module_record.h"
 
 namespace OHOS {

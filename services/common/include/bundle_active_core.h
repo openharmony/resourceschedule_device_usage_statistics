@@ -165,7 +165,7 @@ public:
     // when user switched, restore old userdata.
     void OnUserSwitched(const int32_t userId);
     // force set app group.
-    int32_t SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId);
+    bool SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId);
     // get all user in device.
     void GetAllActiveUser(std::vector<int32_t>& activatedOsAccountIds);
     // when service stop, call it to unregister commen event and shutdown call back.

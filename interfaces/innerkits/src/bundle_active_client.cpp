@@ -86,7 +86,7 @@ std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t beg
 }
 
 bool BundleActiveClient::SetBundleGroup(std::string bundleName, const int32_t newGroup,
-    int32_t& errCode, int32_t userId)
+    int32_t errCode, int32_t userId)
 {
     if (!GetBundleActiveProxy()) {
         return false;

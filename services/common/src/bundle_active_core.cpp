@@ -649,7 +649,7 @@ int32_t BundleActiveCore::QueryAppNotificationNumber(int64_t beginTime, int64_t 
     return errCode;
 }
 
-void BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId)
+bool BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId)
 {
     int32_t newReason = GROUP_CONTROL_REASON_FORCED;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
