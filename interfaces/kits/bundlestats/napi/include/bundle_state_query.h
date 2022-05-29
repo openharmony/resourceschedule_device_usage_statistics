@@ -28,6 +28,7 @@ namespace DeviceUsageStats {
     napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info);
     napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info);
     napi_value GetModuleUsageRecord(napi_env env, napi_callback_info info);
+    napi_value SetBundleGroup(napi_env env, napi_callback_info info);
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_H

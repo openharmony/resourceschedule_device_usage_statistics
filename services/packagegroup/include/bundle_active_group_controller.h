@@ -32,7 +32,6 @@ namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
 
 class BundleActiveGroupHandler;
-
 class BundleActiveGroupController {
 public:
     using PowerMgrClient = OHOS::PowerMgr::PowerMgrClient;
@@ -55,7 +54,7 @@ public:
     ~BundleActiveGroupController() {}
     std::shared_ptr<BundleActiveUserHistory> bundleUserHistory_;
     void SetHandlerAndCreateUserHistory(const std::shared_ptr<BundleActiveGroupHandler>& groupHandler,
-        const int64_t bootFromTimeStamp);
+        const int64_t bootFromTimeStamp, const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
     void ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp, const int32_t userId);
     void CheckAndUpdateGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp);
     bool CheckEachBundleState(const int32_t userId);
@@ -64,14 +63,14 @@ public:
     void OnUserRemoved(const int32_t userId);
     void OnBundleUninstalled(const int32_t userId, const std::string bundleName);
     void OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp);
-    void SetBundleGroup(const std::string& bundleName, const int32_t userId, int32_t newGroup, uint32_t reason,
-        const int64_t bootBasedTimeStamp, const bool& resetTimeout);
+    int32_t SetBundleGroup(const std::string& bundleName, const int32_t userId, int32_t newGroup, uint32_t reason,
+        const int64_t bootBasedTimeStamp);
     void RestoreToDatabase(const int32_t userId);
     void RestoreDurationToDatabase();
     bool IsBundleInstalled(const std::string& bundleName, const int32_t userId);
     bool IsScreenOn();
     int32_t IsBundleIdle(const std::string& bundleName, const int32_t userId);
-    int32_t QueryPackageGroup(const int32_t userId, const std::string& bundleName);
+    int32_t QueryPackageGroup(const std::string& bundleName, const int32_t userId);
     void ShutDown(const int64_t bootBasedTimeStamp, const int32_t userId);
     void OnUserSwitched(const int32_t userId, const int32_t currentUsedUser);
 

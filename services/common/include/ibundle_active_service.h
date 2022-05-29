@@ -33,6 +33,8 @@
 #include "system_ability_definition.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
+#include "ibundle_active_group_callback.h"
+#include "bundle_active_group_callback_proxy.h"
 
 #include "bundle_active_log.h"
 
@@ -90,12 +92,12 @@ public:
     * function: QueryPackageGroup, query bundle priority group calling bundle.
     * return: the priority group of calling bundle.
     */
-    virtual int32_t QueryPackageGroup() = 0;
+    virtual int32_t QueryPackageGroup(const std::string& bundleName, int32_t userId) = 0;
     /*
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    virtual void SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) = 0;
+    virtual bool SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId) = 0;
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
@@ -104,6 +106,9 @@ public:
     */
     virtual int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
         int32_t userId) = 0;
+
+    virtual bool RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
+    virtual bool UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
 
 public:
     enum {
@@ -115,7 +120,9 @@ public:
         QUERY_CURRENT_EVENTS = 6,
         QUERY_BUNDLE_GROUP = 7,
         SET_BUNDLE_GROUP = 8,
-        QUERY_FORM_STATS = 9
+        QUERY_FORM_STATS = 9,
+        REGISTER_GROUP_CALLBACK = 10,
+        UNREGISTER_GROUP_CALLBACK = 11
     };
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"Resourceschedule.IBundleActiveService");

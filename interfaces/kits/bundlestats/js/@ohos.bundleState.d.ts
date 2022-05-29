@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { AsyncCallback } from './basic';
+import { AsyncCallback , Callback} from './basic';
 
 /**
  * Provides methods for managing bundle usage statistics,
@@ -204,6 +204,32 @@ declare namespace bundleState {
          */
         stateType?: number;
     }
+    /**
+     * @since 7
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     */
+    interface BundleActiveGroupCallbackInfo {
+        /*
+        * the usage old group of the application
+        */
+       appUsageOldGroup?: number;
+        /*
+        * the usage new group of the application
+        */
+       appUsageNewGroup?: number;
+       /*
+        * the use id 
+        */
+       useId?: number;
+       /*
+        * the change reason 
+        */
+       changeReason?: number;
+       /*
+        * the bundle name 
+        */
+       bundleName?: string;
+    }
 
     /**
      * Checks whether the application with a specified bundle name is in the idle state.
@@ -217,19 +243,6 @@ declare namespace bundleState {
      */
     function isIdleState(bundleName: string, callback: AsyncCallback<boolean>): void;
     function isIdleState(bundleName: string): Promise<boolean>;
-
-    /**
-     * Queries the usage priority group of the calling application.
-     *
-     * <p>The priority defined in a priority group restricts the resource usage of an application,
-     * for example, restricting the running of background tasks. </p>
-     *
-     * @since 7
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
-     * @return Returns the usage priority group of the calling application.
-     */
-    function queryAppUsagePriorityGroup(callback: AsyncCallback<number>): void;
-    function queryAppUsagePriorityGroup(): Promise<number>;
 
     /**
      * @since 7
@@ -343,6 +356,49 @@ declare namespace bundleState {
      */
     function getRecentlyUsedModules(maxNum?: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
     function getRecentlyUsedModules(maxNum?: number): Promise<Array<BundleActiveModuleInfo>>;
+
+    /**
+     * Queries the usage priority group of the calling application.
+     *
+     * <p>The priority defined in a priority group restricts the resource usage of an application,
+     * for example, restricting the running of background tasks. </p>
+     *
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @return Returns the usage priority group of the calling application.
+     */
+     function queryAppUsagePriorityGroup(bundleName? : string, callback: AsyncCallback<number>): void;
+     function queryAppUsagePriorityGroup(bundleName? : string): Promise<number>;
+
+    /**
+     * set bundle group by bundleName and number.
+     *
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @return Returns the result of setBundleGroup, true of false.
+     */
+    function setBundleGroup(bundleName: string, newGroup: number, callback: AsyncCallback<boolean>): void;
+    function setBundleGroup(bundleName: string, newGroup: number): Promise<boolean>;
+
+    /**
+     * register callback to service.
+     *
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @return Returns BundleActiveGroupCallbackInfo when the group of bundle changed. the result of AsyncCallback is true or false.
+     */
+    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<boolean>): void;
+    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>): Promise<boolean>;
+    
+    /**
+     * unRegister callback from service.
+     *
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @return Returns the result of unRegisterGroupCallBack, true of false.
+     */
+    function unRegisterGroupCallBack(callback: AsyncCallback<boolean>): void;
+    function unRegisterGroupCallBack(): Promise<boolean>;
 }
 
 export default bundleState;

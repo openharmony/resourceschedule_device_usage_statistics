@@ -27,6 +27,7 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
+class BundleActiveCore;
 
 class BundleActiveUserHistory {
 public:
@@ -36,11 +37,12 @@ public:
     int64_t screenOnTimeStamp_;
     int64_t ScreenOnDuration_;
     BundleActiveUsageDatabase database_;
-    BundleActiveUserHistory(const int64_t bootBasedTimeStamp);
+    BundleActiveUserHistory(const int64_t bootBasedTimeStamp,
+        const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
     std::shared_ptr<BundleActivePackageHistory> GetUsageHistoryForBundle(const std::string& bundleName,
-        const int32_t userId, const int64_t bootBasedTimeStamp, const bool& create);
+        const int32_t userId, const int64_t bootBasedTimeStamp, const bool create);
     std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>> GetUserHistory(
-            const int32_t userId, const bool& create);
+            const int32_t userId, const bool create);
     std::shared_ptr<BundleActivePackageHistory> GetUsageHistoryInUserHistory(std::shared_ptr<std::map<std::string,
         std::shared_ptr<BundleActivePackageHistory>>> oneUserHistory, std::string bundleName,
         int64_t bootBasedTimeStamp, bool create);
@@ -48,9 +50,9 @@ public:
     int64_t GetScreenOnTimeStamp(int64_t bootBasedTimeStamp);
     void ReportUsage(std::shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory, const std::string& bundleName,
         const int32_t newGroup, const uint32_t groupReason, const int64_t bootBasedTimeStamp,
-        const int64_t timeUntilNextCheck);
-    void SetBundleGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
-        int32_t newGroup, uint32_t groupReason, const bool& resetTimeout);
+        const int64_t timeUntilNextCheck, const int32_t userId);
+    int32_t SetBundleGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
+        int32_t newGroup, uint32_t groupReason);
     int32_t GetLevelIndex(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
         const std::vector<int64_t> screenTimeLeve, const std::vector<int64_t> bootFromTimeLevel);
     void WriteDeviceDuration();
@@ -61,7 +63,9 @@ public:
     void OnBundleUninstalled(const int32_t userId, const std::string bundleName);
 
 private:
+    std::mutex setGroupMutex_;
     bool isScreenOn_;
+    std::weak_ptr<BundleActiveCore> bundleActiveCore_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

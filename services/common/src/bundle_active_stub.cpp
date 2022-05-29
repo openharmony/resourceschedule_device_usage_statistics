@@ -84,9 +84,10 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         case SET_BUNDLE_GROUP: {
             std::string bundleName = data.ReadString();
             int32_t newGroup = data.ReadInt32();
+            int32_t errCode = data.ReadInt32();
             int32_t userId = data.ReadInt32();
-            SetBundleGroup(bundleName, newGroup, userId);
-            return 0;
+            int32_t result = SetBundleGroup(bundleName, newGroup, errCode, userId);
+            return reply.WriteInt32(result);
         }
         case QUERY_CURRENT_USAGE_STATS: {
             std::vector<BundleActivePackageStats> result;
@@ -122,8 +123,9 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             return size == 0;
         }
         case QUERY_BUNDLE_GROUP: {
-            int32_t result = -1;
-            result = QueryPackageGroup();
+            std::string bundleName = data.ReadString();
+            int32_t userId = data.ReadInt32();
+            int32_t result = QueryPackageGroup(bundleName, userId);
             return reply.WriteInt32(result);
         }
         case QUERY_FORM_STATS: {
@@ -141,6 +143,25 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
                 }
             }
             return size == 0;
+        }
+        case REGISTER_GROUP_CALLBACK: {
+            auto observer = iface_cast<IBundleActiveGroupCallback>(data.ReadRemoteObject());
+            if (!observer) {
+                BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack observer is null, return");
+                return false;
+            }
+            BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack observer is ok");
+            int32_t result = RegisterGroupCallBack(observer);
+            return reply.WriteInt32(result);
+        }
+        case UNREGISTER_GROUP_CALLBACK: {
+            auto observer = iface_cast<IBundleActiveGroupCallback>(data.ReadRemoteObject());
+            if (!observer) {
+                BUNDLE_ACTIVE_LOGE("unRegisterGroupCallBack observer is null, return");
+                return false;
+            }
+            int32_t result = UnregisterGroupCallBack(observer);
+            return reply.WriteInt32(result);
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);

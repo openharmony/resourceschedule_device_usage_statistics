@@ -19,7 +19,6 @@
 #include "ibundle_active_service.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_event.h"
-#include "bundle_active_package_stats.h"
 #include "bundle_active_module_record.h"
 
 namespace OHOS {
@@ -57,8 +56,9 @@ public:
     /*
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
+    * return : void
     */
-    void SetBundleGroup(std::string bundleName, const int32_t newGroup, const int32_t userId);
+    bool SetBundleGroup(std::string bundleName, const int32_t newGroup, int32_t errCode, int32_t userId = -1);
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
@@ -74,9 +74,10 @@ public:
     std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime);
     /*
     * function: QueryPackageGroup, query bundle priority group calling bundle.
+    * parameters: bundleName,userId
     * return: the priority group of calling bundle.
     */
-    int32_t QueryPackageGroup();
+    int32_t QueryPackageGroup(const std::string& bundleName, const int32_t userId = -1);
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
@@ -84,6 +85,18 @@ public:
     * return: errorcode.
     */
     int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId = -1);
+    /*
+    * function: observe bundle group change event
+    * parameters: observer
+    * return: errorcode.
+    */
+    int32_t RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer);
+    /*
+    * function: unobserve bundle group change event
+    * parameters: observer
+    * return: errorcode.
+    */
+    int32_t UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer);
     /*
     * function: GetInstance, get instance of client.
     * return: object of BundleActiveClient.

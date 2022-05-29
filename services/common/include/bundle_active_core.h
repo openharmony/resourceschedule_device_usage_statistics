@@ -19,10 +19,13 @@
 #include <mutex>
 
 #include "power_mgr_client.h"
+#include "accesstoken_kit.h"
 #ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
 #endif // OS_ACCOUNT_PART_ENABLED
 #include "ibundle_active_service.h"
+#include "remote_death_recipient.h"
+#include "ibundle_active_group_callback.h"
 #include "bundle_active_debug_mode.h"
 #include "bundle_active_stats_update_listener.h"
 #include "bundle_active_user_service.h"
@@ -33,6 +36,8 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+using namespace OHOS::Security;
+
 class BundleActiveReportHandlerObject {
 public:
     BundleActiveEvent event_;
@@ -46,7 +51,8 @@ public:
 
 class BundleActiveReportHandler;
 
-class BundleActiveCore : public BundleActiveStatsUpdateListener {
+class BundleActiveCore : public BundleActiveStatsUpdateListener,
+    public std::enable_shared_from_this<BundleActiveCore>  {
 public:
     BundleActiveCore();
     virtual ~BundleActiveCore();
@@ -124,7 +130,7 @@ public:
     // check the app idle state for calling user.
     int32_t IsBundleIdle(const std::string& bundleName, const int32_t userId);
     // query the app group for calling app.
-    int32_t QueryPackageGroup(const int32_t userId, const std::string bundleName);
+    int32_t QueryPackageGroup(const std::string bundleName, const int32_t userId);
     int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId);
     // get the wall time and check if the wall time is changed.
     int64_t CheckTimeChangeAndGetWallTime(int32_t userId = 0);
@@ -138,16 +144,35 @@ public:
     // when user switched, restore old userdata.
     void OnUserSwitched(const int32_t userId);
     // force set app group.
-    void SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId);
+    int32_t SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId);
     // get all user in device.
     void GetAllActiveUser(std::vector<int32_t>& activatedOsAccountIds);
     // when service stop, call it to unregister commen event and shutdown call back.
     void UnRegisterSubscriber();
     // get system time in MS.
     int64_t GetSystemTimeMs();
+    /*
+    * function: RegisterGroupCallBack, register the observer to groupObservers.
+    * parameters: observer
+    * return: result of RegisterGroupCallBack, true or false.
+    */
+    bool RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+        const sptr<IBundleActiveGroupCallback> &observer);
+    /*
+    * function: UnregisterGroupCallBack, remove the observer from groupObservers.
+    * parameters: observer
+    * return: result of UnregisterGroupCallBack, true or false.
+    */
+    bool UnregisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+        const sptr<IBundleActiveGroupCallback> &observer);
     int32_t currentUsedUser_;
+    void OnBundleGroupChanged(const BundleActiveGroupCallbackInfo& callbackInfo);
 
 private:
+    void AddObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer);
+    void RemoveObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer);
+    void OnObserverDied(const wptr<IRemoteObject> &remote);
+    void OnObserverDiedInner(const wptr<IRemoteObject> &remote);
     int64_t flushInterval_;
     static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TWO_SECONDS;
     const int32_t DEFAULT_USER_ID = -1;
@@ -159,10 +184,14 @@ private:
     int64_t systemTimeShot_;
     int64_t realTimeShot_;
     std::mutex mutex_;
+    std::mutex callbackMutex_;
+    std::mutex deathRecipientMutex_;
     std::map<int32_t, std::shared_ptr<BundleActiveUserService>> userStatServices_;
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
     void RestoreAllData();
+    std::map<AccessToken::AccessTokenID, sptr<IBundleActiveGroupCallback>> groupChangeObservers_;
+    std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> recipientMap_;
     bool debugCore_;
 };
 }  // namespace DeviceUsageStats

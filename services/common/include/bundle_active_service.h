@@ -75,7 +75,7 @@ public:
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    void SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) override;
+    bool SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t& errCode, int32_t userId) override;
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
@@ -93,7 +93,7 @@ public:
     * function: QueryPackageGroup, query bundle priority group calling bundle.
     * return: the priority group of calling bundle.
     */
-    int32_t QueryPackageGroup() override;
+    int32_t QueryPackageGroup(const std::string& bundleName, int32_t userId) override;
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
@@ -107,6 +107,20 @@ public:
     * parameters: systemAbilityId, runOnCreate
     */
     BundleActiveService(const int32_t systemAbilityId, bool runOnCreate);
+    /*
+    * function: RegisterGroupCallBack, register the observer to groupObservers.
+    * parameters: observer
+    * return: result of RegisterGroupCallBack, true or false.
+    */
+    bool RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    /*
+    * function: UnregisterGroupCallBack, remove the observer from groupObservers.
+    * parameters: observer
+    * return: result of UnregisterGroupCallBack, true or false.
+    */
+    bool UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+
+protected:
     /**
      * @brief The OnStart callback.
      */
