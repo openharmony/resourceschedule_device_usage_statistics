@@ -81,12 +81,13 @@ void BundleActiveGroupController::OnScreenChanged(const bool& isScreenOn, const 
 }
 
 void BundleActiveGroupController::SetHandlerAndCreateUserHistory(
-    const std::shared_ptr<BundleActiveGroupHandler>& groupHandler, const int64_t bootFromTimeStamp)
+    const std::shared_ptr<BundleActiveGroupHandler>& groupHandler, const int64_t bootFromTimeStamp,
+    const std::shared_ptr<BundleActiveCore>& bundleActiveCore)
 {
     if (bundleUserHistory_ == nullptr) {
         BUNDLE_ACTIVE_LOGI("SetHandlerAndCreateUserHistory bundleUserHistory_ is null, "
             "called constructor, bootstamp is %{public}lld", (long long)bootFromTimeStamp);
-        bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootFromTimeStamp);
+        bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootFromTimeStamp, bundleActiveCore);
     }
     OnScreenChanged(IsScreenOn(), bootFromTimeStamp);
     activeGroupHandler_ = groupHandler;
@@ -242,17 +243,17 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
         switch (eventId) {
             case BundleActiveEvent::NOTIFICATION_SEEN:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_DAILY,
-                    eventReason, 0, bootBasedTimeStamp + timeoutForNotifySeen_);
+                    eventReason, 0, bootBasedTimeStamp + timeoutForNotifySeen_, userId);
                 timeUntilNextCheck = timeoutForNotifySeen_;
                 break;
             case BundleActiveEvent::SYSTEM_INTERACTIVE:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_ALIVE,
-                    eventReason, 0, bootBasedTimeStamp + timeoutForSystemInteraction_);
+                    eventReason, 0, bootBasedTimeStamp + timeoutForSystemInteraction_, userId);
                 timeUntilNextCheck = timeoutForSystemInteraction_;
                 break;
             default:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_ALIVE,
-                    eventReason, bootBasedTimeStamp, bootBasedTimeStamp + timeoutForDirectlyUse_);
+                    eventReason, bootBasedTimeStamp, bootBasedTimeStamp + timeoutForDirectlyUse_, userId);
                 timeUntilNextCheck = timeoutForDirectlyUse_;
                 break;
         }
@@ -308,40 +309,41 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     }
     if (oldGroup < newGroup || notTimeout) {
         BUNDLE_ACTIVE_LOGI("CheckAndUpdateGroup called SetBundleGroup");
-        bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, groupReason, false);
+        bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, groupReason);
     }
 }
 
-void BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int32_t userId, int32_t newGroup,
-    uint32_t reason, const int64_t bootBasedTimeStamp, const bool& resetTimeout)
+bool BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int32_t userId,
+    int32_t newGroup, uint32_t reason, const int64_t bootBasedTimeStamp)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (IsBundleInstalled(bundleName, userId) == false) {
-        return;
+    if (!IsBundleInstalled(bundleName, userId)) {
+        return false;
     }
     auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName, userId, bootBasedTimeStamp, true);
-    if (oneBundleHistory->currentGroup_ < ACTIVE_GROUP_ALIVE) {
-        return;
+    if (!oneBundleHistory || (oneBundleHistory->currentGroup_ < ACTIVE_GROUP_ALIVE)) {
+        return false;
     }
-    int64_t bootBasedTimeStampAdjusted = bundleUserHistory_->GetBootBasedTimeStamp(bootBasedTimeStamp);
-    if (newGroup > ACTIVE_GROUP_ALIVE && oneBundleHistory->bundleAliveTimeoutTimeStamp_ >
-        bootBasedTimeStampAdjusted) {
-        BUNDLE_ACTIVE_LOGI("%{public}s should be decreased, but time out in alive is not expire! now is %{public}lld,"
-            "timeout is %{public}lld",
-            bundleName.c_str(),
-            (long long)bootBasedTimeStampAdjusted, (long long)oneBundleHistory->bundleAliveTimeoutTimeStamp_);
-        newGroup = ACTIVE_GROUP_ALIVE;
-        reason = oneBundleHistory->reasonInGroup_;
-    } else if (newGroup > ACTIVE_GROUP_DAILY && oneBundleHistory->bundleDailyTimeoutTimeStamp_ >
-        bootBasedTimeStampAdjusted) {
-        newGroup = ACTIVE_GROUP_DAILY;
-        if (oneBundleHistory->currentGroup_ != newGroup) {
-            reason = GROUP_CONTROL_REASON_USAGE | GROUP_CONTROL_REASON_TIMEOUT;
-        } else {
+    if (reason != GROUP_CONTROL_REASON_FORCED) {
+        int64_t bootBasedTimeStampAdjusted = bundleUserHistory_->GetBootBasedTimeStamp(bootBasedTimeStamp);
+        if (newGroup > ACTIVE_GROUP_ALIVE &&
+            oneBundleHistory->bundleAliveTimeoutTimeStamp_ > bootBasedTimeStampAdjusted) {
+            BUNDLE_ACTIVE_LOGI("%{public}s should be decreased, but time out in alive is not expire!"
+                "now is %{public}lld,timeout is %{public}lld", bundleName.c_str(),
+                (long long)bootBasedTimeStampAdjusted, (long long)oneBundleHistory->bundleAliveTimeoutTimeStamp_);
+            newGroup = ACTIVE_GROUP_ALIVE;
             reason = oneBundleHistory->reasonInGroup_;
+        } else if (newGroup > ACTIVE_GROUP_DAILY &&
+            oneBundleHistory->bundleDailyTimeoutTimeStamp_ > bootBasedTimeStampAdjusted) {
+            newGroup = ACTIVE_GROUP_DAILY;
+            if (oneBundleHistory->currentGroup_ != newGroup) {
+                reason = GROUP_CONTROL_REASON_USAGE | GROUP_CONTROL_REASON_TIMEOUT;
+            } else {
+                reason = oneBundleHistory->reasonInGroup_;
+            }
         }
     }
-    bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, reason, false);
+    return bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, reason);
 }
 
 int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, const int32_t userId)
@@ -364,21 +366,22 @@ int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName,
     }
 }
 
-int32_t BundleActiveGroupController::QueryPackageGroup(const int32_t userId, const std::string& bundleName)
+int32_t BundleActiveGroupController::QueryPackageGroup(const std::string& bundleName, const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("QueryPackageGroup called");
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-    if (IsBundleInstalled(bundleName, userId) == false) {
+    if (!IsBundleInstalled(bundleName, userId)) {
+        BUNDLE_ACTIVE_LOGI("QueryPackageGroup is not bundleInstalled");
         return -1;
     }
+ 
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(
         bundleName, userId, bootBasedTimeStamp, false);
-    if (oneBundleHistory == nullptr) {
+    if (!oneBundleHistory) {
         return -1;
-    } else {
-        return oneBundleHistory->currentGroup_;
     }
+    return oneBundleHistory->currentGroup_;
 }
 
 bool BundleActiveGroupController::IsBundleInstalled(const std::string& bundleName, const int32_t userId)

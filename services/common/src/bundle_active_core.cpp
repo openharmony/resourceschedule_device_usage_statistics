@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "bundle_active_core.h"
-
+#include "accesstoken_kit.h"
 #include "time_service_client.h"
 
 #include "bundle_active_event.h"
@@ -190,7 +190,7 @@ void BundleActiveCore::InitBundleGroupController()
     }
     if (bundleGroupController_ != nullptr && bundleGroupHandler_ != nullptr) {
         bundleGroupHandler_->Init(bundleGroupController_);
-        bundleGroupController_->SetHandlerAndCreateUserHistory(bundleGroupHandler_, realTimeShot_);
+        bundleGroupController_->SetHandlerAndCreateUserHistory(bundleGroupHandler_, realTimeShot_, shared_from_this());
         BUNDLE_ACTIVE_LOGI("Init Set group controller and handler done");
     } else {
         return;
@@ -649,17 +649,17 @@ int32_t BundleActiveCore::QueryAppNotificationNumber(int64_t beginTime, int64_t 
     return errCode;
 }
 
-void BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId)
+bool BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId)
 {
     int32_t newReason = GROUP_CONTROL_REASON_FORCED;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    bundleGroupController_->SetBundleGroup(bundleName, userId, newGroup, newReason, bootBasedTimeStamp, false);
+    return bundleGroupController_->SetBundleGroup(bundleName, userId, newGroup, newReason, bootBasedTimeStamp);
 }
 
-int32_t BundleActiveCore::QueryPackageGroup(const int32_t userId, const std::string bundleName)
+int32_t BundleActiveCore::QueryPackageGroup(const std::string bundleName, const int32_t userId)
 {
-    return bundleGroupController_->QueryPackageGroup(userId, bundleName);
+    return bundleGroupController_->QueryPackageGroup(bundleName, userId);
 }
 
 int32_t BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int32_t userId)
@@ -701,6 +701,117 @@ int64_t BundleActiveCore::GetSystemTimeMs()
         return -1;
     }
     return static_cast<int64_t>(tarDate);
+}
+
+void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo& callbackInfo)
+{
+    std::lock_guard<std::mutex> lock(callbackMutex_);
+    for (const auto &item : groupChangeObservers_) {
+        auto observer = item.second;
+        if (observer) {
+            BUNDLE_ACTIVE_LOGD(
+                "RegisterGroupCallBack will OnBundleGroupChanged!,oldGroup is %{public}d, newGroup is %{public}d",
+                callbackInfo.GetOldGroup(), callbackInfo.GetNewGroup());
+            observer->OnBundleGroupChanged(callbackInfo);
+        }
+    }
+}
+
+bool BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+    const sptr<IBundleActiveGroupCallback> &observer)
+{
+    std::lock_guard<std::mutex> lock(callbackMutex_);
+    if (!observer) {
+        BUNDLE_ACTIVE_LOGI("observer is null, return");
+        return false;
+    }
+    auto item = groupChangeObservers_.find(tokenId);
+    if (item != groupChangeObservers_.end()) {
+        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack observer exist, return");
+        return false;
+    }
+    groupChangeObservers_.emplace(tokenId, observer);
+    AddObserverDeathRecipient(observer);
+    BUNDLE_ACTIVE_LOGD("RegisterGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
+    return true;
+}
+
+bool BundleActiveCore::UnregisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+    const sptr<IBundleActiveGroupCallback> &observer)
+{
+    std::lock_guard<std::mutex> lock(callbackMutex_);
+    auto item = groupChangeObservers_.find(tokenId);
+    if (item == groupChangeObservers_.end()) {
+        BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not exist, return");
+        return false;
+    }
+    groupChangeObservers_.erase(tokenId);
+    RemoveObserverDeathRecipient(item->second);
+    return true;
+}
+
+void BundleActiveCore::AddObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer)
+{
+    std::lock_guard<std::mutex> lock(deathRecipientMutex_);
+    if (!observer || !(observer->AsObject())) {
+        BUNDLE_ACTIVE_LOGI("observer nullptr.");
+        return;
+    }
+    auto remoteObj = observer->AsObject();
+    auto it = recipientMap_.find(observer->AsObject());
+    if (it != recipientMap_.end()) {
+        BUNDLE_ACTIVE_LOGI("This death recipient has been added.");
+        return;
+    } else {
+        sptr<RemoteDeathRecipient> deathRecipient = new (std::nothrow) RemoteDeathRecipient(
+            [this](const wptr<IRemoteObject> &remote) { this->OnObserverDied(remote); });
+        if (!deathRecipient) {
+            BUNDLE_ACTIVE_LOGI("create death recipient failed");
+            return ;
+        }
+        observer->AsObject()->AddDeathRecipient(deathRecipient);
+        recipientMap_.emplace(observer->AsObject(), deathRecipient);
+    }
+}
+void BundleActiveCore::RemoveObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer)
+{
+    std::lock_guard<std::mutex> lock(deathRecipientMutex_);
+    if (!observer || !(observer->AsObject())) {
+        return ;
+    }
+    auto iter = recipientMap_.find(observer->AsObject());
+    if (iter != recipientMap_.end()) {
+        iter->first->RemoveDeathRecipient(iter->second);
+        recipientMap_.erase(iter);
+        return ;
+    }
+}
+
+void BundleActiveCore::OnObserverDied(const wptr<IRemoteObject> &remote)
+{
+    if (remote == nullptr) {
+        BUNDLE_ACTIVE_LOGE("remote object is null.");
+        return;
+    }
+
+    bundleGroupHandler_->PostSyncTask([this, &remote]() { this->OnObserverDiedInner(remote); });
+}
+
+void BundleActiveCore::OnObserverDiedInner(const wptr<IRemoteObject> &remote)
+{
+    std::lock_guard<std::mutex> lock(deathRecipientMutex_);
+    sptr<IRemoteObject> objectProxy = remote.promote();
+    if (remote == nullptr || !objectProxy) {
+        BUNDLE_ACTIVE_LOGE("get remote object failed");
+        return;
+    }
+    for (const auto& item : groupChangeObservers_) {
+        if ((item.second) && ((item.second)->AsObject()) && ((item.second)->AsObject() == objectProxy)) {
+            groupChangeObservers_.erase(item.first);
+            break;
+        }
+    }
+    recipientMap_.erase(objectProxy);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

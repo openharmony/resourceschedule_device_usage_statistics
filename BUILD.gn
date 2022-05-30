@@ -31,6 +31,9 @@ config("usagestatsinner_public_config") {
 ohos_shared_library("usagestatsinner") {
   sources = [
     "interfaces/innerkits/src/bundle_active_client.cpp",
+    "interfaces/innerkits/src/bundle_active_group_callback_info.cpp",
+    "interfaces/innerkits/src/bundle_active_group_callback_proxy.cpp",
+    "interfaces/innerkits/src/bundle_active_group_callback_stub.cpp",
     "interfaces/innerkits/src/bundle_active_proxy.cpp",
     "services/packageusage/src/bundle_active_event.cpp",
     "services/packageusage/src/bundle_active_package_stats.cpp",
@@ -58,6 +61,7 @@ ohos_prebuilt_etc("device_usage_statistics_service_init") {
 
 ohos_shared_library("bundlestate") {
   sources = [
+    "frameworks/src/bundle_active_group_observer.cpp",
     "frameworks/src/bundle_state_common.cpp",
     "frameworks/src/bundle_state_init.cpp",
     "frameworks/src/bundle_state_query.cpp",
@@ -67,6 +71,7 @@ ohos_shared_library("bundlestate") {
     "services/common/include",
     "interfaces/innerkits/include",
     "services/packageusage/include",
+    "services/packagegroup/include",
   ]
 
   deps = [
@@ -90,6 +95,8 @@ ohos_shared_library("bundlestate") {
 ohos_shared_library("usagestatservice") {
   cflags_cc = []
   sources = [
+    "interfaces/innerkits/src/bundle_active_group_callback_info.cpp",
+    "interfaces/innerkits/src/bundle_active_group_callback_proxy.cpp",
     "services/common/src/bundle_active_account_helper.cpp",
     "services/common/src/bundle_active_app_state_obsever.cpp",
     "services/common/src/bundle_active_binary_search.cpp",
@@ -128,6 +135,7 @@ ohos_shared_library("usagestatservice") {
     "services/common/include",
     "services/packageusage/include",
     "services/packagegroup/include",
+    "interfaces/innerkits/include",
   ]
 
   external_deps = [

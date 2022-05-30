@@ -85,13 +85,13 @@ std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t beg
     return bundleActiveProxy_->QueryEvents(beginTime, endTime, errCode, userId);
 }
 
-void BundleActiveClient::SetBundleGroup(std::string bundleName, const int32_t newGroup, const int32_t userId)
+bool BundleActiveClient::SetBundleGroup(std::string bundleName, const int32_t newGroup,
+    int32_t errCode, int32_t userId)
 {
     if (!GetBundleActiveProxy()) {
-        return;
+        return false;
     }
-    bundleActiveProxy_->SetBundleGroup(bundleName, newGroup, userId);
-    return;
+    return bundleActiveProxy_->SetBundleGroup(bundleName, newGroup, errCode, userId);
 }
 
 std::vector<BundleActivePackageStats> BundleActiveClient::QueryCurrentPackageStats(const int32_t intervalType,
@@ -111,12 +111,12 @@ std::vector<BundleActiveEvent> BundleActiveClient::QueryCurrentEvents(const int6
     return bundleActiveProxy_->QueryCurrentEvents(beginTime, endTime);
 }
 
-int32_t BundleActiveClient::QueryPackageGroup()
+int32_t BundleActiveClient::QueryPackageGroup(const std::string& bundleName, const int32_t userId)
 {
     if (!GetBundleActiveProxy()) {
         return -1;
     }
-    return bundleActiveProxy_->QueryPackageGroup();
+    return bundleActiveProxy_->QueryPackageGroup(bundleName, userId);
 }
 
 int32_t BundleActiveClient::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
@@ -130,6 +130,24 @@ int32_t BundleActiveClient::QueryFormStatistics(int32_t maxNum, std::vector<Bund
         return -1;
     }
     return bundleActiveProxy_->QueryFormStatistics(maxNum, results, userId);
+}
+
+int32_t BundleActiveClient::RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+{
+    if (!GetBundleActiveProxy()) {
+        BUNDLE_ACTIVE_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return false;
+    }
+    return bundleActiveProxy_->RegisterGroupCallBack(observer);
+}
+
+int32_t BundleActiveClient::UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+{
+    if (!GetBundleActiveProxy()) {
+        BUNDLE_ACTIVE_LOGE("GetBackgroundTaskManagerProxy failed.");
+        return false;
+    }
+    return bundleActiveProxy_->UnregisterGroupCallBack(observer);
 }
 
 int32_t BundleActiveClient::QueryEventStats(int64_t beginTime, int64_t endTime,

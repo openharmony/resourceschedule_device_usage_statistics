@@ -60,7 +60,7 @@ private:
     static BundleActiveLogLevel logLevel_;
 };
 
-#define BUNDLE_ACTIVE_PRINT_LOG(LEVEL, Level, fmt, ...)                                \
+#define BUNDLE_ACTIVE_PRINT_LOG(LEVEL, Level, fmt, ...)                                              \
     if (BundleActiveLog::JudgeValidLevel(BundleActiveLogLevel::LEVEL))                 \
     OHOS::HiviewDFX::HiLog::Level(BUNDLE_ACTIVE_LOG_LABEL,                             \
         "[%{public}s(%{public}s):%{public}d] " fmt,                                    \

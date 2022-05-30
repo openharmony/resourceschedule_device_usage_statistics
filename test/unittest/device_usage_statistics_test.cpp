@@ -25,6 +25,7 @@
 
 #include "bundle_active_client.h"
 #include "bundle_active_event.h"
+#include "bundle_active_group_callback_stub.h"
 
 using namespace testing::ext;
 
@@ -39,6 +40,7 @@ static std::string DEFAULT_ABILITYID = "1234";
 static std::string DEFAULT_ABILITYNAME = "testability";
 static int32_t DEFAULT_USERID = 0;
 static int64_t LARGE_NUM = 20000000000000;
+static int32_t DEFAULT_GROUP = 10;
 
 class DeviceUsageStatisticsTest : public testing::Test {
 public:
@@ -154,11 +156,6 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleIdle_001, 
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_001, Function | MediumTest | Level0)
-{
-    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup();
-    EXPECT_EQ(result, -1);
-}
 
 /*
  * @tc.name: DeviceUsageStatisticsTest_QueryFormStatistics_001
@@ -176,6 +173,22 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistic
     int32_t errCode = BundleActiveClient::GetInstance().QueryFormStatistics(maxNum, results, DEFAULT_USERID);
     EXPECT_EQ(errCode, 0);
     EXPECT_EQ(results.size(), 0);
+}
+
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001, Function | MediumTest | Level0)
+{
+    bool result = BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP, DEFAULT_USERID);
+    EXPECT_EQ(result, true);
+}
+
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallBack_001, Function | MediumTest | Level0)
+{
+    auto observer=std::make_shared<BundleActiveGroupCallbackStub>();
+    if (!observer) {
+        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack construct observer!------------------------------");
+    }
+    bool result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer.get());
+    EXPECT_EQ(result, true);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
