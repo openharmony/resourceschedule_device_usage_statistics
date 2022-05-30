@@ -377,7 +377,6 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
         callbackPtr.release();
         return promise;
     }
-    
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
