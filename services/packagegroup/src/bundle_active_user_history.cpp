@@ -167,6 +167,9 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     const string& bundleName, const int32_t newGroup, const uint32_t groupReason, const int64_t bootBasedTimeStamp,
     const int64_t timeUntilNextCheck, const int32_t userId)
 {
+    if ((oneBundleUsageHistory->reasonInGroup_ & GROUP_CONTROL_REASON_MASK) == GROUP_CONTROL_REASON_FORCED) {
+        return;
+    }
     if (timeUntilNextCheck > bootBasedTimeStamp) {
         int64_t nextCheckTimeStamp = bootBasedDuration_ + (timeUntilNextCheck - bootBasedTimeStamp_);
         if (newGroup == ACTIVE_GROUP_ALIVE) {
@@ -223,6 +226,7 @@ bool BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int
     oneBundleHistory->currentGroup_ = newGroup;
     oneBundleHistory->reasonInGroup_ = groupReason;
     oneBundleHistory->isChanged_ = true;
+    BUNDLE_ACTIVE_LOGI("SetBundleGroup set success");
     BundleActiveGroupCallbackInfo callbackInfo(
         userId, oldGroup, newGroup, oneBundleHistory->reasonInGroup_, bundleName);
     if (!bundleActiveCore_.expired()) {

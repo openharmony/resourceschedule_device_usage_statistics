@@ -111,12 +111,14 @@ std::vector<BundleActiveEvent> BundleActiveClient::QueryCurrentEvents(const int6
     return bundleActiveProxy_->QueryCurrentEvents(beginTime, endTime);
 }
 
-int32_t BundleActiveClient::QueryPackageGroup(const std::string& bundleName, const int32_t userId)
+int32_t BundleActiveClient::QueryPackageGroup(std::string& bundleName, const int32_t userId)
 {
     if (!GetBundleActiveProxy()) {
         return -1;
     }
-    return bundleActiveProxy_->QueryPackageGroup(bundleName, userId);
+    int32_t result = bundleActiveProxy_->QueryPackageGroup(bundleName, userId);
+    BUNDLE_ACTIVE_LOGI("QueryPackageGroup group is %{public}d ", result);
+    return result;
 }
 
 int32_t BundleActiveClient::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,

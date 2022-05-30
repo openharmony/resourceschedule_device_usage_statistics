@@ -43,7 +43,7 @@ const uint32_t MODULE_RECORDS_PARAMS = 2;
 const uint32_t SECOND_ARG = 2;
 const uint32_t THIRD_ARG = 3;
 const int32_t MAXNUM_UP_LIMIT = 1000;
-const std::vector GROUP_TYPE {5, 10, 20, 30, 40, 50, 60};
+const std::vector GROUP_TYPE {10, 20, 30, 40, 50, 60};
 const uint32_t EVENT_STATES_MIN_PARAMS = 2;
 const uint32_t EVENT_STATES_PARAMS = 3;
 
@@ -313,7 +313,7 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
     }
     std::unique_ptr<AsyncCallbackInfoPriorityGroup> callbackPtr {asyncCallbackInfo};
     callbackPtr->bundleName = params.bundleName;
-    BUNDLE_ACTIVE_LOGI("QueryAppUsagePriorityGroup QueryPackageGroup callbackPtr->bundleName: %{public}s",
+    BUNDLE_ACTIVE_LOGI("QueryPackageGroup callbackPtr->bundleName: %{public}s",
         callbackPtr->bundleName.c_str());
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
@@ -331,21 +331,22 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
             }
         },
         [](napi_env env, napi_status status, void *data) {
-            AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = (AsyncCallbackInfoPriorityGroup *)data;
-            std::unique_ptr<AsyncCallbackInfoPriorityGroup> callbackPtr {asyncCallbackInfo};
+            AsyncCallbackInfoPriorityGroup * asyncCallbackInfo = (AsyncCallbackInfoPriorityGroup *)data;
             if (asyncCallbackInfo) {
                 napi_value result = nullptr;
                 napi_create_int32(env, asyncCallbackInfo->priorityGroup, &result);
+                BUNDLE_ACTIVE_LOGI("QueryPackageGroup, group is %{public}d",asyncCallbackInfo->priorityGroup);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
         (void *)asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    callbackPtr.release();
     if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }
@@ -842,6 +843,8 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
     std::unique_ptr<AsyncCallbackInfoSetBundleGroup> callbackPtr {asyncCallbackInfo};
     callbackPtr->newGroup = params.newGroup;
     callbackPtr->bundleName = params.bundleName;
+    BUNDLE_ACTIVE_LOGI("SetBundleGroup, bundleName is %{public}s, newGroup is %{public}d",
+        callbackPtr->bundleName.c_str(), callbackPtr->newGroup);
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
     NAPI_CALL(env, napi_create_string_latin1(env, "SetBundleGroup", NAPI_AUTO_LENGTH, &resourceName));
@@ -859,7 +862,6 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
         },
         [](napi_env env, napi_status status, void *data) {
             AsyncCallbackInfoSetBundleGroup *asyncCallbackInfo = (AsyncCallbackInfoSetBundleGroup *)data;
-            std::unique_ptr<AsyncCallbackInfoSetBundleGroup> callbackPtr {asyncCallbackInfo};
             if (asyncCallbackInfo) {
                 napi_value result = nullptr;
                 napi_get_boolean(env, asyncCallbackInfo->state, &result);
@@ -869,10 +871,11 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
         (void *)asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    callbackPtr.release();
     if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }

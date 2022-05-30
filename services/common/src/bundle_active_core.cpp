@@ -709,7 +709,7 @@ void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo&
     for (const auto &item : groupChangeObservers_) {
         auto observer = item.second;
         if (observer) {
-            BUNDLE_ACTIVE_LOGD(
+            BUNDLE_ACTIVE_LOGI(
                 "RegisterGroupCallBack will OnBundleGroupChanged!,oldGroup is %{public}d, newGroup is %{public}d",
                 callbackInfo.GetOldGroup(), callbackInfo.GetNewGroup());
             observer->OnBundleGroupChanged(callbackInfo);
@@ -720,6 +720,7 @@ void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo&
 bool BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
     const sptr<IBundleActiveGroupCallback> &observer)
 {
+    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack enter BundleActiveCore, return");
     std::lock_guard<std::mutex> lock(callbackMutex_);
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("observer is null, return");
@@ -732,7 +733,7 @@ bool BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID& t
     }
     groupChangeObservers_.emplace(tokenId, observer);
     AddObserverDeathRecipient(observer);
-    BUNDLE_ACTIVE_LOGD("RegisterGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
+    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
     return true;
 }
 

@@ -391,6 +391,43 @@ declare namespace bundleState {
      function queryAppUsagePriorityGroup(bundleName? : string, callback: AsyncCallback<number>): void;
      function queryAppUsagePriorityGroup(bundleName? : string): Promise<number>;
 
+     /**
+     * Declares group type.
+     *
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     */
+      export enum GroupType {
+        /**
+         * Indicates the alive group.
+         */
+        ACTIVE_GROUP_ALIVE = 10,
+
+        /**
+         * Indicates the daily group.
+         */
+        ACTIVE_GROUP_DAILY = 20,
+
+        /**
+         * Indicates the fixed group.
+         */
+        ACTIVE_GROUP_FIXED = 30,
+
+        /**
+         * Indicates the rare group.
+         */
+        ACTIVE_GROUP_RARE = 40,
+
+        /**
+         * Indicates the limit group.
+         */
+         ACTIVE_GROUP_LIMIT = 50,
+         /**
+         * Indicates the never group.
+         */
+         ACTIVE_GROUP_NEVER = 60
+    }
+
     /**
      * set bundle group by bundleName and number.
      *
@@ -398,8 +435,8 @@ declare namespace bundleState {
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @return Returns the result of setBundleGroup, true of false.
      */
-    function setBundleGroup(bundleName: string, newGroup: number, callback: AsyncCallback<boolean>): void;
-    function setBundleGroup(bundleName: string, newGroup: number): Promise<boolean>;
+    function setBundleGroup(bundleName: string, newGroup: GroupType, callback: AsyncCallback<boolean>): void;
+    function setBundleGroup(bundleName: string, newGroup: GroupType): Promise<boolean>;
 
     /**
      * register callback to service.
