@@ -23,7 +23,9 @@
 #include "napi/native_node_api.h"
 
 #include "bundle_active_event.h"
+#include "bundle_active_event_stats.h"
 #include "bundle_active_package_stats.h"
+#include "bundle_active_group_observer.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -42,6 +44,8 @@ namespace DeviceUsageStats {
 #define INTERVAL_NUMBER_MIN 0
 #define INTERVAL_NUMBER_MAX 4
 #define TIME_NUMBER_MIN 0
+#define GROUP_NUMBER_MIN 5
+#define GROUP_NUMBER_MAX 50
 
 struct AsyncWorkData {
     explicit AsyncWorkData(napi_env napiEnv);
@@ -54,6 +58,16 @@ struct AsyncWorkData {
     int32_t errorCode = 0;
 };
 
+struct CallbackReceiveDataWorker {
+    napi_env env = nullptr;
+    napi_ref ref = nullptr;
+    int32_t oldGroup = 0;
+    int32_t newGroup = 0;
+    int32_t userId = -1;
+    uint32_t changeReason = 0;
+    std::string bundleName;
+};
+
 struct AsyncCallbackInfoIsIdleState : public AsyncWorkData {
     explicit AsyncCallbackInfoIsIdleState(napi_env env) : AsyncWorkData(env) {}
     std::string bundleName = "";
@@ -62,7 +76,8 @@ struct AsyncCallbackInfoIsIdleState : public AsyncWorkData {
 
 struct AsyncCallbackInfoPriorityGroup : public AsyncWorkData {
     explicit AsyncCallbackInfoPriorityGroup(napi_env env) : AsyncWorkData(env) {}
-    int32_t priorityGroup = 60;
+    std::string bundleName = "";
+    int32_t priorityGroup = -1;
 };
 
 struct AsyncCallbackInfoStates : public AsyncWorkData {
@@ -80,17 +95,42 @@ struct AsyncCallbackInfoAppUsageByInterval : public AsyncWorkData {
     std::vector<BundleActivePackageStats> packageStats;
 };
 
+struct AsyncCallbackInfoEventStats : public AsyncWorkData {
+    explicit AsyncCallbackInfoEventStats(napi_env env) : AsyncWorkData(env) {}
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
+    std::vector<BundleActiveEventStats> eventStats;
+};
+
 struct AsyncCallbackInfoAppUsage : public AsyncWorkData {
     explicit AsyncCallbackInfoAppUsage(napi_env env) : AsyncWorkData(env) {}
     int64_t beginTime = -1;
     int64_t endTime = -1;
     std::shared_ptr<std::map<std::string, BundleActivePackageStats>> packageStats;
 };
+struct AsyncCallbackInfoSetBundleGroup : public AsyncWorkData {
+    explicit AsyncCallbackInfoSetBundleGroup(napi_env env) : AsyncWorkData(env) {}
+    int32_t newGroup = -1;;
+    std::string bundleName = "";
+    bool state = true;
+};
 
 struct AsyncCallbackInfoModuleRecord : public AsyncWorkData {
     explicit AsyncCallbackInfoModuleRecord(napi_env env) : AsyncWorkData(env) {}
     int32_t maxNum = -1;
     std::vector<BundleActiveModuleRecord> moduleRecords;
+};
+
+struct AsyncUnRegisterCallbackInfo : public AsyncWorkData {
+    explicit AsyncUnRegisterCallbackInfo(napi_env env) : AsyncWorkData(env) {}
+    sptr<BundleActiveGroupObserver> observer = nullptr;
+    bool state = true;
+};
+
+struct AsyncRegisterCallbackInfo : public AsyncWorkData {
+    explicit AsyncRegisterCallbackInfo(napi_env env) : AsyncWorkData(env) {}
+    sptr<BundleActiveGroupObserver> observer = nullptr;
+    bool state = true;
 };
 
 struct IsIdleStateParamsInfo {
@@ -100,6 +140,7 @@ struct IsIdleStateParamsInfo {
 };
 
 struct PriorityGroupParamsInfo {
+    std::string bundleName;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };
@@ -128,6 +169,30 @@ struct AppUsageParamsInfo {
 
 struct ModuleRecordParamsInfo {
     int32_t maxNum = -1;
+    napi_ref callback = nullptr;
+    int32_t errorCode = 0;
+};
+
+struct ParamsBundleGroupInfo {
+    std::string bundleName = "";
+    int32_t newGroup = -1;
+    napi_ref callback = nullptr;
+    int32_t errorCode = 0;
+};
+
+struct RegisterCallbackInfo {
+    napi_ref callback = nullptr;
+    int32_t errorCode = 0;
+};
+
+struct UnRegisterCallbackInfo {
+    napi_ref callback = nullptr;
+    int32_t errorCode = 0;
+};
+
+struct EventStatesParamsInfo {
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };

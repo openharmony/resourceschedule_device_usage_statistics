@@ -67,6 +67,10 @@ public:
         std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
     void LoadFormData(const int32_t userId, std::map<std::string,
         std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
+    void QueryEventStats(int32_t eventId, int64_t beginTime, int64_t endTime,
+        std::map<std::string, BundleActiveEventStats>& eventStats, int32_t userId);
+    void QueryAppNotificationNumber(int32_t eventId, int64_t beginTime, int64_t endTime,
+        std::map<std::string, BundleActiveEventStats>& notificationEventStats, int32_t userId);
 
 private:
     void CheckDatabaseVersion();
@@ -102,6 +106,8 @@ private:
     void UpdateFormData(const int32_t userId, const std::string bundleName,
         const std::string moduleName, const BundleActiveFormRecord& formRecord,
         std::shared_ptr<NativeRdb::RdbStore> rdbStore);
+    int32_t JudgeQueryCondition(const int64_t beginTime, const int64_t endTime, const int64_t eventTableTime);
+    std::string GetSystemEventName(const int32_t userId);
 
 private:
     std::vector<std::string> databaseFiles_;

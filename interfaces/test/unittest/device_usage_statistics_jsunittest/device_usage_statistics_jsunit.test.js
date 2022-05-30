@@ -100,7 +100,9 @@ describe("DeviceUsageStatisticsJsTest", function () {
      */
     it("DeviceUsageStatisticsJsTest003", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest003---------------------------');
-        bundleState.queryAppUsagePriorityGroup().then( res => {
+        let bundleName = 'com.example.deviceUsageStatistics';
+        let userId = 10;
+        bundleState.queryAppUsagePriorityGroup(bundleName, userId).then( res => {
             console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup promise success.');
             expect(true).assertEqual(true);
         }).catch( err => {
@@ -121,7 +123,9 @@ describe("DeviceUsageStatisticsJsTest", function () {
      */
     it("DeviceUsageStatisticsJsTest004", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest004---------------------------');
-        bundleState.queryAppUsagePriorityGroup((err, res) => {
+        let bundleName = 'com.example.deviceUsageStatistics';
+        let userId = 10;
+        bundleState.queryAppUsagePriorityGroup(bundleName, userId, (err, res) => {
             if (err) {
                 console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup callback failure.');
                 expect(false).assertEqual(true);
@@ -374,6 +378,49 @@ describe("DeviceUsageStatisticsJsTest", function () {
         setTimeout(()=>{
             done();
         }, 500);
+    })
+
+    it("DeviceUsageStatisticsJsTest015", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest015---------------------------');
+        let bundleName = 'com.example.deviceUsageStatistics';
+        let newGroup   = 10;
+        bundleState.setBundleGroup(bundleName, newGroup, (err, res) => {
+            if (err) {
+                console.info('BUNDLE_ACTIVE setBundleGroup callback failure.');
+                expect(false).assertEqual(true);
+            } else {
+                console.info('BUNDLE_ACTIVE setBundleGroup callback success.');
+                expect(true).assertEqual(true);
+            }
+        });
+
+        setTimeout(()=>{
+            done();
+        }, 500);  
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest015
+     * @tc.desc: test getRecentlyUsedModules promise.
+     * @tc.type: FUNC
+     * @tc.require: SR000GU2UE AR0003GU3EQ
+     */
+    
+    it("DeviceUsageStatisticsJsTest016", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest017---------------------------');
+        bundleState.registerGroupCallBack((err, res) => {
+            if (err) {
+                console.info('BUNDLE_ACTIVE registerGroupCallBack callback failure.');
+                expect(false).assertEqual(true);
+            } else {
+                console.info('BUNDLE_ACTIVE registerGroupCallBack callback success.');
+                expect(true).assertEqual(true);
+            }
+        });
+
+        setTimeout(()=>{
+            done();
+        }, 500);  
     })
 })
 

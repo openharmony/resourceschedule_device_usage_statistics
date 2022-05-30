@@ -116,18 +116,22 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
     return result;
 }
 
-void BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t userId)
+bool BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId)
 {
+    BUNDLE_ACTIVE_LOGI("SetBundleGroup enter bundleActiveProxy");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return;
+        return false;
     }
     data.WriteString(bundleName);
     data.WriteInt32(newGroup);
+    data.WriteInt32(errCode);
     data.WriteInt32(userId);
+
     Remote() -> SendRequest(SET_BUNDLE_GROUP, data, reply, option);
+    return reply.ReadInt32();
 }
 
 std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStats(const int32_t intervalType,
@@ -193,18 +197,20 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64
     return result;
 }
 
-int32_t BundleActiveProxy::QueryPackageGroup()
+int32_t BundleActiveProxy::QueryPackageGroup(const std::string& bundleName, const int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
+
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return -1;
     }
+    data.WriteString(bundleName);
+    data.WriteInt32(userId);
     Remote() -> SendRequest(QUERY_BUNDLE_GROUP, data, reply, option);
-    int32_t packageGroup = reply.ReadInt32();
-    BUNDLE_ACTIVE_LOGI("QueryPackageGroup result is %{public}d", packageGroup);
-    return packageGroup;
+
+    return reply.ReadInt32();
 }
 
 int32_t BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
@@ -239,6 +245,101 @@ int32_t BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<Bundl
                 oneForm.formDimension_, (long long)oneForm.formId_,
                 (long long)oneForm.formLastUsedTime_, oneForm.count_);
         }
+    }
+    return errCode;
+}
+
+bool BundleActiveProxy::RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+{
+    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack enter proxy---------------------");
+    if (!observer) {
+        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack observer null");
+        return false;
+    }
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack WriteInterfaceToken fail");
+        return false;
+    }
+    if (!data.WriteRemoteObject(observer->AsObject())) {
+        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack observer write failed.");
+        return false;
+    }
+    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack proxy is ok");
+    int32_t ret = Remote()->SendRequest(REGISTER_GROUP_CALLBACK, data, reply, option);
+    if (ret!= ERR_OK) {
+        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack SendRequest failed, error code: %{public}d", ret);
+    }
+    return true;
+}
+
+bool BundleActiveProxy::UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+{
+    if (!observer) {
+        BUNDLE_ACTIVE_LOGE("observer null");
+        return false;
+    }
+    BUNDLE_ACTIVE_LOGI("unRegisterApplicationStateObserver start");
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return false;
+    }
+    if (!data.WriteRemoteObject(observer->AsObject())) {
+        BUNDLE_ACTIVE_LOGE("observer write failed.");
+        return false;
+    }
+    Remote()->SendRequest(UNREGISTER_GROUP_CALLBACK, data, reply, option);
+    return true;
+}
+
+int32_t BundleActiveProxy::QueryEventStats(int64_t beginTime, int64_t endTime,
+    std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
+{
+    int32_t errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_EVENT_STATS);
+    for (const auto& singleEvent : eventStats) {
+        BUNDLE_ACTIVE_LOGI("name is %{public}s, eventId is %{public}d, count is %{public}d",
+            singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
+    }
+    return errCode;
+}
+
+int32_t BundleActiveProxy::QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+    std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
+{
+    int32_t errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_APP_NOTIFICATION_NUMBER);
+    for (const auto& singleEvent : eventStats) {
+        BUNDLE_ACTIVE_LOGI("name is %{public}s, eventId is %{public}d, count is %{public}d",
+            singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
+    }
+    return errCode;
+}
+
+int32_t BundleActiveProxy::IPCCommunication(int64_t beginTime, int64_t endTime,
+    std::vector<BundleActiveEventStats>& eventStats, int32_t userId, int32_t communicationFlag)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor())) {
+        return -1;
+    }
+    data.WriteInt64(beginTime);
+    data.WriteInt64(endTime);
+    data.WriteInt32(userId);
+    Remote() -> SendRequest(communicationFlag, data, reply, option);
+    int32_t errCode = reply.ReadInt32();
+    int32_t size = reply.ReadInt32();
+    std::shared_ptr<BundleActiveEventStats> tmp;
+    for (int32_t i = 0; i < size; i++) {
+        tmp = tmp->UnMarshalling(reply);
+        if (!tmp) {
+            continue;
+        }
+        eventStats.emplace_back(*tmp);
     }
     return errCode;
 }

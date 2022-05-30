@@ -69,6 +69,8 @@ const int32_t FORM_DIMENSION_COLUMN_INDEX = 4;
 const int32_t FORM_ID_COLUMN_INDEX = 5;
 const int32_t FORM_COUNT_COLUMN_INDEX = 6;
 const int32_t FORM_LAST_TIME_COLUMN_INDEX = 7;
+const int32_t QUERY_CONDITION_VALID = 0;
+const int32_t QUERY_CONDITION_INVALID = -1;
 const int64_t TWO_SECONDS = 2 * 1000LL;
 const int64_t THIRTY_MINUTE = 30 * 60 * 1000LL;
 const int64_t SIX_DAY_IN_MILLIS_MAX_DEBUG = 6 * 1 * 10 * 60 * 1000LL;
@@ -125,8 +127,14 @@ const std::string BUNDLE_ACTIVE_DATABASE_DIR = "/data/service/el1/public/bundle_
 const std::string BUNDLE_ACTIVE_VERSION_FILE = "/version";
 const std::string DATABASE_FILE_TABLE_NAME = "table";
 const std::string SQLITE_MASTER_NAME = "name";
+const std::string COMMON_EVENT_UNLOCK_SCREEN = "common.event.UNLOCK_SCREEN";
+const std::string COMMON_EVENT_LOCK_SCREEN = "common.event.LOCK_SCREEN";
 const std::string DATABASE_TYPE[] = {"daily", "weekly", "monthly", "yearly", "event", "usageGroup"};
 const std::string SUFFIX_TYPE[] = {".db"};
+const std::string OPERATION_SYSTEM_LOCK = "SYSTEM_LOCK";
+const std::string OPERATION_SYSTEM_UNLOCK = "SYSTEM_UNLOCK";
+const std::string OPERATION_SYSTEM_SLEEP = "SYSTEM_SLEEP";
+const std::string OPERATION_SYSTEM_WAKEUP = "SYSTEM_WAKEUP";
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_CONSTANT_H

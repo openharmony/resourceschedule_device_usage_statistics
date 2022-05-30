@@ -1298,19 +1298,8 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
 {
     lock_guard<mutex> lock(databaseMutex_);
     vector<BundleActiveEvent> databaseEvents;
-    if (eventTableName_ == UNKNOWN_TABLE_NAME) {
-        BUNDLE_ACTIVE_LOGE("eventTable does not exist");
-        return databaseEvents;
-    }
-    if (endTime <= beginTime) {
-        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= beginTime(%{public}lld)",
-            (long long)endTime, (long long)beginTime);
-        return databaseEvents;
-    }
     int64_t eventTableTime = ParseStartTime(eventTableName_);
-    if (endTime < eventTableTime) {
-        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= eventTableTime(%{public}lld)",
-            (long long)endTime, (long long)eventTableTime);
+    if (JudgeQueryCondition(beginTime, endTime, eventTableTime) == QUERY_CONDITION_INVALID) {
         return databaseEvents;
     }
     vector<string> queryCondition;
@@ -1597,6 +1586,131 @@ void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std:
             it->second->formRecords_.emplace_back(oneFormRecord);
         }
     }
+}
+
+void BundleActiveUsageDatabase::QueryEventStats(int32_t eventId, int64_t beginTime,
+    int64_t endTime, std::map<std::string, BundleActiveEventStats>& eventStats, int32_t userId)
+{
+    lock_guard<mutex> lock(databaseMutex_);
+    int64_t eventTableTime = ParseStartTime(eventTableName_);
+    if (JudgeQueryCondition(beginTime, endTime, eventTableTime) == QUERY_CONDITION_INVALID) {
+        return;
+    }
+    vector<string> queryCondition;
+    int64_t diff = beginTime - eventTableTime;
+    if (diff >= 0) {
+        queryCondition.push_back(to_string(diff));
+    } else {
+        queryCondition.push_back(to_string(EVENT_TIME_IN_MILLIS_MIN));
+    }
+    queryCondition.push_back(to_string(endTime - eventTableTime));
+    queryCondition.push_back(to_string(userId));
+    queryCondition.push_back(to_string(eventId));
+    string queryEventSql = "select * from " + eventTableName_ +
+            " where timeStamp >= ? and timeStamp <= ? and userId = ? and eventId = ?";
+    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(EVENT_DATABASE_INDEX,
+        queryEventSql, queryCondition);
+    if (bundleActiveResult == nullptr) {
+        return;
+    }
+    int32_t tableRowNumber;
+    bundleActiveResult->GetRowCount(tableRowNumber);
+    if (tableRowNumber == 0) {
+        return;
+    }
+    BundleActiveEventStats event;
+    event.name_= GetSystemEventName(eventId);
+    event.count_ = tableRowNumber;
+    event.eventId_ = eventId;
+    eventStats.insert(std::pair<std::string, BundleActiveEventStats>(event.name_, event));
+}
+
+std::string BundleActiveUsageDatabase::GetSystemEventName(const int32_t userId)
+{
+    std::string systemEventName = "";
+    switch (userId) {
+        case BundleActiveEvent::SYSTEM_LOCK:
+            systemEventName = OPERATION_SYSTEM_LOCK;
+            break;
+        case BundleActiveEvent::SYSTEM_UNLOCK:
+            systemEventName = OPERATION_SYSTEM_UNLOCK;
+            break;
+        case BundleActiveEvent::SYSTEM_SLEEP:
+            systemEventName = OPERATION_SYSTEM_SLEEP;
+            break;
+        case BundleActiveEvent::SYSTEM_WAKEUP:
+            systemEventName = OPERATION_SYSTEM_WAKEUP;
+            break;
+        default:
+            break;
+    }
+    return systemEventName;
+}
+
+void BundleActiveUsageDatabase::QueryAppNotificationNumber(int32_t eventId, int64_t beginTime,
+    int64_t endTime, std::map<std::string, BundleActiveEventStats>& notificationEventStats, int32_t userId)
+{
+    lock_guard<mutex> lock(databaseMutex_);
+    int64_t eventTableTime = ParseStartTime(eventTableName_);
+    if (JudgeQueryCondition(beginTime, endTime, eventTableTime) == QUERY_CONDITION_INVALID) {
+        return;
+    }
+    vector<string> queryCondition;
+    int64_t diff = beginTime - eventTableTime;
+    if (diff >= 0) {
+        queryCondition.push_back(to_string(diff));
+    } else {
+        queryCondition.push_back(to_string(EVENT_TIME_IN_MILLIS_MIN));
+    }
+    queryCondition.push_back(to_string(endTime - eventTableTime));
+    queryCondition.push_back(to_string(userId));
+    queryCondition.push_back(to_string(eventId));
+    string queryEventSql = "select * from " + eventTableName_ +
+            " where timeStamp >= ? and timeStamp <= ? and userId = ? and eventId = ?";
+    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(EVENT_DATABASE_INDEX,
+        queryEventSql, queryCondition);
+    if (bundleActiveResult == nullptr) {
+        return;
+    }
+    int32_t tableRowNumber;
+    bundleActiveResult->GetRowCount(tableRowNumber);
+    if (tableRowNumber == 0) {
+        return;
+    }
+    BundleActiveEventStats event;
+    std::map<std::string, BundleActiveEventStats>::iterator iter;
+    for (int32_t i = 0; i < tableRowNumber; i++) {
+        bundleActiveResult->GoToRow(i);
+        bundleActiveResult->GetString(BUNDLE_NAME_COLUMN_INDEX, event.name_);
+        bundleActiveResult->GetInt(EVENT_ID_COLUMN_INDEX, event.eventId_);
+        iter = notificationEventStats.find(event.name_);
+        if (iter != notificationEventStats.end()) {
+            iter->second.count_++;
+        } else {
+            event.count_ = 1;
+            notificationEventStats.insert(std::pair<std::string, BundleActiveEventStats>(event.name_, event));
+        }
+    }
+}
+
+int32_t BundleActiveUsageDatabase::JudgeQueryCondition(const int64_t beginTime,
+    const int64_t endTime, const int64_t eventTableTime)
+{
+    if (eventTableName_ == UNKNOWN_TABLE_NAME) {
+        BUNDLE_ACTIVE_LOGE("eventTable does not exist");
+        return QUERY_CONDITION_INVALID;
+    }
+    if (endTime <= beginTime) {
+        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= beginTime(%{public}lld)",
+            (long long)endTime, (long long)beginTime);
+        return QUERY_CONDITION_INVALID;
+    }
+    if (endTime < eventTableTime) {
+        BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= eventTableTime(%{public}lld)",
+            (long long)endTime, (long long)eventTableTime);
+        return QUERY_CONDITION_INVALID;
+    }
+    return QUERY_CONDITION_VALID;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

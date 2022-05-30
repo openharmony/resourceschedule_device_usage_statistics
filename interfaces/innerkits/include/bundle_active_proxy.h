@@ -18,9 +18,10 @@
 
 #include "ibundle_active_service.h"
 #include "bundle_active_event.h"
-#include "bundle_active_package_stats.h"
+#include "bundle_active_event_stats.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_module_record.h"
+#include "ibundle_active_group_callback.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -56,7 +57,7 @@ public:
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    void SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) override;
+    bool SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId) override;
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
@@ -74,15 +75,31 @@ public:
     * function: QueryPackageGroup, query bundle priority group calling bundle.
     * return: the priority group of calling bundle.
     */
-    int32_t QueryPackageGroup() override;
+    int32_t QueryPackageGroup(const std::string& bundleName, const int32_t userId) override;
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
-    * if other SAs call this API, they should explicit define userId
+    * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
     int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
         int32_t userId = -1) override;
+    /*
+    * function: QueryEventStats, query all from event stats in specific time span for calling user.
+    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    int32_t QueryEventStats(int64_t beginTime, int64_t endTime,
+        std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
+    /*
+    * function: QueryAppNotificationNumber, query all app notification number in specific time span for calling user.
+    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    int32_t QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+        std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
     /*
     * function: BundleActiveProxy, default constructor.
     * parameters: impl
@@ -90,12 +107,26 @@ public:
     explicit BundleActiveProxy(const sptr<IRemoteObject>& impl)
         : IRemoteProxy<IBundleActiveService>(impl) {}
     /*
+    * function: RegisterGroupCallBack, register the observer to groupObservers.
+    * parameters: observer
+    * return: result of RegisterGroupCallBack, true or false.
+    */
+    bool RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    /*
+    * function: UnregisterGroupCallBack, remove the observer from groupObservers.
+    * parameters: observer
+    * return: result of UnregisterGroupCallBack, true or false.
+    */
+    bool UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    /*
     * function: ~BundleActiveProxy, default destructor.
     */
     virtual ~BundleActiveProxy() {}
 
 private:
     static inline BrokerDelegator<BundleActiveProxy> delegator_;
+    int32_t IPCCommunication(int64_t beginTime, int64_t endTime, std::vector<BundleActiveEventStats>& eventStats,
+        int32_t userId, int32_t communicationFlag);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
