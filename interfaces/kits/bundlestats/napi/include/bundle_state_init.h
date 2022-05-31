@@ -28,7 +28,8 @@ extern "C" {
 __attribute__((constructor)) void RegisterModule(void);
 static napi_value BundleStateInit(napi_env env, napi_value exports);
 static napi_value InitIntervalType(napi_env env, napi_value exports);
-static napi_value EnumIntervalTypeConstructor(napi_env env, napi_callback_info info);
+static napi_value InitGroupType(napi_env env, napi_value exports);
+static napi_value EnumTypeConstructor(napi_env env, napi_callback_info info);
 
 #ifdef __cplusplus
 }

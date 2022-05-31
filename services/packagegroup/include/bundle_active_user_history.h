@@ -51,7 +51,7 @@ public:
     void ReportUsage(std::shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory, const std::string& bundleName,
         const int32_t newGroup, const uint32_t groupReason, const int64_t bootBasedTimeStamp,
         const int64_t timeUntilNextCheck, const int32_t userId);
-    bool SetBundleGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
+    int32_t SetBundleGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
         int32_t newGroup, uint32_t groupReason);
     int32_t GetLevelIndex(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
         const std::vector<int64_t> screenTimeLeve, const std::vector<int64_t> bootFromTimeLevel);

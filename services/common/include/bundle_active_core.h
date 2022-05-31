@@ -165,7 +165,7 @@ public:
     // when user switched, restore old userdata.
     void OnUserSwitched(const int32_t userId);
     // force set app group.
-    bool SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId);
+    int32_t SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId);
     // get all user in device.
     void GetAllActiveUser(std::vector<int32_t>& activatedOsAccountIds);
     // when service stop, call it to unregister commen event and shutdown call back.
@@ -177,14 +177,14 @@ public:
     * parameters: observer
     * return: result of RegisterGroupCallBack, true or false.
     */
-    bool RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+    int32_t RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
         const sptr<IBundleActiveGroupCallback> &observer);
     /*
     * function: UnregisterGroupCallBack, remove the observer from groupObservers.
     * parameters: observer
     * return: result of UnregisterGroupCallBack, true or false.
     */
-    bool UnregisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+    int32_t UnregisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
         const sptr<IBundleActiveGroupCallback> &observer);
     int32_t currentUsedUser_;
     void OnBundleGroupChanged(const BundleActiveGroupCallbackInfo& callbackInfo);

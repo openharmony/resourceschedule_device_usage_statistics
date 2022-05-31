@@ -649,7 +649,7 @@ int32_t BundleActiveCore::QueryAppNotificationNumber(int64_t beginTime, int64_t 
     return errCode;
 }
 
-bool BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId)
+int32_t BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId)
 {
     int32_t newReason = GROUP_CONTROL_REASON_FORCED;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
@@ -717,38 +717,36 @@ void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo&
     }
 }
 
-bool BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+int32_t BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
     const sptr<IBundleActiveGroupCallback> &observer)
 {
     BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack enter BundleActiveCore, return");
     std::lock_guard<std::mutex> lock(callbackMutex_);
     if (!observer) {
-        BUNDLE_ACTIVE_LOGI("observer is null, return");
-        return false;
+        return -1;
     }
     auto item = groupChangeObservers_.find(tokenId);
     if (item != groupChangeObservers_.end()) {
-        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack observer exist, return");
-        return false;
+        return 1;
     }
     groupChangeObservers_.emplace(tokenId, observer);
     AddObserverDeathRecipient(observer);
-    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
-    return true;
+    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack number is %{public}d", groupChangeObservers_.size());
+    return 0;
 }
 
-bool BundleActiveCore::UnregisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+int32_t BundleActiveCore::UnregisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
     const sptr<IBundleActiveGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(callbackMutex_);
     auto item = groupChangeObservers_.find(tokenId);
     if (item == groupChangeObservers_.end()) {
         BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not exist, return");
-        return false;
+        return 1;
     }
-    groupChangeObservers_.erase(tokenId);
     RemoveObserverDeathRecipient(item->second);
-    return true;
+    groupChangeObservers_.erase(tokenId);
+    return 0;
 }
 
 void BundleActiveCore::AddObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer)

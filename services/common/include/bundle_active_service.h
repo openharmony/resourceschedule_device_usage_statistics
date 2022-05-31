@@ -75,7 +75,7 @@ public:
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    bool SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId) override;
+    int32_t SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId) override;
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
@@ -128,13 +128,13 @@ public:
     * parameters: observer
     * return: result of RegisterGroupCallBack, true or false.
     */
-    bool RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    int32_t RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
     /*
     * function: UnregisterGroupCallBack, remove the observer from groupObservers.
     * parameters: observer
     * return: result of UnregisterGroupCallBack, true or false.
     */
-    bool UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    int32_t UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
 
 protected:
     /**

@@ -194,16 +194,19 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     oneBundleUsageHistory->reasonInGroup_ = GROUP_CONTROL_REASON_USAGE | groupReason;
     oneBundleUsageHistory->isChanged_ = true;
     BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack will ReportUsage");
-    BundleActiveGroupCallbackInfo callbackInfo(
+    bool isGroupChanged = (oldGroup == newGroup) ? true : false;
+    if (isGroupChanged) {
+        BundleActiveGroupCallbackInfo callbackInfo(
         userId, oldGroup, newGroup, oneBundleUsageHistory->reasonInGroup_, bundleName);
-    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack BundleActiveGroupCallbackInfo build success");
-    if (!bundleActiveCore_.expired()) {
-        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack will callback!");
-        bundleActiveCore_.lock()->OnBundleGroupChanged(callbackInfo);
+        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack BundleActiveGroupCallbackInfo build success");
+        if (!bundleActiveCore_.expired()) {
+            BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack will callback!");
+            bundleActiveCore_.lock()->OnBundleGroupChanged(callbackInfo);
+        }
     }
 }
 
-bool BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int32_t userId,
+int32_t BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int32_t userId,
     const int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason)
 {
     std::lock_guard<std::mutex> lock(setGroupMutex_);
@@ -211,16 +214,16 @@ bool BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int
         bundleName.c_str(), newGroup, groupReason, userId);
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userBundleHistory = GetUserHistory(userId, false);
     if (!userBundleHistory) {
-        return false;
+        return -1;
     }
     shared_ptr<BundleActivePackageHistory> oneBundleHistory = GetUsageHistoryInUserHistory(userBundleHistory,
         bundleName, bootBasedTimeStamp, false);
     if (!oneBundleHistory) {
-        return false;
+        return -1;
     }
     if (oneBundleHistory->currentGroup_ == newGroup && oneBundleHistory->reasonInGroup_ == groupReason) {
         BUNDLE_ACTIVE_LOGI("%{public}s group and reason is same as before, not update", bundleName.c_str());
-        return false;
+        return 1;
     }
     int32_t oldGroup = oneBundleHistory->currentGroup_;
     oneBundleHistory->currentGroup_ = newGroup;
@@ -232,7 +235,7 @@ bool BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int
     if (!bundleActiveCore_.expired()) {
         bundleActiveCore_.lock()->OnBundleGroupChanged(callbackInfo);
     }
-    return true;
+    return 0;
 }
 
 void BundleActiveUserHistory::UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t bootBasedTimeStamp,

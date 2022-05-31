@@ -50,6 +50,7 @@ napi_value BundleStateCommon::NapiGetNull(napi_env env)
 void BundleStateCommon::GetCallbackPromiseResult(const napi_env &env,
     const AsyncWorkData &workData, const napi_value &result)
 {
+
     if (workData.isCallback) {
         SetCallbackInfo(env, workData.callback, workData.errorCode, result);
     } else {
@@ -67,7 +68,13 @@ void BundleStateCommon::SetCallbackInfo(
     napi_value resultout = nullptr;
     napi_get_reference_value(env, callbackIn, &callback);
     napi_value results[ARGS_TWO] = {nullptr};
-    results[PARAM_FIRST] = GetErrorValue(env, errorCode);
+    if (errorCode == -1) {
+        results[PARAM_FIRST] = GetErrorValue(env, ERR_SERVICE_FAILED);
+    } else if (errorCode == 0) {
+        results[PARAM_FIRST] = GetErrorValue(env, errorCode);
+    } else if (errorCode == 1) {
+        results[PARAM_FIRST] = GetErrorValue(env, ERR_REPEAT_OPERATION);
+    }
     results[PARAM_SECOND] = result;
     NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &results[PARAM_FIRST],
         &resultout));
@@ -303,7 +310,11 @@ void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred 
     if (errorCode == ERR_OK) {
         napi_resolve_deferred(env, deferred, result);
     } else {
-        napi_reject_deferred(env, deferred, GetErrorValue(env, errorCode));
+        if (errorCode == -1) {
+            napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_SERVICE_FAILED));
+        } else if (errorCode == 1) {
+            napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_REPEAT_OPERATION));
+        } 
     }
 }
 

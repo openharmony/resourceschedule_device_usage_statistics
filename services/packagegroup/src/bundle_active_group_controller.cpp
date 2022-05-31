@@ -314,16 +314,16 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     }
 }
 
-bool BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int32_t userId,
+int32_t BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int32_t userId,
     int32_t newGroup, uint32_t reason, const int64_t bootBasedTimeStamp)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!IsBundleInstalled(bundleName, userId)) {
-        return false;
+        return -1;
     }
     auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName, userId, bootBasedTimeStamp, true);
     if (!oneBundleHistory) {
-        return false;
+        return -1;
     }
     return bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, reason);
 }
@@ -350,7 +350,10 @@ int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName,
 
 int32_t BundleActiveGroupController::QueryPackageGroup(const std::string& bundleName, const int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("QueryPackageGroup called");
+    if (bundleName.empty()) {
+        BUNDLE_ACTIVE_LOGE("bundleName can not get by userId");
+        return -1;
+    }
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     if (!IsBundleInstalled(bundleName, userId)) {
         BUNDLE_ACTIVE_LOGI("QueryPackageGroup is not bundleInstalled");
@@ -362,7 +365,7 @@ int32_t BundleActiveGroupController::QueryPackageGroup(const std::string& bundle
     if (!oneBundleHistory) {
         return -1;
     }
-    BUNDLE_ACTIVE_LOGI("QueryPackageGroup group is %{public}d ", oneBundleHistory->currentGroup_);
+    BUNDLE_ACTIVE_LOGI("QueryPackageGroup group is %{public}d, ",oneBundleHistory->currentGroup_);
     return oneBundleHistory->currentGroup_;
 }
 
