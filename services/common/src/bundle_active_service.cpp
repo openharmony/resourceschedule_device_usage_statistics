@@ -443,7 +443,7 @@ int32_t BundleActiveService::QueryPackageGroup(std::string& bundleName, int32_t 
                 AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
                     result = bundleActiveCore_->QueryPackageGroup(bundleName, userId);
             }
-        } 
+        }
     }
     return result;
 }
@@ -480,7 +480,6 @@ int32_t BundleActiveService::UnregisterGroupCallBack(const sptr<IBundleActiveGro
         AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
         result = bundleActiveCore_->UnregisterGroupCallBack(tokenId, observer);
     }
-
     return result;
 }
 

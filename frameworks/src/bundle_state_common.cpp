@@ -50,7 +50,6 @@ napi_value BundleStateCommon::NapiGetNull(napi_env env)
 void BundleStateCommon::GetCallbackPromiseResult(const napi_env &env,
     const AsyncWorkData &workData, const napi_value &result)
 {
-
     if (workData.isCallback) {
         SetCallbackInfo(env, workData.callback, workData.errorCode, result);
     } else {
@@ -314,7 +313,7 @@ void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred 
             napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_SERVICE_FAILED));
         } else if (errorCode == 1) {
             napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_REPEAT_OPERATION));
-        } 
+        }
     }
 }
 

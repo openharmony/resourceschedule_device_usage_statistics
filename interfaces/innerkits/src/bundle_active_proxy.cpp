@@ -116,7 +116,8 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
     return result;
 }
 
-int32_t BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId)
+int32_t BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int32_t newGroup,
+    int32_t errCode, int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("SetBundleGroup enter bundleActiveProxy");
     MessageParcel data;

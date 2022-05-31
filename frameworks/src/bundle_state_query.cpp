@@ -331,9 +331,9 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
             }
         },
         [](napi_env env, napi_status status, void *data) {
-            AsyncCallbackInfoPriorityGroup * asyncCallbackInfo = (AsyncCallbackInfoPriorityGroup *)data;
+            AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = (AsyncCallbackInfoPriorityGroup *)data;
             if (asyncCallbackInfo) {
-                if(asyncCallbackInfo->priorityGroup == -1) {
+                if (asyncCallbackInfo->priorityGroup == -1) {
                     asyncCallbackInfo->priorityGroup = ERR_SERVICE_FAILED;
                 }
                 napi_value result = nullptr;

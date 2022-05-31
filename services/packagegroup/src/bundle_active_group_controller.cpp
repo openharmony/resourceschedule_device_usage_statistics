@@ -365,7 +365,7 @@ int32_t BundleActiveGroupController::QueryPackageGroup(const std::string& bundle
     if (!oneBundleHistory) {
         return -1;
     }
-    BUNDLE_ACTIVE_LOGI("QueryPackageGroup group is %{public}d, ",oneBundleHistory->currentGroup_);
+    BUNDLE_ACTIVE_LOGI("QueryPackageGroup group is %{public}d", oneBundleHistory->currentGroup_);
     return oneBundleHistory->currentGroup_;
 }
 

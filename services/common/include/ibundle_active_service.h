@@ -98,7 +98,8 @@ public:
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    virtual int32_t SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId) = 0;
+    virtual int32_t SetBundleGroup(const std::string& bundleName, int32_t newGroup,
+        int32_t errCode, int32_t userId) = 0;
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
