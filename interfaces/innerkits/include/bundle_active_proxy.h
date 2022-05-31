@@ -75,7 +75,7 @@ public:
     * function: QueryPackageGroup, query bundle priority group calling bundle.
     * return: the priority group of calling bundle.
     */
-    int32_t QueryPackageGroup(const std::string& bundleName, const int32_t userId) override;
+    int32_t QueryPackageGroup(std::string& bundleName, const int32_t userId) override;
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,

@@ -93,7 +93,7 @@ public:
     * function: QueryPackageGroup, query bundle priority group calling bundle.
     * return: the priority group of calling bundle.
     */
-    virtual int32_t QueryPackageGroup(const std::string& bundleName, int32_t userId) = 0;
+    virtual int32_t QueryPackageGroup(std::string& bundleName, int32_t userId) = 0;
     /*
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId

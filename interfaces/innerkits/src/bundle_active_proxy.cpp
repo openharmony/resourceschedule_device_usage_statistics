@@ -197,7 +197,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64
     return result;
 }
 
-int32_t BundleActiveProxy::QueryPackageGroup(const std::string& bundleName, const int32_t userId)
+int32_t BundleActiveProxy::QueryPackageGroup(std::string& bundleName, const int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -209,8 +209,9 @@ int32_t BundleActiveProxy::QueryPackageGroup(const std::string& bundleName, cons
     data.WriteString(bundleName);
     data.WriteInt32(userId);
     Remote() -> SendRequest(QUERY_BUNDLE_GROUP, data, reply, option);
-
-    return reply.ReadInt32();
+    int32_t result = reply.ReadInt32();
+    BUNDLE_ACTIVE_LOGI("the result of QueryPackgeGroup is %{public}d", result);
+    return result;
 }
 
 int32_t BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,

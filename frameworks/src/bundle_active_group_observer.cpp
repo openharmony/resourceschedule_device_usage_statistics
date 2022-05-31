@@ -78,7 +78,8 @@ napi_value SetBundleGroupChangedData(const CallbackReceiveDataWorker *commonEven
         commonEventDataWorkerData->env, commonEventDataWorkerData->bundleName.c_str(), NAPI_AUTO_LENGTH, &value);
     napi_set_named_property(commonEventDataWorkerData->env, result, "bundleName", value);
     BUNDLE_ACTIVE_LOGI(
-        "oldGroup=%{public}d, newGroup=%{public}d, userId=%{public}d, changeReason=%{public}d, bundleName=%{public}s",
+        "RegisterGroupCallBack oldGroup=%{public}d, newGroup=%{public}d, userId=%{public}d, "
+        "changeReason=%{public}d, bundleName=%{public}s",
         commonEventDataWorkerData->oldGroup, commonEventDataWorkerData->newGroup, commonEventDataWorkerData->userId,
         commonEventDataWorkerData->changeReason, commonEventDataWorkerData->bundleName.c_str());
 
@@ -171,12 +172,13 @@ void BundleActiveGroupObserver::OnBundleGroupChanged(const BundleActiveGroupCall
 
     BUNDLE_ACTIVE_LOGI("OnReceiveEvent this = %{public}p", this);
 
-    uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnBundleGroupChanged);
-    delete callbackReceiveDataWorker;
-    callbackReceiveDataWorker = nullptr;
-    delete work;
-    work = nullptr;
-
+    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnBundleGroupChanged);
+    if (ret != 0) {
+        delete callbackReceiveDataWorker;
+        callbackReceiveDataWorker = nullptr;
+        delete work;
+        work = nullptr;
+    }
     BUNDLE_ACTIVE_LOGI("OnBundleGroupChanged end");
 }
 
@@ -269,12 +271,11 @@ napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
                asyncCallbackInfo->state =
                     BundleActiveClient::GetInstance().RegisterGroupCallBack(asyncCallbackInfo->observer);
             } else {
-                BUNDLE_ACTIVE_LOGE("QueryCurrentBundleActiveStates, asyncCallbackInfo == nullptr");
+                BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack, asyncCallbackInfo == nullptr");
             }
         },
         [](napi_env env, napi_status status, void *data) {
             AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
-            std::unique_ptr<AsyncRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
             if (asyncCallbackInfo) {
                 napi_value result = nullptr;
                 napi_get_boolean(env, asyncCallbackInfo->state, &result);
@@ -283,11 +284,12 @@ napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
         },
         (void *)asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork));
-    callbackPtr.release();
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }
@@ -342,7 +344,7 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
     std::unique_ptr<AsyncUnRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
     callbackPtr->observer = registerObserver;
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
-    
+    BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack will Async");
     napi_value resourceName = nullptr;
     NAPI_CALL(env, napi_create_string_latin1(env, "UnRegisterGroupCallBack", NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env,
@@ -350,7 +352,6 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
         resourceName,
         [](napi_env env, void *data) {
             AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
-            std::unique_ptr<AsyncUnRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->state =
                     BundleActiveClient::GetInstance().UnregisterGroupCallBack(asyncCallbackInfo->observer);
@@ -369,14 +370,13 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
         (void *)asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    callbackPtr.release();
     if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
-    delete registerObserver;
-    registerObserver = nullptr;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
