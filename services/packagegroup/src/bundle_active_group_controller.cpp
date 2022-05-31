@@ -218,12 +218,12 @@ uint32_t BundleActiveGroupController::EventToGroupReason(const int32_t eventId)
 void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp,
     const int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("ReportEvent called");
     if (bundleGroupEnable_ == false) {
         return;
     }
     std::lock_guard<std::mutex> lock(mutex_);
     if (IsBundleInstalled(event.bundleName_, userId) == false) {
+        BUNDLE_ACTIVE_LOGE("Report an uninstalled package event, return!");
         return;
     }
     int32_t eventId = event.eventId_;

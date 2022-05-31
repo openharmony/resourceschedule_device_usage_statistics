@@ -41,7 +41,8 @@ public:
     ~BundleActiveUsageDatabase();
     void InitDatabaseTableInfo(int64_t currentTime);
     void InitUsageGroupDatabase(const int32_t databaseType, const bool forModuleRecords);
-    void UpdateUsageData(int32_t databaseType, BundleActivePeriodStats &stats);
+    void UpdateBundleUsageData(int32_t databaseType, BundleActivePeriodStats &stats);
+    void UpdateEventData(int32_t databaseType, BundleActivePeriodStats &stats);
     std::shared_ptr<BundleActivePeriodStats> GetCurrentUsageData(int32_t databaseType, int32_t userId);
     void RenewTableTime(int64_t timeDiffMillis);
     int32_t GetOptimalIntervalType(int64_t beginTime, int64_t endTime);
