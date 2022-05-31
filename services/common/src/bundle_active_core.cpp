@@ -731,7 +731,7 @@ int32_t BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID
     }
     groupChangeObservers_.emplace(tokenId, observer);
     AddObserverDeathRecipient(observer);
-    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack number is %{public}d", groupChangeObservers_.size());
+    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
     return 0;
 }
 

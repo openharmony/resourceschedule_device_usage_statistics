@@ -69,10 +69,10 @@ void BundleStateCommon::SetCallbackInfo(
     napi_value results[ARGS_TWO] = {nullptr};
     if (errorCode == -1) {
         results[PARAM_FIRST] = GetErrorValue(env, ERR_SERVICE_FAILED);
-    } else if (errorCode == 0) {
-        results[PARAM_FIRST] = GetErrorValue(env, errorCode);
     } else if (errorCode == 1) {
         results[PARAM_FIRST] = GetErrorValue(env, ERR_REPEAT_OPERATION);
+    } else {
+        results[PARAM_FIRST] = GetErrorValue(env, errorCode);
     }
     results[PARAM_SECOND] = result;
     NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &results[PARAM_FIRST],
@@ -306,14 +306,20 @@ void BundleStateCommon::GetModuleRecordForResult(napi_env env,
 void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred &deferred,
     const napi_value &result, const int32_t &errorCode)
 {
-    if (errorCode == ERR_OK) {
+    switch (errorCode)
+    {
+    case ERR_OK:
         napi_resolve_deferred(env, deferred, result);
-    } else {
-        if (errorCode == -1) {
-            napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_SERVICE_FAILED));
-        } else if (errorCode == 1) {
-            napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_REPEAT_OPERATION));
-        }
+        break;
+    case -1:
+        napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_SERVICE_FAILED));
+        break;
+    case 1:
+        napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_REPEAT_OPERATION));
+        break;
+    default:
+        napi_reject_deferred(env, deferred, GetErrorValue(env, errorCode));
+        break;
     }
 }
 
