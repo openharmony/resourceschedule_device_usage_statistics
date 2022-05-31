@@ -218,7 +218,6 @@ uint32_t BundleActiveGroupController::EventToGroupReason(const int32_t eventId)
 void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp,
     const int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("ReportEvent called");
     if (bundleGroupEnable_ == false) {
         return;
     }
@@ -375,7 +374,6 @@ int32_t BundleActiveGroupController::QueryPackageGroup(const std::string& bundle
         BUNDLE_ACTIVE_LOGI("QueryPackageGroup is not bundleInstalled");
         return -1;
     }
-
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(
         bundleName, userId, bootBasedTimeStamp, false);
