@@ -195,9 +195,9 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     oneBundleUsageHistory->isChanged_ = true;
     BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack will ReportUsage");
     bool isGroupChanged = (oldGroup == newGroup) ? true : false;
-    if (isGroupChanged) {
+    if (!isGroupChanged) {
         BundleActiveGroupCallbackInfo callbackInfo(
-        userId, oldGroup, newGroup, oneBundleUsageHistory->reasonInGroup_, bundleName);
+            userId, oldGroup, newGroup, oneBundleUsageHistory->reasonInGroup_, bundleName);
         BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack BundleActiveGroupCallbackInfo build success");
         if (!bundleActiveCore_.expired()) {
             BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack will callback!");
@@ -230,10 +230,13 @@ int32_t BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const 
     oneBundleHistory->reasonInGroup_ = groupReason;
     oneBundleHistory->isChanged_ = true;
     BUNDLE_ACTIVE_LOGI("SetBundleGroup set success");
-    BundleActiveGroupCallbackInfo callbackInfo(
-        userId, oldGroup, newGroup, oneBundleHistory->reasonInGroup_, bundleName);
-    if (!bundleActiveCore_.expired()) {
-        bundleActiveCore_.lock()->OnBundleGroupChanged(callbackInfo);
+    bool isGroupChanged = (oldGroup == newGroup) ? true : false;
+    if (!isGroupChanged) {
+        BundleActiveGroupCallbackInfo callbackInfo(
+            userId, oldGroup, newGroup, oneBundleHistory->reasonInGroup_, bundleName);
+        if (!bundleActiveCore_.expired()) {
+            bundleActiveCore_.lock()->OnBundleGroupChanged(callbackInfo);
+        }
     }
     return 0;
 }
