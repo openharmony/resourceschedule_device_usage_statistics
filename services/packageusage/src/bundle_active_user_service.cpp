@@ -176,7 +176,7 @@ void BundleActiveUserService::RestoreStats(bool forced)
                 if (!currentStats_[i]->bundleStats_.empty()) {
                     database_.UpdateBundleUsageData(i, *(currentStats_[i]));
                 }
-                if (!currentStats_[i]->events_.events_.empty()) {
+                if (!currentStats_[i]->events_.events_.empty() && i == BundleActivePeriodStats::PERIOD_DAILY) {
                     database_.UpdateEventData(i, *(currentStats_[i]));
                 }
             }
