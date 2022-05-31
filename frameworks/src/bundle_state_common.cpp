@@ -306,20 +306,19 @@ void BundleStateCommon::GetModuleRecordForResult(napi_env env,
 void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred &deferred,
     const napi_value &result, const int32_t &errorCode)
 {
-    switch (errorCode)
-    {
-    case ERR_OK:
-        napi_resolve_deferred(env, deferred, result);
-        break;
-    case -1:
-        napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_SERVICE_FAILED));
-        break;
-    case 1:
-        napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_REPEAT_OPERATION));
-        break;
-    default:
-        napi_reject_deferred(env, deferred, GetErrorValue(env, errorCode));
-        break;
+    switch (errorCode) {
+        case ERR_OK:
+            napi_resolve_deferred(env, deferred, result);
+            break;
+        case -1:
+            napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_SERVICE_FAILED));
+            break;
+        case 1:
+            napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_REPEAT_OPERATION));
+            break;
+        default:
+            napi_reject_deferred(env, deferred, GetErrorValue(env, errorCode));
+            break;
     }
 }
 
