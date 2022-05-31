@@ -183,6 +183,19 @@ std::string BundleActiveEvent::ToString()
     return "bundle name is " + this->bundleName_ + ", event is " +
         std::to_string(this->eventId_) + ", timestamp is " + std::to_string(this->timeStamp_) + "\n";
 }
+
+bool BundleActiveEvent::IsBundleEvent(const int32_t eventId)
+{
+    if (eventId == ABILITY_BACKGROUND ||
+        eventId == ABILITY_FOREGROUND ||
+        eventId == ABILITY_STOP ||
+        eventId == LONG_TIME_TASK_STARTTED ||
+        eventId == LONG_TIME_TASK_ENDED ||
+        eventId == END_OF_THE_DAY) {
+            return true;
+    }
+    return false;
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 

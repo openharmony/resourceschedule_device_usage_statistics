@@ -53,7 +53,7 @@ void BundleActivePeriodStats::Update(const std::string bundleName, const std::st
                 tmpUsageStats->Update("", timeStamp, eventId, abilityId);
             }
         }
-    } else {
+    } else if (BundleActiveEvent::IsBundleEvent(eventId)){
         auto usageStats = GetOrCreateUsageStats(bundleName);
         usageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
     }

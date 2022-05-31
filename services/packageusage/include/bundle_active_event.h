@@ -120,6 +120,12 @@ public:
     * return: string of bundlename, timestamp, eventid.
     */
     std::string ToString();
+    /**
+    * @brief get if the event is reported by bundle usage.
+    *
+    * @return return true if event reported by bundle usage.
+    */
+    static bool IsBundleEvent(const int32_t eventId);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

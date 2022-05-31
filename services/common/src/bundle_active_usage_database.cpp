@@ -1167,7 +1167,20 @@ void BundleActiveUsageDatabase::RenewTableTime(int64_t changedTime)
     }
 }
 
-void BundleActiveUsageDatabase::UpdateUsageData(int32_t databaseType, BundleActivePeriodStats &stats)
+void BundleActiveUsageDatabase::UpdateEventData(int32_t databaseType, BundleActivePeriodStats &stats)
+{
+    lock_guard<mutex> lock(databaseMutex_);
+    CheckDatabaseFile(databaseType);
+    if (databaseType != DAILY_DATABASE_INDEX) {
+        return;
+    }
+    if (stats.events_.Size() != 0) {
+        CheckDatabaseFile(EVENT_DATABASE_INDEX);
+        FlushEventInfo(EVENT_DATABASE_INDEX, stats);
+    }
+}
+
+void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, BundleActivePeriodStats &stats)
 {
     lock_guard<mutex> lock(databaseMutex_);
     if (databaseType < 0 || databaseType >= EVENT_DATABASE_INDEX) {
@@ -1175,12 +1188,6 @@ void BundleActiveUsageDatabase::UpdateUsageData(int32_t databaseType, BundleActi
         return;
     }
     CheckDatabaseFile(databaseType);
-    if (databaseType == DAILY_DATABASE_INDEX) {
-        if (stats.events_.Size() != 0) {
-            CheckDatabaseFile(EVENT_DATABASE_INDEX);
-            FlushEventInfo(EVENT_DATABASE_INDEX, stats);
-        }
-    }
     int32_t packageTableIndex = BundleActiveBinarySearch::GetInstance()->BinarySearch(
         sortedTableArray_.at(databaseType), stats.beginTime_);
     if (packageTableIndex < 0) {

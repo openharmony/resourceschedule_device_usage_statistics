@@ -173,10 +173,12 @@ void BundleActiveUserService::RestoreStats(bool forced)
         BUNDLE_ACTIVE_LOGI("RestoreStats() stat changed is true");
         for (uint32_t i = 0; i < currentStats_.size(); i++) {
             if (currentStats_[i]) {
-                if (currentStats_[i]->bundleStats_.empty() && currentStats_[i]->events_.events_.empty()) {
-                    continue;
+                if (!currentStats_[i]->bundleStats_.empty()) {
+                    database_.UpdateBundleUsageData(i, *(currentStats_[i]));
                 }
-                database_.UpdateUsageData(i, *(currentStats_[i]));
+                if (!currentStats_[i]->events_.events_.empty() && i == BundleActivePeriodStats::PERIOD_DAILY) {
+                    database_.UpdateEventData(i, *(currentStats_[i]));
+                }
             }
         }
         if (!moduleRecords_.empty()) {
