@@ -98,7 +98,8 @@ public:
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    virtual bool SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId) = 0;
+    virtual int32_t SetBundleGroup(const std::string& bundleName, int32_t newGroup,
+        int32_t errCode, int32_t userId) = 0;
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
@@ -108,8 +109,8 @@ public:
     virtual int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
         int32_t userId) = 0;
 
-    virtual bool RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
-    virtual bool UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
+    virtual int32_t RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
+    virtual int32_t UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
 
     /*
     * function: QueryEventStats, query all from event stats in specific time span for calling user.

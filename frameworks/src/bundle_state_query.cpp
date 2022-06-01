@@ -333,8 +333,12 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = (AsyncCallbackInfoPriorityGroup *)data;
             if (asyncCallbackInfo) {
+                if (asyncCallbackInfo->priorityGroup == -1) {
+                    asyncCallbackInfo->priorityGroup = ERR_SERVICE_FAILED;
+                }
                 napi_value result = nullptr;
                 napi_create_int32(env, asyncCallbackInfo->priorityGroup, &result);
+                BUNDLE_ACTIVE_LOGD("QueryPackageGroup, group is %{public}d", asyncCallbackInfo->priorityGroup);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
@@ -754,10 +758,11 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
         (void *)asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    callbackPtr.release();
     if (callbackPtr->isCallback) {
+        callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
     } else {
+        callbackPtr.release();
         return promise;
     }
 }
@@ -832,7 +837,7 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    if (memset_s(asyncCallbackInfo, sizeof(AsyncCallbackInfoSetBundleGroup), 0, sizeof(AsyncCallbackInfoSetBundleGroup))
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo))
         != EOK) {
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         delete asyncCallbackInfo;
@@ -853,7 +858,7 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
         [](napi_env env, void *data) {
             AsyncCallbackInfoSetBundleGroup *asyncCallbackInfo = (AsyncCallbackInfoSetBundleGroup *)data;
             if (asyncCallbackInfo) {
-                    asyncCallbackInfo->state = BundleActiveClient::GetInstance().SetBundleGroup(
+                    asyncCallbackInfo->errorCode = BundleActiveClient::GetInstance().SetBundleGroup(
                         asyncCallbackInfo->bundleName, asyncCallbackInfo->newGroup, asyncCallbackInfo->errorCode);
             } else {
                 BUNDLE_ACTIVE_LOGE("SetBundleGroup, asyncCallbackInfo == nullptr");
@@ -863,6 +868,7 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
             AsyncCallbackInfoSetBundleGroup *asyncCallbackInfo = (AsyncCallbackInfoSetBundleGroup *)data;
             if (asyncCallbackInfo) {
                 napi_value result = nullptr;
+                asyncCallbackInfo->state = (asyncCallbackInfo->errorCode == ERR_OK) ? true : false;
                 napi_get_boolean(env, asyncCallbackInfo->state, &result);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }

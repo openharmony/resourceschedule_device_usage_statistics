@@ -53,6 +53,9 @@ enum : int32_t {
     ERR_MODULE_STATS_MAXNUM_INVALID,
     ERR_EVENT_TYPE,
     ERR_EVENT_TYPE_NUMBER,
+    ERR_SERVICE_FAILED,
+    ERR_REPEAT_OPERATION,
+    ERR_REGISTER_OBSERVER_IS_NULL,
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

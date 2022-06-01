@@ -85,11 +85,11 @@ std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t beg
     return bundleActiveProxy_->QueryEvents(beginTime, endTime, errCode, userId);
 }
 
-bool BundleActiveClient::SetBundleGroup(std::string bundleName, const int32_t newGroup,
+int32_t BundleActiveClient::SetBundleGroup(std::string bundleName, const int32_t newGroup,
     int32_t errCode, int32_t userId)
 {
     if (!GetBundleActiveProxy()) {
-        return false;
+        return -1;
     }
     return bundleActiveProxy_->SetBundleGroup(bundleName, newGroup, errCode, userId);
 }
@@ -117,7 +117,6 @@ int32_t BundleActiveClient::QueryPackageGroup(std::string& bundleName, const int
         return -1;
     }
     int32_t result = bundleActiveProxy_->QueryPackageGroup(bundleName, userId);
-    BUNDLE_ACTIVE_LOGI("QueryPackageGroup group is %{public}d ", result);
     return result;
 }
 
