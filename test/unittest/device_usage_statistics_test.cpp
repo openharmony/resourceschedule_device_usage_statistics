@@ -42,7 +42,7 @@ static int32_t DEFAULT_USERID = 0;
 static int32_t DEFAULT_ERRCODE = 0;
 static int64_t LARGE_NUM = 20000000000000;
 static int32_t DEFAULT_GROUP = 10;
-static std::vector GROUP_TYPE {10, 20, 30 , 40, 50};
+static std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50};
 static std::shared_ptr<BundleActiveGroupCallbackStub> observer = nullptr;
 
 class DeviceUsageStatisticsTest : public testing::Test {

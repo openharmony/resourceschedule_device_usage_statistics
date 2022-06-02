@@ -43,7 +43,7 @@ const uint32_t MODULE_RECORDS_PARAMS = 2;
 const uint32_t SECOND_ARG = 2;
 const uint32_t THIRD_ARG = 3;
 const int32_t MAXNUM_UP_LIMIT = 1000;
-const std::vector GROUP_TYPE {10, 20, 30, 40, 50, 60};
+const std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50, 60};
 const uint32_t EVENT_STATES_MIN_PARAMS = 2;
 const uint32_t EVENT_STATES_PARAMS = 3;
 
