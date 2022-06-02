@@ -56,6 +56,7 @@ enum : int32_t {
     ERR_SERVICE_FAILED,
     ERR_REPEAT_OPERATION,
     ERR_REGISTER_OBSERVER_IS_NULL,
+    ERR_OBSERVER_CALLBACK_IS_INVALID,
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

@@ -39,8 +39,11 @@ static int64_t DEFAULT_FORMID = 1;
 static std::string DEFAULT_ABILITYID = "1234";
 static std::string DEFAULT_ABILITYNAME = "testability";
 static int32_t DEFAULT_USERID = 0;
+static int32_t DEFAULT_ERRCODE = 0;
 static int64_t LARGE_NUM = 20000000000000;
 static int32_t DEFAULT_GROUP = 10;
+static std::vector GROUP_TYPE {10, 20, 30 , 40, 50};
+static std::shared_ptr<BundleActiveGroupCallbackStub> observer = nullptr;
 
 class DeviceUsageStatisticsTest : public testing::Test {
 public:
@@ -151,13 +154,6 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleIdle_001, 
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryPackageGroup_001
- * @tc.desc: querypackagegroup
- * @tc.type: FUNC
- * @tc.require:
- */
-
-/*
  * @tc.name: DeviceUsageStatisticsTest_QueryFormStatistics_001
  * @tc.desc: QueryFormStatistics
  * @tc.type: FUNC
@@ -175,20 +171,89 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistic
     EXPECT_EQ(results.size(), 0);
 }
 
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001, Function | MediumTest | Level0)
+/*
+ * @tc.name: DeviceUsageStatisticsTest_QueryPackageGroup_001
+ * @tc.desc: querypackagegroup, no bundleName
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_001, Function | MediumTest | Level0)
 {
-    bool result = BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP, DEFAULT_USERID);
-    EXPECT_EQ(result, true);
+    std::string bundleName = "";
+    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(bundleName);
+    bool flag = false;
+    for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
+        if (*item == result) {
+            flag = true;
+            break;
+        }
+    }
+    EXPECT_EQ(flag, true);
 }
 
+/*
+ * @tc.name: DeviceUsageStatisticsTest_QueryPackageGroup_002
+ * @tc.desc: querypackagegroup, with bundleName
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_002, Function | MediumTest | Level0)
+{
+    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(DEFAULT_BUNDLENAME);
+    bool flag = false;
+    for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
+        if (*item == result) {
+            flag = true;
+            break;
+        }
+    }
+    EXPECT_EQ(flag, true);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_SetBundleGroup_001
+ * @tc.desc: setbundlename
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001, Function | MediumTest | Level0)
+{
+    int32_t result = BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP,
+        DEFAULT_ERRCODE);
+    EXPECT_EQ(result, DEFAULT_ERRCODE);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_RegisterGroupCallBack_001
+ * @tc.desc: registercallback
+ * @tc.type: FUNC
+ * @tc.require:
+ */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallBack_001, Function | MediumTest | Level0)
 {
-    auto observer=std::make_shared<BundleActiveGroupCallbackStub>();
+    observer=std::make_shared<BundleActiveGroupCallbackStub>();
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack construct observer!------------------------------");
     }
-    bool result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer.get());
-    EXPECT_EQ(result, true);
+    int32_t result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer.get());
+    EXPECT_EQ(result, DEFAULT_ERRCODE);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_UnRegisterGroupCallBack_001
+ * @tc.desc: unregistercallback
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_UnRegisterGroupCallBack_001,
+    Function | MediumTest | Level0)
+{
+    if (!observer) {
+        BUNDLE_ACTIVE_LOGI("observer has been delete");
+    }
+    int32_t result = BundleActiveClient::GetInstance().UnregisterGroupCallBack(observer.get());
+    observer = nullptr;
+    EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

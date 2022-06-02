@@ -207,17 +207,17 @@ napi_value ParseRegisterGroupCallBackParameters(const napi_env &env, const napi_
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     NAPI_ASSERT(env, argc == REGISTER_GROUP_CALLBACK_MIN_PARAMS || argc == REGISTER_GROUP_CALLBACK_PARAMS,
         "Invalid number of parameters");
+        
     // arg[0] : callback
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-    NAPI_ASSERT(env, valuetype == napi_function, "RegisterGroupCallBack Wrong argument type. Object expected.");
-
     BundleActiveGroupObserverInfo bundleActiveGroupObserverInfo;
-    if (!GetBundleGroupChangeCallback(env, argv[0], bundleActiveGroupObserverInfo)) {
+    if (valuetype != napi_function || !GetBundleGroupChangeCallback(env, argv[0], bundleActiveGroupObserverInfo)) {
         BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack bundleActiveGroupObserverInfo parse failed");
-        return nullptr;
+        params.errorCode = ERR_OBSERVER_CALLBACK_IS_INVALID;
+    } else {
+        observer = bundleActiveGroupObserverInfo.callback;
     }
-    observer = bundleActiveGroupObserverInfo.callback;
 
     // argv[1]: asyncCallback
     if (argc == REGISTER_GROUP_CALLBACK_PARAMS) {

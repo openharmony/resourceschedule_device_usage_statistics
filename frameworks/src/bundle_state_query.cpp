@@ -334,7 +334,7 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
             AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = (AsyncCallbackInfoPriorityGroup *)data;
             if (asyncCallbackInfo) {
                 if (asyncCallbackInfo->priorityGroup == -1) {
-                    asyncCallbackInfo->priorityGroup = ERR_SERVICE_FAILED;
+                    asyncCallbackInfo->errorCode = ERR_SERVICE_FAILED;
                 }
                 napi_value result = nullptr;
                 napi_create_int32(env, asyncCallbackInfo->priorityGroup, &result);
@@ -790,11 +790,10 @@ napi_value ParseAppUsageBundleGroupInfoParameters(const napi_env &env, const nap
         BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
         params.errorCode = ERR_USAGE_STATS_BUNDLENAME_TYPE;
     }
-
     // argv[1] : newGroup
     if ((params.errorCode == ERR_OK)
         && (BundleStateCommon::GetInt32NumberValue(env, argv[1], params.newGroup) == nullptr)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageBundleGroupInfoParameters failed, beginTime type is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseAppUsageBundleGroupInfoParameters failed, newGroup type is invalid.");
         params.errorCode = ERR_USAGE_STATS_GROUP_INVALID;
     }
     bool flag = false;
@@ -810,9 +809,8 @@ napi_value ParseAppUsageBundleGroupInfoParameters(const napi_env &env, const nap
         BUNDLE_ACTIVE_LOGE("ParseAppUsageBundleGroupInfoParameters failed, newGroup value is invalid.");
         params.errorCode = ERR_USAGE_STATS_GROUP_INVALID;
     }
-
     // argv[SECOND_ARG]: callback
-    if (params.errorCode == ERR_OK && argc == APP_USAGE_PARAMS_BUNDLE_GROUP) {
+    if (argc == APP_USAGE_PARAMS_BUNDLE_GROUP) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageBundleGroupInfoParameters invalid parameter type. "
