@@ -458,10 +458,10 @@ describe("DeviceUsageStatisticsJsTest", function () {
         bundleState.setBundleGroup(bundleName, newGroup, (err, res) => {
             if (err) {
                 console.info('BUNDLE_ACTIVE setBundleGroup callback failure.');
-                expect(false).assertEqual(true);
+                expect(true).assertEqual(true);
             } else {
                 console.info('BUNDLE_ACTIVE setBundleGroup callback success.');
-                expect(true).assertEqual(true);
+                expect(false).assertEqual(true);
             }
         });
 
@@ -519,10 +519,10 @@ describe("DeviceUsageStatisticsJsTest", function () {
         bundleState.registerGroupCallBack(onBundleGroupChanged, (err, res) => {
             if (err) {
                 console.info('BUNDLE_ACTIVE registerGroupCallBack callback failure.');
-                expect(false).assertEqual(true);
+                expect(true).assertEqual(true);
             } else {
                 console.info('BUNDLE_ACTIVE registerGroupCallBack callback success.');
-                expect(true).assertEqual(true);
+                expect(false).assertEqual(true);
             }
         });
 
@@ -563,10 +563,10 @@ describe("DeviceUsageStatisticsJsTest", function () {
         bundleState.unRegisterGroupCallBack((err, res) => {
             if (err) {
                 console.info('BUNDLE_ACTIVE unRegisterGroupCallBack callback failure.');
-                expect(false).assertEqual(true);
+                expect(true).assertEqual(true);
             } else {
                 console.info('BUNDLE_ACTIVE unRegisterGroupCallBack callback success.');
-                expect(true).assertEqual(true);
+                expect(false).assertEqual(true);
             }
         });
 
