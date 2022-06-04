@@ -17,7 +17,6 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-static std::mutex callbackMutex_;
 int32_t BundleActiveGroupCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
     MessageOption &option)
 {
@@ -32,14 +31,13 @@ int32_t BundleActiveGroupCallbackStub::OnRemoteRequest(uint32_t code, MessagePar
         case static_cast<uint32_t>(IBundleActiveGroupCallback::message::ON_BUNDLE_GROUP_CHANGED): {
             BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack OnRemoteRequest is nowing ON_BUNDLE_GROUP_CHANGED");
             BundleActiveGroupCallbackInfo* groupInfo = nullptr;
-            std::unique_lock<std::mutex> lock(callbackMutex_);
-            groupInfo = data.ReadParcelable<BundleActiveGroupCallbackInfo>();
+            std::shared_ptr<BundleActiveGroupCallbackInfo> groupInfo(
+                data.ReadParcelable<BundleActiveGroupCallbackInfo>());
             if (!groupInfo) {
                 BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack ReadParcelable<AbilityStateData> failed");
                 return -1;
             }
-            OnBundleGroupChanged(*groupInfo);
-            delete groupInfo;
+            OnBundleGroupChanged(*(groupInfo.get()));
             groupInfo = nullptr;
             break;
         }
