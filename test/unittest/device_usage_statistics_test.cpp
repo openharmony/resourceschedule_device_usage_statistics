@@ -39,6 +39,7 @@ static int64_t DEFAULT_FORMID = 1;
 static std::string DEFAULT_ABILITYID = "1234";
 static std::string DEFAULT_ABILITYNAME = "testability";
 static int32_t DEFAULT_USERID = 0;
+static int32_t COMMON_USERID = 100;
 static int32_t DEFAULT_ERRCODE = 0;
 static int64_t LARGE_NUM = 20000000000000;
 static int32_t DEFAULT_GROUP = 10;
@@ -179,27 +180,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistic
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_001, Function | MediumTest | Level0)
 {
-    std::string bundleName = "";
-    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(bundleName);
-    bool flag = false;
-    for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
-        if (*item == result) {
-            flag = true;
-            break;
-        }
-    }
-    EXPECT_EQ(flag, true);
-}
-
-/*
- * @tc.name: DeviceUsageStatisticsTest_QueryPackageGroup_002
- * @tc.desc: querypackagegroup, with bundleName
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_002, Function | MediumTest | Level0)
-{
-    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(DEFAULT_BUNDLENAME);
+    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(DEFAULT_BUNDLENAME, COMMON_USERID);
     bool flag = false;
     for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
         if (*item == result) {
@@ -219,7 +200,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001, Function | MediumTest | Level0)
 {
     int32_t result = BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP,
-        DEFAULT_ERRCODE);
+        DEFAULT_ERRCODE, COMMON_USERID);
     EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
 

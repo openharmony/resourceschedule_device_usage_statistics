@@ -23,10 +23,6 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveGroupCallbackProxy : public IRemoteProxy<IBundleActiveGroupCallback> {
 public:
-    /*
-    * function: default constructor.
-    */
-    BundleActiveGroupCallbackProxy() = delete;
     explicit BundleActiveGroupCallbackProxy(const sptr<IRemoteObject>& impl);
     virtual ~BundleActiveGroupCallbackProxy() override;
     DISALLOW_COPY_AND_MOVE(BundleActiveGroupCallbackProxy);
