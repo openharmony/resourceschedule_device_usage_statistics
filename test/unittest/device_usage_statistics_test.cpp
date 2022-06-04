@@ -208,7 +208,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEventStats_00
  * @tc.desc: QueryAppNotificationNumber
  * @tc.type: FUNC
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryAppNotificationNumber_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryAppNotificationNumber_001, Function
+    | MediumTest | Level0)
 {
     std::vector<BundleActiveEventStats> eventStats;
     int32_t errCode = BundleActiveClient::GetInstance().QueryAppNotificationNumber(0, LARGE_NUM, eventStats);
