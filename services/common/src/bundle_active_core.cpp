@@ -113,11 +113,13 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
             bundleActiveReportHandler_.lock()->SendEvent(event);
         }
     } else if (action == COMMON_EVENT_UNLOCK_SCREEN || action == COMMON_EVENT_LOCK_SCREEN) {
-        HandleLockEvent(action);
+        int32_t userId = data.GetWant().GetIntParam("userId", 0);
+        BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d", action.c_str(), userId);
+        HandleLockEvent(action, userId);
     }
 }
 
-void BundleActiveCommonEventSubscriber::HandleLockEvent(const std::string& action)
+void BundleActiveCommonEventSubscriber::HandleLockEvent(const std::string& action, const int32_t userId)
 {
     if (bundleActiveReportHandler_.expired()) {
         return;
@@ -130,6 +132,7 @@ void BundleActiveCommonEventSubscriber::HandleLockEvent(const std::string& actio
     } else {
         tmpHandlerObject.event_.eventId_ = BundleActiveEvent::SYSTEM_LOCK;
     }
+    tmpHandlerObject.userId_ = userId;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
     auto handlerobjToPtr = std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
@@ -461,16 +464,9 @@ void BundleActiveCore::OnUserSwitched(const int32_t userId)
 int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("FLUSH interval is %{public}lld, debug is %{public}d", (long long)flushInterval_, debugCore_);
+    ObtainSystemEventName(event);
     event.PrintEvent(debugCore_);
     std::lock_guard<std::mutex> lock(mutex_);
-    if (event.eventId_ == BundleActiveEvent::SYSTEM_LOCK || event.eventId_ == BundleActiveEvent::SYSTEM_UNLOCK) {
-        std::vector<int32_t> currentActiveUser;
-        BundleActiveCore::GetAllActiveUser(currentActiveUser);
-        if (currentActiveUser.size() == 1) {
-            userId = currentActiveUser.front();
-        }
-    }
-    ObtainSystemEventName(event);
     if (userId == 0 || userId == -1) {
         return -1;
     }

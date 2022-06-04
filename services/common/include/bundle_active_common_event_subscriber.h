@@ -46,7 +46,7 @@ public:
         bundleActiveReportHandler_(bundleActiveReportHandler) {}
     ~BundleActiveCommonEventSubscriber() = default;
     void OnReceiveEvent(const CommonEventData &data) override;
-    void HandleLockEvent(const std::string& action);
+    void HandleLockEvent(const std::string& action, const int32_t userId);
 
 private:
     std::mutex mutex_;

@@ -190,6 +190,30 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallB
     bool result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer.get());
     EXPECT_EQ(result, true);
 }
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_QueryEventStats_001
+ * @tc.desc: QueryEventStats
+ * @tc.type: FUNC
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEventStats_001, Function | MediumTest | Level0)
+{
+    std::vector<BundleActiveEventStats> eventStats;
+    int32_t errCode = BundleActiveClient::GetInstance().QueryEventStats(0, LARGE_NUM, eventStats);
+    EXPECT_EQ(errCode, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_QueryAppNotificationNumber_001
+ * @tc.desc: QueryAppNotificationNumber
+ * @tc.type: FUNC
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryAppNotificationNumber_001, Function | MediumTest | Level0)
+{
+    std::vector<BundleActiveEventStats> eventStats;
+    int32_t errCode = BundleActiveClient::GetInstance().QueryAppNotificationNumber(0, LARGE_NUM, eventStats);
+    EXPECT_EQ(errCode, 0);
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 
