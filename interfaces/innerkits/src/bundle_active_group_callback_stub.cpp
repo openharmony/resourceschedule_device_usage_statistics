@@ -29,8 +29,6 @@ int32_t BundleActiveGroupCallbackStub::OnRemoteRequest(uint32_t code, MessagePar
     BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack BundleActiveGroupCallbackStub will switch");
     switch (code) {
         case static_cast<uint32_t>(IBundleActiveGroupCallback::message::ON_BUNDLE_GROUP_CHANGED): {
-            BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack OnRemoteRequest is nowing ON_BUNDLE_GROUP_CHANGED");
-            BundleActiveGroupCallbackInfo* groupInfo = nullptr;
             std::shared_ptr<BundleActiveGroupCallbackInfo> groupInfo(
                 data.ReadParcelable<BundleActiveGroupCallbackInfo>());
             if (!groupInfo) {

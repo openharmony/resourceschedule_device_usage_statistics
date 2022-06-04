@@ -338,7 +338,6 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
                 }
                 napi_value result = nullptr;
                 napi_create_int32(env, asyncCallbackInfo->priorityGroup, &result);
-                BUNDLE_ACTIVE_LOGD("QueryPackageGroup, group is %{public}d", asyncCallbackInfo->priorityGroup);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },

@@ -252,7 +252,6 @@ int32_t BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<Bundl
 
 int32_t BundleActiveProxy::RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
 {
-    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack enter proxy");
     if (!observer) {
         BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack observer null");
         return false;
@@ -281,7 +280,6 @@ int32_t BundleActiveProxy::UnregisterGroupCallBack(const sptr<IBundleActiveGroup
         BUNDLE_ACTIVE_LOGE("observer null");
         return false;
     }
-    BUNDLE_ACTIVE_LOGI("UnregisterGroupCallBack start");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
