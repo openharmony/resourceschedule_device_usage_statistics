@@ -195,6 +195,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallB
  * @tc.name: DeviceUsageStatisticsTest_QueryEventStats_001
  * @tc.desc: QueryEventStats
  * @tc.type: FUNC
+ * @tc.require: SR000H0H9H AR000H0ROG
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEventStats_001, Function | MediumTest | Level0)
 {
@@ -207,6 +208,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEventStats_00
  * @tc.name: DeviceUsageStatisticsTest_QueryAppNotificationNumber_001
  * @tc.desc: QueryAppNotificationNumber
  * @tc.type: FUNC
+ * @tc.require: SR000H0H7D AR000H0RR6
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryAppNotificationNumber_001, Function
     | MediumTest | Level0)

@@ -427,6 +427,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest020
      * @tc.desc: test queryBundleActiveEventStates promise.
      * @tc.type: FUNC
+     * @tc.require: SR000H0H9H AR000H0ROG
      */
     it("DeviceUsageStatisticsJsTest020", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest020---------------------------');
@@ -449,6 +450,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest021
      * @tc.desc: test queryBundleActiveEventStates callback.
      * @tc.type: FUNC
+     * @tc.require: SR000H0H9H AR000H0ROG
      */
     it("DeviceUsageStatisticsJsTest021", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest021---------------------------');
@@ -473,6 +475,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest022
      * @tc.desc: test queryAppNotificationNumber promise.
      * @tc.type: FUNC
+     * @tc.require: SR000H0H7D AR000H0RR6
      */
     it("DeviceUsageStatisticsJsTest022", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest022---------------------------');
@@ -495,6 +498,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest023
      * @tc.desc: test queryAppNotificationNumber callback.
      * @tc.type: FUNC
+     * @tc.require: SR000H0H7D AR000H0RR6
      */
     it("DeviceUsageStatisticsJsTest023", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest023---------------------------');
