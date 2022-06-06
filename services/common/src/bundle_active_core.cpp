@@ -716,7 +716,6 @@ void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo&
 int32_t BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
     const sptr<IBundleActiveGroupCallback> &observer)
 {
-    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack enter BundleActiveCore, return");
     std::lock_guard<std::mutex> lock(callbackMutex_);
     if (!observer) {
         return -1;

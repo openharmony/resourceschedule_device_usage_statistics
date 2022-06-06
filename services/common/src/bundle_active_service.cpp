@@ -450,7 +450,6 @@ int32_t BundleActiveService::QueryPackageGroup(std::string& bundleName, int32_t 
 
 int32_t BundleActiveService::RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
 {
-    BUNDLE_ACTIVE_LOGD("RegisterGroupCallBack enter bundleService");
     int result = -1;
     if (!bundleActiveCore_) {
         return result;
@@ -475,7 +474,6 @@ int32_t BundleActiveService::UnregisterGroupCallBack(const sptr<IBundleActiveGro
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     int32_t errCode = 0;
-    BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack enter BundleActiveService");
     if (CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode) ||
         AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
         result = bundleActiveCore_->UnregisterGroupCallBack(tokenId, observer);

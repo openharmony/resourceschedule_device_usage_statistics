@@ -241,7 +241,7 @@ declare namespace bundleState {
        /*
         * the use id 
         */
-       useId?: number;
+       userId?: number;
        /*
         * the change reason 
         */
@@ -422,6 +422,7 @@ declare namespace bundleState {
          * Indicates the limit group.
          */
          ACTIVE_GROUP_LIMIT = 50,
+         
          /**
          * Indicates the never group.
          */

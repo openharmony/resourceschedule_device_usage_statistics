@@ -201,23 +201,22 @@ napi_value GetBundleGroupChangeCallback(
 napi_value ParseRegisterGroupCallBackParameters(const napi_env &env, const napi_callback_info &info,
     RegisterCallbackInfo &params, sptr<BundleActiveGroupObserver> &observer)
 {
-    BUNDLE_ACTIVE_LOGI("enter ParseRegisterGroupCallBackParameters");
     size_t argc = REGISTER_GROUP_CALLBACK_PARAMS;
     napi_value argv[REGISTER_GROUP_CALLBACK_PARAMS] = {nullptr};
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     NAPI_ASSERT(env, argc == REGISTER_GROUP_CALLBACK_MIN_PARAMS || argc == REGISTER_GROUP_CALLBACK_PARAMS,
         "Invalid number of parameters");
+        
     // arg[0] : callback
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-    NAPI_ASSERT(env, valuetype == napi_function, "RegisterGroupCallBack Wrong argument type. Object expected.");
-
     BundleActiveGroupObserverInfo bundleActiveGroupObserverInfo;
-    if (!GetBundleGroupChangeCallback(env, argv[0], bundleActiveGroupObserverInfo)) {
+    if (valuetype != napi_function || !GetBundleGroupChangeCallback(env, argv[0], bundleActiveGroupObserverInfo)) {
         BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack bundleActiveGroupObserverInfo parse failed");
-        return nullptr;
+        params.errorCode = ERR_OBSERVER_CALLBACK_IS_INVALID;
+    } else {
+        observer = bundleActiveGroupObserverInfo.callback;
     }
-    observer = bundleActiveGroupObserverInfo.callback;
 
     // argv[1]: asyncCallback
     if (argc == REGISTER_GROUP_CALLBACK_PARAMS) {
@@ -231,7 +230,6 @@ napi_value ParseRegisterGroupCallBackParameters(const napi_env &env, const napi_
 
 napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
 {
-    BUNDLE_ACTIVE_LOGI("enter RegisterGroupCallBack");
     RegisterCallbackInfo params;
     ParseRegisterGroupCallBackParameters(env, info, params, registerObserver);
 
@@ -316,15 +314,13 @@ napi_value ParseUnRegisterGroupCallBackParameters(const napi_env &env, const nap
 
 napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
 {
-    BUNDLE_ACTIVE_LOGI("enter UnRegisterGroupCallBack");
-
     UnRegisterCallbackInfo params;
     ParseUnRegisterGroupCallBackParameters(env, info, params);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     if (!registerObserver) {
-        BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not");
+        BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not exist");
         params.errorCode = ERR_REGISTER_OBSERVER_IS_NULL;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
