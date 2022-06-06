@@ -336,7 +336,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest013
      * @tc.desc: test queryAppUsagePriorityGroup promise.
      * @tc.type: FUNC
-     * @tc.require: SR000GGTN7 AR000GH89H AR000GH89I AR000GH899
+     * @tc.require: SR000H0HAQ AR000H0ROE
      */
     it("DeviceUsageStatisticsJsTest013", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest013---------------------------');
@@ -358,7 +358,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest014
      * @tc.desc: test queryAppUsagePriorityGroup callback.
      * @tc.type: FUNC
-     * @tc.require: SR000GGTN7 AR000GH89E AR000GH89F AR000GH89G
+     * @tc.require: SR000H0HAQ AR000H0ROE
      */
     it("DeviceUsageStatisticsJsTest014", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest014---------------------------');
@@ -382,7 +382,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest015
      * @tc.desc: test queryAppUsagePriorityGroup promise, with no param.
      * @tc.type: FUNC
-     * @tc.require: SR000GGTN7 AR000GH89H AR000GH89I AR000GH899
+     * @tc.require: SR000H0HAQ AR000H0ROE
      */
     it("DeviceUsageStatisticsJsTest015", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest015---------------------------');
@@ -403,7 +403,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest016
      * @tc.desc: test queryAppUsagePriorityGroup callback, with no param.
      * @tc.type: FUNC
-     * @tc.require: SR000GGTN7 AR000GH89E AR000GH89F AR000GH89G
+     * @tc.require: SR000H0HAQ AR000H0ROE
      */
     it("DeviceUsageStatisticsJsTest016", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest016---------------------------');
@@ -426,12 +426,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest017
      * @tc.desc: test setBundleGroup promise.
      * @tc.type: FUNC
-     * @tc.require: SR000GGTN7 AR000GH89H AR000GH89I AR000GH899
+     * @tc.require: SR000H0HAQ AR000H0ROE
      */
     it("DeviceUsageStatisticsJsTest017", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest017---------------------------');
         let bundleName = 'com.example.deviceUsageStatistics';
-        let newGroup   = 10;
+        let newGroup   = 30;
         bundleState.setBundleGroup(bundleName, newGroup).then( res => {
             console.info('BUNDLE_ACTIVE setBundleGroup promise success.');
             expect(true).assertEqual(true);
@@ -449,12 +449,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest018
      * @tc.desc: test setBundleGroup callback.
      * @tc.type: FUNC
-     * @tc.require: SR000GGTN7 AR000GH89E AR000GH89F AR000GH89G
+     * @tc.require: SR000H0HAQ AR000H0ROE
      */
     it("DeviceUsageStatisticsJsTest018", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest018---------------------------');
         let bundleName = 'com.example.deviceUsageStatistics';
-        let newGroup   = 10;
+        let newGroup   = 30;
         bundleState.setBundleGroup(bundleName, newGroup, (err, res) => {
             if (err) {
                 console.info('BUNDLE_ACTIVE setBundleGroup callback failure.');
@@ -474,9 +474,8 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest019
      * @tc.desc: test registerGroupCallBack promise.
      * @tc.type: FUNC
-     * @tc.require: SR000GU2UE AR0003GU3EQ
+     * @tc.require: SR000H0HAQ AR000H0ROE
      */
-    
     it("DeviceUsageStatisticsJsTest019", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest019---------------------------');
         let onBundleGroupChanged = (err,res) =>{
@@ -504,7 +503,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest020
      * @tc.desc: test registerGroupCallBack callback.
      * @tc.type: FUNC
-     * @tc.require: SR000GU2UE AR0003GU3EQ
+     * @tc.require: SR000H0HAQ AR000H0ROE
      */
     it("DeviceUsageStatisticsJsTest020", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest020---------------------------');
@@ -535,7 +534,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest021
      * @tc.desc: test unRegisterGroupCallBack promise.
      * @tc.type: FUNC
-     * @tc.require: SR000GGTN7 AR000GH89H AR000GH89I AR000GH899
+     * @tc.require: SR000H0HAQ AR000H0ROE
      */
     it("DeviceUsageStatisticsJsTest021", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest021---------------------------');
@@ -556,7 +555,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      * @tc.name: DeviceUsageStatisticsJsTest022
      * @tc.desc: test unRegisterGroupCallBack callback.
      * @tc.type: FUNC
-     * @tc.require: SR000GU2UE AR0003GU3EQ
+     * @tc.require: SR000H0HAQ AR000H0ROE
      */
     it("DeviceUsageStatisticsJsTest022", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest022---------------------------');

@@ -176,7 +176,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistic
  * @tc.name: DeviceUsageStatisticsTest_QueryPackageGroup_001
  * @tc.desc: querypackagegroup, no bundleName
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: SR000H0HAQ AR000H0ROE
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_001, Function | MediumTest | Level0)
 {
@@ -195,7 +195,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_
  * @tc.name: DeviceUsageStatisticsTest_SetBundleGroup_001
  * @tc.desc: setbundlename
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: SR000H0HAQ AR000H0ROE
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001, Function | MediumTest | Level0)
 {
@@ -208,7 +208,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001
  * @tc.name: DeviceUsageStatisticsTest_RegisterGroupCallBack_001
  * @tc.desc: registercallback
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: SR000H0HAQ AR000H0ROE
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallBack_001, Function | MediumTest | Level0)
 {
@@ -224,7 +224,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallB
  * @tc.name: DeviceUsageStatisticsTest_UnRegisterGroupCallBack_001
  * @tc.desc: unregistercallback
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require: SR000H0HAQ AR000H0ROE
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_UnRegisterGroupCallBack_001,
     Function | MediumTest | Level0)
