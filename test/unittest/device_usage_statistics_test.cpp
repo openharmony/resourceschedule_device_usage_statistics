@@ -182,7 +182,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001
 {
     int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(DEFAULT_BUNDLENAME, COMMON_USERID);
     DEFAULT_GROUP = (result == DEFAULT_GROUP) ? (result + 10) : DEFAULT_GROUP;
-    int32_t result = BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP,
+    result = BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP,
         DEFAULT_ERRCODE, COMMON_USERID);
     EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
