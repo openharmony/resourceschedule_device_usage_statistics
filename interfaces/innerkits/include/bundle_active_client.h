@@ -16,6 +16,8 @@
 #ifndef BUNDLE_ACTIVE_CLIENT_H
 #define BUNDLE_ACTIVE_CLIENT_H
 
+#include <mutex>
+
 #include "ibundle_active_service.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_event.h"
@@ -135,6 +137,7 @@ public:
 private:
     bool GetBundleActiveProxy();
     sptr<IBundleActiveService> bundleActiveProxy_;
+    std::mutex mutex_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

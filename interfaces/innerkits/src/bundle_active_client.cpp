@@ -30,6 +30,10 @@ BundleActiveClient& BundleActiveClient::GetInstance()
 
 bool BundleActiveClient::GetBundleActiveProxy()
 {
+    if (bundleActiveProxy_ != nullptr) {
+        return true;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
     sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (!samgr) {
         BUNDLE_ACTIVE_LOGE("Failed to get SystemAbilityManager.");
@@ -44,7 +48,7 @@ bool BundleActiveClient::GetBundleActiveProxy()
 
     bundleActiveProxy_ = iface_cast<IBundleActiveService>(object);
     if (!bundleActiveProxy_) {
-        BUNDLE_ACTIVE_LOGE("Failed to get BundleActiveClient.");
+        BUNDLE_ACTIVE_LOGE("Failed to get BundleActiveProxy.");
         return false;
     }
     return true;
