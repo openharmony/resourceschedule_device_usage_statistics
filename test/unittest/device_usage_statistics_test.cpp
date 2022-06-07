@@ -173,25 +173,6 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistic
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryPackageGroup_001
- * @tc.desc: querypackagegroup, no bundleName
- * @tc.type: FUNC
- * @tc.require: SR000H0HAQ AR000H0ROE
- */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_001, Function | MediumTest | Level0)
-{
-    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(DEFAULT_BUNDLENAME, COMMON_USERID);
-    bool flag = false;
-    for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
-        if (*item == result) {
-            flag = true;
-            break;
-        }
-    }
-    EXPECT_EQ(flag, true);
-}
-
-/*
  * @tc.name: DeviceUsageStatisticsTest_SetBundleGroup_001
  * @tc.desc: setbundlename
  * @tc.type: FUNC
@@ -202,6 +183,27 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001
     int32_t result = BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP,
         DEFAULT_ERRCODE, COMMON_USERID);
     EXPECT_EQ(result, DEFAULT_ERRCODE);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_QueryPackageGroup_001
+ * @tc.desc: querypackagegroup, no bundleName
+ * @tc.type: FUNC
+ * @tc.require: SR000H0HAQ AR000H0ROE
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_001, Function | MediumTest | Level0)
+{
+    BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP,
+        DEFAULT_ERRCODE, COMMON_USERID);
+    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(DEFAULT_BUNDLENAME, COMMON_USERID);
+    bool flag = false;
+    for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
+        if (*item == result) {
+            flag = true;
+            break;
+        }
+    }
+    EXPECT_EQ(flag, true);
 }
 
 /*
