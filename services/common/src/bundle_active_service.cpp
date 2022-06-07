@@ -336,9 +336,9 @@ int32_t BundleActiveService::SetBundleGroup(const std::string& bundleName, int32
         BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
         return result;
     }
-    std::string g_bundleName = "";
-    sptrBundleMgr_->GetBundleNameForUid(callingUid, g_bundleName);
-    if (g_bundleName == bundleName) {
+    std::string localBundleName = "";
+    sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
+    if (localBundleName == bundleName) {
         BUNDLE_ACTIVE_LOGI("SetBundleGroup can not set its bundleName");
         return -1;
     }
@@ -441,9 +441,9 @@ int32_t BundleActiveService::QueryPackageGroup(std::string& bundleName, int32_t 
                 BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
                 return result;
             }
-            std::string g_bundleName = "";
-            sptrBundleMgr_->GetBundleNameForUid(callingUid, g_bundleName);
-            bundleName = g_bundleName;
+            std::string localBundleName = "";
+            sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
+            bundleName = localBundleName;
             result = bundleActiveCore_->QueryPackageGroup(bundleName, userId);
         } else {
             AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
