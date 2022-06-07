@@ -62,15 +62,8 @@ void BundleActiveService::OnStart()
         BUNDLE_ACTIVE_LOGI("BundleActiveService handler create failed!");
         return;
     }
-
-    InitNecessaryState();
-    int32_t ret = Publish(DelayedSingleton<BundleActiveService>::GetInstance().get());
-    if (!ret) {
-        BUNDLE_ACTIVE_LOGE("[Server] OnStart, Register SystemAbility[1907] FAIL.");
-        return;
-    }
-    BUNDLE_ACTIVE_LOGI("[Server] OnStart, Register SystemAbility[1907] SUCCESS.");
-    return;
+    auto registerTask = [this]() { this->InitNecessaryState(); };
+    handler_->PostSyncTask(registerTask);
 }
 
 void BundleActiveService::InitNecessaryState()
@@ -103,6 +96,12 @@ void BundleActiveService::InitNecessaryState()
     }
     InitService();
     ready_ = true;
+    int32_t ret = Publish(DelayedSingleton<BundleActiveService>::GetInstance().get());
+    if (!ret) {
+        BUNDLE_ACTIVE_LOGE("[Server] OnStart, Register SystemAbility[1907] FAIL.");
+        return;
+    }
+    BUNDLE_ACTIVE_LOGI("[Server] OnStart, Register SystemAbility[1907] SUCCESS.");
 }
 
 void BundleActiveService::InitService()
@@ -470,7 +469,7 @@ int32_t BundleActiveService::UnregisterGroupCallBack(const sptr<IBundleActiveGro
     if (!bundleActiveCore_) {
         return result;
     }
-    
+
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     int32_t errCode = 0;

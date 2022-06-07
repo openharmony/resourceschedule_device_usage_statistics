@@ -38,7 +38,7 @@ bool BundleActiveClient::GetBundleActiveProxy()
 
     sptr<IRemoteObject> object = samgr->GetSystemAbility(DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID);
     if (!object) {
-        BUNDLE_ACTIVE_LOGE("Failed to get SystemAbility[1920] .");
+        BUNDLE_ACTIVE_LOGE("Failed to get SystemAbility[1907] .");
         return false;
     }
 
