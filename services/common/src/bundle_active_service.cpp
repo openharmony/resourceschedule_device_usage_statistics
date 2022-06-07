@@ -329,9 +329,19 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
 int32_t BundleActiveService::SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode,
     int32_t userId)
 {
-    bool result = -1;
-    // get uid
+    int32_t result = -1;
+
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    if (!GetBundleMgrProxy()) {
+        BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
+        return result;
+    }
+    std::string g_bundleName = "";
+    sptrBundleMgr_->GetBundleNameForUid(callingUid, g_bundleName);
+    if (g_bundleName == bundleName) {
+        BUNDLE_ACTIVE_LOGI("SetBundleGroup can not set its bundleName");
+        return -1;
+    }
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);

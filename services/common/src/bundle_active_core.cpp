@@ -702,13 +702,22 @@ int64_t BundleActiveCore::GetSystemTimeMs()
 void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo& callbackInfo)
 {
     std::lock_guard<std::mutex> lock(callbackMutex_);
+    AccessToken::HapTokenInfo tokenInfo = AccessToken::HapTokenInfo();
     for (const auto &item : groupChangeObservers_) {
         auto observer = item.second;
         if (observer) {
             BUNDLE_ACTIVE_LOGI(
                 "RegisterGroupCallBack will OnBundleGroupChanged!,oldGroup is %{public}d, newGroup is %{public}d",
                 callbackInfo.GetOldGroup(), callbackInfo.GetNewGroup());
-            observer->OnBundleGroupChanged(callbackInfo);
+            if (AccessToken::AccessTokenKit::GetTokenType(item.first) == AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
+                observer->OnBundleGroupChanged(callbackInfo);
+            } else if (AccessToken::AccessTokenKit::GetTokenType(item.first) ==
+                        AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+                AccessToken::AccessTokenKit::GetHapTokenInfo(item.first, tokenInfo);
+                if (tokenInfo.userID == callbackInfo.GetUserId()) {
+                    observer->OnBundleGroupChanged(callbackInfo);
+                }
+            }
         }
     }
 }
