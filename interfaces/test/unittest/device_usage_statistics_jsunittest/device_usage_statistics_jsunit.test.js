@@ -575,13 +575,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
     })
 
     /*
-     * @tc.name: DeviceUsageStatisticsJsTest020
+     * @tc.name: DeviceUsageStatisticsJsTest023
      * @tc.desc: test queryBundleActiveEventStates promise.
      * @tc.type: FUNC
      * @tc.require: SR000H0H9H AR000H0ROG
      */
-    it("DeviceUsageStatisticsJsTest020", 0, async function (done) {
-        console.info('----------------------DeviceUsageStatisticsJsTest020---------------------------');
+    it("DeviceUsageStatisticsJsTest023", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest023---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
         bundleState.queryBundleActiveEventStates(beginTime, endTime).then((res) => {
@@ -598,13 +598,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
     })
 
     /*
-     * @tc.name: DeviceUsageStatisticsJsTest021
+     * @tc.name: DeviceUsageStatisticsJsTest024
      * @tc.desc: test queryBundleActiveEventStates callback.
      * @tc.type: FUNC
      * @tc.require: SR000H0H9H AR000H0ROG
      */
-    it("DeviceUsageStatisticsJsTest021", 0, async function (done) {
-        console.info('----------------------DeviceUsageStatisticsJsTest021---------------------------');
+    it("DeviceUsageStatisticsJsTest024", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest024---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
         bundleState.queryBundleActiveEventStates(beginTime, endTime, (err, res) => {
@@ -623,13 +623,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
     })
 
     /*
-     * @tc.name: DeviceUsageStatisticsJsTest022
+     * @tc.name: DeviceUsageStatisticsJsTest025
      * @tc.desc: test queryAppNotificationNumber promise.
      * @tc.type: FUNC
      * @tc.require: SR000H0H7D AR000H0RR6
      */
-    it("DeviceUsageStatisticsJsTest022", 0, async function (done) {
-        console.info('----------------------DeviceUsageStatisticsJsTest022---------------------------');
+    it("DeviceUsageStatisticsJsTest025", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest025---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
         bundleState.queryAppNotificationNumber(beginTime, endTime).then((res) => {
@@ -646,13 +646,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
     })
 
     /*
-     * @tc.name: DeviceUsageStatisticsJsTest023
+     * @tc.name: DeviceUsageStatisticsJsTest026
      * @tc.desc: test queryAppNotificationNumber callback.
      * @tc.type: FUNC
      * @tc.require: SR000H0H7D AR000H0RR6
      */
-    it("DeviceUsageStatisticsJsTest023", 0, async function (done) {
-        console.info('----------------------DeviceUsageStatisticsJsTest023---------------------------');
+    it("DeviceUsageStatisticsJsTest026", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest026---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
         bundleState.queryAppNotificationNumber(beginTime, endTime, (err, res) => {
