@@ -266,6 +266,19 @@ declare namespace bundleState {
     function isIdleState(bundleName: string): Promise<boolean>;
 
     /**
+     * Queries the usage priority group of the calling application.
+     *
+     * <p>The priority defined in a priority group restricts the resource usage of an application,
+     * for example, restricting the running of background tasks. </p>
+     *
+     * @since 7
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @return Returns the usage priority group of the calling application.
+     */
+    function queryAppUsagePriorityGroup(callback: AsyncCallback<number>): void;
+    function queryAppUsagePriorityGroup(): Promise<number>;
+
+    /**
      * @since 7
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      */
