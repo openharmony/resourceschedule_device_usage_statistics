@@ -536,10 +536,10 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_t u
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
     if (bundleHasPermission != 0) {
         errCode = bundleHasPermission;
-        BUNDLE_ACTIVE_LOGE("UnRegisterGroupCallBack %{public}s hasn't permission", bundleName.c_str());
+        BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
         return false;
     } else {
-        BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack %{public}s has permission %{public}d",
+        BUNDLE_ACTIVE_LOGI("%{public}s has permission %{public}d",
             bundleName.c_str(), bundleHasPermission);
         return true;
     }
