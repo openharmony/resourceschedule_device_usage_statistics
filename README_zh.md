@@ -58,10 +58,6 @@
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>通过指定时间段间隔（天、周、月、年）查询应用使用时长统计信息（callback形式）。</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryBundleStateInfoByInterval(byInterval: IntervalType, begin: number, end: number): Promise&lt;Array&lt;BundleStateInfo&gt;&gt;</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>通过指定时间段间隔（天、周、月、年）查询应用使用时长统计信息（Promise形式）。</p>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(callback: AsyncCallback&lt;number&gt;): void</p>
-<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>查询（返回）当前调用者应用的使用优先级群组（callback形式）。</p>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(): Promise&lt;number&gt;</p>
-<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>查询（返回）当前调用者应用的使用优先级群组（Promise形式）。</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>isIdleState(bundleName: string, callback: AsyncCallback&lt;boolean&gt;): void</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>判断指定Bundle Name的应用当前是否是空闲状态（callback形式）。</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>isIdleState(bundleName: string): Promise&lt;boolean&gt;</p>
@@ -113,14 +109,13 @@
 >2.  根据起止时间查询应用的使用时长；
 >3.  根据起止时间查询当前应用的事件集合；
 >4.  根据interval（日、周、月、年）类型和起止时间查询应用的使用时长；
->5.  查询调用者应用的优先级群组；
->6.  判断指定应用当前是否是空闲状态；
->7.  根据起止时间查询系统事件（休眠、唤醒、解锁、锁屏）统计信息；
->8.  根据起止时间查询应用通知次数；
->9.  查询FA使用记录。返回数量最大不超过maxNum设置的值，FA使用记录由近及远排序，maxNum最大为1000，若不填写maxNum参数，则maxNum默认为1000;
->10.  使用可选参数查询当前调用者应用的使用优先级群组；
->11.  将指定应用的分组设置为参数提供的分组；
->12.  给应用分组变化注册回调；
+>5.  判断指定应用当前是否是空闲状态；
+>6.  根据起止时间查询系统事件（休眠、唤醒、解锁、锁屏）统计信息；
+>7.  根据起止时间查询应用通知次数；
+>8.  查询FA使用记录。返回数量最大不超过maxNum设置的值，FA使用记录由近及远排序，maxNum最大为1000，若不填写maxNum参数，则maxNum默认为1000;
+>9.  查询当前应用或指定bundlename对应的应用的分组；
+>10.  将指定应用的分组设置为参数提供的分组；
+>11.  给应用分组变化注册回调；
 >13.  将已注册过的应用分组回调解除注册；
 
 ## 相关仓<a name="section1371113476307"></a>

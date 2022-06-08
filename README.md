@@ -60,10 +60,6 @@ Taking app usage interface as an example, the main exposed interfaces are as fol
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries application usage duration statistics by time interval(callback).</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryBundleStateInfoByInterval(byInterval: IntervalType, begin: number, end: number): Promise&lt;Array&lt;BundleStateInfo&gt;&gt;</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries application usage duration statistics by time interval(Promise).</p>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(callback: AsyncCallback&lt;number&gt;): void</p>
-<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries (returns) the priority group used by the current caller application(callback).</p>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(): Promise&lt;Array&lt;number&gt;</p>
-<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries (returns) the priority group used by the current caller application(Promise).</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>isIdleState(bundleName: string, callback: AsyncCallback&lt;boolean&gt;): void</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Judges whether the application of the specified bundle name is currently idle(callback).</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>isIdleState(bundleName: string): Promise&lt;boolean&gt;</p>
@@ -81,9 +77,9 @@ Taking app usage interface as an example, the main exposed interfaces are as fol
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>getRecentlyUsedModules(maxNum?: number): Promise&lt;Array&lt;BundleActiveModuleInfo&gt;&gt;</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query FA usage records. The maximum returned quantity does not exceed the value set by maxnum. FA usage records are sorted from near to far. The maximum maxnum is 1000. If the maxnum parameter is not filled in, the default maxnum is 1000(Promise).</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(bundleName? : string, callback: AsyncCallback&lt;number&gt;): void</p>
-<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Use the optional parameters to query the usage priority group of the current caller application(callback).</p>
+<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query the group of the current application or the application of specified bundlename.</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(bundleName? : string): Promise&lt;number&gt;</p>
-<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Use the optional parameters to query the usage priority group of the current caller application(Promise).</p>
+<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query the group of the current application or the application of specified bundlename.</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>setBundleGroup(bundleName: string, newGroup: GroupType, callback: AsyncCallback&lt;boolean&gt;): void</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Set the group of the specified application as the group provided by the parameter(callback).</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>setBundleGroup(bundleName: string, newGroup: GroupType): Promise&lt;boolean&gt;</p>
@@ -101,6 +97,7 @@ Taking app usage interface as an example, the main exposed interfaces are as fol
 </tbody>
 </table>
 
+
 ### Usage Guidelines<a name="section129654513264"></a>
 
 There are many interfaces for device usage statistics. Take app usage interface as an example to introduce the interface logic.
@@ -114,14 +111,13 @@ There are many interfaces for device usage statistics. Take app usage interface 
 >2.  Query the usage duration of the application according to the start and end time;
 >3.  Query the event collection of the current application according to the start and end time;
 >4.  Query the usage duration of the application according to the type of interval (day, week, month, year) and the start and end time;
->5.  Query the priority group of the caller application;
->6.  Judge whether the specified application is currently idle;
->7.  Query the statistical information of system events (sleep, wake-up, unlock and screen lock) according to the start and end time;
->8.  Query the application notification times according to the start and end time;
->9.  Query FA usage records. The maximum returned quantity does not exceed the value set by maxnum. FA usage records are sorted from near to far. The maximum maxnum is 1000. If the maxnum parameter is not filled in, the default maxnum is 1000;
->10.  Use the optional parameters to query the usage priority group of the current caller application；
->11.  Set the group of the specified application as the group provided by the parameter；
->12.  Register callback for application group change；
+>5.  Judge whether the specified application is currently idle;
+>6.  Query the statistical information of system events (sleep, wake-up, unlock and screen lock) according to the start and end time;
+>7.  Query the application notification times according to the start and end time;
+>8.  Query FA usage records. The maximum returned quantity does not exceed the value set by maxnum. FA usage records are sorted from near to far. The maximum maxnum is 1000. If the maxnum parameter is not filled in, the default maxnum is 1000;
+>9.  Query the group of the current application or the application of specified bundlename；
+>10.  Set the group of the specified application as the group provided by the parameter；
+>11.  Register callback for application group change；
 >13.  Unregister the registered application group callback；
 
 ## Repositories Involved<a name="section1371113476307"></a>
