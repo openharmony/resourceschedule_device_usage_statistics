@@ -182,7 +182,7 @@ declare namespace bundleState {
         /**
          * the bundle name or system event name.
          */
-        name?: string;
+        name: string;
 
         /**
          * the event id.
