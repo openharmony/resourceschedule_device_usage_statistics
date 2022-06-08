@@ -231,25 +231,25 @@ declare namespace bundleState {
      */
     interface BundleActiveGroupCallbackInfo {
         /*
-        * the usage old group of the application
-        */
-       appUsageOldGroup: number;
+         * the usage old group of the application
+         */
+        appUsageOldGroup: number;
         /*
-        * the usage new group of the application
-        */
-       appUsageNewGroup: number;
-       /*
-        * the use id
-        */
-       userId: number;
-       /*
-        * the change reason
-        */
-       changeReason: number;
-       /*
-        * the bundle name
-        */
-       bundleName: string;
+         * the usage new group of the application
+         */
+        appUsageNewGroup: number;
+        /*
+         * the use id
+         */
+        userId: number;
+        /*
+         * the change reason
+         */
+        changeReason: number;
+        /*
+         * the bundle name
+         */
+        bundleName: string;
     }
 
     /**
