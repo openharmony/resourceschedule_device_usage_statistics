@@ -233,23 +233,23 @@ declare namespace bundleState {
         /*
         * the usage old group of the application
         */
-       appUsageOldGroup?: number;
+       appUsageOldGroup: number;
         /*
         * the usage new group of the application
         */
-       appUsageNewGroup?: number;
+       appUsageNewGroup: number;
        /*
-        * the use id 
+        * the use id
         */
-       userId?: number;
+       userId: number;
        /*
-        * the change reason 
+        * the change reason
         */
-       changeReason?: number;
+       changeReason: number;
        /*
-        * the bundle name 
+        * the bundle name
         */
-       bundleName?: string;
+       bundleName: string;
     }
 
     /**
@@ -366,14 +366,14 @@ declare namespace bundleState {
     function queryCurrentBundleActiveStates(begin: number, end: number): Promise<Array<BundleActiveState>>;
 
     /**
-     * Queries module usage records.
+     * Queries recently module usage records.
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
      * @systemapi Hide this for inner system use.
      * @param maxNum Indicates max record number in result, max value is 1000, default value is 1000.
-     * @return Returns the {@link BundleActiveModuleInfo} object Array containing the state data of the current module.
+     * @return Returns the {@link BundleActiveModuleInfo} object Array containing the usage data of the modules.
      */
     function getRecentlyUsedModules(maxNum?: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
     function getRecentlyUsedModules(maxNum?: number): Promise<Array<BundleActiveModuleInfo>>;
@@ -386,6 +386,9 @@ declare namespace bundleState {
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @systemapi Hide this for inner system use.
+     * @param bundleName, name of the application.
      * @return Returns the usage priority group of the calling application.
      */
      function queryAppUsagePriorityGroup(bundleName? : string, callback: AsyncCallback<number>): void;
@@ -395,7 +398,7 @@ declare namespace bundleState {
      * Declares group type.
      *
      * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
      */
       export enum GroupType {
         /**
@@ -422,7 +425,7 @@ declare namespace bundleState {
          * Indicates the limit group.
          */
          ACTIVE_GROUP_LIMIT = 50,
-         
+
          /**
          * Indicates the never group.
          */
@@ -434,6 +437,10 @@ declare namespace bundleState {
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @systemapi Hide this for inner system use.
+     * @param bundleName, name of the application.
+     * @param newGroup,the group of the application whose name is bundleName.
      * @return Returns the result of setBundleGroup, true of false.
      */
     function setBundleGroup(bundleName: string, newGroup: GroupType, callback: AsyncCallback<boolean>): void;
@@ -444,16 +451,21 @@ declare namespace bundleState {
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @systemapi Hide this for inner system use.
+     * @param Callback<BundleActiveGroupCallbackInfo>, callback when application group change,return the BundleActiveGroupCallbackInfo.
      * @return Returns BundleActiveGroupCallbackInfo when the group of bundle changed. the result of AsyncCallback is true or false.
      */
     function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<boolean>): void;
     function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>): Promise<boolean>;
-    
+
     /**
      * unRegister callback from service.
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @systemapi Hide this for inner system use.
      * @return Returns the result of unRegisterGroupCallBack, true of false.
      */
     function unRegisterGroupCallBack(callback: AsyncCallback<boolean>): void;
