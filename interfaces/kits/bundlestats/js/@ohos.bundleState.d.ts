@@ -226,8 +226,8 @@ declare namespace bundleState {
         stateType?: number;
     }
     /**
-     * @since 7
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
      */
     interface BundleActiveGroupCallbackInfo {
         /*
@@ -433,7 +433,7 @@ declare namespace bundleState {
      * set bundle group by bundleName and number.
      *
      * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
      * @return Returns the result of setBundleGroup, true of false.
      */
     function setBundleGroup(bundleName: string, newGroup: GroupType, callback: AsyncCallback<boolean>): void;
@@ -443,7 +443,7 @@ declare namespace bundleState {
      * register callback to service.
      *
      * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
      * @return Returns BundleActiveGroupCallbackInfo when the group of bundle changed. the result of AsyncCallback is true or false.
      */
     function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<boolean>): void;
@@ -453,7 +453,7 @@ declare namespace bundleState {
      * unRegister callback from service.
      *
      * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
      * @return Returns the result of unRegisterGroupCallBack, true of false.
      */
     function unRegisterGroupCallBack(callback: AsyncCallback<boolean>): void;
