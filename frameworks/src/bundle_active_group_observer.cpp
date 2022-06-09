@@ -181,25 +181,23 @@ void BundleActiveGroupObserver::OnBundleGroupChanged(const BundleActiveGroupCall
     }
 }
 
-napi_value GetBundleGroupChangeCallback(
-    const napi_env &env, const napi_value &value, BundleActiveGroupObserverInfo &bundleActiveGroupObserverInfo)
+napi_value GetBundleGroupChangeCallback(const napi_env &env, const napi_value &value)
 {
     napi_ref result = nullptr;
     
-    bundleActiveGroupObserverInfo.callback = new (std::nothrow) BundleActiveGroupObserver();
-    if (!bundleActiveGroupObserverInfo.callback) {
+    registerObserver = new (std::nothrow) BundleActiveGroupObserver();
+    if (!registerObserver) {
         BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack callback is null");
         return BundleStateCommon::NapiGetNull(env);
     }
-
     napi_create_reference(env, value, 1, &result);
-    bundleActiveGroupObserverInfo.callback->SetCallbackInfo(env, result);
+    registerObserver->SetCallbackInfo(env, result);
 
     return BundleStateCommon::NapiGetNull(env);
 }
 
 napi_value ParseRegisterGroupCallBackParameters(const napi_env &env, const napi_callback_info &info,
-    RegisterCallbackInfo &params, sptr<BundleActiveGroupObserver> &observer)
+    RegisterCallbackInfo &params)
 {
     size_t argc = REGISTER_GROUP_CALLBACK_PARAMS;
     napi_value argv[REGISTER_GROUP_CALLBACK_PARAMS] = {nullptr};
@@ -210,12 +208,12 @@ napi_value ParseRegisterGroupCallBackParameters(const napi_env &env, const napi_
     // arg[0] : callback
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-    BundleActiveGroupObserverInfo bundleActiveGroupObserverInfo;
-    if (valuetype != napi_function || !GetBundleGroupChangeCallback(env, argv[0], bundleActiveGroupObserverInfo)) {
+    if (registerObserver) {
+        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack repeat!");
+        params.errorCode = ERR_REPEAT_OPERATION;
+    } else if (valuetype != napi_function || !GetBundleGroupChangeCallback(env, argv[0])) {
         BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack bundleActiveGroupObserverInfo parse failed");
         params.errorCode = ERR_OBSERVER_CALLBACK_IS_INVALID;
-    } else {
-        observer = bundleActiveGroupObserverInfo.callback;
     }
 
     // argv[1]: asyncCallback
@@ -231,13 +229,9 @@ napi_value ParseRegisterGroupCallBackParameters(const napi_env &env, const napi_
 napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
 {
     RegisterCallbackInfo params;
-    ParseRegisterGroupCallBackParameters(env, info, params, registerObserver);
+    ParseRegisterGroupCallBackParameters(env, info, params);
 
-    if (params.errorCode != ERR_OK || !registerObserver) {
-        if (registerObserver) {
-            delete registerObserver;
-            registerObserver = nullptr;
-        }
+    if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     napi_value promise = nullptr;

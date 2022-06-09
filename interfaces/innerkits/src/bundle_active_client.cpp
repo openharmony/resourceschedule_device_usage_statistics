@@ -143,7 +143,8 @@ int32_t BundleActiveClient::RegisterGroupCallBack(const sptr<IBundleActiveGroupC
         BUNDLE_ACTIVE_LOGE("GetBackgroundTaskManagerProxy failed.");
         return false;
     }
-    return bundleActiveProxy_->RegisterGroupCallBack(observer);
+    int32_t result = bundleActiveProxy_->RegisterGroupCallBack(observer);
+    return result;
 }
 
 int32_t BundleActiveClient::UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
@@ -219,7 +220,6 @@ int32_t BundleActiveClient::ShellDump(const std::vector<std::string> &dumpOption
             }
         }
     }
-
     return ret;
 }
 }  // namespace DeviceUsageStats
