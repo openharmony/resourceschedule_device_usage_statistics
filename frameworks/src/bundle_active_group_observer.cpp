@@ -234,10 +234,6 @@ napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
     ParseRegisterGroupCallBackParameters(env, info, params, registerObserver);
 
     if (params.errorCode != ERR_OK || !registerObserver) {
-        if (registerObserver) {
-            delete registerObserver;
-            registerObserver = nullptr;
-        }
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     napi_value promise = nullptr;
