@@ -144,10 +144,6 @@ int32_t BundleActiveClient::RegisterGroupCallBack(const sptr<IBundleActiveGroupC
         return false;
     }
     int32_t result = bundleActiveProxy_->RegisterGroupCallBack(observer);
-    if (/* condition */) {
-        /* code */
-    }
-    
     return result;
 }
 
