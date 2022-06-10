@@ -865,8 +865,7 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
             AsyncCallbackInfoSetBundleGroup *asyncCallbackInfo = (AsyncCallbackInfoSetBundleGroup *)data;
             if (asyncCallbackInfo) {
                 napi_value result = nullptr;
-                asyncCallbackInfo->state = (asyncCallbackInfo->errorCode == ERR_OK) ? true : false;
-                napi_get_boolean(env, asyncCallbackInfo->state, &result);
+                napi_get_null(env, &result);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },

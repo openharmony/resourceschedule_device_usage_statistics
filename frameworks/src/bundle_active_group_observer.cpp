@@ -48,6 +48,27 @@ void BundleActiveGroupObserver::SetCallbackInfo(const napi_env &env, const napi_
     bundleGroupCallbackInfo_.ref = ref;
 }
 
+template <typename PARAMT, typename ASYNCT>
+napi_value AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo)
+{
+    if (params.errorCode != ERR_OK) {
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    asyncCallbackInfo = new (std::nothrow) ASYNCT(env);
+    if (!asyncCallbackInfo) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo))
+        != EOK) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    return BundleStateCommon::NapiGetNull(env);
+}
+
 napi_value SetBundleGroupChangedData(const CallbackReceiveDataWorker *commonEventDataWorkerData, napi_value &result)
 {
     BUNDLE_ACTIVE_LOGI("enter");
@@ -269,8 +290,7 @@ napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
             AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
             if (asyncCallbackInfo) {
                 napi_value result = nullptr;
-                asyncCallbackInfo->state = (asyncCallbackInfo->errorCode == ERR_OK) ? true : false;
-                napi_get_boolean(env, asyncCallbackInfo->state, &result);
+                napi_get_null(env, &result);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
@@ -310,32 +330,17 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
 {
     UnRegisterCallbackInfo params;
     ParseUnRegisterGroupCallBackParameters(env, info, params);
-    if (params.errorCode != ERR_OK) {
-        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
-    }
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not exist");
         params.errorCode = ERR_REGISTER_OBSERVER_IS_NULL;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     napi_value promise = nullptr;
-    AsyncUnRegisterCallbackInfo *asyncCallbackInfo =
-        new (std::nothrow) AsyncUnRegisterCallbackInfo(env);
-    if (!asyncCallbackInfo) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
-        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
-    }
-    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo))
-        != EOK) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
-        delete asyncCallbackInfo;
-        asyncCallbackInfo = nullptr;
-        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
-    }
+    AsyncUnRegisterCallbackInfo *asyncCallbackInfo = nullptr;
+    AsyncInit(env, params, asyncCallbackInfo);
     std::unique_ptr<AsyncUnRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
     callbackPtr->observer = registerObserver;
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
-    BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack will Async");
     napi_value resourceName = nullptr;
     NAPI_CALL(env, napi_create_string_latin1(env, "UnRegisterGroupCallBack", NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env,
@@ -354,8 +359,7 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
             AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
             if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
-                asyncCallbackInfo->state = (asyncCallbackInfo->errorCode == ERR_OK) ? true : false;
-                napi_get_boolean(env, asyncCallbackInfo->state, &result);
+                napi_get_null(env, &result);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
