@@ -58,6 +58,10 @@
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>通过指定时间段间隔（天、周、月、年）查询应用使用时长统计信息（callback形式）。</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryBundleStateInfoByInterval(byInterval: IntervalType, begin: number, end: number): Promise&lt;Array&lt;BundleStateInfo&gt;&gt;</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>通过指定时间段间隔（天、周、月、年）查询应用使用时长统计信息（Promise形式）。</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(callback: AsyncCallback&lt;number&gt;): void</p>
+<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>查询当前应用的优先级分组（callback形式）。</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(): Promise&lt;number&gt;</p>
+<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>查询当前应用的优先级分组（Promise形式）。</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>isIdleState(bundleName: string, callback: AsyncCallback&lt;boolean&gt;): void</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>判断指定Bundle Name的应用当前是否是空闲状态（callback形式）。</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>isIdleState(bundleName: string): Promise&lt;boolean&gt;</p>
@@ -96,6 +100,7 @@
 </tbody>
 </table>
 
+
 ### 使用说明<a name="section129654513264"></a>
 
 设备使用信息统计接口众多，以应用使用详情（app usage）接口为例，介绍接口逻辑。
@@ -109,6 +114,7 @@
 >2.  根据起止时间查询应用的使用时长；
 >3.  根据起止时间查询当前应用的事件集合；
 >4.  根据interval（日、周、月、年）类型和起止时间查询应用的使用时长；
+>4.  查询当前应用的优先级分组；
 >5.  判断指定应用当前是否是空闲状态；
 >6.  根据起止时间查询系统事件（休眠、唤醒、解锁、锁屏）统计信息；
 >7.  根据起止时间查询应用通知次数；

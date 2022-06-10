@@ -177,6 +177,7 @@ declare namespace bundleState {
     /**
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
      */
     interface BundleActiveEventState {
         /**
@@ -456,8 +457,8 @@ declare namespace bundleState {
      * @param newGroup,the group of the application whose name is bundleName.
      * @return Returns the result of setBundleGroup, true of false.
      */
-    function setBundleGroup(bundleName: string, newGroup: GroupType, callback: AsyncCallback<boolean>): void;
-    function setBundleGroup(bundleName: string, newGroup: GroupType): Promise<boolean>;
+    function setBundleGroup(bundleName: string, newGroup: GroupType, callback: AsyncCallback<void>): void;
+    function setBundleGroup(bundleName: string, newGroup: GroupType): Promise<void>;
 
     /**
      * register callback to service.
@@ -469,8 +470,8 @@ declare namespace bundleState {
      * @param Callback<BundleActiveGroupCallbackInfo>, callback when application group change,return the BundleActiveGroupCallbackInfo.
      * @return Returns BundleActiveGroupCallbackInfo when the group of bundle changed. the result of AsyncCallback is true or false.
      */
-    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<boolean>): void;
-    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>): Promise<boolean>;
+    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<void>): void;
+    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>): Promise<void>;
 
     /**
      * unRegister callback from service.
@@ -481,8 +482,8 @@ declare namespace bundleState {
      * @systemapi Hide this for inner system use.
      * @return Returns the result of unRegisterGroupCallBack, true of false.
      */
-    function unRegisterGroupCallBack(callback: AsyncCallback<boolean>): void;
-    function unRegisterGroupCallBack(): Promise<boolean>;
+    function unRegisterGroupCallBack(callback: AsyncCallback<void>): void;
+    function unRegisterGroupCallBack(): Promise<void>;
 
     /*
      * Queries system event states data within a specified period identified by the start and end time.

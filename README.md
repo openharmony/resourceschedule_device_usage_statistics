@@ -60,6 +60,10 @@ Taking app usage interface as an example, the main exposed interfaces are as fol
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries application usage duration statistics by time interval(callback).</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryBundleStateInfoByInterval(byInterval: IntervalType, begin: number, end: number): Promise&lt;Array&lt;BundleStateInfo&gt;&gt;</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Queries application usage duration statistics by time interval(Promise).</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(callback: AsyncCallback&lt;number&gt;): void</p>
+<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query the priority group of the application.</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(): Promise&lt;number&gt;</p>
+<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query the priority group of the application.</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>isIdleState(bundleName: string, callback: AsyncCallback&lt;boolean&gt;): void</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Judges whether the application of the specified bundle name is currently idle(callback).</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>isIdleState(bundleName: string): Promise&lt;boolean&gt;</p>
@@ -98,6 +102,7 @@ Taking app usage interface as an example, the main exposed interfaces are as fol
 </table>
 
 
+
 ### Usage Guidelines<a name="section129654513264"></a>
 
 There are many interfaces for device usage statistics. Take app usage interface as an example to introduce the interface logic.
@@ -111,6 +116,7 @@ There are many interfaces for device usage statistics. Take app usage interface 
 >2.  Query the usage duration of the application according to the start and end time;
 >3.  Query the event collection of the current application according to the start and end time;
 >4.  Query the usage duration of the application according to the type of interval (day, week, month, year) and the start and end time;
+>4.  Query the priority group of the application;
 >5.  Judge whether the specified application is currently idle;
 >6.  Query the statistical information of system events (sleep, wake-up, unlock and screen lock) according to the start and end time;
 >7.  Query the application notification times according to the start and end time;
