@@ -19,6 +19,7 @@
 #include "accesstoken_kit.h"
 #include "app_mgr_interface.h"
 
+#include "bundle_state_inner_errors.h"
 #include "bundle_active_event.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_account_helper.h"
@@ -33,6 +34,11 @@ static const int32_t PERIOD_BEST_SERVICE = 4;
 static const int32_t DELAY_TIME = 2000;
 static const std::string PERMITTED_PROCESS_NAME = "foundation";
 static const int32_t MAXNUM_UP_LIMIT = 1000;
+const int32_t EVENTS_PARAM = 5;
+static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
+static constexpr int32_t MIN_DUMP_PARAM_NUMS = 1;
+const int32_t PACKAGE_USAGE_PARAM = 6;
+const int32_t MODULE_USAGE_PARAM = 4;
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 const bool REGISTER_RESULT =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<BundleActiveService>::GetInstance().get());
@@ -364,17 +370,16 @@ int32_t BundleActiveService::SetBundleGroup(const std::string& bundleName, int32
 std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageStats(const int32_t intervalType,
     const int64_t beginTime, const int64_t endTime)
 {
-    BUNDLE_ACTIVE_LOGI("QueryCurrentPackageStats stats called");
     std::vector<BundleActivePackageStats> result;
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    BUNDLE_ACTIVE_LOGI("UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("UID is %{public}d", callingUid);
     // get userid
     int32_t userId = -1;
     OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGI("QueryCurrentPackageStats userid is %{public}d", userId);
+        BUNDLE_ACTIVE_LOGD("QueryCurrentPackageStats userid is %{public}d", userId);
         if (!GetBundleMgrProxy()) {
             BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
             return result;
@@ -396,11 +401,10 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
 std::vector<BundleActiveEvent> BundleActiveService::QueryCurrentEvents(const int64_t beginTime,
     const int64_t endTime)
 {
-    BUNDLE_ACTIVE_LOGI("QueryCurrentEvents stats called");
     std::vector<BundleActiveEvent> result;
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGI("QueryCurrentEvents UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("QueryCurrentEvents UID is %{public}d", callingUid);
     // get userid
     int32_t userId = -1;
     OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
@@ -417,7 +421,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryCurrentEvents(const int
             result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, bundleName);
         }
     }
-    BUNDLE_ACTIVE_LOGI("QueryCurrentEvents result size is %{public}zu", result.size());
+    BUNDLE_ACTIVE_LOGD("QueryCurrentEvents result size is %{public}zu", result.size());
     return result;
 }
 
@@ -555,7 +559,7 @@ int32_t BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<Bun
         return errCode;
     }
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGI("QueryFormStatistics UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("QueryFormStatistics UID is %{public}d", callingUid);
     // get userid when userId is -1
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
@@ -584,7 +588,7 @@ int32_t BundleActiveService::QueryEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGI("QueryEventStats UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("QueryEventStats UID is %{public}d", callingUid);
     // get userid when userId is -1
     int32_t errCode = 0;
     if (userId == -1) {
@@ -603,7 +607,7 @@ int32_t BundleActiveService::QueryEventStats(int64_t beginTime, int64_t endTime,
             errCode = bundleActiveCore_->QueryEventStats(beginTime, endTime, eventStats, userId);
         }
     }
-    BUNDLE_ACTIVE_LOGI("QueryEventStats result size is %{public}zu", eventStats.size());
+    BUNDLE_ACTIVE_LOGD("QueryEventStats result size is %{public}zu", eventStats.size());
     return errCode;
 }
 
@@ -611,7 +615,7 @@ int32_t BundleActiveService::QueryAppNotificationNumber(int64_t beginTime, int64
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGI("QueryAppNotificationNumber UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("QueryAppNotificationNumber UID is %{public}d", callingUid);
     // get userid when userId is -1
     int32_t errCode = 0;
     if (userId == -1) {
@@ -642,13 +646,13 @@ void BundleActiveService::QueryModuleRecordInfos(BundleActiveModuleRecord& modul
     ApplicationInfo appInfo;
     if (!sptrBundleMgr_->GetApplicationInfo(moduleRecord.bundleName_, ApplicationFlag::GET_BASIC_APPLICATION_INFO,
         moduleRecord.userId_, appInfo)) {
-        BUNDLE_ACTIVE_LOGW("GetApplicationInfo failed!");
+        BUNDLE_ACTIVE_LOGE("GetApplicationInfo failed!");
         return;
     }
     BundleInfo bundleInfo;
     if (!sptrBundleMgr_->GetBundleInfo(moduleRecord.bundleName_, BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO,
         bundleInfo, moduleRecord.userId_)) {
-        BUNDLE_ACTIVE_LOGW("GetBundleInfo failed!");
+        BUNDLE_ACTIVE_LOGE("GetBundleInfo failed!");
         return;
     }
     for (const auto & oneModuleInfo : bundleInfo.hapModuleInfos) {
@@ -678,6 +682,100 @@ void BundleActiveService::SerModuleProperties(const HapModuleInfo& hapModuleInfo
     moduleRecord.descriptionId_ = abilityInfo.descriptionId;
     moduleRecord.abilityIconId_ = abilityInfo.iconId;
     moduleRecord.installFreeSupported_ = hapModuleInfo.installationFree;
+}
+
+int32_t BundleActiveService::Dump(int32_t fd, const std::vector<std::u16string> &args)
+{
+    std::vector<std::string> argsInStr;
+    std::transform(args.begin(), args.end(), std::back_inserter(argsInStr),
+        [](const std::u16string &arg) {
+        return Str16ToStr8(arg);
+    });
+    std::string result;
+    int32_t ret = ERR_OK;
+    if (argsInStr.size() == NO_DUMP_PARAM_NUMS) {
+        DumpUsage(result);
+    } else if (argsInStr.size() >= MIN_DUMP_PARAM_NUMS) {
+        std::vector<std::string> infos;
+        if (argsInStr[0] == "-h") {
+            DumpUsage(result);
+        } else if (argsInStr[0] == "-A") {
+            ret = ShellDump(argsInStr, infos);
+        } else {
+            infos.emplace_back("BundleActiveService Error params.\n");
+            ret = ERR_USAGE_STATS_INVALID_PARAM;
+        }
+        for (auto info : infos) {
+            result.append(info);
+        }
+    }
+    if (!SaveStringToFd(fd, result)) {
+        BUNDLE_ACTIVE_LOGE("BundleActiveService dump save string to fd failed!");
+        ret = ERR_USAGE_STATS_METHOD_CALLED_FAILED;
+    }
+    return ret;
+}
+
+int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
+{
+    int32_t ret = -1;
+
+    if (dumpOption[1] == "Events") {
+        std::vector<BundleActiveEvent> eventResult;
+        if (static_cast<int32_t>(dumpOption.size()) != EVENTS_PARAM) {
+            return ret;
+        }
+        int64_t beginTime = std::stoll(dumpOption[2]);
+        int64_t endTime = std::stoll(dumpOption[3]);
+        int32_t userId = std::stoi(dumpOption[4]);
+        eventResult = this->QueryEvents(beginTime, endTime, ret, userId);
+        for (auto& oneEvent : eventResult) {
+            dumpInfo.emplace_back(oneEvent.ToString());
+        }
+    } else if (dumpOption[1] == "PackageUsage") {
+        std::vector<BundleActivePackageStats> packageUsageResult;
+        if (static_cast<int32_t>(dumpOption.size()) != PACKAGE_USAGE_PARAM) {
+            return ret;
+        }
+        int32_t intervalType = std::stoi(dumpOption[2]);
+        int64_t beginTime = std::stoll(dumpOption[3]);
+        int64_t endTime = std::stoll(dumpOption[4]);
+        int32_t userId = std::stoi(dumpOption[5]);
+        packageUsageResult = this->QueryPackageStats(intervalType, beginTime, endTime, ret, userId);
+        for (auto& onePackageRecord : packageUsageResult) {
+            dumpInfo.emplace_back(onePackageRecord.ToString());
+        }
+    } else if (dumpOption[1] == "ModuleUsage") {
+        std::vector<BundleActiveModuleRecord> moduleResult;
+        if (static_cast<int32_t>(dumpOption.size()) != MODULE_USAGE_PARAM) {
+            return ret;
+        }
+        int32_t maxNum = std::stoi(dumpOption[2]);
+        int32_t userId = std::stoi(dumpOption[3]);
+        BUNDLE_ACTIVE_LOGI("M is %{public}d, u is %{public}d", maxNum, userId);
+        ret = this->QueryFormStatistics(maxNum, moduleResult, userId);
+        for (auto& oneModuleRecord : moduleResult) {
+            dumpInfo.emplace_back(oneModuleRecord.ToString());
+            for (uint32_t i = 0; i < oneModuleRecord.formRecords_.size(); i++) {
+                std::string oneFormInfo = "form " + std::to_string(static_cast<int32_t>(i) + 1) + ", ";
+                dumpInfo.emplace_back(oneFormInfo + oneModuleRecord.formRecords_[i].ToString());
+            }
+        }
+    }
+    return ret;
+}
+
+void BundleActiveService::DumpUsage(std::string &result)
+{
+    std::string dumpHelpMsg =
+        "usage: bundleactive dump [<options>]\n"
+        "options list:\n"
+        "  -h                                                             help menu\n"
+        "  -A                                                                                    \n"
+        "      Events [beginTime] [endTime] [userId]                      get events for one user\n"
+        "      PackageUsage [intervalType] [beginTime] [endTime] [userId] get package usage for one user\n"
+        "      ModuleUsage [maxNum] [userId]                              get module usage for one user\n";
+    result.append(dumpHelpMsg);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
