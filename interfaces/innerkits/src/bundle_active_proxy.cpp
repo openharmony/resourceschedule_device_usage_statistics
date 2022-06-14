@@ -33,7 +33,7 @@ int32_t BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int32_t u
     return result;
 }
 
-bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName)
+bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName, int32_t& errCode)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -43,8 +43,8 @@ bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName)
     }
     data.WriteString(bundleName);
     Remote() -> SendRequest(IS_BUNDLE_IDLE, data, reply, option);
-    int32_t result = reply.ReadInt32();
-    BUNDLE_ACTIVE_LOGD("result is %{public}d", result);
+    bool result = reply.ReadInt32();
+    errCode = reply.ReadInt32();
     return result;
 }
 

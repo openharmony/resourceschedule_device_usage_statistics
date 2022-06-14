@@ -249,19 +249,42 @@ int32_t BundleActiveService::ReportEvent(BundleActiveEvent& event, const int32_t
     }
 }
 
-bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
+bool BundleActiveService::IsBundleIdle(const std::string& bundleName, int32_t& errCode)
 {
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGD("UID is %{public}d", callingUid);
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+    if (!GetBundleMgrProxy()) {
+        BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
+        return false;
+    }
+    std::string callingBundleName = "";
+    sptrBundleMgr_->GetBundleNameForUid(callingUid, callingBundleName);
+    BUNDLE_ACTIVE_LOGI("UID is %{public}d, bundle name is %{public}s", callingUid, callingBundleName.c_str());
     // get user id
     int32_t userId = -1;
     int32_t result = -1;
-    OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
-    if (ret == ERR_OK && userId != -1) {
-        result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
+    BundleActiveAccountHelper::GetUserId(callingUid, userId);
+    if (userId != -1 && !callingBundleName.empty()) {
+        if (callingBundleName == bundleName) {
+            BUNDLE_ACTIVE_LOGI("%{public}s check its own idle state", bundleName.c_str());
+            result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
+        } else {
+            bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
+            BUNDLE_ACTIVE_LOGI("check other bundle idle state");
+            if (isSystemAppAndHasPermission) {
+                errCode = 0;
+                result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
+            } else {
+                errCode = -1;
+                return false;
+            }
+        }
+    } else {
+        errCode = -1;
+        return false;
     }
-    if (result == 0) {
+    if (result == 0 || result == -1) {
         return false;
     }
     return true;

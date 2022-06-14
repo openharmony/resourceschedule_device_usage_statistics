@@ -75,12 +75,12 @@ int32_t BundleActiveClient::ReportEvent(BundleActiveEvent event, const int32_t u
     return bundleActiveProxy_->ReportEvent(event, userId);
 }
 
-bool BundleActiveClient::IsBundleIdle(const std::string& bundleName)
+bool BundleActiveClient::IsBundleIdle(const std::string& bundleName, int32_t& errCode)
 {
     if (!GetBundleActiveProxy()) {
         return -1;
     }
-    return bundleActiveProxy_->IsBundleIdle(bundleName);
+    return bundleActiveProxy_->IsBundleIdle(bundleName, errCode);
 }
 
 std::vector<BundleActivePackageStats> BundleActiveClient::QueryPackageStats(const int32_t intervalType,
