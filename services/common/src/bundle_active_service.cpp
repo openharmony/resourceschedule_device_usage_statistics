@@ -180,7 +180,6 @@ void BundleActiveService::InitContinuousSubscriber(const std::shared_ptr<BundleA
 
 bool BundleActiveService::SubscribeAppState()
 {
-    BUNDLE_ACTIVE_LOGI("SubscribeAppState called");
     sptr<OHOS::AppExecFwk::IAppMgr> appManager = GetAppManagerInstance();
     if (appStateObserver_ == nullptr || appManager == nullptr) {
         BUNDLE_ACTIVE_LOGE("SubscribeAppState appstateobserver is null, return");
@@ -191,7 +190,7 @@ bool BundleActiveService::SubscribeAppState()
         BUNDLE_ACTIVE_LOGE("RegisterApplicationStateObserver failed. err:%{public}d", err);
         return false;
     }
-    BUNDLE_ACTIVE_LOGI("RegisterApplicationStateObserver success.");
+    BUNDLE_ACTIVE_LOGD("RegisterApplicationStateObserver success.");
     return true;
 }
 
@@ -253,9 +252,8 @@ int32_t BundleActiveService::ReportEvent(BundleActiveEvent& event, const int32_t
 bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
 {
     // get uid
-    BUNDLE_ACTIVE_LOGI("Is bundle active called");
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGI("UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("UID is %{public}d", callingUid);
     // get user id
     int32_t userId = -1;
     int32_t result = -1;
@@ -272,12 +270,12 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName)
 std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(const int32_t intervalType,
     const int64_t beginTime, const int64_t endTime, int32_t& errCode, int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("QueryPackageStats stats called, intervaltype is %{public}d", intervalType);
+    BUNDLE_ACTIVE_LOGD("QueryPackageStats stats called, intervaltype is %{public}d", intervalType);
     std::vector<BundleActivePackageStats> result;
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    BUNDLE_ACTIVE_LOGI("QueryPackageStats UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("QueryPackageStats UID is %{public}d", callingUid);
     if (userId == -1) {
         // get userid
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
@@ -304,12 +302,11 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
 std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t beginTime,
     const int64_t endTime, int32_t& errCode, int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("QueryEvents stats called");
     std::vector<BundleActiveEvent> result;
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    BUNDLE_ACTIVE_LOGI("QueryEvents UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("QueryEvents UID is %{public}d", callingUid);
     if (userId == -1) {
         // get userid
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);

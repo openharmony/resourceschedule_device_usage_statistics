@@ -415,7 +415,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
 
 void BundleActiveCore::ConvertToSystemTimeLocked(BundleActiveEvent& event)
 {
-    BUNDLE_ACTIVE_LOGI("ConvertToSystemTimeLocked called");
+    BUNDLE_ACTIVE_LOGD("ConvertToSystemTimeLocked called");
     event.timeStamp_ = std::max((int64_t)0, event.timeStamp_ - realTimeShot_) + systemTimeShot_;
 }
 
