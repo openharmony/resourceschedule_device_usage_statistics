@@ -86,7 +86,7 @@ public:
         AsyncCallbackInfoEventStats *asyncCallbackInfo, EventStatesParamsInfo &params);
 
     template <typename PARAMT, typename ASYNCT>
-    void AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo)
+    static void AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo)
 };
 
 template <typename PARAMT, typename ASYNCT>
