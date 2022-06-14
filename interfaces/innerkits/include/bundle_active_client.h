@@ -24,6 +24,8 @@
 #include "bundle_active_event_stats.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_module_record.h"
+#include "event_handler.h"
+#include "event_runner.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -124,19 +126,41 @@ public:
     * return: object of BundleActiveClient.
     */
     static BundleActiveClient& GetInstance();
-    /*
-    * function: BundleActiveClient, default constructor.
-    */
-    BundleActiveClient() {}
-    /*
-    * function: ~BundleActiveClient, default destructor.
-    */
-    ~BundleActiveClient() {}
+private:
+    class BundleActiveClientDeathRecipient : public IRemoteObject::DeathRecipient {
+    public:
+        /*
+        * function: BundleActiveClientDeathRecipient, default constructor.
+        */
+        BundleActiveClientDeathRecipient() = default;
+        /*
+        * function: ~BundleActiveClientDeathRecipient, default destructor.
+        */
+        ~BundleActiveClientDeathRecipient() = default;
+        /*
+        * function: setObserver.
+        */
+        void setObserver(const sptr<IBundleActiveGroupCallback> &observer);
+        /*
+        * function: OnRemoteDied, PostTask when service(bundleActiveProxy_) is died.
+        */
+        void OnRemoteDied(const wptr<IRemoteObject> &object) override;
+        /*
+        * function: OnServiceDiedInner, get bundleActiveProxy_ and registerGroupCallBack again.
+        */
+        void OnServiceDiedInner(const wptr<IRemoteObject> &object);
 
-    int32_t ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+    private:
+        sptr<IBundleActiveGroupCallback> observer_ = nullptr;
+    };
 private:
     bool GetBundleActiveProxy();
+    BundleActiveClient() {}
+    ~BundleActiveClient() {}
     sptr<IBundleActiveService> bundleActiveProxy_;
+    sptr<BundleActiveClientDeathRecipient> recipient_;
+    std::shared_ptr<AppExecFwk::EventRunner> bundleClientRunner_ {nullptr};
+    std::shared_ptr<AppExecFwk::EventHandler> bundleClientHandler_ {nullptr};
     std::mutex mutex_;
 };
 }  // namespace DeviceUsageStats

@@ -28,6 +28,8 @@
 #include "bundle_active_app_state_observer.h"
 #include "bundle_active_continuous_task_observer.h"
 #include "bundle_active_account_helper.h"
+#include "file_ex.h"
+#include "string_ex.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -135,6 +137,7 @@ public:
     * return: result of UnregisterGroupCallBack, true or false.
     */
     int32_t UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 
 protected:
     /**
@@ -171,6 +174,8 @@ private:
     void QueryModuleRecordInfos(BundleActiveModuleRecord& moduleRecord);
     void SerModuleProperties(const HapModuleInfo& hapModuleInfo,
     const ApplicationInfo& appInfo, const AbilityInfo& abilityInfo, BundleActiveModuleRecord& moduleRecord);
+    void DumpUsage(std::string &result);
+    int32_t ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

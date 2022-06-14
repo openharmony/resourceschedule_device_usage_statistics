@@ -70,7 +70,7 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
 {
     std::lock_guard<std::mutex> lock(mutex_);
     std::string action = data.GetWant().GetAction();
-    BUNDLE_ACTIVE_LOGI("OnReceiveEvent action is %{public}s", action.c_str());
+    BUNDLE_ACTIVE_LOGD("OnReceiveEvent action is %{public}s", action.c_str());
     if (action == CommonEventSupport::COMMON_EVENT_SCREEN_OFF ||
         action == CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
         if (!activeGroupController_.expired()) {
@@ -157,7 +157,7 @@ void BundleActiveCore::RegisterSubscriber()
     commonEventSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
         bundleGroupController_, handler_);
     bool subscribeResult = CommonEventManager::SubscribeCommonEvent(commonEventSubscriber_);
-    BUNDLE_ACTIVE_LOGI("Register for events result is %{public}d", subscribeResult);
+    BUNDLE_ACTIVE_LOGD("Register for events result is %{public}d", subscribeResult);
 }
 
 void BundleActiveCore::UnRegisterSubscriber()
@@ -175,12 +175,12 @@ void BundleActiveCore::Init()
     realTimeShot_ = timer->GetBootTimeMs();
     systemTimeShot_ = GetSystemTimeMs();
     bundleGroupController_ = std::make_shared<BundleActiveGroupController>(debugCore_);
-    BUNDLE_ACTIVE_LOGI("system time shot is %{public}lld", (long long)systemTimeShot_);
+    BUNDLE_ACTIVE_LOGD("system time shot is %{public}lld", (long long)systemTimeShot_);
 }
 
 void BundleActiveCore::InitBundleGroupController()
 {
-    BUNDLE_ACTIVE_LOGI("InitBundleGroupController called");
+    BUNDLE_ACTIVE_LOGD("InitBundleGroupController called");
     std::string threadName = "bundle_active_group_handler";
     auto runner = AppExecFwk::EventRunner::Create(threadName);
     if (runner == nullptr) {
@@ -219,7 +219,7 @@ void BundleActiveCore::SetHandler(const std::shared_ptr<BundleActiveReportHandle
 std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitializeIfNeeded(const int32_t userId,
     const int64_t timeStamp, const bool debug)
 {
-    BUNDLE_ACTIVE_LOGI("GetUserDataAndInitializeIfNeeded called");
+    BUNDLE_ACTIVE_LOGD("GetUserDataAndInitializeIfNeeded called");
     std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.find(userId);
     if (it == userStatServices_.end()) {
         BUNDLE_ACTIVE_LOGI("first initialize user service");
@@ -238,7 +238,7 @@ std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitial
 
 void BundleActiveCore::OnBundleUninstalled(const int32_t userId, const std::string& bundleName)
 {
-    BUNDLE_ACTIVE_LOGI("OnBundleUninstalled CALLED");
+    BUNDLE_ACTIVE_LOGD("OnBundleUninstalled CALLED");
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == -1) {
@@ -293,7 +293,7 @@ void BundleActiveCore::RestoreAllData()
 
 void BundleActiveCore::RestoreToDatabase(const int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("RestoreToDatabase called");
+    BUNDLE_ACTIVE_LOGD("RestoreToDatabase called");
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     BundleActiveEvent event;
     event.eventId_ = BundleActiveEvent::FLUSH;
@@ -308,7 +308,7 @@ void BundleActiveCore::RestoreToDatabase(const int32_t userId)
 
 void BundleActiveCore::RestoreToDatabaseLocked(const int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("RestoreToDatabaseLocked called");
+    BUNDLE_ACTIVE_LOGD("RestoreToDatabaseLocked called");
     auto it = userStatServices_.find(userId);
     if (it != userStatServices_.end()) {
         it->second->RestoreStats(false);
@@ -347,7 +347,7 @@ void BundleActiveCore::PreservePowerStateInfo(const int32_t eventId)
 void BundleActiveCore::ShutDown()
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    BUNDLE_ACTIVE_LOGI("ShutDown called");
+    BUNDLE_ACTIVE_LOGD("ShutDown called");
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t timeStamp = timer->GetBootTimeMs();
     BundleActiveEvent event(BundleActiveEvent::SHUTDOWN, timeStamp);
@@ -367,7 +367,7 @@ void BundleActiveCore::ShutDown()
 
 void BundleActiveCore::OnStatsReload()
 {
-    BUNDLE_ACTIVE_LOGI("OnStatsReload called");
+    BUNDLE_ACTIVE_LOGD("OnStatsReload called");
     bundleGroupController_->CheckIdleStatsOneTime();
 }
 
@@ -377,7 +377,7 @@ void BundleActiveCore::OnSystemUpdate(int32_t userId)
 
 int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("CheckTimeChangeAndGetWallTime called, userId is %{public}d", userId);
+    BUNDLE_ACTIVE_LOGD("CheckTimeChangeAndGetWallTime called, userId is %{public}d", userId);
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t actualSystemTime = GetSystemTimeMs();
     int64_t actualRealTime = timer->GetBootTimeMs();
@@ -386,7 +386,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
     if (actualSystemTime == -1 || actualRealTime == -1) {
         return -1;
     }
-    BUNDLE_ACTIVE_LOGI("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, "
+    BUNDLE_ACTIVE_LOGD("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, "
         "diff is %{public}lld", (long long)actualSystemTime,
         (long long)actualRealTime, (long long)expectedSystemTime, (long long)diffSystemTime);
     if (std::abs(diffSystemTime) > TIME_CHANGE_THRESHOLD_MILLIS) {
@@ -415,13 +415,13 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
 
 void BundleActiveCore::ConvertToSystemTimeLocked(BundleActiveEvent& event)
 {
-    BUNDLE_ACTIVE_LOGI("ConvertToSystemTimeLocked called");
+    BUNDLE_ACTIVE_LOGD("ConvertToSystemTimeLocked called");
     event.timeStamp_ = std::max((int64_t)0, event.timeStamp_ - realTimeShot_) + systemTimeShot_;
 }
 
 void BundleActiveCore::OnUserRemoved(const int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("OnUserRemoved called");
+    BUNDLE_ACTIVE_LOGD("OnUserRemoved called");
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = userStatServices_.find(userId);
     if (it == userStatServices_.end()) {
@@ -463,7 +463,7 @@ void BundleActiveCore::OnUserSwitched(const int32_t userId)
 
 int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("FLUSH interval is %{public}lld, debug is %{public}d", (long long)flushInterval_, debugCore_);
+    BUNDLE_ACTIVE_LOGD("FLUSH interval is %{public}lld, debug is %{public}d", (long long)flushInterval_, debugCore_);
     ObtainSystemEventName(event);
     event.PrintEvent(debugCore_);
     std::lock_guard<std::mutex> lock(mutex_);
@@ -481,7 +481,7 @@ int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, int32_t userId)
         bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
         return 0;
     }
-    BUNDLE_ACTIVE_LOGI("report event called, bundle name %{public}s time %{public}lld userId %{public}d, "
+    BUNDLE_ACTIVE_LOGD("report event called, bundle name %{public}s time %{public}lld userId %{public}d, "
         "eventid %{public}d, in lock range", event.bundleName_.c_str(),
         (long long)event.timeStamp_, userId, event.eventId_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
@@ -527,7 +527,7 @@ void BundleActiveCore::ObtainSystemEventName(BundleActiveEvent& event)
 
 int32_t BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
 {
-    BUNDLE_ACTIVE_LOGI("ReportEventToAllUserId called");
+    BUNDLE_ACTIVE_LOGD("ReportEventToAllUserId called");
     int64_t timeNow = CheckTimeChangeAndGetWallTime();
     if (timeNow == -1) {
         return -1;
@@ -554,14 +554,14 @@ int32_t BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
 std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const int32_t userId,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime, std::string bundleName)
 {
-    BUNDLE_ACTIVE_LOGI("QueryPackageStats called");
+    BUNDLE_ACTIVE_LOGD("QueryPackageStats called");
     std::lock_guard<std::mutex> lock(mutex_);
     std::vector<BundleActivePackageStats> result;
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == -1) {
         return result;
     }
-    BUNDLE_ACTIVE_LOGI("QueryPackageStats begin time is %{public}lld, end time is %{public}lld, "
+    BUNDLE_ACTIVE_LOGD("QueryPackageStats begin time is %{public}lld, end time is %{public}lld, "
         "intervaltype is %{public}d", (long long)beginTime, (long long)endTime, intervalType);
     if (beginTime > timeNow || beginTime >= endTime) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats time span illegal");
@@ -579,7 +579,7 @@ std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const 
 std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int32_t userId, const int64_t beginTime,
     const int64_t endTime, std::string bundleName)
 {
-    BUNDLE_ACTIVE_LOGI("QueryEvents called");
+    BUNDLE_ACTIVE_LOGD("QueryEvents called");
     std::vector<BundleActiveEvent> result;
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
@@ -735,7 +735,7 @@ int32_t BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID
     }
     groupChangeObservers_.emplace(tokenId, observer);
     AddObserverDeathRecipient(observer);
-    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
+    BUNDLE_ACTIVE_LOGD("RegisterGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
     return 0;
 }
 

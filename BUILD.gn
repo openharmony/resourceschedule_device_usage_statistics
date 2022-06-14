@@ -41,6 +41,7 @@ ohos_shared_library("usagestatsinner") {
   public_configs = [ ":usagestatsinner_public_config" ]
   public_deps = [ ":usagestatservice" ]
   external_deps = [
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
@@ -80,6 +81,7 @@ ohos_shared_library("bundlestate") {
   ]
 
   external_deps = [
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
@@ -136,6 +138,7 @@ ohos_shared_library("usagestatservice") {
     "services/packageusage/include",
     "services/packagegroup/include",
     "interfaces/innerkits/include",
+    "interfaces/kits/bundlestats/napi/include",
   ]
 
   external_deps = [
@@ -168,37 +171,4 @@ ohos_shared_library("usagestatservice") {
 
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
-}
-
-ohos_executable("deviceusagestats") {
-  include_dirs = [
-    "services/common/include",
-    "services/packageusage/include",
-    "services/packagegroup/include",
-    "interfaces/innerkits/include",
-    "utils/dump/include",
-  ]
-
-  sources = [
-    "utils/dump/src/bundle_active_shell_command.cpp",
-    "utils/dump/src/main.cpp",
-    "utils/dump/src/shell_command.cpp",
-  ]
-
-  deps = [ ":usagestatsinner" ]
-
-  configs = []
-
-  external_deps = [
-    "ability_base:want",
-    "ability_runtime:wantagent_innerkits",
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
-    "utils_base:utils",
-  ]
-
-  install_enable = true
-  part_name = "${device_usage_statistics_part_name}"
 }

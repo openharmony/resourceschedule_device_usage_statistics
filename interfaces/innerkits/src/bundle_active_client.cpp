@@ -18,9 +18,8 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 namespace {
-    const int32_t EVENTS_PARAM = 5;
-    const int32_t PACKAGE_USAGE_PARAM = 6;
-    const int32_t MODULE_USAGE_PARAM = 4;
+    const std::string BUNDLE_ACTIVE_CLIENT_NAME = "bundleActiveName";
+    static const int32_t DELAY_TIME = 5000;
 }
 BundleActiveClient& BundleActiveClient::GetInstance()
 {
@@ -49,6 +48,19 @@ bool BundleActiveClient::GetBundleActiveProxy()
     bundleActiveProxy_ = iface_cast<IBundleActiveService>(object);
     if (!bundleActiveProxy_) {
         BUNDLE_ACTIVE_LOGE("Failed to get BundleActiveProxy.");
+        return false;
+    }
+    if (!recipient_) {
+        recipient_ = new (std::nothrow) BundleActiveClientDeathRecipient();
+    }
+    bundleClientRunner_ = AppExecFwk::EventRunner::Create(BUNDLE_ACTIVE_CLIENT_NAME);
+    if (!bundleClientRunner_) {
+        BUNDLE_ACTIVE_LOGE("BundleActiveClient runner create failed!");
+        return false;
+    }
+    bundleClientHandler_ = std::make_shared<OHOS::AppExecFwk::EventHandler>(bundleClientRunner_);
+    if (!bundleClientHandler_) {
+        BUNDLE_ACTIVE_LOGE("BundleActiveClient handler create failed!");
         return false;
     }
     return true;
@@ -140,20 +152,27 @@ int32_t BundleActiveClient::QueryFormStatistics(int32_t maxNum, std::vector<Bund
 int32_t BundleActiveClient::RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
 {
     if (!GetBundleActiveProxy()) {
-        BUNDLE_ACTIVE_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return false;
+        return -1;
     }
     int32_t result = bundleActiveProxy_->RegisterGroupCallBack(observer);
+    // AddDeathRecipient when RegisterGroupCallBack success
+    if (recipient_ && result == ERR_OK) {
+        recipient_->setObserver(observer);
+        bundleActiveProxy_->AsObject()->AddDeathRecipient(recipient_);
+    }
     return result;
 }
 
 int32_t BundleActiveClient::UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
 {
     if (!GetBundleActiveProxy()) {
-        BUNDLE_ACTIVE_LOGE("GetBackgroundTaskManagerProxy failed.");
-        return false;
+        return -1;
     }
-    return bundleActiveProxy_->UnregisterGroupCallBack(observer);
+    int32_t result = bundleActiveProxy_->UnregisterGroupCallBack(observer);
+    if (recipient_) {
+        bundleActiveProxy_->AsObject()->RemoveDeathRecipient(recipient_);
+    }
+    return result;
 }
 
 int32_t BundleActiveClient::QueryEventStats(int64_t beginTime, int64_t endTime,
@@ -174,53 +193,29 @@ int32_t BundleActiveClient::QueryAppNotificationNumber(int64_t beginTime, int64_
     return bundleActiveProxy_->QueryAppNotificationNumber(beginTime, endTime, eventStats, userId);
 }
 
-int32_t BundleActiveClient::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
+void BundleActiveClient::BundleActiveClientDeathRecipient::setObserver(const sptr<IBundleActiveGroupCallback> &observer)
 {
-    int32_t ret = -1;
-
-    if (dumpOption[1] == "Events") {
-        std::vector<BundleActiveEvent> eventResult;
-        if (static_cast<int32_t>(dumpOption.size()) != EVENTS_PARAM) {
-            return ret;
-        }
-        int64_t beginTime = std::stoll(dumpOption[2]);
-        int64_t endTime = std::stoll(dumpOption[3]);
-        int32_t userId = std::stoi(dumpOption[4]);
-        eventResult = this->QueryEvents(beginTime, endTime, ret, userId);
-        for (auto& oneEvent : eventResult) {
-            dumpInfo.emplace_back(oneEvent.ToString());
-        }
-    } else if (dumpOption[1] == "PackageUsage") {
-        std::vector<BundleActivePackageStats> packageUsageResult;
-        if (static_cast<int32_t>(dumpOption.size()) != PACKAGE_USAGE_PARAM) {
-            return ret;
-        }
-        int32_t intervalType = std::stoi(dumpOption[2]);
-        int64_t beginTime = std::stoll(dumpOption[3]);
-        int64_t endTime = std::stoll(dumpOption[4]);
-        int32_t userId = std::stoi(dumpOption[5]);
-        packageUsageResult = this->QueryPackageStats(intervalType, beginTime, endTime, ret, userId);
-        for (auto& onePackageRecord : packageUsageResult) {
-            dumpInfo.emplace_back(onePackageRecord.ToString());
-        }
-    } else if (dumpOption[1] == "ModuleUsage") {
-        std::vector<BundleActiveModuleRecord> moduleResult;
-        if (static_cast<int32_t>(dumpOption.size()) != MODULE_USAGE_PARAM) {
-            return ret;
-        }
-        int32_t maxNum = std::stoi(dumpOption[2]);
-        int32_t userId = std::stoi(dumpOption[3]);
-        BUNDLE_ACTIVE_LOGI("M is %{public}d, u is %{public}d", maxNum, userId);
-        ret = this->QueryFormStatistics(maxNum, moduleResult, userId);
-        for (auto& oneModuleRecord : moduleResult) {
-            dumpInfo.emplace_back(oneModuleRecord.ToString());
-            for (uint32_t i = 0; i < oneModuleRecord.formRecords_.size(); i++) {
-                std::string oneFormInfo = "form " + std::to_string(static_cast<int32_t>(i) + 1) + ", ";
-                dumpInfo.emplace_back(oneFormInfo + oneModuleRecord.formRecords_[i].ToString());
-            }
-        }
+    if (observer) {
+        observer_ = observer;
     }
-    return ret;
+}
+void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &object)
+{
+    if (object == nullptr) {
+        BUNDLE_ACTIVE_LOGE("remote object is null.");
+        return;
+    }
+    BundleActiveClient::GetInstance().bundleActiveProxy_ = nullptr;
+    BundleActiveClient::GetInstance().bundleClientHandler_->PostTask([this, &object]() {
+            this->OnServiceDiedInner(object);
+        },
+        DELAY_TIME);
+}
+
+void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner(const wptr<IRemoteObject> &object)
+{
+    while (!BundleActiveClient::GetInstance().GetBundleActiveProxy()) { }
+    BundleActiveClient::GetInstance().RegisterGroupCallBack(observer_);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
