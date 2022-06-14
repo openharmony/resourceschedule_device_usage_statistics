@@ -154,7 +154,7 @@ int32_t BundleActiveClient::RegisterGroupCallBack(const sptr<IBundleActiveGroupC
         return -1;
     }
     int32_t result = bundleActiveProxy_->RegisterGroupCallBack(observer);
-    //AddDeathRecipient when RegisterGroupCallBack success
+    // AddDeathRecipient when RegisterGroupCallBack success
     if (recipient_ && result == ERR_OK) {
         recipient_->setObserver(observer);
         bundleActiveProxy_->AsObject()->AddDeathRecipient(recipient_);
@@ -205,7 +205,8 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
         return;
     }
     BundleActiveClient::GetInstance().bundleActiveProxy_ = nullptr;
-    BundleActiveClient::GetInstance().bundleClientHandler_->PostTask([this, &object]() { this->OnServiceDiedInner(object); });
+    BundleActiveClient::GetInstance().bundleClientHandler_->PostTask([this, &object]() {
+        this->OnServiceDiedInner(object); });
 }
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner(const wptr<IRemoteObject> &object)

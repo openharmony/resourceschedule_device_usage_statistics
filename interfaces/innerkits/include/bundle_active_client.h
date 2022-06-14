@@ -132,7 +132,7 @@ private:
         /*
         * function: BundleActiveClientDeathRecipient, default constructor.
         */
-        explicit BundleActiveClientDeathRecipient() = default;
+        BundleActiveClientDeathRecipient() = default;
         /*
         * function: ~BundleActiveClientDeathRecipient, default destructor.
         */
