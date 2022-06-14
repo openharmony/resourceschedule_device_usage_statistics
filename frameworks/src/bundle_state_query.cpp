@@ -47,25 +47,6 @@ const std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50, 60};
 const uint32_t EVENT_STATES_MIN_PARAMS = 2;
 const uint32_t EVENT_STATES_PARAMS = 3;
 
-template <typename PARAMT, typename ASYNCT>
-void AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo)
-{
-    if (params.errorCode != ERR_OK) {
-        return ;
-    }
-    asyncCallbackInfo = new (std::nothrow) ASYNCT(env);
-    if (!asyncCallbackInfo) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
-        return ;
-    }
-    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo))
-        != EOK) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
-        delete asyncCallbackInfo;
-        asyncCallbackInfo = nullptr;
-    }
-}
-
 napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback_info &info,
     ModuleRecordParamsInfo &params)
 {
