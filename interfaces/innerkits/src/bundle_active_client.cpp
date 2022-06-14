@@ -207,9 +207,9 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
     }
     BundleActiveClient::GetInstance().bundleActiveProxy_ = nullptr;
     BundleActiveClient::GetInstance().bundleClientHandler_->PostTask([this, &object]() {
-        this->OnServiceDiedInner(object);
-    },
-    DELAY_TIME);
+            this->OnServiceDiedInner(object);
+        },
+        DELAY_TIME);
 }
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner(const wptr<IRemoteObject> &object)
