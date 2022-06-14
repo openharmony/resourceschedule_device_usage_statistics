@@ -285,7 +285,7 @@ napi_value ParseUnRegisterGroupCallBackParameters(const napi_env &env, const nap
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not exist");
         params.errorCode = ERR_REGISTER_OBSERVER_IS_NULL;
-        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+        return BundleStateCommon::NapiGetNull(env);
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
