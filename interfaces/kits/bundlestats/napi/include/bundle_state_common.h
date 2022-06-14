@@ -21,6 +21,7 @@
 #include "bundle_state_query.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
+#include "bundle_state_inner_errors.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -83,7 +84,29 @@ public:
 
     static std::unique_ptr<AsyncCallbackInfoEventStats> HandleEventStatsInfo(
         AsyncCallbackInfoEventStats *asyncCallbackInfo, EventStatesParamsInfo &params);
+
+    template <typename PARAMT, typename ASYNCT>
+    void AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo)
 };
+
+template <typename PARAMT, typename ASYNCT>
+void BundleStateCommon::AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo)
+{
+    if (params.errorCode != ERR_OK) {
+        return ;
+    }
+    asyncCallbackInfo = new (std::nothrow) ASYNCT(env);
+    if (!asyncCallbackInfo) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
+        return ;
+    }
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo))
+        != EOK) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+    }
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_COMMON_H

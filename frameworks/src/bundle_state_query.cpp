@@ -63,7 +63,6 @@ void AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo)
         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
-        return ;
     }
 }
 
@@ -308,7 +307,7 @@ napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback
             napi_create_reference(env, argv[1], 1, &params.callback);
         }
     }
-    AsyncInit(env, params, asyncCallbackInfo);
+    BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
 }
 
@@ -825,7 +824,7 @@ napi_value ParseAppUsageBundleGroupInfoParameters(const napi_env &env, const nap
             "Function expected.");
         napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
     }
-    AsyncInit(env, params, asyncCallbackInfo);
+    BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
 }
 

@@ -48,26 +48,6 @@ void BundleActiveGroupObserver::SetCallbackInfo(const napi_env &env, const napi_
     bundleGroupCallbackInfo_.ref = ref;
 }
 
-template <typename PARAMT, typename ASYNCT>
-void AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo)
-{
-    if (params.errorCode != ERR_OK) {
-        return ;
-    }
-    asyncCallbackInfo = new (std::nothrow) ASYNCT(env);
-    if (!asyncCallbackInfo) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
-        return ;
-    }
-    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo))
-        != EOK) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
-        delete asyncCallbackInfo;
-        asyncCallbackInfo = nullptr;
-        return ;
-    }
-}
-
 napi_value SetBundleGroupChangedData(const CallbackReceiveDataWorker *commonEventDataWorkerData, napi_value &result)
 {
     if (!commonEventDataWorkerData) {
@@ -235,7 +215,7 @@ napi_value ParseRegisterGroupCallBackParameters(const napi_env &env, const napi_
         NAPI_ASSERT(env, valuetype == napi_function, "ParseStatesParameters invalid parameter type. Function expected");
         napi_create_reference(env, argv[1], 1, &params.callback);
     }
-    AsyncInit(env, params, asyncCallbackInfo);
+    BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
 }
 
@@ -307,7 +287,7 @@ napi_value ParseUnRegisterGroupCallBackParameters(const napi_env &env, const nap
         params.errorCode = ERR_REGISTER_OBSERVER_IS_NULL;
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    AsyncInit(env, params, asyncCallbackInfo);
+    BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
 }
 
