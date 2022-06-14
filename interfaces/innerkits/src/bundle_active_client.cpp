@@ -19,6 +19,7 @@ namespace OHOS {
 namespace DeviceUsageStats {
 namespace {
     const std::string BUNDLE_ACTIVE_CLIENT_NAME = "bundleActiveName";
+    static const int32_t DELAY_TIME = 5000;
 }
 BundleActiveClient& BundleActiveClient::GetInstance()
 {
@@ -206,8 +207,9 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
     }
     BundleActiveClient::GetInstance().bundleActiveProxy_ = nullptr;
     BundleActiveClient::GetInstance().bundleClientHandler_->PostTask([this, &object]() {
-        this->OnServiceDiedInner(object); 
-    }, 5000);
+        this->OnServiceDiedInner(object);
+    },
+    DELAY_TIME);
 }
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner(const wptr<IRemoteObject> &object)
