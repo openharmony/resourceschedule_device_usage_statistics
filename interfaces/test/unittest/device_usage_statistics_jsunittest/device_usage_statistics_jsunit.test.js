@@ -467,7 +467,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
         setTimeout(()=>{
             done();
-        }, 500);  
+        }, 500);
     })
 
     /*
@@ -498,7 +498,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
             done();
         }, 500);
     })
-    
+
     /*
      * @tc.name: DeviceUsageStatisticsJsTest020
      * @tc.desc: test registerGroupCallBack callback.
@@ -527,7 +527,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
         setTimeout(()=>{
             done();
-        }, 500);  
+        }, 500);
     })
 
     /*
@@ -571,7 +571,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
         setTimeout(()=>{
             done();
-        }, 500);  
+        }, 500);
     })
 
     /*

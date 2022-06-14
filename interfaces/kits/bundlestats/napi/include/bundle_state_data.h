@@ -71,7 +71,7 @@ struct CallbackReceiveDataWorker {
 struct AsyncCallbackInfoIsIdleState : public AsyncWorkData {
     explicit AsyncCallbackInfoIsIdleState(napi_env env) : AsyncWorkData(env) {}
     std::string bundleName = "";
-    bool state = true;
+    bool state = false;
 };
 
 struct AsyncCallbackInfoPriorityGroup : public AsyncWorkData {

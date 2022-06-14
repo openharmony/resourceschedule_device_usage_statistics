@@ -221,7 +221,7 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
             AsyncCallbackInfoIsIdleState *asyncCallbackInfo = (AsyncCallbackInfoIsIdleState *)data;
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->state = BundleActiveClient::GetInstance().IsBundleIdle(
-                    asyncCallbackInfo->bundleName);
+                    asyncCallbackInfo->bundleName, asyncCallbackInfo->errorCode);
             } else {
                 BUNDLE_ACTIVE_LOGE("IsIdleState, asyncCallbackInfo == nullptr");
             }
