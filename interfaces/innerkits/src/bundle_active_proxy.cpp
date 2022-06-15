@@ -38,12 +38,12 @@ bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName, int32_t& err
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-    if (!data.WriteInterfaceToken(GetDescriptor())) {
+    if (!data.WriteInterfaceToken(GetDescriptor()) ||
+        !data.WriteString(bundleName) ||
+        !data.WriteInt32(errCode) ||
+        !data.WriteInt32(userId)) {
         return false;
     }
-    data.WriteString(bundleName);
-    data.WriteInt32(errCode);
-    data.WriteInt32(userId);
     Remote() -> SendRequest(IS_BUNDLE_IDLE, data, reply, option);
     bool result = reply.ReadInt32();
     errCode = reply.ReadInt32();
