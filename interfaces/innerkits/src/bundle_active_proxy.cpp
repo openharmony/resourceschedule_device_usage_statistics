@@ -33,15 +33,17 @@ int32_t BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int32_t u
     return result;
 }
 
-bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName, int32_t& errCode)
+bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName, int32_t& errCode, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-    if (!data.WriteInterfaceToken(GetDescriptor())) {
+    if (!data.WriteInterfaceToken(GetDescriptor()) ||
+        !data.WriteString(bundleName) ||
+        !data.WriteInt32(errCode) ||
+        !data.WriteInt32(userId)) {
         return false;
     }
-    data.WriteString(bundleName);
     Remote() -> SendRequest(IS_BUNDLE_IDLE, data, reply, option);
     bool result = reply.ReadInt32();
     errCode = reply.ReadInt32();

@@ -249,7 +249,7 @@ int32_t BundleActiveService::ReportEvent(BundleActiveEvent& event, const int32_t
     }
 }
 
-bool BundleActiveService::IsBundleIdle(const std::string& bundleName, int32_t& errCode)
+bool BundleActiveService::IsBundleIdle(const std::string& bundleName, int32_t& errCode, int32_t userId)
 {
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
@@ -262,17 +262,20 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName, int32_t& e
     sptrBundleMgr_->GetBundleNameForUid(callingUid, callingBundleName);
     BUNDLE_ACTIVE_LOGI("UID is %{public}d, bundle name is %{public}s", callingUid, callingBundleName.c_str());
     // get user id
-    int32_t userId = -1;
     int32_t result = -1;
-    BundleActiveAccountHelper::GetUserId(callingUid, userId);
-    if (userId != -1 && !callingBundleName.empty()) {
+    if (userId == -1) {
+        BundleActiveAccountHelper::GetUserId(callingUid, userId);
+    }
+    if (userId != -1) {
         if (callingBundleName == bundleName) {
             BUNDLE_ACTIVE_LOGI("%{public}s check its own idle state", bundleName.c_str());
             result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
         } else {
             bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
             BUNDLE_ACTIVE_LOGI("check other bundle idle state");
-            if (isSystemAppAndHasPermission) {
+            if (isSystemAppAndHasPermission ||
+                AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
+                AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
                 errCode = 0;
                 result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
             } else {

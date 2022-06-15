@@ -44,7 +44,7 @@ public:
     * parameters: bundleName
     * return: if bundle is idle, return true. if bundle is not idle, return false.
     */
-    bool IsBundleIdle(const std::string& bundleName, int32_t& errCode);
+    bool IsBundleIdle(const std::string& bundleName, int32_t& errCode, int32_t userId = -1);
     /*
     * function: QueryPackageStats, query all bundle usage statistics in specific time span for calling user.
     * parameters: intervalType, beginTime, endTime, errCode
