@@ -260,14 +260,16 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName, int32_t& e
     int32_t userId = -1;
     int32_t result = -1;
     BundleActiveAccountHelper::GetUserId(callingUid, userId);
-    if (userId != -1 && !callingBundleName.empty()) {
+    if (userId != -1) {
         if (callingBundleName == bundleName) {
             BUNDLE_ACTIVE_LOGI("%{public}s check its own idle state", bundleName.c_str());
             result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
         } else {
             bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
             BUNDLE_ACTIVE_LOGI("check other bundle idle state");
-            if (isSystemAppAndHasPermission) {
+            if (isSystemAppAndHasPermission ||
+                AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) ==
+                AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
                 errCode = 0;
                 result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
             } else {
