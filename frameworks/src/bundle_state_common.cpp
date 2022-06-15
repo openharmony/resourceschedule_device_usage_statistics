@@ -16,7 +16,6 @@
 #include "securec.h"
 
 #include "bundle_active_log.h"
-#include "bundle_state_inner_errors.h"
 #include "bundle_state_common.h"
 
 namespace OHOS {

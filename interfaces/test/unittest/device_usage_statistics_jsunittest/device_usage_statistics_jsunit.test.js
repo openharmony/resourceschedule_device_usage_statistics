@@ -434,10 +434,10 @@ describe("DeviceUsageStatisticsJsTest", function () {
         let newGroup   = 30;
         bundleState.setBundleGroup(bundleName, newGroup).then( res => {
             console.info('BUNDLE_ACTIVE setBundleGroup promise success.');
-            expect(true).assertEqual(true);
+            expect(false).assertEqual(true);
         }).catch( err => {
             console.info('BUNDLE_ACTIVE setBundleGroup promise failure.');
-            expect(false).assertEqual(true);
+            expect(true).assertEqual(true);
         });
 
         setTimeout(()=>{

@@ -77,7 +77,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
         result.push_back(*tmp);
     }
     for (uint32_t i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGI("QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
+        BUNDLE_ACTIVE_LOGD("QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
             i + 1, result[i].bundleName_.c_str(),
@@ -121,7 +121,6 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
 int32_t BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int32_t newGroup,
     int32_t errCode, int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("SetBundleGroup enter bundleActiveProxy");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -161,7 +160,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStat
         result.push_back(*tmp);
     }
     for (uint32_t i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGI("QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
+        BUNDLE_ACTIVE_LOGD("QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
             i + 1, result[i].bundleName_.c_str(),
@@ -193,7 +192,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64
         result.push_back(*tmp);
     }
     for (uint32_t i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGI("QueryCurrentEvents event id is %{public}d, bundle name is %{public}s,"
+        BUNDLE_ACTIVE_LOGD("QueryCurrentEvents event id is %{public}d, bundle name is %{public}s,"
             "time stamp is %{public}lld",
             result[i].eventId_, result[i].bundleName_.c_str(), (long long)result[i].timeStamp_);
     }
@@ -239,11 +238,11 @@ int32_t BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<Bundl
         results.emplace_back(*tmp);
     }
     for (const auto& oneModule : results) {
-        BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, "
+        BUNDLE_ACTIVE_LOGD("bundle name is %{public}s, module name is %{public}s, "
             "lastusedtime is %{public}lld, launchcount is %{public}d", oneModule.bundleName_.c_str(),
             oneModule.moduleName_.c_str(), (long long)oneModule.lastModuleUsedTime_, oneModule.launchedCount_);
         for (const auto& oneForm : oneModule.formRecords_) {
-            BUNDLE_ACTIVE_LOGI("form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, "
+            BUNDLE_ACTIVE_LOGD("form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, "
                 "lasttouchtime is %{public}lld, touchcount is %{public}d", oneForm.formName_.c_str(),
                 oneForm.formDimension_, (long long)oneForm.formId_,
                 (long long)oneForm.formLastUsedTime_, oneForm.count_);
@@ -255,7 +254,7 @@ int32_t BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<Bundl
 int32_t BundleActiveProxy::RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
 {
     if (!observer) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack observer null");
+        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack observer is nullptr");
         return false;
     }
     MessageParcel data;
@@ -279,7 +278,7 @@ int32_t BundleActiveProxy::RegisterGroupCallBack(const sptr<IBundleActiveGroupCa
 int32_t BundleActiveProxy::UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
 {
     if (!observer) {
-        BUNDLE_ACTIVE_LOGE("observer null");
+        BUNDLE_ACTIVE_LOGE("UnregisterGroupCallBack observer is nullptr");
         return false;
     }
     MessageParcel data;
@@ -289,7 +288,7 @@ int32_t BundleActiveProxy::UnregisterGroupCallBack(const sptr<IBundleActiveGroup
         return false;
     }
     if (!data.WriteRemoteObject(observer->AsObject())) {
-        BUNDLE_ACTIVE_LOGE("observer write failed.");
+        BUNDLE_ACTIVE_LOGE("UnregisterGroupCallBack observer write failed.");
         return false;
     }
     Remote()->SendRequest(UNREGISTER_GROUP_CALLBACK, data, reply, option);
@@ -301,7 +300,7 @@ int32_t BundleActiveProxy::QueryEventStats(int64_t beginTime, int64_t endTime,
 {
     int32_t errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_EVENT_STATS);
     for (const auto& singleEvent : eventStats) {
-        BUNDLE_ACTIVE_LOGI("name is %{public}s, eventId is %{public}d, count is %{public}d",
+        BUNDLE_ACTIVE_LOGD("QueryEventStats name is %{public}s, eventId is %{public}d, count is %{public}d",
             singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
     }
     return errCode;
@@ -312,7 +311,7 @@ int32_t BundleActiveProxy::QueryAppNotificationNumber(int64_t beginTime, int64_t
 {
     int32_t errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_APP_NOTIFICATION_NUMBER);
     for (const auto& singleEvent : eventStats) {
-        BUNDLE_ACTIVE_LOGI("name is %{public}s, eventId is %{public}d, count is %{public}d",
+        BUNDLE_ACTIVE_LOGD("QueryAppNotificationNumber name is %{public}s, eventId is %{public}d, count is %{public}d",
             singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
     }
     return errCode;
