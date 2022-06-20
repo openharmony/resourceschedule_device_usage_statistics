@@ -61,7 +61,7 @@ public:
     * parameters: bundleName
     * return: if bundle is idle, return true. if bundle is not idle, return false.
     */
-    virtual bool IsBundleIdle(const std::string& bundleName) = 0;
+    virtual bool IsBundleIdle(const std::string& bundleName, int32_t& errCode, int32_t userId) = 0;
     /*
     * function: QueryPackageStats, query all bundle usage statistics in specific time span for calling user.
     * parameters: intervalType, beginTime, endTime, errCode
@@ -120,7 +120,7 @@ public:
     */
     virtual int32_t QueryEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) = 0;
-        
+
     /*
     * function: QueryAppNotificationNumber, query all app notification number in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,

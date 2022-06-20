@@ -40,8 +40,11 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         }
         case IS_BUNDLE_IDLE: {
             std::string bundleName = data.ReadString();
-            int32_t result = IsBundleIdle(bundleName);
-            return reply.WriteInt32(result);
+            int32_t errCode = data.ReadInt32();
+            int32_t userId = data.ReadInt32();
+            int32_t result = IsBundleIdle(bundleName, errCode, userId);
+            reply.WriteInt32(result);
+            return reply.WriteInt32(errCode);
         }
         case QUERY_USAGE_STATS: {
             std::vector<BundleActivePackageStats> result;

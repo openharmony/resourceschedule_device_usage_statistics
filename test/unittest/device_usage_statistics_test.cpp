@@ -150,8 +150,10 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackagesStats
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleIdle_001, Function | MediumTest | Level0)
 {
-    bool result = BundleActiveClient::GetInstance().IsBundleIdle(DEFAULT_BUNDLENAME);
-    EXPECT_EQ(result, true);
+    int32_t errCode = 0;
+    bool result = BundleActiveClient::GetInstance().IsBundleIdle(DEFAULT_BUNDLENAME, errCode, DEFAULT_USERID);
+    EXPECT_EQ(result, false);
+    EXPECT_EQ(errCode, 0);
 }
 
 /*
