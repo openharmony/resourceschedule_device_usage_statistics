@@ -24,7 +24,6 @@
     "deps": {
       "components": [
         "libhilog",
-        "libpermissionsdk_standard",
         "powermgr_client",
         "cesfwk_innerkits",
         "wantagent_innerkits",
