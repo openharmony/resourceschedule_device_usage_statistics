@@ -22,7 +22,7 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 #ifndef LOG_TAG_DOMAIN_ID_BUNDLE_ACTIVE
-#define LOG_TAG_DOMAIN_ID_BUNDLE_ACTIVE 0xD001701
+#define LOG_TAG_DOMAIN_ID_BUNDLE_ACTIVE 0xD001710
 #endif
 
 #ifndef LOG_TAG_BUNDLE_ACTIVE
