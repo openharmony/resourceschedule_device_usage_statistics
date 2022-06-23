@@ -479,12 +479,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
     it("DeviceUsageStatisticsJsTest019", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest019---------------------------');
         let onBundleGroupChanged = (err,res) =>{
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack callback success.');
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack oldGroup is : ' + res.oldGroup);
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack newGroup is : ' + res.newGroup);
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack changeReason is : ' + res.newGroup);
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack userId is : ' + res.userId);
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack bundleName is : ' + res.bundleName);
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack callback success.');
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack appUsageOldGroup is : ' + res.appUsageOldGroup);
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack appUsageNewGroup is : ' + res.appUsageNewGroup);
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack changeReason is : ' + res.changeReason);
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack userId is : ' + res.userId);
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack bundleName is : ' + res.bundleName);
         };
         bundleState.registerGroupCallBack(onBundleGroupChanged).then( res => {
             console.info('BUNDLE_ACTIVE RegisterGroupCallBack promise success.');
@@ -509,11 +509,11 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest020---------------------------');
         let onBundleGroupChanged = (err,res) =>{
             console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack callback success.');
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack oldGroup is : ' + res.oldGroup);
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack newGroup is : ' + res.newGroup);
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack changeReason is : ' + res.newGroup);
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack userId is : ' + res.userId);
-            console.log('BUNDLE_ACTIVE onBundleGroupChanged RegisterGroupCallBack bundleName is : ' + res.bundleName);
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack appUsageOldGroup is : ' + res.appUsageOldGroup);
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack appUsageNewGroup is : ' + res.appUsageNewGroup);
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack changeReason is : ' + res.changeReason);
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack userId is : ' + res.userId);
+            console.log('BUNDLE_ACTIVE RegisterGroupCallBack bundleName is : ' + res.bundleName);
         };
         bundleState.registerGroupCallBack(onBundleGroupChanged, (err, res) => {
             if (err) {
