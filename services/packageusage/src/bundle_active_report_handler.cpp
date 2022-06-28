@@ -73,6 +73,7 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
             auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->OnUserSwitched(tmpHandlerobj.userId_);
+            break;
         }
         default: {
             break;
