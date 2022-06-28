@@ -118,6 +118,7 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int3
             break;
         case BundleActiveEvent::ABILITY_STOP:
             abilities_.erase(abilityId);
+            break;
         default:
             break;
     }
@@ -137,6 +138,7 @@ void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTas
         switch (lastEventId) {
             case BundleActiveEvent::LONG_TIME_TASK_STARTTED:
                 IncrementServiceTimeUsed(timeStamp);
+                break;
             default:
                 break;
         }
@@ -151,6 +153,7 @@ void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTas
             break;
         case BundleActiveEvent::LONG_TIME_TASK_ENDED:
             longTimeTasks_.erase(longTimeTaskName);
+            break;
         default:
             break;
     }
