@@ -227,12 +227,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
         let beginTime = 0;
         let endTime = 20000000000000;
         bundleState.queryCurrentBundleActiveStates(beginTime, endTime).then((res) => {
-            console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates promise failure.');
-            expect(false).assertEqual(true);
-            done();
-        }).catch((err) => {
             console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates promise success.');
             expect(true).assertEqual(true);
+            done();
+        }).catch((err) => {
+            console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates promise failure.');
+            expect(false).assertEqual(true);
             done();
         });
     })
