@@ -220,7 +220,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallB
 {
     observer=std::make_shared<BundleActiveGroupCallbackStub>();
     if (!observer) {
-        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack construct observer!------------------------------");
+        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack construct observer!");
     }
     int32_t result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer.get());
     EXPECT_EQ(result, DEFAULT_ERRCODE);
