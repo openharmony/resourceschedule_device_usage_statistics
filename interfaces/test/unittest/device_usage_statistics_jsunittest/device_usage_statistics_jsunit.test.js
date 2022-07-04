@@ -58,14 +58,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
         bundleState.isIdleState(bundleName).then((res) => {
             console.info('BUNDLE_ACTIVE isIdleState promise success.');
             expect(true).assertEqual(true);
-        }).catch((err) => {
-            expect(false).assertEqual(true);
-            console.info('BUNDLE_ACTIVE isIdleState promise failure.');
-        });
-
-        setTimeout(()=>{
             done();
-        }, 500);
+        }).catch((err) => {
+            console.info('BUNDLE_ACTIVE isIdleState promise failure.');
+            expect(false).assertEqual(true);
+            done();
+        });
     })
 
     /*
@@ -78,18 +76,16 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest002---------------------------');
         let bundleName = 'com.example.deviceUsageStatistics';
         bundleState.isIdleState(bundleName, (err, res) => {
-            if(err.code === 0) {
+            if (err) {
+                console.info('BUNDLE_ACTIVE isIdleState callback failure.');
+                expect(false).assertEqual(true);
+                done();
+            } else {
                 console.info('BUNDLE_ACTIVE isIdleState callback success.');
                 expect(true).assertEqual(true);
-            } else {
-                expect(false).assertEqual(true);
-                console.info('BUNDLE_ACTIVE isIdleState callback failure.');
+                done();
             }
         });
-
-        setTimeout(()=>{
-            done();
-        }, 500);
     })
 
     /*
@@ -102,15 +98,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest003---------------------------');
         bundleState.queryAppUsagePriorityGroup().then( res => {
             console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup promise success.');
-            expect(true).assertEqual(true)
-        }).catch( err => {
-            expect(false).assertEqual(true)
-            console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup promise failure.');
-        });
-
-        setTimeout(()=>{
+            expect(true).assertEqual(true);
             done();
-        }, 500);
+        }).catch( err => {
+            console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup promise failure.');
+            expect(false).assertEqual(true);
+            done();
+        });
     })
 
     /*
@@ -122,18 +116,16 @@ describe("DeviceUsageStatisticsJsTest", function () {
     it("DeviceUsageStatisticsJsTest004", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest004---------------------------');
         bundleState.queryAppUsagePriorityGroup((err, res) => {
-            if(err.code === 0) {
-                console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup callback success.');
-                expect(true).assertEqual(true)
-            } else {
-                expect(false).assertEqual(true)
+            if (err) {
                 console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup callback failure.');
+                expect(false).assertEqual(true);
+                done();
+            } else {
+                console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup callback success.');
+                expect(true).assertEqual(true);
+                done();
             }
         });
-
-        setTimeout(()=>{
-            done();
-        }, 500);
     })
 
     /*
@@ -149,14 +141,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
         bundleState.queryBundleActiveStates(beginTime, endTime).then((res) => {
             console.info('BUNDLE_ACTIVE queryBundleActiveStates promise success.');
             expect(true).assertEqual(true);
-        }).catch((err) => {
-            expect(false).assertEqual(true);
-            console.info('BUNDLE_ACTIVE queryBundleActiveStates promise failure.');
-        });
-
-        setTimeout(()=>{
             done();
-        }, 500);
+        }).catch((err) => {
+            console.info('BUNDLE_ACTIVE queryBundleActiveStates promise failure.');
+            expect(false).assertEqual(true);
+            done();
+        });
     })
 
     /*
@@ -170,18 +160,16 @@ describe("DeviceUsageStatisticsJsTest", function () {
         let beginTime = 0;
         let endTime = 20000000000000;
         bundleState.queryBundleActiveStates(beginTime, endTime, (err, res) => {
-            if(err.code === 0) {
+            if (err) {
+                console.info('BUNDLE_ACTIVE queryBundleActiveStates callback failure.');
+                expect(false).assertEqual(true);
+                done();
+            } else {
                 console.info('BUNDLE_ACTIVE queryBundleActiveStates callback success.');
                 expect(true).assertEqual(true);
-            } else {
-                expect(false).assertEqual(true);
-                console.info('BUNDLE_ACTIVE queryBundleActiveStates callback failure.');
+                done();
             }
         });
-
-        setTimeout(()=>{
-            done();
-        }, 500);
     })
 
     /*
@@ -197,14 +185,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
         bundleState.queryBundleStateInfos(beginTime, endTime).then((res) => {
             console.info('BUNDLE_ACTIVE queryBundleStateInfos promise success.');
             expect(true).assertEqual(true);
-        }).catch((err) => {
-            expect(false).assertEqual(true);
-            console.info('BUNDLE_ACTIVE queryBundleStateInfos promise failure.');
-        });
-
-        setTimeout(()=>{
             done();
-        }, 500);
+        }).catch((err) => {
+            console.info('BUNDLE_ACTIVE queryBundleStateInfos promise failure.');
+            expect(false).assertEqual(true);
+            done();
+        });
     })
 
     /*
@@ -218,18 +204,16 @@ describe("DeviceUsageStatisticsJsTest", function () {
         let beginTime = 0;
         let endTime = 20000000000000;
         bundleState.queryBundleStateInfos(beginTime, endTime, (err, res) => {
-            if(err.code === 0) {
+            if (err) {
+                console.info('BUNDLE_ACTIVE queryBundleStateInfos callback failure.');
+                expect(false).assertEqual(true);
+                done();
+            } else {
                 console.info('BUNDLE_ACTIVE queryBundleStateInfos callback success.');
                 expect(true).assertEqual(true);
-            } else {
-                expect(false).assertEqual(true);
-                console.info('BUNDLE_ACTIVE queryBundleStateInfos callback failure.');
+                done();
             }
         });
-
-        setTimeout(()=>{
-            done();
-        }, 500);
     })
 
     /*
@@ -243,16 +227,14 @@ describe("DeviceUsageStatisticsJsTest", function () {
         let beginTime = 0;
         let endTime = 20000000000000;
         bundleState.queryCurrentBundleActiveStates(beginTime, endTime).then((res) => {
+            console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates promise failure.');
+            expect(false).assertEqual(true);
+            done();
+        }).catch((err) => {
             console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates promise success.');
             expect(true).assertEqual(true);
-        }).catch((err) => {
-            expect(false).assertEqual(true);
-            console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates promise failure.');
-        });
-
-        setTimeout(()=>{
             done();
-        }, 500);
+        });
     })
 
     /*
@@ -266,18 +248,16 @@ describe("DeviceUsageStatisticsJsTest", function () {
         let beginTime = 0;
         let endTime = 20000000000000;
         bundleState.queryCurrentBundleActiveStates(beginTime, endTime, (err, res) => {
-            if(err.code === 0) {
+            if (err) {
+                console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates callback failure.');
+                expect(false).assertEqual(true);
+                done();
+            } else {
                 console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates callback success.');
                 expect(true).assertEqual(true);
-            } else {
-                expect(false).assertEqual(true);
-                console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates callback failure.');
+                done();
             }
         });
-
-        setTimeout(()=>{
-            done();
-        }, 500);
     })
 
     /*
@@ -294,14 +274,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
         bundleState.queryBundleStateInfoByInterval(intervalType, beginTime, endTime).then((res) => {
             console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise success.');
             expect(true).assertEqual(true);
-        }).catch((err) => {
-            expect(false).assertEqual(true);
-            console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise failure.');
-        });
-
-        setTimeout(()=>{
             done();
-        }, 500);
+        }).catch((err) => {
+            console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise failure.');
+            expect(false).assertEqual(true);
+            done();
+        });
     })
 
     /*
@@ -316,17 +294,15 @@ describe("DeviceUsageStatisticsJsTest", function () {
         let beginTime = 0;
         let endTime = 20000000000000;
         bundleState.queryBundleStateInfoByInterval(intervalType, beginTime, endTime, (err, res) => {
-            if(err.code === 0) {
+            if (err) {
+                console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval callback failure.');
+                expect(false).assertEqual(true);
+                done();
+            } else {
                 console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval callback success.');
                 expect(true).assertEqual(true);
-            } else {
-                expect(false).assertEqual(true);
-                console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval callback failure.');
+                done();
             }
         });
-
-        setTimeout(()=>{
-            done();
-        }, 500);
     })
 })
