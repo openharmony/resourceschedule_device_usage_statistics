@@ -787,6 +787,10 @@ pair<int64_t, int64_t> BundleActiveUsageDatabase::GetDurationData()
 void BundleActiveUsageDatabase::FlushPackageInfo(uint32_t databaseType, const BundleActivePeriodStats &stats)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
+    if (rdbStore == nullptr) {
+        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        return;
+    }
     string tableName = PACKAGE_LOG_TABLE + to_string(stats.beginTime_);
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
