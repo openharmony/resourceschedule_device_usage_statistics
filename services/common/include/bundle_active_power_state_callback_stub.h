@@ -18,7 +18,6 @@
 
 #include "ipower_state_callback.h"
 #include "nocopyable.h"
-
 #include "ibundle_active_service.h"
 
 namespace OHOS {

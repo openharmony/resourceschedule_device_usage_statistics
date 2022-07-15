@@ -16,7 +16,11 @@
 #ifndef BUNDLE_ACTIVE_EVENT_H
 #define BUNDLE_ACTIVE_EVENT_H
 
-#include "ibundle_active_service.h"
+#include <stdint.h>
+#include "iosfwd"
+#include "memory"
+#include "parcel.h"
+#include "string"
 
 namespace OHOS {
 namespace DeviceUsageStats {

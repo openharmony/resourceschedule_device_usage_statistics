@@ -16,12 +16,9 @@
 #ifndef BUNDLE_ACTIVE_MODULE_RECORD_H
 #define BUNDLE_ACTIVE_MODULE_RECORD_H
 
-#include <string>
-#include <map>
-#include <memory>
-
 #include "bundle_active_form_record.h"
-#include "ibundle_active_service.h"
+#include "memory"
+#include "string"
 
 namespace OHOS {
 namespace DeviceUsageStats {

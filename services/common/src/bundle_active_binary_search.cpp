@@ -14,7 +14,8 @@
  */
 
 #include "bundle_active_binary_search.h"
-#include "bundle_active_log.h"
+#include "cstdint"
+#include "vector"
 
 namespace OHOS {
 namespace DeviceUsageStats {
