@@ -14,6 +14,8 @@
  */
 
 #include "bundle_active_event.h"
+#include <memory>
+#include "bundle_active_log.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

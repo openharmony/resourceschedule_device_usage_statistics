@@ -16,9 +16,11 @@
 #ifndef BUNDLE_ACTIVE_FORM_RECORD_H
 #define BUNDLE_ACTIVE_FORM_RECORD_H
 
+#include <stdint.h>
 #include <string>
-
-#include "ibundle_active_service.h"
+#include "iosfwd"
+#include "memory"
+#include "parcel.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

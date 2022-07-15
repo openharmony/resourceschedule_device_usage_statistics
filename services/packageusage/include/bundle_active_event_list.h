@@ -16,8 +16,9 @@
 #ifndef BUNDLE_ACTIVE_EVENT_LIST_H
 #define BUNDLE_ACTIVE_EVENT_LIST_H
 
-#include "ibundle_active_service.h"
+#include <stdint.h>
 #include "bundle_active_event.h"
+#include "vector"
 
 namespace OHOS {
 namespace DeviceUsageStats {
