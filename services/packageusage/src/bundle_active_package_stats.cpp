@@ -14,7 +14,6 @@
  */
 
 #include "bundle_active_package_stats.h"
-#include <memory>
 #include "bundle_active_event.h"
 #include "utility"
 
