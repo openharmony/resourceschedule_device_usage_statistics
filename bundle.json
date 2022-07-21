@@ -32,7 +32,7 @@
         "access_token",
         "ability_runtime",
         "hiviewdfx_hilog_native",
-        "samgr_standard",
+        "samgr",
         "utils_base",
         "napi",
         "startup_l2",
