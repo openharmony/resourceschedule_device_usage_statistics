@@ -59,7 +59,7 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "startup_l2:syspara",
-    "time_native:time_service",
+    "time_service:time_service",
     "utils_base:utils",
   ]
 }
