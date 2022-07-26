@@ -14,6 +14,7 @@
  */
 
 #include "bundle_active_form_record.h"
+#include "string"
 
 namespace OHOS {
 namespace DeviceUsageStats {

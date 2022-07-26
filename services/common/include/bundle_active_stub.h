@@ -16,7 +16,13 @@
 #ifndef BUNDLE_ACTIVE_STUB_H
 #define BUNDLE_ACTIVE_STUB_H
 
+#include <stdint.h>
 #include "ibundle_active_service.h"
+#include "iremote_stub.h"
+#include "message_option.h"
+#include "message_parcel.h"
+#include "nocopyable.h"
+#include "refbase.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

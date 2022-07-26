@@ -39,7 +39,7 @@
         "ability_base",
         "background_task_mgr",
         "eventhandler",
-        "power_manager_native",
+        "power_manager",
         "time_native"
       ],
       "third_party": [ "googletest" ]

@@ -16,8 +16,14 @@
 #ifndef BUNDLE_ACTIVE_PACKAGE_STATS_H
 #define BUNDLE_ACTIVE_PACKAGE_STATS_H
 
-#include "ibundle_active_service.h"
-#include "bundle_active_event.h"
+#include <stdint.h>
+#include "__functional_base"
+#include "cstdint"
+#include "iosfwd"
+#include "map"
+#include "memory"
+#include "parcel.h"
+#include "string"
 
 namespace OHOS {
 namespace DeviceUsageStats {
