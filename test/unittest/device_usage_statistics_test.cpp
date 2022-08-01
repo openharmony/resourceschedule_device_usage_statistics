@@ -26,6 +26,7 @@
 #include "bundle_active_client.h"
 #include "bundle_active_event.h"
 #include "bundle_active_group_callback_stub.h"
+#include "bundle_active_group_map.h"
 
 using namespace testing::ext;
 
@@ -268,6 +269,32 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryAppNotificati
     std::vector<BundleActiveEventStats> eventStats;
     int32_t errCode = BundleActiveClient::GetInstance().QueryAppNotificationNumber(0, LARGE_NUM, eventStats);
     EXPECT_EQ(errCode, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_BundleActiveGroupMap_001
+ * @tc.desc: BundleActiveGroupMap
+ * @tc.type: FUNC
+ * @tc.require: SR000H0G4F AR000H2US8
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveGroupMap_001, Function
+    | MediumTest | Level0)
+{
+    int64_t minInterval = DeviceUsageStatsGroupMap::groupIntervalMap_
+        .at(DeviceUsageStatsGroupConst::ACTIVE_GROUP_FORCED_SET);
+    EXPECT_EQ(minInterval, 0);
+    minInterval = DeviceUsageStatsGroupMap::groupIntervalMap_
+        .at(DeviceUsageStatsGroupConst::ACTIVE_GROUP_ALIVE);
+    EXPECT_EQ(minInterval, DeviceUsageStatsGroupConst::TWO_HOUR);
+    minInterval = DeviceUsageStatsGroupMap::groupIntervalMap_
+        .at(DeviceUsageStatsGroupConst::ACTIVE_GROUP_DAILY);
+    EXPECT_EQ(minInterval, 2 * DeviceUsageStatsGroupConst::TWO_HOUR);
+    minInterval = DeviceUsageStatsGroupMap::groupIntervalMap_
+        .at(DeviceUsageStatsGroupConst::ACTIVE_GROUP_FIXED);
+    EXPECT_EQ(minInterval, DeviceUsageStatsGroupConst::TWENTY_FOUR_HOUR);
+    minInterval = DeviceUsageStatsGroupMap::groupIntervalMap_
+        .at(DeviceUsageStatsGroupConst::ACTIVE_GROUP_RARE);
+    EXPECT_EQ(minInterval, DeviceUsageStatsGroupConst::FOURTY_EIGHT_HOUR);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
