@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
+#include "bundle_active_stub.h"
+
 #include "ipc_object_stub.h"
 #include "iremote_broker.h"
 
-#include "bundle_active_stub.h"
 #include "bundle_active_event.h"
 #include "bundle_active_event_stats.h"
 #include "bundle_active_log.h"
