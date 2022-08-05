@@ -14,7 +14,6 @@
  */
 
 #include "bundle_active_package_stats.h"
-#include <utility>
 #include "bundle_active_event.h"
 
 namespace OHOS {

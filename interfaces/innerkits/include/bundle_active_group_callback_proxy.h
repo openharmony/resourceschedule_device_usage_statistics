@@ -16,11 +16,13 @@
 #ifndef BUNDLE_ACTIVE_GROUP_CALLBACK_PROXY_H
 #define BUNDLE_ACTIVE_GROUP_CALLBACK_PROXY_H
 
-#include "bundle_active_group_callback_info.h"
 #include <functional>
-#include "ibundle_active_group_callback.h"
-#include "iremote_proxy.h"
 #include "nocopyable.h"
+
+#include "iremote_proxy.h"
+
+#include "ibundle_active_group_callback.h"
+#include "bundle_active_group_callback_info.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

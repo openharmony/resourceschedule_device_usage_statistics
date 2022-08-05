@@ -17,7 +17,6 @@
 #define BUNDLE_ACTIVE_EVENT_LIST_H
 
 #include "bundle_active_event.h"
-#include <cstdint>
 
 namespace OHOS {
 namespace DeviceUsageStats {

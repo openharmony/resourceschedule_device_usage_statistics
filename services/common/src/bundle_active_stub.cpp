@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#include "ipc_object_stub.h"
+#include "iremote_broker.h"
+
 #include "bundle_active_stub.h"
 #include "bundle_active_event.h"
 #include "bundle_active_event_stats.h"
@@ -20,9 +23,7 @@
 #include "bundle_active_module_record.h"
 #include "bundle_active_package_stats.h"
 #include "ibundle_active_group_callback.h"
-#include <iosfwd>
-#include "ipc_object_stub.h"
-#include "iremote_broker.h"
+
 
 namespace OHOS {
 namespace DeviceUsageStats {
