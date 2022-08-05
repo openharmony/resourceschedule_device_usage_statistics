@@ -45,7 +45,7 @@ static int32_t DEFAULT_ERRCODE = 0;
 static int64_t LARGE_NUM = 20000000000000;
 static int32_t DEFAULT_GROUP = 10;
 static std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50};
-static std::shared_ptr<BundleActiveGroupCallbackStub> observer = nullptr;
+static sptr<BundleActiveGroupCallbackStub> observer = nullptr;
 
 class DeviceUsageStatisticsTest : public testing::Test {
 public:
@@ -219,11 +219,11 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallBack_001, Function | MediumTest | Level0)
 {
-    observer=std::make_shared<BundleActiveGroupCallbackStub>();
+    observer = std::make_unique<BundleActiveGroupCallbackStub>().release();
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack construct observer!");
     }
-    int32_t result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer.get());
+    int32_t result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer);
     EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
 
@@ -239,7 +239,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_UnRegisterGroupCal
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("observer has been delete");
     }
-    int32_t result = BundleActiveClient::GetInstance().UnregisterGroupCallBack(observer.get());
+    int32_t result = BundleActiveClient::GetInstance().UnregisterGroupCallBack(observer);
     observer = nullptr;
     EXPECT_EQ(result, DEFAULT_ERRCODE);
 }

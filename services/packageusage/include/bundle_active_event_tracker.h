@@ -16,9 +16,8 @@
 #ifndef BUNDLE_ACTIVE_EVENT_TRACKER_H
 #define BUNDLE_ACTIVE_EVENT_TRACKER_H
 
-#include <stdint.h>
 #include "bundle_active_event_stats.h"
-#include "vector"
+#include <cstdint>
 
 namespace OHOS {
 namespace DeviceUsageStats {

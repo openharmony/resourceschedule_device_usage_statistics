@@ -14,7 +14,7 @@
  */
 
 #include "bundle_active_event_stats.h"
-#include "algorithm"
+#include <algorithm>
 
 namespace OHOS {
 namespace DeviceUsageStats {

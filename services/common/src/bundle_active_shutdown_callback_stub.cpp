@@ -17,7 +17,6 @@
 #include "bundle_active_log.h"
 #include "errors.h"
 #include "ipc_object_stub.h"
-#include "string"
 
 namespace OHOS {
 namespace DeviceUsageStats {

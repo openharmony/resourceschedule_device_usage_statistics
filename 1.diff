@@ -1,0 +1,345 @@
+diff --git a/interfaces/innerkits/include/bundle_active_group_callback_info.h b/interfaces/innerkits/include/bundle_active_group_callback_info.h
+index b774fcf..c284430 100644
+--- a/interfaces/innerkits/include/bundle_active_group_callback_info.h
++++ b/interfaces/innerkits/include/bundle_active_group_callback_info.h
+@@ -16,7 +16,6 @@
+ #ifndef BUNDLE_ACTIVE_GROUP_CALLBACK_INFO_H
+ #define BUNDLE_ACTIVE_GROUP_CALLBACK_INFO_H
+ 
+-#include <string>
+ #include <memory>
+ 
+ #include "parcel.h"
+diff --git a/interfaces/innerkits/include/bundle_active_group_callback_proxy.h b/interfaces/innerkits/include/bundle_active_group_callback_proxy.h
+index aee3c1f..a2bbb7b 100644
+--- a/interfaces/innerkits/include/bundle_active_group_callback_proxy.h
++++ b/interfaces/innerkits/include/bundle_active_group_callback_proxy.h
+@@ -17,13 +17,10 @@
+ #define BUNDLE_ACTIVE_GROUP_CALLBACK_PROXY_H
+ 
+ #include "bundle_active_group_callback_info.h"
+-#include "functional"
++#include <functional>
+ #include "ibundle_active_group_callback.h"
+-#include "iremote_broker.h"
+-#include "iremote_object.h"
+ #include "iremote_proxy.h"
+ #include "nocopyable.h"
+-#include "refbase.h"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/interfaces/innerkits/include/ibundle_active_group_callback.h b/interfaces/innerkits/include/ibundle_active_group_callback.h
+index 296ed9f..a50dedc 100644
+--- a/interfaces/innerkits/include/ibundle_active_group_callback.h
++++ b/interfaces/innerkits/include/ibundle_active_group_callback.h
+@@ -18,7 +18,6 @@
+ 
+ #include <ipc_types.h>
+ #include <iremote_broker.h>
+-#include "iremote_object.h"
+ 
+ #include "bundle_active_log.h"
+ #include "bundle_active_group_callback_info.h"
+diff --git a/interfaces/innerkits/src/bundle_active_group_callback_proxy.cpp b/interfaces/innerkits/src/bundle_active_group_callback_proxy.cpp
+index 42b0e66..6f0196b 100644
+--- a/interfaces/innerkits/src/bundle_active_group_callback_proxy.cpp
++++ b/interfaces/innerkits/src/bundle_active_group_callback_proxy.cpp
+@@ -13,7 +13,7 @@
+  * limitations under the License.
+  */
+ #include "bundle_active_group_callback_proxy.h"
+-#include <message_parcel.h>
++#include "message_parcel.h"
+ #include "bundle_active_log.h"
+ #include "errors.h"
+ #include "message_option.h"
+diff --git a/services/common/include/bundle_active_binary_search.h b/services/common/include/bundle_active_binary_search.h
+index 6f62ac6..4f76822 100644
+--- a/services/common/include/bundle_active_binary_search.h
++++ b/services/common/include/bundle_active_binary_search.h
+@@ -16,7 +16,7 @@
+ #ifndef BUNDLE_ACTIVE_BINARY_SEARCH_H
+ #define BUNDLE_ACTIVE_BINARY_SEARCH_H
+ 
+-#include <stdint.h>
++#include <cstdint>
+ #include <vector>
+ #include "singleton.h"
+ 
+diff --git a/services/common/include/bundle_active_shutdown_callback_stub.h b/services/common/include/bundle_active_shutdown_callback_stub.h
+index 36205c3..134e33d 100644
+--- a/services/common/include/bundle_active_shutdown_callback_stub.h
++++ b/services/common/include/bundle_active_shutdown_callback_stub.h
+@@ -16,13 +16,12 @@
+ #ifndef BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_STUB_H
+ #define BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_STUB_H
+ 
+-#include <stdint.h>
++#include <cstdint>
+ #include "iremote_stub.h"
+ #include "ishutdown_callback.h"
+ #include "message_option.h"
+ #include "message_parcel.h"
+ #include "nocopyable.h"
+-#include "refbase.h"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/common/include/bundle_active_stub.h b/services/common/include/bundle_active_stub.h
+index 06fb292..a3c5983 100644
+--- a/services/common/include/bundle_active_stub.h
++++ b/services/common/include/bundle_active_stub.h
+@@ -16,13 +16,9 @@
+ #ifndef BUNDLE_ACTIVE_STUB_H
+ #define BUNDLE_ACTIVE_STUB_H
+ 
+-#include <stdint.h>
++#include <cstdint>
+ #include "ibundle_active_service.h"
+-#include "iremote_stub.h"
+-#include "message_option.h"
+-#include "message_parcel.h"
+ #include "nocopyable.h"
+-#include "refbase.h"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/common/include/ibundle_active_service.h b/services/common/include/ibundle_active_service.h
+index 4935160..fe1f87c 100644
+--- a/services/common/include/ibundle_active_service.h
++++ b/services/common/include/ibundle_active_service.h
+@@ -16,13 +16,12 @@
+ #ifndef BUNDLE_ACTIVE_ISERVICE_H
+ #define BUNDLE_ACTIVE_ISERVICE_H
+ 
+-#include <string>
+ #include <map>
+ #include <vector>
+ #include <set>
+ #include <utility>
+ #include <algorithm>
+-#include <stdint.h>
++#include <cstdint>
+ 
+ #include "iremote_broker.h"
+ #include "iremote_stub.h"
+diff --git a/services/common/src/bundle_active_binary_search.cpp b/services/common/src/bundle_active_binary_search.cpp
+index 1e5d27b..a830181 100644
+--- a/services/common/src/bundle_active_binary_search.cpp
++++ b/services/common/src/bundle_active_binary_search.cpp
+@@ -14,8 +14,8 @@
+  */
+ 
+ #include "bundle_active_binary_search.h"
+-#include "cstdint"
+-#include "vector"
++#include <cstdint>
++#include <vector>
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/common/src/bundle_active_shutdown_callback_stub.cpp b/services/common/src/bundle_active_shutdown_callback_stub.cpp
+index 65093d4..5380b59 100644
+--- a/services/common/src/bundle_active_shutdown_callback_stub.cpp
++++ b/services/common/src/bundle_active_shutdown_callback_stub.cpp
+@@ -17,7 +17,6 @@
+ #include "bundle_active_log.h"
+ #include "errors.h"
+ #include "ipc_object_stub.h"
+-#include "string"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/common/src/bundle_active_stub.cpp b/services/common/src/bundle_active_stub.cpp
+index 20d7865..a84b6e0 100644
+--- a/services/common/src/bundle_active_stub.cpp
++++ b/services/common/src/bundle_active_stub.cpp
+@@ -20,12 +20,9 @@
+ #include "bundle_active_module_record.h"
+ #include "bundle_active_package_stats.h"
+ #include "ibundle_active_group_callback.h"
+-#include "iosfwd"
++#include <iosfwd>
+ #include "ipc_object_stub.h"
+ #include "iremote_broker.h"
+-#include "memory"
+-#include "string"
+-#include "vector"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/packageusage/include/bundle_active_event.h b/services/packageusage/include/bundle_active_event.h
+index f27cbd9..57889be 100644
+--- a/services/packageusage/include/bundle_active_event.h
++++ b/services/packageusage/include/bundle_active_event.h
+@@ -16,11 +16,10 @@
+ #ifndef BUNDLE_ACTIVE_EVENT_H
+ #define BUNDLE_ACTIVE_EVENT_H
+ 
+-#include <stdint.h>
+-#include "iosfwd"
+-#include "memory"
++#include <cstdint>
++#include <iosfwd>
++#include <memory>
+ #include "parcel.h"
+-#include "string"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/packageusage/include/bundle_active_event_list.h b/services/packageusage/include/bundle_active_event_list.h
+index 62abd5a..ba557b8 100644
+--- a/services/packageusage/include/bundle_active_event_list.h
++++ b/services/packageusage/include/bundle_active_event_list.h
+@@ -16,9 +16,8 @@
+ #ifndef BUNDLE_ACTIVE_EVENT_LIST_H
+ #define BUNDLE_ACTIVE_EVENT_LIST_H
+ 
+-#include <stdint.h>
+ #include "bundle_active_event.h"
+-#include "vector"
++#include <cstdint>
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/packageusage/include/bundle_active_event_stats.h b/services/packageusage/include/bundle_active_event_stats.h
+index 77898ce..5b63239 100644
+--- a/services/packageusage/include/bundle_active_event_stats.h
++++ b/services/packageusage/include/bundle_active_event_stats.h
+@@ -16,11 +16,10 @@
+ #ifndef BUNDLE_ACTIVE_EVENT_STATS_H
+ #define BUNDLE_ACTIVE_EVENT_STATS_H
+ 
+-#include <stdint.h>
+-#include "iosfwd"
+-#include "memory"
++#include <cstdint>
++#include <iosfwd>
++#include <memory>
+ #include "parcel.h"
+-#include "string"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/packageusage/include/bundle_active_event_tracker.h b/services/packageusage/include/bundle_active_event_tracker.h
+index c6b921b..d2cb586 100644
+--- a/services/packageusage/include/bundle_active_event_tracker.h
++++ b/services/packageusage/include/bundle_active_event_tracker.h
+@@ -16,9 +16,8 @@
+ #ifndef BUNDLE_ACTIVE_EVENT_TRACKER_H
+ #define BUNDLE_ACTIVE_EVENT_TRACKER_H
+ 
+-#include <stdint.h>
+ #include "bundle_active_event_stats.h"
+-#include "vector"
++#include <cstdint>
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/packageusage/include/bundle_active_form_record.h b/services/packageusage/include/bundle_active_form_record.h
+index dc637b8..57d0c1c 100644
+--- a/services/packageusage/include/bundle_active_form_record.h
++++ b/services/packageusage/include/bundle_active_form_record.h
+@@ -16,10 +16,9 @@
+ #ifndef BUNDLE_ACTIVE_FORM_RECORD_H
+ #define BUNDLE_ACTIVE_FORM_RECORD_H
+ 
+-#include <stdint.h>
+-#include <string>
+-#include "iosfwd"
+-#include "memory"
++#include <cstdint>
++#include <iosfwd>
++#include <memory>
+ #include "parcel.h"
+ 
+ namespace OHOS {
+diff --git a/services/packageusage/include/bundle_active_module_record.h b/services/packageusage/include/bundle_active_module_record.h
+index 05c7e2c..0112a18 100644
+--- a/services/packageusage/include/bundle_active_module_record.h
++++ b/services/packageusage/include/bundle_active_module_record.h
+@@ -17,8 +17,6 @@
+ #define BUNDLE_ACTIVE_MODULE_RECORD_H
+ 
+ #include "bundle_active_form_record.h"
+-#include "memory"
+-#include "string"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/packageusage/include/bundle_active_package_stats.h b/services/packageusage/include/bundle_active_package_stats.h
+index c2c0f31..88ba2e8 100644
+--- a/services/packageusage/include/bundle_active_package_stats.h
++++ b/services/packageusage/include/bundle_active_package_stats.h
+@@ -16,14 +16,11 @@
+ #ifndef BUNDLE_ACTIVE_PACKAGE_STATS_H
+ #define BUNDLE_ACTIVE_PACKAGE_STATS_H
+ 
+-#include <stdint.h>
+-#include "__functional_base"
+-#include "cstdint"
+-#include "iosfwd"
+-#include "map"
+-#include "memory"
++#include <cstdint>
++#include <iosfwd>
++#include <map>
++#include <memory>
+ #include "parcel.h"
+-#include "string"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/packageusage/src/bundle_active_event_stats.cpp b/services/packageusage/src/bundle_active_event_stats.cpp
+index 4819002..1bd78dd 100644
+--- a/services/packageusage/src/bundle_active_event_stats.cpp
++++ b/services/packageusage/src/bundle_active_event_stats.cpp
+@@ -14,7 +14,7 @@
+  */
+ 
+ #include "bundle_active_event_stats.h"
+-#include "algorithm"
++#include <algorithm>
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/packageusage/src/bundle_active_form_record.cpp b/services/packageusage/src/bundle_active_form_record.cpp
+index 5561edc..3ef3c59 100644
+--- a/services/packageusage/src/bundle_active_form_record.cpp
++++ b/services/packageusage/src/bundle_active_form_record.cpp
+@@ -14,7 +14,6 @@
+  */
+ 
+ #include "bundle_active_form_record.h"
+-#include "string"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/packageusage/src/bundle_active_module_record.cpp b/services/packageusage/src/bundle_active_module_record.cpp
+index c0ba82c..9032d92 100644
+--- a/services/packageusage/src/bundle_active_module_record.cpp
++++ b/services/packageusage/src/bundle_active_module_record.cpp
+@@ -14,8 +14,6 @@
+  */
+ 
+ #include "bundle_active_module_record.h"
+-#include "memory"
+-#include "string"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {
+diff --git a/services/packageusage/src/bundle_active_package_stats.cpp b/services/packageusage/src/bundle_active_package_stats.cpp
+index 7bd0679..2afaf5a 100644
+--- a/services/packageusage/src/bundle_active_package_stats.cpp
++++ b/services/packageusage/src/bundle_active_package_stats.cpp
+@@ -14,8 +14,8 @@
+  */
+ 
+ #include "bundle_active_package_stats.h"
++#include <utility>
+ #include "bundle_active_event.h"
+-#include "utility"
+ 
+ namespace OHOS {
+ namespace DeviceUsageStats {

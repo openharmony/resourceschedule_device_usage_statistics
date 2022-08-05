@@ -16,7 +16,6 @@
 #ifndef BUNDLE_ACTIVE_GROUP_CALLBACK_INFO_H
 #define BUNDLE_ACTIVE_GROUP_CALLBACK_INFO_H
 
-#include <string>
 #include <memory>
 
 #include "parcel.h"
