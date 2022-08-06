@@ -16,13 +16,12 @@
 #ifndef BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_STUB_H
 #define BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_STUB_H
 
-#include <stdint.h>
+#include <cstdint>
 #include "iremote_stub.h"
 #include "ishutdown_callback.h"
 #include "message_option.h"
 #include "message_parcel.h"
 #include "nocopyable.h"
-#include "refbase.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

@@ -18,7 +18,6 @@
 
 #include <ipc_types.h>
 #include <iremote_broker.h>
-#include "iremote_object.h"
 
 #include "bundle_active_log.h"
 #include "bundle_active_group_callback_info.h"

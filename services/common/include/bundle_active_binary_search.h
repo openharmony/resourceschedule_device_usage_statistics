@@ -16,7 +16,7 @@
 #ifndef BUNDLE_ACTIVE_BINARY_SEARCH_H
 #define BUNDLE_ACTIVE_BINARY_SEARCH_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 #include "singleton.h"
 

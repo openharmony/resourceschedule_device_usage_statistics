@@ -14,8 +14,6 @@
  */
 
 #include "bundle_active_module_record.h"
-#include "memory"
-#include "string"
 
 namespace OHOS {
 namespace DeviceUsageStats {

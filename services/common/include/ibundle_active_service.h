@@ -16,13 +16,12 @@
 #ifndef BUNDLE_ACTIVE_ISERVICE_H
 #define BUNDLE_ACTIVE_ISERVICE_H
 
-#include <string>
 #include <map>
 #include <vector>
 #include <set>
 #include <utility>
 #include <algorithm>
-#include <stdint.h>
+#include <cstdint>
 
 #include "iremote_broker.h"
 #include "iremote_stub.h"
