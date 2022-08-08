@@ -207,7 +207,7 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
 }
 
 int32_t BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int32_t userId,
-    const int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason)
+    const int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason, const bool flushflag)
 {
     std::lock_guard<std::mutex> lock(setGroupMutex_);
     BUNDLE_ACTIVE_LOGI("set %{public}s to group %{public}d, reason is %{public}d, userId is %{public}d",
@@ -230,6 +230,11 @@ int32_t BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const 
     oneBundleHistory->reasonInGroup_ = groupReason;
     oneBundleHistory->isChanged_ = true;
     BUNDLE_ACTIVE_LOGI("SetBundleGroup set success");
+    if (flushflag) {
+        BUNDLE_ACTIVE_LOGD("SetBundleGroup will RestoreToDatabase");
+        WriteBundleUsage(userId);
+    }
+
     bool isGroupChanged = (oldGroup == newGroup) ? true : false;
     if (!isGroupChanged) {
         BundleActiveGroupCallbackInfo callbackInfo(

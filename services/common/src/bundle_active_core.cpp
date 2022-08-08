@@ -645,12 +645,14 @@ int32_t BundleActiveCore::QueryAppNotificationNumber(int64_t beginTime, int64_t 
     return errCode;
 }
 
-int32_t BundleActiveCore::SetBundleGroup(const std::string& bundleName, const int32_t newGroup, const int32_t userId)
+int32_t BundleActiveCore::SetBundleGroup(
+    const std::string& bundleName, const int32_t newGroup, const int32_t userId, const bool flushflag)
 {
     int32_t newReason = GROUP_CONTROL_REASON_FORCED;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    return bundleGroupController_->SetBundleGroup(bundleName, userId, newGroup, newReason, bootBasedTimeStamp);
+    return bundleGroupController_->SetBundleGroup(
+        bundleName, userId, newGroup, newReason, bootBasedTimeStamp, flushflag);
 }
 
 int32_t BundleActiveCore::QueryPackageGroup(const std::string bundleName, const int32_t userId)
