@@ -231,7 +231,6 @@ int32_t BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const 
     oneBundleHistory->isChanged_ = true;
     BUNDLE_ACTIVE_LOGI("SetBundleGroup set success");
     if (isFlush) {
-        BUNDLE_ACTIVE_LOGD("SetBundleGroup will RestoreToDatabase");
         WriteBundleUsage(userId);
     }
 
