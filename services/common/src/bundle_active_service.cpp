@@ -373,21 +373,21 @@ int32_t BundleActiveService::SetBundleGroup(const std::string& bundleName, int32
         return result;
     }
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    bool flushflag = false;
+    bool isFlush = false;
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
         if (ret != ERR_OK) {
             errCode = -1;
             return result;
         }
-        flushflag = true;
+        isFlush = true;
     }
     if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("SetBundleGroup userid is %{public}d", userId);
         auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
         if (CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode) ||
             tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
-            result = bundleActiveCore_->SetBundleGroup(bundleName, newGroup, userId, flushflag);
+            result = bundleActiveCore_->SetBundleGroup(bundleName, newGroup, userId, isFlush);
         }
     }
     return result;

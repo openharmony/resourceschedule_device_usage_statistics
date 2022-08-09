@@ -166,11 +166,11 @@ public:
     void OnUserSwitched(const int32_t userId);
     /*
     * function: SetBundleGroup, change bundleGroup to the newGroup.
-    * parameters: bundleName, newGroup, userId, flushflag,
+    * parameters: bundleName, newGroup, userId, isFlush,
     * return: errorcode.
     */
     int32_t SetBundleGroup(
-        const std::string& bundleName, const int32_t newGroup, const int32_t userId, const bool flushflag);
+        const std::string& bundleName, const int32_t newGroup, const int32_t userId, const bool isFlush);
     // get all user in device.
     void GetAllActiveUser(std::vector<int32_t>& activatedOsAccountIds);
     // when service stop, call it to unregister commen event and shutdown call back.
