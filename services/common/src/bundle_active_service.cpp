@@ -361,7 +361,6 @@ int32_t BundleActiveService::SetBundleGroup(const std::string& bundleName, int32
     int32_t userId)
 {
     int32_t result = -1;
-
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     if (!GetBundleMgrProxy()) {
         BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
@@ -371,22 +370,24 @@ int32_t BundleActiveService::SetBundleGroup(const std::string& bundleName, int32
     sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
     if (localBundleName == bundleName) {
         BUNDLE_ACTIVE_LOGI("SetBundleGroup can not set its bundleName");
-        return -1;
+        return result;
     }
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+    bool isFlush = false;
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
         if (ret != ERR_OK) {
             errCode = -1;
             return result;
         }
+        isFlush = true;
     }
     if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("SetBundleGroup userid is %{public}d", userId);
         auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
         if (CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode) ||
             tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
-            result = bundleActiveCore_->SetBundleGroup(bundleName, newGroup, userId);
+            result = bundleActiveCore_->SetBundleGroup(bundleName, newGroup, userId, isFlush);
         }
     }
     return result;

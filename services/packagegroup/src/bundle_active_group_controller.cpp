@@ -310,12 +310,12 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     }
     if (oldGroup < newGroup || notTimeout) {
         BUNDLE_ACTIVE_LOGI("CheckAndUpdateGroup called SetBundleGroup");
-        bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, groupReason);
+        bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, groupReason, false);
     }
 }
 
 int32_t BundleActiveGroupController::SetBundleGroup(const std::string& bundleName, const int32_t userId,
-    int32_t newGroup, uint32_t reason, const int64_t bootBasedTimeStamp)
+    int32_t newGroup, uint32_t reason, const int64_t bootBasedTimeStamp, const bool isFlush)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!IsBundleInstalled(bundleName, userId)) {
@@ -325,7 +325,7 @@ int32_t BundleActiveGroupController::SetBundleGroup(const std::string& bundleNam
     if (!oneBundleHistory) {
         return -1;
     }
-    return bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, reason);
+    return bundleUserHistory_->SetBundleGroup(bundleName, userId, bootBasedTimeStamp, newGroup, reason, isFlush);
 }
 
 int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, const int32_t userId)
