@@ -91,6 +91,7 @@ declare namespace bundleState {
     /**
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
      */
     interface BundleActiveFormInfo {
         /**
@@ -118,6 +119,7 @@ declare namespace bundleState {
     /**
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
      */
     interface BundleActiveModuleInfo {
         /**
@@ -229,6 +231,7 @@ declare namespace bundleState {
     /**
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
      */
     interface BundleActiveGroupCallbackInfo {
         /*
@@ -413,6 +416,7 @@ declare namespace bundleState {
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
      */
       export enum GroupType {
         /**
