@@ -41,12 +41,12 @@ ohos_shared_library("usagestatsinner") {
   public_configs = [ ":usagestatsinner_public_config" ]
   public_deps = [ ":usagestatservice" ]
   external_deps = [
+    "c_utils:utils",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "utils_base:utils",
   ]
 
   part_name = "${device_usage_statistics_part_name}"
@@ -81,13 +81,13 @@ ohos_shared_library("bundlestate") {
   ]
 
   external_deps = [
+    "c_utils:utils",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "napi:ace_napi",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "utils_base:utils",
   ]
   relative_install_dir = "module"
   part_name = "${device_usage_statistics_part_name}"
@@ -150,6 +150,7 @@ ohos_shared_library("usagestatservice") {
     "background_task_mgr:bgtaskmgr_innerkits",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
@@ -160,7 +161,6 @@ ohos_shared_library("usagestatservice") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "time_service:time_service",
-    "utils_base:utils",
   ]
 
   if (os_account_part_enabled) {

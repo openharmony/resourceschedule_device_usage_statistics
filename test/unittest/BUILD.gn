@@ -38,13 +38,13 @@ ohos_unittest("DeviceUsageStatsTest") {
   ]
 
   external_deps = [
+    "c_utils:utils",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "utils_base:utils",
   ]
 }
 

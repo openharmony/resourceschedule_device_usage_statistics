@@ -33,7 +33,7 @@
         "ability_runtime",
         "hiviewdfx_hilog_native",
         "samgr",
-        "utils_base",
+        "c_utils",
         "napi",
         "startup_l2",
         "ability_base",
