@@ -378,7 +378,6 @@ int32_t BundleActiveService::SetBundleGroup(const std::string& bundleName, int32
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
         if (ret != ERR_OK) {
-            errCode = -1;
             return result;
         }
         isFlush = true;
@@ -464,7 +463,6 @@ int32_t BundleActiveService::QueryPackageGroup(std::string& bundleName, int32_t 
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
         if (ret != ERR_OK) {
-            errCode = -1;
             return result;
         }
     }

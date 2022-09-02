@@ -224,7 +224,7 @@ napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
     RegisterCallbackInfo params;
     AsyncRegisterCallbackInfo *asyncCallbackInfo = nullptr;
     ParseRegisterGroupCallBackParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
+    if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     std::unique_ptr<AsyncRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
@@ -296,7 +296,7 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
     UnRegisterCallbackInfo params;
     AsyncUnRegisterCallbackInfo *asyncCallbackInfo = nullptr;
     ParseUnRegisterGroupCallBackParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
+    if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     std::unique_ptr<AsyncUnRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
