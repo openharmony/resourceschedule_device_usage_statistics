@@ -324,6 +324,9 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
             if (asyncCallbackInfo != nullptr) {
+                if (asyncCallbackInfo->errorCode == ERR_OK) {
+                    asyncCallbackInfo->observer = nullptr;
+                }
                 napi_value result = nullptr;
                 napi_get_null(env, &result);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
@@ -332,7 +335,6 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
         (void *)asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    registerObserver = nullptr;
     if (callbackPtr->isCallback) {
         callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);
