@@ -162,6 +162,7 @@ void BundleActiveGroupObserver::OnBundleGroupChanged(const BundleActiveGroupCall
     callbackReceiveDataWorker->bundleName   = callBackInfo->GetBundleName();
     callbackReceiveDataWorker->env = bundleGroupCallbackInfo_.env;
     callbackReceiveDataWorker->ref = bundleGroupCallbackInfo_.ref;
+    delete callBackInfo;
 
     work->data = (void *)callbackReceiveDataWorker;
     int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnBundleGroupChanged);
@@ -248,6 +249,9 @@ napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
             if (asyncCallbackInfo) {
+                if (asyncCallbackInfo->errorCode != ERR_OK) {
+                    asyncCallbackInfo->observer = nullptr;
+                }
                 napi_value result = nullptr;
                 napi_get_null(env, &result);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
