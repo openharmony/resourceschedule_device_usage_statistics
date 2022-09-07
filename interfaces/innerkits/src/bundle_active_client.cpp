@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "unistd.h"
 
 #include "bundle_active_client.h"
 
@@ -224,7 +225,9 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner(const wptr<IRemoteObject> &object)
 {
-    while (!BundleActiveClient::GetInstance().GetBundleActiveProxy()) { }
+    while (!BundleActiveClient::GetInstance().GetBundleActiveProxy()) {
+        sleep(1000);
+    }
     if (observer_) {
         BundleActiveClient::GetInstance().RegisterGroupCallBack(observer_);
     }
