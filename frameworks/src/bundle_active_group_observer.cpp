@@ -182,7 +182,7 @@ napi_value GetBundleGroupChangeCallback(const napi_env &env, const napi_value &v
     registerObserver = new (std::nothrow) BundleActiveGroupObserver();
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack callback is null");
-        return BundleStateCommon::NapiGetNull(env);
+        return nullptr;
     }
     napi_create_reference(env, value, 1, &result);
     registerObserver->SetCallbackInfo(env, result);
@@ -293,7 +293,7 @@ napi_value ParseUnRegisterGroupCallBackParameters(const napi_env &env, const nap
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not exist");
         params.errorCode = ERR_REGISTER_OBSERVER_IS_NULL;
-        return BundleStateCommon::NapiGetNull(env);
+        return nullptr;
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
