@@ -250,7 +250,7 @@ napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
             AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
             if (asyncCallbackInfo) {
                 if (asyncCallbackInfo->errorCode != ERR_OK) {
-                    asyncCallbackInfo->observer = nullptr;
+                    registerObserver = nullptr;
                 }
                 napi_value result = nullptr;
                 napi_get_null(env, &result);
@@ -325,7 +325,7 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
             AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
             if (asyncCallbackInfo != nullptr) {
                 if (asyncCallbackInfo->errorCode == ERR_OK) {
-                    asyncCallbackInfo->observer = nullptr;
+                    registerObserver = nullptr;
                 }
                 napi_value result = nullptr;
                 napi_get_null(env, &result);
