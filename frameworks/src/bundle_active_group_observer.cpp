@@ -34,6 +34,7 @@ const uint32_t REGISTER_GROUP_CALLBACK_MIN_PARAMS = 1;
 const uint32_t REGISTER_GROUP_CALLBACK_PARAMS = 2;
 
 static sptr<BundleActiveGroupObserver> registerObserver = nullptr;
+static std::mutex g_observerMutex_;
 
 BundleActiveGroupObserver::~BundleActiveGroupObserver()
 {
@@ -201,6 +202,7 @@ napi_value ParseRegisterGroupCallBackParameters(const napi_env &env, const napi_
     // arg[0] : callback
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
+    std::lock_guard<std::mutex> lock(g_observerMutex_);
     if (registerObserver) {
         BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack repeat!");
         params.errorCode = ERR_REPEAT_OPERATION;
@@ -249,6 +251,7 @@ napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
             if (asyncCallbackInfo) {
+                std::lock_guard<std::mutex> lock(g_observerMutex_);
                 if (asyncCallbackInfo->errorCode != ERR_OK) {
                     registerObserver = nullptr;
                 }
@@ -286,6 +289,7 @@ napi_value ParseUnRegisterGroupCallBackParameters(const napi_env &env, const nap
             "Function expected.");
         napi_create_reference(env, argv[0], 1, &params.callback);
     }
+    std::lock_guard<std::mutex> lock(g_observerMutex_);
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not exist");
         params.errorCode = ERR_REGISTER_OBSERVER_IS_NULL;
@@ -324,6 +328,7 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
             if (asyncCallbackInfo != nullptr) {
+                std::lock_guard<std::mutex> lock(g_observerMutex_);
                 if (asyncCallbackInfo->errorCode == ERR_OK) {
                     registerObserver = nullptr;
                 }
