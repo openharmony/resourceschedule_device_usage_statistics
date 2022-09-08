@@ -161,7 +161,7 @@ int32_t BundleActiveClient::RegisterGroupCallBack(const sptr<IBundleActiveGroupC
     }
     int32_t result = bundleActiveProxy_->RegisterGroupCallBack(observer);
     if (recipient_ && result == ERR_OK) {
-        recipient_->SetObserver(observer);
+        recipient_->AddObserver(observer);
     }
     return result;
 }
@@ -196,7 +196,7 @@ int32_t BundleActiveClient::QueryAppNotificationNumber(int64_t beginTime, int64_
     return bundleActiveProxy_->QueryAppNotificationNumber(beginTime, endTime, eventStats, userId);
 }
 
-void BundleActiveClient::BundleActiveClientDeathRecipient::SetObserver(const sptr<IBundleActiveGroupCallback> &observer)
+void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const sptr<IBundleActiveGroupCallback> &observer)
 {
     if (observer) {
         observer_ = observer;

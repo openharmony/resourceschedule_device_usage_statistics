@@ -140,9 +140,9 @@ private:
         ~BundleActiveClientDeathRecipient() = default;
 
         /*
-        * function: SetObserver.
+        * function: AddObserver.
         */
-        void SetObserver(const sptr<IBundleActiveGroupCallback> &observer);
+        void AddObserver(const sptr<IBundleActiveGroupCallback> &observer);
 
         /*
         * function: RemoveObserver.
