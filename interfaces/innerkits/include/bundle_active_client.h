@@ -133,18 +133,27 @@ private:
         * function: BundleActiveClientDeathRecipient, default constructor.
         */
         BundleActiveClientDeathRecipient() = default;
+
         /*
         * function: ~BundleActiveClientDeathRecipient, default destructor.
         */
         ~BundleActiveClientDeathRecipient() = default;
+
         /*
-        * function: setObserver.
+        * function: AddObserver.
         */
-        void setObserver(const sptr<IBundleActiveGroupCallback> &observer);
+        void AddObserver(const sptr<IBundleActiveGroupCallback> &observer);
+
+        /*
+        * function: RemoveObserver.
+        */
+        void RemoveObserver();
+
         /*
         * function: OnRemoteDied, PostTask when service(bundleActiveProxy_) is died.
         */
         void OnRemoteDied(const wptr<IRemoteObject> &object) override;
+
         /*
         * function: OnServiceDiedInner, get bundleActiveProxy_ and registerGroupCallBack again.
         */

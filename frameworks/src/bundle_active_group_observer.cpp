@@ -34,6 +34,7 @@ const uint32_t REGISTER_GROUP_CALLBACK_MIN_PARAMS = 1;
 const uint32_t REGISTER_GROUP_CALLBACK_PARAMS = 2;
 
 static sptr<BundleActiveGroupObserver> registerObserver = nullptr;
+static std::mutex g_observerMutex_;
 
 BundleActiveGroupObserver::~BundleActiveGroupObserver()
 {
@@ -162,6 +163,7 @@ void BundleActiveGroupObserver::OnBundleGroupChanged(const BundleActiveGroupCall
     callbackReceiveDataWorker->bundleName   = callBackInfo->GetBundleName();
     callbackReceiveDataWorker->env = bundleGroupCallbackInfo_.env;
     callbackReceiveDataWorker->ref = bundleGroupCallbackInfo_.ref;
+    delete callBackInfo;
 
     work->data = (void *)callbackReceiveDataWorker;
     int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnBundleGroupChanged);
@@ -180,7 +182,7 @@ napi_value GetBundleGroupChangeCallback(const napi_env &env, const napi_value &v
     registerObserver = new (std::nothrow) BundleActiveGroupObserver();
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack callback is null");
-        return BundleStateCommon::NapiGetNull(env);
+        return nullptr;
     }
     napi_create_reference(env, value, 1, &result);
     registerObserver->SetCallbackInfo(env, result);
@@ -200,6 +202,7 @@ napi_value ParseRegisterGroupCallBackParameters(const napi_env &env, const napi_
     // arg[0] : callback
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
+    std::lock_guard<std::mutex> lock(g_observerMutex_);
     if (registerObserver) {
         BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack repeat!");
         params.errorCode = ERR_REPEAT_OPERATION;
@@ -248,6 +251,10 @@ napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
             if (asyncCallbackInfo) {
+                std::lock_guard<std::mutex> lock(g_observerMutex_);
+                if (asyncCallbackInfo->errorCode != ERR_OK) {
+                    registerObserver = nullptr;
+                }
                 napi_value result = nullptr;
                 napi_get_null(env, &result);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
@@ -282,10 +289,11 @@ napi_value ParseUnRegisterGroupCallBackParameters(const napi_env &env, const nap
             "Function expected.");
         napi_create_reference(env, argv[0], 1, &params.callback);
     }
+    std::lock_guard<std::mutex> lock(g_observerMutex_);
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not exist");
         params.errorCode = ERR_REGISTER_OBSERVER_IS_NULL;
-        return BundleStateCommon::NapiGetNull(env);
+        return nullptr;
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
@@ -320,6 +328,10 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
             if (asyncCallbackInfo != nullptr) {
+                std::lock_guard<std::mutex> lock(g_observerMutex_);
+                if (asyncCallbackInfo->errorCode == ERR_OK) {
+                    registerObserver = nullptr;
+                }
                 napi_value result = nullptr;
                 napi_get_null(env, &result);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
@@ -328,7 +340,6 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
         (void *)asyncCallbackInfo,
         &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    registerObserver = nullptr;
     if (callbackPtr->isCallback) {
         callbackPtr.release();
         return BundleStateCommon::NapiGetNull(env);

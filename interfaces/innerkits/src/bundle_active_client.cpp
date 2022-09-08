@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "unistd.h"
 
 #include "bundle_active_client.h"
 
@@ -53,6 +54,10 @@ bool BundleActiveClient::GetBundleActiveProxy()
     if (!recipient_) {
         recipient_ = new (std::nothrow) BundleActiveClientDeathRecipient();
     }
+    if (recipient_) {
+        bundleActiveProxy_->AsObject()->AddDeathRecipient(recipient_);
+    }
+
     bundleClientRunner_ = AppExecFwk::EventRunner::Create(BUNDLE_ACTIVE_CLIENT_NAME);
     if (!bundleClientRunner_) {
         BUNDLE_ACTIVE_LOGE("BundleActiveClient runner create failed!");
@@ -155,10 +160,8 @@ int32_t BundleActiveClient::RegisterGroupCallBack(const sptr<IBundleActiveGroupC
         return -1;
     }
     int32_t result = bundleActiveProxy_->RegisterGroupCallBack(observer);
-    // AddDeathRecipient when RegisterGroupCallBack success
     if (recipient_ && result == ERR_OK) {
-        recipient_->setObserver(observer);
-        bundleActiveProxy_->AsObject()->AddDeathRecipient(recipient_);
+        recipient_->AddObserver(observer);
     }
     return result;
 }
@@ -169,8 +172,8 @@ int32_t BundleActiveClient::UnregisterGroupCallBack(const sptr<IBundleActiveGrou
         return -1;
     }
     int32_t result = bundleActiveProxy_->UnregisterGroupCallBack(observer);
-    if (recipient_) {
-        bundleActiveProxy_->AsObject()->RemoveDeathRecipient(recipient_);
+    if (recipient_ && result == ERR_OK) {
+        recipient_->RemoveObserver();
     }
     return result;
 }
@@ -193,12 +196,20 @@ int32_t BundleActiveClient::QueryAppNotificationNumber(int64_t beginTime, int64_
     return bundleActiveProxy_->QueryAppNotificationNumber(beginTime, endTime, eventStats, userId);
 }
 
-void BundleActiveClient::BundleActiveClientDeathRecipient::setObserver(const sptr<IBundleActiveGroupCallback> &observer)
+void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const sptr<IBundleActiveGroupCallback> &observer)
 {
     if (observer) {
         observer_ = observer;
     }
 }
+
+void BundleActiveClient::BundleActiveClientDeathRecipient::RemoveObserver()
+{
+    if (observer_) {
+        observer_ = nullptr;
+    }
+}
+
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &object)
 {
     if (object == nullptr) {
@@ -214,8 +225,12 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner(const wptr<IRemoteObject> &object)
 {
-    while (!BundleActiveClient::GetInstance().GetBundleActiveProxy()) { }
-    BundleActiveClient::GetInstance().RegisterGroupCallBack(observer_);
+    while (!BundleActiveClient::GetInstance().GetBundleActiveProxy()) {
+        sleep(1000);
+    }
+    if (observer_) {
+        BundleActiveClient::GetInstance().RegisterGroupCallBack(observer_);
+    }
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
