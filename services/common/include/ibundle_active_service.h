@@ -28,7 +28,6 @@
 #include "iremote_proxy.h"
 #include "iremote_object.h"
 #include "ipc_skeleton.h"
-#include "system_ability.h"
 #include "system_ability_definition.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
