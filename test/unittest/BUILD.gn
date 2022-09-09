@@ -34,6 +34,7 @@ ohos_unittest("DeviceUsageStatsTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
+    "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
     "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
   ]
 
