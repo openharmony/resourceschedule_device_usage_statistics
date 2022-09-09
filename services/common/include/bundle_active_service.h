@@ -30,6 +30,7 @@
 #include "bundle_active_account_helper.h"
 #include "file_ex.h"
 #include "string_ex.h"
+#include "system_ability.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
