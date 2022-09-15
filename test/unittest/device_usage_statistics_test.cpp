@@ -32,13 +32,11 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DeviceUsageStats {
-static std::string DEFAULT_BUNDLENAME = "com.ohos.camera";
-static std::string DEFAULT_MODULENAME = "defaultmodulename";
-static std::string DEFAULT_FORM_NAME = "defaultformname";
+static std::string g_defaultBundleName = "com.ohos.camera";
+static std::string g_defaultMoudleName = "defaultmodulename";
+static std::string g_defaultFormName = "defaultformname";
 static int32_t DEFAULT_DIMENSION = 4;
 static int64_t DEFAULT_FORMID = 1;
-static std::string DEFAULT_ABILITYID = "1234";
-static std::string DEFAULT_ABILITYNAME = "testability";
 static int32_t DEFAULT_USERID = 0;
 static int32_t COMMON_USERID = 100;
 static int32_t DEFAULT_ERRCODE = 0;
@@ -96,10 +94,10 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_GetServiceObject_0
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, Function | MediumTest | Level0)
 {
-    BundleActiveEvent eventA(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME, DEFAULT_FORM_NAME,
+    BundleActiveEvent eventA(g_defaultBundleName, g_defaultMoudleName, g_defaultFormName,
         DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_CLICKED);
     BundleActiveClient::GetInstance().ReportEvent(eventA, DEFAULT_USERID);
-    BundleActiveEvent eventB(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME, DEFAULT_FORM_NAME,
+    BundleActiveEvent eventB(g_defaultBundleName, g_defaultMoudleName, g_defaultFormName,
         DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_REMOVED);
     BundleActiveClient::GetInstance().ReportEvent(eventB, DEFAULT_USERID);
 }
@@ -144,6 +142,20 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackagesStats
 }
 
 /*
+ * @tc.name: DeviceUsageStatisticsTest_QueryCurrentPackageStats_001
+ * @tc.desc: querycurrentpackagestats
+ * @tc.type: FUNC
+ * @tc.require: issuesI5QJD9
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentPackageStats_001,
+    Function | MediumTest | Level0)
+{
+    std::vector<BundleActivePackageStats> result =
+        BundleActiveClient::GetInstance().QueryCurrentPackageStats(4, 0, LARGE_NUM);
+    EXPECT_EQ(result.size(), 0);
+}
+
+/*
  * @tc.name: DeviceUsageStatisticsTest_IsBundleIdle_001
  * @tc.desc: isbundleidle
  * @tc.type: FUNC
@@ -152,7 +164,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackagesStats
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleIdle_001, Function | MediumTest | Level0)
 {
     int32_t errCode = 0;
-    bool result = BundleActiveClient::GetInstance().IsBundleIdle(DEFAULT_BUNDLENAME, errCode, DEFAULT_USERID);
+    bool result = BundleActiveClient::GetInstance().IsBundleIdle(g_defaultBundleName, errCode, DEFAULT_USERID);
     EXPECT_EQ(result, false);
     EXPECT_EQ(errCode, 0);
 }
@@ -166,7 +178,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleIdle_001, 
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistics_001, Function | MediumTest | Level0)
 {
     int32_t maxNum = 1;
-    BundleActiveEvent eventA(DEFAULT_BUNDLENAME, DEFAULT_MODULENAME, DEFAULT_FORM_NAME,
+    BundleActiveEvent eventA(g_defaultBundleName, g_defaultMoudleName, g_defaultFormName,
         DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_CLICKED);
     BundleActiveClient::GetInstance().ReportEvent(eventA, DEFAULT_USERID);
     std::vector<BundleActiveModuleRecord> results;
@@ -183,9 +195,9 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistic
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001, Function | MediumTest | Level0)
 {
-    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(DEFAULT_BUNDLENAME, COMMON_USERID);
+    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(g_defaultBundleName, COMMON_USERID);
     DEFAULT_GROUP = (result == DEFAULT_GROUP) ? (result + 10) : DEFAULT_GROUP;
-    result = BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP,
+    result = BundleActiveClient::GetInstance().SetBundleGroup(g_defaultBundleName, DEFAULT_GROUP,
         DEFAULT_ERRCODE, COMMON_USERID);
     EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
@@ -198,9 +210,9 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_001, Function | MediumTest | Level0)
 {
-    BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP,
+    BundleActiveClient::GetInstance().SetBundleGroup(g_defaultBundleName, DEFAULT_GROUP,
         DEFAULT_ERRCODE, COMMON_USERID);
-    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(DEFAULT_BUNDLENAME, COMMON_USERID);
+    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(g_defaultBundleName, COMMON_USERID);
     bool flag = false;
     for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
         if (*item == result) {
@@ -219,10 +231,11 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallBack_001, Function | MediumTest | Level0)
 {
-    observer = std::make_unique<BundleActiveGroupCallbackStub>().release();
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack construct observer!");
+        observer = std::make_unique<BundleActiveGroupCallbackStub>().release();
     }
+    ASSERT_NE(observer, nullptr);
     int32_t result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer);
     EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
@@ -239,6 +252,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_UnRegisterGroupCal
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("observer has been delete");
     }
+    ASSERT_NE(observer, nullptr);
     int32_t result = BundleActiveClient::GetInstance().UnregisterGroupCallBack(observer);
     observer = nullptr;
     EXPECT_EQ(result, DEFAULT_ERRCODE);
