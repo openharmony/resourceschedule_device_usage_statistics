@@ -37,8 +37,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
     switch (code) {
         case REPORT_EVENT: {
             int32_t userId = data.ReadInt32();
-            std::shared_ptr<BundleActiveEvent> tmpEvent;
-            tmpEvent = tmpEvent->UnMarshalling(data);
+            std::shared_ptr<BundleActiveEvent> tmpEvent = BundleActiveEvent::UnMarshalling(data);
             if (!tmpEvent) {
                 return -1;
             }
