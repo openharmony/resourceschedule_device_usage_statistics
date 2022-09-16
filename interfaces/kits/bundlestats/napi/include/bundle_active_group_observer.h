@@ -25,31 +25,6 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-static const int8_t NO_ERROR = 0;
-
-class BundleActiveGroupObserver : public BundleActiveGroupCallbackStub {
-public:
-    BundleActiveGroupObserver() =default;
-
-    ~BundleActiveGroupObserver();
-
-    virtual void OnBundleGroupChanged(const BundleActiveGroupCallbackInfo &bundleActiveGroupCallbackInfo) override;
-
-    void SetCallbackInfo(const napi_env &env, const napi_ref &ref);
-
-private:
-    struct BundleGroupCallbackInfo {
-        napi_env env = nullptr;
-        napi_ref ref = nullptr;
-    };
-    BundleGroupCallbackInfo bundleGroupCallbackInfo_;
-};
-
-struct BundleActiveGroupObserverInfo {
-    napi_ref ref = nullptr;
-    sptr<BundleActiveGroupObserver> callback = nullptr;
-};
-
 napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info);
 napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info);
 }  // namespace DeviceUsageStats

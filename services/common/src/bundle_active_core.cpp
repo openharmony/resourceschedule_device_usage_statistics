@@ -551,28 +551,28 @@ int32_t BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
     return 0;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const int32_t userId,
+std::vector<BundleActivePackageStats> BundleActiveCore::QueryBundleStatsInfos(const int32_t userId,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime, std::string bundleName)
 {
-    BUNDLE_ACTIVE_LOGD("QueryPackageStats called");
+    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos called");
     std::lock_guard<std::mutex> lock(mutex_);
     std::vector<BundleActivePackageStats> result;
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == -1) {
         return result;
     }
-    BUNDLE_ACTIVE_LOGD("QueryPackageStats begin time is %{public}lld, end time is %{public}lld, "
+    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos begin time is %{public}lld, end time is %{public}lld, "
         "intervaltype is %{public}d", (long long)beginTime, (long long)endTime, intervalType);
     if (beginTime > timeNow || beginTime >= endTime) {
-        BUNDLE_ACTIVE_LOGI("QueryPackageStats time span illegal");
+        BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos time span illegal");
         return result;
     }
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (service == nullptr) {
-        BUNDLE_ACTIVE_LOGI("QueryPackageStats service is null, failed");
+        BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos service is null, failed");
         return result;
     }
-    result = service->QueryPackageStats(intervalType, beginTime, endTime, userId, bundleName);
+    result = service->QueryBundleStatsInfos(intervalType, beginTime, endTime, userId, bundleName);
     return result;
 }
 

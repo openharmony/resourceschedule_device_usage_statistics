@@ -22,9 +22,9 @@
 namespace OHOS {
 namespace DeviceUsageStats {
     napi_value IsIdleState(napi_env env, napi_callback_info info);
-    napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info);
+    napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info);
     napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info);
-    napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info);
+    napi_value QueryBundleStatsInfoByInterval(napi_env env, napi_callback_info info);
     napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info);
     napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info);
     napi_value QueryBundleActiveEventStates(napi_env env, napi_callback_info info);

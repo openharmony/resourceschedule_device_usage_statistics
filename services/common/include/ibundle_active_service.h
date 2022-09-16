@@ -48,25 +48,29 @@ public:
     IBundleActiveService() = default;
     ~IBundleActiveService() override = default;
     DISALLOW_COPY_AND_MOVE(IBundleActiveService);
+
     /*
     * function: ReportEvent, used to report event.
     * parameters: event, userId
     * return: errorcode.
     */
     virtual int32_t ReportEvent(BundleActiveEvent& event, const int32_t userId) = 0;
+
     /*
     * function: IsBundleIdle, used to check whether specific bundle is idle.
     * parameters: bundleName
     * return: if bundle is idle, return true. if bundle is not idle, return false.
     */
     virtual bool IsBundleIdle(const std::string& bundleName, int32_t& errCode, int32_t userId) = 0;
+
     /*
-    * function: QueryPackageStats, query all bundle usage statistics in specific time span for calling user.
+    * function: QueryBundleStatsInfoByInterval, query all bundle usage statistics in specific time span for calling user.
     * parameters: intervalType, beginTime, endTime, errCode
     * return: vector of bundle usage statistics.
     */
-    virtual std::vector<BundleActivePackageStats> QueryPackageStats(const int32_t intervalType, const int64_t beginTime,
+    virtual std::vector<BundleActivePackageStats> QueryBundleStatsInfoByInterval(const int32_t intervalType, const int64_t beginTime,
         const int64_t endTime, int32_t& errCode, int32_t userId) = 0;
+
     /*
     * function: QueryBundleEvents, query all events in specific time span for calling user.
     * parameters: beginTime, endTime, errCode
@@ -74,30 +78,36 @@ public:
     */
     virtual std::vector<BundleActiveEvent> QueryBundleEvents(const int64_t beginTime, const int64_t endTime,
         int32_t& errCode, int32_t userId) = 0;
+
     /*
-    * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
+    * function: QueryBundleStatsInfos, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
     * return: vector of calling bundle usage statistics.
     */
-    virtual std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int32_t intervalType,
+    virtual std::vector<BundleActivePackageStats> QueryBundleStatsInfos(const int32_t intervalType,
         const int64_t beginTime, const int64_t endTime) = 0;
+
     /*
     * function: QueryCurrentBundleEvents, query bundle usage statistics in specific time span for calling bundle.
     * parameters: beginTime, endTime
     * return: vector of calling bundle events.
     */
     virtual std::vector<BundleActiveEvent> QueryCurrentBundleEvents(const int64_t beginTime, const int64_t endTime) = 0;
+
     /*
     * function: QueryAppGroup, query bundle priority group calling bundle.
     * return: the priority group of calling bundle.
     */
     virtual int32_t QueryAppGroup(std::string& bundleName, int32_t userId) = 0;
+
     /*
     * function: SetAppGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
+    * return: errorcode.
     */
     virtual int32_t SetAppGroup(const std::string& bundleName, int32_t newGroup,
         int32_t errCode, int32_t userId) = 0;
+
     /*
     * function: QueryModuleUsageRecords, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
@@ -107,7 +117,18 @@ public:
     virtual int32_t QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
         int32_t userId) = 0;
 
+    /*
+    * function: RegisterAppGroupCallBack, register the observer to groupObservers.
+    * parameters: observer
+    * return: errorcode.
+    */
     virtual int32_t RegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
+
+    /*
+    * function: UnRegisterAppGroupCallBack, remove the observer from groupObservers.
+    * parameters: observer
+    * return: errorcode.
+    */
     virtual int32_t UnRegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
 
     /*

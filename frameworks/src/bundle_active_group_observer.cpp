@@ -23,8 +23,7 @@
 #include "bundle_state_data.h"
 #include "bundle_state_inner_errors.h"
 #include "bundle_active_group_callback_info.h"
-
-#include "bundle_active_group_observer.h"
+#include "app_group_observer_napi.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -33,147 +32,8 @@ const uint32_t UN_REGISTER_GROUP_CALLBACK_PARAMS = 1;
 const uint32_t REGISTER_GROUP_CALLBACK_MIN_PARAMS = 1;
 const uint32_t REGISTER_GROUP_CALLBACK_PARAMS = 2;
 
-static sptr<BundleActiveGroupObserver> registerObserver = nullptr;
+static sptr<AppGroupObserver> registerObserver = nullptr;
 static std::mutex g_observerMutex_;
-
-BundleActiveGroupObserver::~BundleActiveGroupObserver()
-{
-    if (bundleGroupCallbackInfo_.ref) {
-        napi_delete_reference(bundleGroupCallbackInfo_.env, bundleGroupCallbackInfo_.ref);
-    }
-}
-
-void BundleActiveGroupObserver::SetCallbackInfo(const napi_env &env, const napi_ref &ref)
-{
-    bundleGroupCallbackInfo_.env = env;
-    bundleGroupCallbackInfo_.ref = ref;
-}
-
-napi_value SetBundleGroupChangedData(const CallbackReceiveDataWorker *commonEventDataWorkerData, napi_value &result)
-{
-    if (!commonEventDataWorkerData) {
-        BUNDLE_ACTIVE_LOGE("commonEventDataWorkerData is null");
-        return nullptr;
-    }
-    napi_value value = nullptr;
-
-    // oldGroup
-    napi_create_int32(commonEventDataWorkerData->env, commonEventDataWorkerData->oldGroup, &value);
-    napi_set_named_property(commonEventDataWorkerData->env, result, "appUsageOldGroup", value);
-
-    // newGroup
-    napi_create_int32(commonEventDataWorkerData->env, commonEventDataWorkerData->newGroup, &value);
-    napi_set_named_property(commonEventDataWorkerData->env, result, "appUsageNewGroup", value);
-
-    // userId
-    napi_create_int32(commonEventDataWorkerData->env, commonEventDataWorkerData->userId, &value);
-    napi_set_named_property(commonEventDataWorkerData->env, result, "userId", value);
-
-    // changeReason
-    napi_create_uint32(commonEventDataWorkerData->env, commonEventDataWorkerData->changeReason, &value);
-    napi_set_named_property(commonEventDataWorkerData->env, result, "changeReason", value);
-    // bundleName
-    napi_create_string_utf8(
-        commonEventDataWorkerData->env, commonEventDataWorkerData->bundleName.c_str(), NAPI_AUTO_LENGTH, &value);
-    napi_set_named_property(commonEventDataWorkerData->env, result, "bundleName", value);
-    BUNDLE_ACTIVE_LOGD(
-        "RegisterGroupCallBack appUsageOldGroup = %{public}d, appUsageNewGroup = %{public}d, userId=%{public}d, "
-        "changeReason=%{public}d, bundleName=%{public}s",
-        commonEventDataWorkerData->oldGroup, commonEventDataWorkerData->newGroup, commonEventDataWorkerData->userId,
-        commonEventDataWorkerData->changeReason, commonEventDataWorkerData->bundleName.c_str());
-
-    return BundleStateCommon::NapiGetNull(commonEventDataWorkerData->env);
-}
-
-void UvQueueWorkOnBundleGroupChanged(uv_work_t *work, int status)
-{
-    BUNDLE_ACTIVE_LOGD("OnBundleGroupChanged uv_work_t start");
-    if (!work) {
-        return;
-    }
-    CallbackReceiveDataWorker *callbackReceiveDataWorkerData = (CallbackReceiveDataWorker *)work->data;
-    if (!callbackReceiveDataWorkerData || !callbackReceiveDataWorkerData->ref) {
-        BUNDLE_ACTIVE_LOGE("OnBundleGroupChanged commonEventDataWorkerData or ref is null");
-        delete work;
-        work = nullptr;
-        return;
-    }
-
-    napi_value result = nullptr;
-    napi_create_object(callbackReceiveDataWorkerData->env, &result);
-    if (!SetBundleGroupChangedData(callbackReceiveDataWorkerData, result)) {
-        delete work;
-        work = nullptr;
-        delete callbackReceiveDataWorkerData;
-        callbackReceiveDataWorkerData = nullptr;
-        return;
-    }
-
-    napi_value undefined = nullptr;
-    napi_get_undefined(callbackReceiveDataWorkerData->env, &undefined);
-
-    napi_value callback = nullptr;
-    napi_value resultout = nullptr;
-    napi_get_reference_value(callbackReceiveDataWorkerData->env, callbackReceiveDataWorkerData->ref, &callback);
-
-    napi_value results[ARGS_TWO] = {nullptr};
-    results[PARAM_FIRST] = BundleStateCommon::GetErrorValue(callbackReceiveDataWorkerData->env, NO_ERROR);
-    results[PARAM_SECOND] = result;
-    NAPI_CALL_RETURN_VOID(callbackReceiveDataWorkerData->env, napi_call_function(callbackReceiveDataWorkerData->env,
-        undefined, callback, ARGS_TWO, &results[PARAM_FIRST], &resultout));
-    delete callbackReceiveDataWorkerData;
-    callbackReceiveDataWorkerData = nullptr;
-    delete work;
-    work = nullptr;
-}
-
-/*
-* observer callback when group change
-*/
-void BundleActiveGroupObserver::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo &bundleActiveGroupCallbackInfo)
-{
-    BUNDLE_ACTIVE_LOGD("OnBundleGroupChanged start");
-    uv_loop_s *loop = nullptr;
-    napi_get_uv_event_loop(bundleGroupCallbackInfo_.env, &loop);
-    if (!loop) {
-        BUNDLE_ACTIVE_LOGE("loop instance is nullptr");
-        return;
-    }
-    uv_work_t* work = new (std::nothrow) uv_work_t;
-    if (!work) {
-        BUNDLE_ACTIVE_LOGE("work is null");
-        return;
-    }
-    CallbackReceiveDataWorker* callbackReceiveDataWorker = new (std::nothrow) CallbackReceiveDataWorker();
-    if (!callbackReceiveDataWorker) {
-        BUNDLE_ACTIVE_LOGE("callbackReceiveDataWorker is null");
-        delete work;
-        work = nullptr;
-        return;
-    }
-    MessageParcel data;
-    if (!bundleActiveGroupCallbackInfo.Marshalling(data)) {
-        BUNDLE_ACTIVE_LOGE("Marshalling fail");
-    }
-    BundleActiveGroupCallbackInfo* callBackInfo = bundleActiveGroupCallbackInfo.Unmarshalling(data);
-    callbackReceiveDataWorker->oldGroup     = callBackInfo->GetOldGroup();
-    callbackReceiveDataWorker->newGroup     = callBackInfo->GetNewGroup();
-    callbackReceiveDataWorker->changeReason = callBackInfo->GetChangeReason();
-    callbackReceiveDataWorker->userId       = callBackInfo->GetUserId();
-    callbackReceiveDataWorker->bundleName   = callBackInfo->GetBundleName();
-    callbackReceiveDataWorker->env = bundleGroupCallbackInfo_.env;
-    callbackReceiveDataWorker->ref = bundleGroupCallbackInfo_.ref;
-    delete callBackInfo;
-
-    work->data = (void *)callbackReceiveDataWorker;
-    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnBundleGroupChanged);
-    if (ret != 0) {
-        delete callbackReceiveDataWorker;
-        callbackReceiveDataWorker = nullptr;
-        delete work;
-        work = nullptr;
-    }
-}
 
 napi_value GetBundleGroupChangeCallback(const napi_env &env, const napi_value &value)
 {
@@ -243,7 +103,7 @@ napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info)
             AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
             if (asyncCallbackInfo) {
                asyncCallbackInfo->errorCode =
-                    BundleActiveClient::GetInstance().RegisterGroupCallBack(asyncCallbackInfo->observer);
+                    BundleActiveClient::GetInstance().RegisterAppGroupCallBack(asyncCallbackInfo->observer);
             } else {
                 BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack, asyncCallbackInfo == nullptr");
             }

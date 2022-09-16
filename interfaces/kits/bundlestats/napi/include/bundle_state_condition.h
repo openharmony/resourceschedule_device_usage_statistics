@@ -39,6 +39,15 @@ public:
         ACTIVE_GROUP_LIMIT = 50,
         ACTIVE_GROUP_NEVER = 60,
     };
+
+    enum AppGroupType {
+        ALIVE_GROUP = 10,
+        DAILY_GROUP = 20,
+        FIXED_GROUP = 30,
+        RARE_GROUP = 40,
+        LIMITED_GROUP = 50,
+        NEVER_GROUP = 60,
+    };
 };
 } // namespace DeviceUsageStats
 } // namespace OHOS

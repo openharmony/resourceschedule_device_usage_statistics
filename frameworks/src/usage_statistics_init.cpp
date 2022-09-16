@@ -37,10 +37,10 @@ static napi_value UsageStatisticsInit(napi_env env, napi_value exports)
      */
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_FUNCTION("isIdleState", IsIdleState),
-        DECLARE_NAPI_FUNCTION("queryAppGroup", QueryAppUsagePriorityGroup),
-        DECLARE_NAPI_FUNCTION("queryCurrentBundleEvents", QueryCurrentBundleActiveStates),
+        DECLARE_NAPI_FUNCTION("queryAppGroup", QueryAppGroup),
+        DECLARE_NAPI_FUNCTION("queryCurrentBundleEvents", QueryCurrentBundleEvents),
         DECLARE_NAPI_FUNCTION("queryBundleEvents", QueryBundleActiveStates),
-        DECLARE_NAPI_FUNCTION("queryBundleStatsInfoByInterval", QueryBundleStateInfoByInterval),
+        DECLARE_NAPI_FUNCTION("queryBundleStatsInfoByInterval", QueryBundleStatsInfoByInterval),
         DECLARE_NAPI_FUNCTION("queryBundleStatsInfos", QueryBundleStatsInfos),
         DECLARE_NAPI_FUNCTION("queryModuleUsageRecords", QueryModuleUsageRecords),
         DECLARE_NAPI_FUNCTION("setAppGroup", SetAppGroup),
@@ -53,7 +53,7 @@ static napi_value UsageStatisticsInit(napi_env env, napi_value exports)
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
 
     InitIntervalType(env, exports);
-    InitGroupType(env, exports);
+    InitAppGroupType(env, exports);
     return exports;
 }
 
@@ -93,7 +93,7 @@ napi_value InitIntervalType(napi_env env, napi_value exports)
     return exports;
 }
 
-napi_value InitGroupType(napi_env env, napi_value exports)
+napi_value InitAppGroupType(napi_env env, napi_value exports)
 {
     napi_value active_group_alive;
     napi_value active_group_daily;
@@ -103,17 +103,17 @@ napi_value InitGroupType(napi_env env, napi_value exports)
     napi_value active_group_never;
     int32_t refCount = 1;
 
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_ALIVE),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::ALIVE_GROUP),
         &active_group_alive);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_DAILY),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::DAILY_GROUP),
         &active_group_daily);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_FIXED),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::FIXED_GROUP),
         &active_group_fixed);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_RARE),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::RARE_GROUP),
         &active_group_rare);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_LIMIT),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::LIMITED_GROUP),
         &active_group_limit);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_NEVER),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::NEVER_GROUP),
         &active_group_never);
 
     napi_property_descriptor desc[] = {
@@ -126,10 +126,10 @@ napi_value InitGroupType(napi_env env, napi_value exports)
     };
 
     napi_value result = nullptr;
-    napi_define_class(env, "GroupType", NAPI_AUTO_LENGTH, EnumTypeConstructor,
+    napi_define_class(env, "AppGroupType", NAPI_AUTO_LENGTH, EnumTypeConstructor,
         nullptr, sizeof(desc) / sizeof(*desc), desc, &result);
     napi_create_reference(env, result, refCount, &typeConstructor_);
-    napi_set_named_property(env, exports, "GroupType", result);
+    napi_set_named_property(env, exports, "AppGroupType", result);
     return exports;
 }
 

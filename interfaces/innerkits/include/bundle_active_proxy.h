@@ -42,11 +42,11 @@ public:
     bool IsBundleIdle(const std::string& bundleName, int32_t& errCode, int32_t userId = -1) override;
 
     /*
-    * function: QueryPackageStats, query all bundle usage statistics in specific time span for calling user.
+    * function: QueryBundleStatsInfoByInterval, query all bundle usage statistics in specific time span for calling user.
     * parameters: intervalType, beginTime, endTime, errCode
     * return: vector of bundle usage statistics.
     */
-    std::vector<BundleActivePackageStats> QueryPackageStats(const int32_t intervalType, const int64_t beginTime,
+    std::vector<BundleActivePackageStats> QueryBundleStatsInfoByInterval(const int32_t intervalType, const int64_t beginTime,
         const int64_t endTime, int32_t& errCode, int32_t userId = -1) override;
 
     /*
@@ -64,11 +64,11 @@ public:
     int32_t SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId) override;
 
     /*
-    * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
+    * function: QueryBundleStatsInfos, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
     * return: vector of calling bundle usage statistics.
     */
-    std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int32_t intervalType, const int64_t beginTime,
+    std::vector<BundleActivePackageStats> QueryBundleStatsInfos(const int32_t intervalType, const int64_t beginTime,
         const int64_t endTime) override;
 
     /*

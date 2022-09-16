@@ -307,7 +307,7 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
     RestoreStats(true);
 }
 
-std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats(int32_t intervalType,
+std::vector<BundleActivePackageStats> BundleActiveUserService::QueryBundleStatsInfos(int32_t intervalType,
     const int64_t beginTime, const int64_t endTime, const int32_t userId, const std::string& bundleName)
 {
     std::vector<BundleActivePackageStats> result;
@@ -341,7 +341,7 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryPackageStats
     PrintInMemPackageStats(intervalType, debugUserService_);
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
-        BUNDLE_ACTIVE_LOGI("QueryPackageStats need in memory stats");
+        BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos need in memory stats");
         for (auto it : currentStats->bundleStats_) {
             if (bundleName.empty()) {
                 if ((it.second->totalInFrontTime_ != 0 || it.second->totalContiniousTaskUsedTime_ != 0) &&

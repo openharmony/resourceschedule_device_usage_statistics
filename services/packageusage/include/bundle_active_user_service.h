@@ -66,7 +66,7 @@ public:
     void DeleteUninstalledBundleStats(const std::string& bundleName);
     int32_t userId_;
     BundleActiveCalendar dailyExpiryDate_;
-    std::vector<BundleActivePackageStats> QueryPackageStats(int32_t intervalType, const int64_t beginTime,
+    std::vector<BundleActivePackageStats> QueryBundleStatsInfos(int32_t intervalType, const int64_t beginTime,
         const int64_t endTime, const int32_t userId, const std::string& bundleName);
     std::vector<BundleActiveEvent> QueryBundleEvents(const int64_t beginTime, const int64_t endTime, const int32_t userId,
         const std::string& bundleName);

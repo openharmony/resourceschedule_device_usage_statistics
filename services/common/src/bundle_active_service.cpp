@@ -294,15 +294,15 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName, int32_t& e
     return true;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(const int32_t intervalType,
+std::vector<BundleActivePackageStats> BundleActiveService::QueryBundleStatsInfoByInterval(const int32_t intervalType,
     const int64_t beginTime, const int64_t endTime, int32_t& errCode, int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGD("QueryPackageStats stats called, intervaltype is %{public}d", intervalType);
+    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfoByInterval stats called, intervaltype is %{public}d", intervalType);
     std::vector<BundleActivePackageStats> result;
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    BUNDLE_ACTIVE_LOGD("QueryPackageStats UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfoByInterval UID is %{public}d", callingUid);
     if (userId == -1) {
         // get userid
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
@@ -312,7 +312,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
         }
     }
     if (userId != -1) {
-        BUNDLE_ACTIVE_LOGI("QueryPackageStats user id is %{public}d", userId);
+        BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfoByInterval user id is %{public}d", userId);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
@@ -321,7 +321,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
         tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_SHELL) {
             errCode = 0;
             int32_t convertedIntervalType = ConvertIntervalType(intervalType);
-            result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime, "");
+            result = bundleActiveCore_->QueryBundleStatsInfos(userId, convertedIntervalType, beginTime, endTime, "");
         }
     }
     return result;
@@ -395,7 +395,7 @@ int32_t BundleActiveService::SetAppGroup(const std::string& bundleName, int32_t 
 }
 
 
-std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageStats(const int32_t intervalType,
+std::vector<BundleActivePackageStats> BundleActiveService::QueryBundleStatsInfos(const int32_t intervalType,
     const int64_t beginTime, const int64_t endTime)
 {
     std::vector<BundleActivePackageStats> result;
@@ -407,7 +407,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
     int32_t userId = -1;
     OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGD("QueryCurrentPackageStats userid is %{public}d", userId);
+        BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos userid is %{public}d", userId);
         if (!GetBundleMgrProxy()) {
             BUNDLE_ACTIVE_LOGE("get bundle manager proxy failed!");
             return result;
@@ -418,11 +418,11 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
         if (!bundleName.empty() && isSystemAppAndHasPermission == true) {
             int32_t convertedIntervalType = ConvertIntervalType(intervalType);
-            result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime,
+            result = bundleActiveCore_->QueryBundleStatsInfos(userId, convertedIntervalType, beginTime, endTime,
                 bundleName);
         }
     }
-    BUNDLE_ACTIVE_LOGI("QueryCurrentPackageStats result size is %{public}zu", result.size());
+    BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos result size is %{public}zu", result.size());
     return result;
 }
 
@@ -774,7 +774,7 @@ int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOptio
         int64_t beginTime = std::stoll(dumpOption[3]);
         int64_t endTime = std::stoll(dumpOption[4]);
         int32_t userId = std::stoi(dumpOption[5]);
-        packageUsageResult = this->QueryPackageStats(intervalType, beginTime, endTime, ret, userId);
+        packageUsageResult = this->QueryBundleStatsInfoByInterval(intervalType, beginTime, endTime, ret, userId);
         for (auto& onePackageRecord : packageUsageResult) {
             dumpInfo.emplace_back(onePackageRecord.ToString());
         }

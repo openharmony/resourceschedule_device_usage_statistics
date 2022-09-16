@@ -24,7 +24,7 @@
 #include "bundle_state_inner_errors.h"
 #include "bundle_active_group_callback_info.h"
 
-#include "bundle_active_group_observer.h"
+#include "bundle_active_app_group_napi.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -32,12 +32,19 @@ const uint32_t UN_REGISTER_GROUP_CALLBACK_MIN_PARAMS = 0;
 const uint32_t UN_REGISTER_GROUP_CALLBACK_PARAMS = 1;
 const uint32_t REGISTER_GROUP_CALLBACK_MIN_PARAMS = 1;
 const uint32_t REGISTER_GROUP_CALLBACK_PARAMS = 2;
+const uint32_t PRIORITY_GROUP_MIN_PARAMS = 0;
+const uint32_t PRIORITY_GROUP_MIDDLE_PARAMS = 1;
+const uint32_t PRIORITY_GROUP_PARAMS = 2;
+const uint32_t APP_USAGE_MIN_PARAMS_BUNDLE_GROUP = 2;
+const uint32_t APP_USAGE_PARAMS_BUNDLE_GROUP = 3;
+const uint32_t SECOND_ARG = 2;
+const std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50, 60};
 
-static sptr<BundleActiveGroupObserver> registerObserver = nullptr;
+static sptr<AppGroupObserver> registerObserver = nullptr;
 static std::mutex g_observerMutex_;
 
 napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback_info &info,
-    PriorityGroupParamsInfo &params, AsyncCallbackInfoPriorityGroup* &asyncCallbackInfo)
+    PriorityGroupParamsInfo &params, AsyncQueryAppGroupCallbackInfo* &asyncCallbackInfo)
 {
     size_t argc = PRIORITY_GROUP_PARAMS;
     napi_value argv[PRIORITY_GROUP_PARAMS] = {nullptr};
@@ -85,12 +92,12 @@ napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback
 napi_value QueryAppGroup(napi_env env, napi_callback_info info)
 {
     PriorityGroupParamsInfo params;
-    AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = nullptr;
+    AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = nullptr;
     ParsePriorityGroupParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
-    std::unique_ptr<AsyncCallbackInfoPriorityGroup> callbackPtr {asyncCallbackInfo};
+    std::unique_ptr<AsyncQueryAppGroupCallbackInfo> callbackPtr {asyncCallbackInfo};
     callbackPtr->bundleName = params.bundleName;
     BUNDLE_ACTIVE_LOGD("QueryAppGroup callbackPtr->bundleName: %{public}s",
         callbackPtr->bundleName.c_str());
@@ -102,7 +109,7 @@ napi_value QueryAppGroup(napi_env env, napi_callback_info info)
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
-            AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = (AsyncCallbackInfoPriorityGroup *)data;
+            AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = (AsyncQueryAppGroupCallbackInfo *)data;
             if (asyncCallbackInfo) {
                 asyncCallbackInfo->priorityGroup =
                     BundleActiveClient::GetInstance().QueryAppGroup(asyncCallbackInfo->bundleName);
@@ -111,7 +118,7 @@ napi_value QueryAppGroup(napi_env env, napi_callback_info info)
             }
         },
         [](napi_env env, napi_status status, void *data) {
-            AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = (AsyncCallbackInfoPriorityGroup *)data;
+            AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = (AsyncQueryAppGroupCallbackInfo *)data;
             if (asyncCallbackInfo) {
                 if (asyncCallbackInfo->priorityGroup == -1) {
                     asyncCallbackInfo->errorCode = ERR_SERVICE_FAILED;
@@ -133,8 +140,8 @@ napi_value QueryAppGroup(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value ParseAppUsageBundleGroupInfoParameters(const napi_env &env, const napi_callback_info &info,
-    ParamsBundleGroupInfo &params, AsyncCallbackInfosetAppGroup* &asyncCallbackInfo)
+napi_value ParseSetAppGroupParameters(const napi_env &env, const napi_callback_info &info,
+    ParamsBundleGroupInfo &params, AsyncCallbackInfoSetAppGroup* &asyncCallbackInfo)
 {
     size_t argc = APP_USAGE_PARAMS_BUNDLE_GROUP;
     napi_value argv[APP_USAGE_PARAMS_BUNDLE_GROUP] = {nullptr};
@@ -146,7 +153,7 @@ napi_value ParseAppUsageBundleGroupInfoParameters(const napi_env &env, const nap
     std::string result = "";
     params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
     if (params.bundleName.empty()) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageBundleGroupInfoParameters failed, bundleName is empty.");
+        BUNDLE_ACTIVE_LOGE("ParseSetAppGroupParameters failed, bundleName is empty.");
         params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
     }
     napi_valuetype valuetype;
@@ -158,7 +165,7 @@ napi_value ParseAppUsageBundleGroupInfoParameters(const napi_env &env, const nap
     // argv[1] : newGroup
     if ((params.errorCode == ERR_OK)
         && (BundleStateCommon::GetInt32NumberValue(env, argv[1], params.newGroup) == nullptr)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageBundleGroupInfoParameters failed, newGroup type is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseSetAppGroupParameters failed, newGroup type is invalid.");
         params.errorCode = ERR_USAGE_STATS_GROUP_INVALID;
     }
     bool flag = false;
@@ -171,14 +178,14 @@ napi_value ParseAppUsageBundleGroupInfoParameters(const napi_env &env, const nap
         }
     }
     if ((params.errorCode == ERR_OK) && !flag) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageBundleGroupInfoParameters failed, newGroup value is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseSetAppGroupParameters failed, newGroup value is invalid.");
         params.errorCode = ERR_USAGE_STATS_GROUP_INVALID;
     }
     // argv[SECOND_ARG]: callback
     if (argc == APP_USAGE_PARAMS_BUNDLE_GROUP) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
-        NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageBundleGroupInfoParameters invalid parameter type. "
+        NAPI_ASSERT(env, valuetype == napi_function, "ParseSetAppGroupParameters invalid parameter type. "
             "Function expected.");
         napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
     }
@@ -190,7 +197,7 @@ napi_value SetAppGroup(napi_env env, napi_callback_info info)
 {
     ParamsBundleGroupInfo params;
     AsyncCallbackInfoSetAppGroup *asyncCallbackInfo = nullptr;
-    ParseAppUsageBundleGroupInfoParameters(env, info, params, asyncCallbackInfo);
+    ParseSetAppGroupParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
@@ -239,7 +246,7 @@ napi_value GetBundleGroupChangeCallback(const napi_env &env, const napi_value &v
 {
     napi_ref result = nullptr;
     
-    registerObserver = new (std::nothrow) BundleActiveGroupObserver();
+    registerObserver = new (std::nothrow) AppGroupObserver();
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack callback is null");
         return nullptr;

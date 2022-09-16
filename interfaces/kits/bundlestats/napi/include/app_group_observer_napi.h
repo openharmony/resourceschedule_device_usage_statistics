@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_APP_GROUP_OBSERVER_H
-#define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_APP_GROUP_OBSERVER_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_APP_GROUP_OBSERVER_NAPI_H
+#define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_APP_GROUP_OBSERVER_NAPI_H
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
@@ -23,6 +23,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+static const int8_t NO_ERROR = 0;
 class AppGroupObserver : public BundleActiveGroupCallbackStub {
 public:
     AppGroupObserver() =default;
@@ -47,4 +48,4 @@ struct BundleActiveGroupObserverInfo {
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_APP_GROUP_OBSERVER_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_APP_GROUP_OBSERVER_NAPI_H

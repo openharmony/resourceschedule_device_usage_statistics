@@ -424,11 +424,11 @@ void BundleStateCommon::SettingAsyncWorkData(
     }
 }
 
-std::shared_ptr<std::map<std::string, BundleActivePackageStats>> BundleStateCommon::GetPackageStats(
+std::shared_ptr<std::map<std::string, BundleActivePackageStats>> BundleStateCommon::QueryBundleStatsInfos(
     int64_t &beginTime, int64_t &endTime, int32_t &errCode)
 {
     std::vector<BundleActivePackageStats> packageStats =
-        BundleActiveClient::GetInstance().QueryPackageStats(INTERVAL_TYPE_DEFAULT, beginTime, endTime, errCode);
+        BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(INTERVAL_TYPE_DEFAULT, beginTime, endTime, errCode);
     std::shared_ptr<std::map<std::string, BundleActivePackageStats>> mergedPackageStats =
         std::make_shared<std::map<std::string, BundleActivePackageStats>>();
     if (packageStats.empty()) {

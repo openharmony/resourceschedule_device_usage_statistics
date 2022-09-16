@@ -135,11 +135,11 @@ public:
     void PreservePowerStateInfo(const int32_t eventId);
 
     /*
-    * function: QueryPackageStats, query the package stat for calling user.
+    * function: queryBundleStatsInfos, query the package stat for calling user.
     * parameters: userId, intervalType, beginTime, endTime, bundleName
     * return: vector of BundleActivePackageStats
     */
-    std::vector<BundleActivePackageStats> QueryPackageStats(const int32_t userId, const int32_t intervalType,
+    std::vector<BundleActivePackageStats> QueryBundleStatsInfos(const int32_t userId, const int32_t intervalType,
         const int64_t beginTime, const int64_t endTime, std::string bundleName);
 
     // query the event stat for calling user.

@@ -49,11 +49,11 @@ public:
     bool IsBundleIdle(const std::string& bundleName, int32_t& errCode, int32_t userId = -1);
 
     /*
-    * function: QueryPackageStats, query all bundle usage statistics in specific time span for calling user.
+    * function: QueryBundleStatsInfoByInterval, query all bundle usage statistics in specific time span for calling user.
     * parameters: intervalType, beginTime, endTime, errCode
     * return: vector of bundle usage statistics.
     */
-    std::vector<BundleActivePackageStats> QueryPackageStats(const int32_t intervalType, const int64_t beginTime,
+    std::vector<BundleActivePackageStats> QueryBundleStatsInfoByInterval(const int32_t intervalType, const int64_t beginTime,
         const int64_t endTime, int32_t& errCode, int32_t userId = -1);
 
     /*
@@ -72,11 +72,11 @@ public:
     int32_t SetAppGroup(std::string bundleName, const int32_t newGroup, int32_t errCode, int32_t userId = -1);
 
     /*
-    * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
+    * function: QueryBundleStatsInfos, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
     * return: vector of calling bundle usage statistics.
     */
-    std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int32_t intervalType, const int64_t beginTime,
+    std::vector<BundleActivePackageStats> QueryBundleStatsInfos(const int32_t intervalType, const int64_t beginTime,
         const int64_t endTime);
 
     /*
@@ -133,7 +133,7 @@ public:
     int32_t QueryNotificationNumber(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId = -1);
     /*
-    * function: GetInstance, get instance of client.
+    * function: GetInstance, get single instance of client.
     * return: object of BundleActiveClient.
     */
     static BundleActiveClient& GetInstance();

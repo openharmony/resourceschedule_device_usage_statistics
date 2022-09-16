@@ -28,7 +28,7 @@ extern "C" {
 __attribute__((constructor)) void RegisterModule(void);
 static napi_value UsageStatisticsInit(napi_env env, napi_value exports);
 static napi_value InitIntervalType(napi_env env, napi_value exports);
-static napi_value InitGroupType(napi_env env, napi_value exports);
+static napi_value InitAppGroupType(napi_env env, napi_value exports);
 static napi_value EnumTypeConstructor(napi_env env, napi_callback_info info);
 
 #ifdef __cplusplus

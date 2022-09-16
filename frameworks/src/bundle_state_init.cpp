@@ -16,7 +16,7 @@
 #include "bundle_state_init.h"
 
 #include "bundle_state_condition.h"
-#include "bundle_active_group_observer.h"
+#include "app_group_observer_napi.h"
 #include "bundle_state_query.h"
 
 namespace OHOS {
@@ -154,7 +154,6 @@ napi_value EnumTypeConstructor(napi_env env, napi_callback_info info)
 __attribute__((constructor)) void RegisterModule(void)
 {
     napi_module_register(&_module);
-    napi_module_register(&_usageStatisticsModule);
 }
 EXTERN_C_END
 }  // namespace DeviceUsageStats

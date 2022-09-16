@@ -50,7 +50,7 @@ bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName, int32_t& err
     return result;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const int32_t intervalType,
+std::vector<BundleActivePackageStats> BundleActiveProxy::QueryBundleStatsInfoByInterval(const int32_t intervalType,
     const int64_t beginTime, const int64_t endTime, int32_t& errCode, int32_t userId)
 {
     MessageParcel data;
@@ -77,7 +77,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
         result.push_back(*tmp);
     }
     for (uint32_t i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGD("QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
+        BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfoByInterval result idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
             i + 1, result[i].bundleName_.c_str(),
@@ -136,7 +136,7 @@ int32_t BundleActiveProxy::SetAppGroup(const std::string& bundleName, int32_t ne
     return reply.ReadInt32();
 }
 
-std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStats(const int32_t intervalType,
+std::vector<BundleActivePackageStats> BundleActiveProxy::QueryBundleStatsInfos(const int32_t intervalType,
     const int64_t beginTime, const int64_t endTime)
 {
     MessageParcel data;
@@ -160,7 +160,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStat
         result.push_back(*tmp);
     }
     for (uint32_t i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGD("QueryPackageStats result idx is %{public}d, bundleName_ is %{public}s, "
+        BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos result idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
             i + 1, result[i].bundleName_.c_str(),

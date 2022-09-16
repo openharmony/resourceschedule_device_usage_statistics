@@ -25,7 +25,7 @@
 #include "bundle_active_event.h"
 #include "bundle_active_event_stats.h"
 #include "bundle_active_package_stats.h"
-#include "bundle_active_group_observer.h"
+#include "app_group_observer_napi.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -74,8 +74,8 @@ struct AsyncCallbackInfoIsIdleState : public AsyncWorkData {
     bool state = false;
 };
 
-struct AsyncCallbackInfoPriorityGroup : public AsyncWorkData {
-    explicit AsyncCallbackInfoPriorityGroup(napi_env env) : AsyncWorkData(env) {}
+struct AsyncQueryAppGroupCallbackInfo : public AsyncWorkData {
+    explicit AsyncQueryAppGroupCallbackInfo(napi_env env) : AsyncWorkData(env) {}
     std::string bundleName = "";
     int32_t priorityGroup = -1;
 };
@@ -108,8 +108,8 @@ struct AsyncCallbackInfoAppUsage : public AsyncWorkData {
     int64_t endTime = -1;
     std::shared_ptr<std::map<std::string, BundleActivePackageStats>> packageStats;
 };
-struct AsyncCallbackInfoSetBundleGroup : public AsyncWorkData {
-    explicit AsyncCallbackInfoSetBundleGroup(napi_env env) : AsyncWorkData(env) {}
+struct AsyncCallbackInfoSetAppGroup : public AsyncWorkData {
+    explicit AsyncCallbackInfoSetAppGroup(napi_env env) : AsyncWorkData(env) {}
     int32_t newGroup = -1;;
     std::string bundleName = "";
     bool state = true;
@@ -123,13 +123,13 @@ struct AsyncCallbackInfoModuleRecord : public AsyncWorkData {
 
 struct AsyncUnRegisterCallbackInfo : public AsyncWorkData {
     explicit AsyncUnRegisterCallbackInfo(napi_env env) : AsyncWorkData(env) {}
-    sptr<BundleActiveGroupObserver> observer = nullptr;
+    sptr<AppGroupObserver> observer = nullptr;
     bool state = true;
 };
 
 struct AsyncRegisterCallbackInfo : public AsyncWorkData {
     explicit AsyncRegisterCallbackInfo(napi_env env) : AsyncWorkData(env) {}
-    sptr<BundleActiveGroupObserver> observer = nullptr;
+    sptr<AppGroupObserver> observer = nullptr;
     bool state = true;
 };
 

@@ -19,22 +19,17 @@
 #include "bundle_active_log.h"
 #include "bundle_state_common.h"
 #include "bundle_state_data.h"
-#include "bundle_active_group_observer.h"
+#include "app_group_observer_napi.h"
 #include "bundle_state_inner_errors.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
 const uint32_t IS_IDLE_STATE_MIN_PARAMS = 1;
 const uint32_t IS_IDLE_STATE_PARAMS = 2;
-const uint32_t PRIORITY_GROUP_MIN_PARAMS = 0;
-const uint32_t PRIORITY_GROUP_MIDDLE_PARAMS = 1;
-const uint32_t PRIORITY_GROUP_PARAMS = 2;
 const uint32_t STATES_MIN_PARAMS = 2;
 const uint32_t STATES_PARAMS = 3;
 const uint32_t APP_USAGE_MIN_PARAMS_BY_INTERVAL = 3;
 const uint32_t APP_USAGE_PARAMS_BY_INTERVAL = 4;
-const uint32_t APP_USAGE_MIN_PARAMS_BUNDLE_GROUP = 2;
-const uint32_t APP_USAGE_PARAMS_BUNDLE_GROUP = 3;
 const uint32_t APP_USAGE_MIN_PARAMS = 2;
 const uint32_t APP_USAGE_PARAMS = 3;
 const uint32_t MODULE_RECORDS_MIN_PARAMS = 0;
@@ -596,7 +591,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info)
+napi_value queryBundleStatsInfos(napi_env env, napi_callback_info info)
 {
     AppUsageParamsInfo params;
     ParseAppUsageParameters(env, info, params);
@@ -618,24 +613,24 @@ napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info)
     }
     std::unique_ptr<AsyncCallbackInfoAppUsage> callbackPtr {asyncCallbackInfo};
     callbackPtr->beginTime = params.beginTime;
-    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos callbackPtr->beginTime: %{public}lld",
+    BUNDLE_ACTIVE_LOGD("queryBundleStatsInfos callbackPtr->beginTime: %{public}lld",
         (long long)callbackPtr->beginTime);
     callbackPtr->endTime = params.endTime;
-    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos callbackPtr->endTime: %{public}lld",
+    BUNDLE_ACTIVE_LOGD("queryBundleStatsInfos callbackPtr->endTime: %{public}lld",
         (long long)callbackPtr->endTime);
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "QueryBundleStatsInfos", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_string_latin1(env, "queryBundleStatsInfos", NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
         [](napi_env env, void *data) {
             AsyncCallbackInfoAppUsage *asyncCallbackInfo = (AsyncCallbackInfoAppUsage *)data;
             if (asyncCallbackInfo != nullptr) {
-                asyncCallbackInfo->packageStats = BundleStateCommon::GetPackageStats(asyncCallbackInfo->beginTime,
+                asyncCallbackInfo->packageStats = BundleStateCommon::QueryBundleStatsInfos(asyncCallbackInfo->beginTime,
                     asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
             } else {
-                BUNDLE_ACTIVE_LOGE("QueryBundleStatsInfos asyncCallbackInfo == nullptr");
+                BUNDLE_ACTIVE_LOGE("queryBundleStatsInfos asyncCallbackInfo == nullptr");
             }
         },
         [](napi_env env, napi_status status, void *data) {
