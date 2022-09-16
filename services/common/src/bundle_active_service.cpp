@@ -314,7 +314,6 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
     if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryPackageStats user id is %{public}d", userId);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
-        AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
     if (isSystemAppAndHasPermission == true ||
         tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE ||
@@ -346,7 +345,6 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
     if (userId != -1) {
         BUNDLE_ACTIVE_LOGI("QueryEvents userid is %{public}d", userId);
         bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
-        AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
         if (isSystemAppAndHasPermission == true ||
             tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE ||
@@ -458,7 +456,6 @@ int32_t BundleActiveService::QueryPackageGroup(std::string& bundleName, int32_t 
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     BUNDLE_ACTIVE_LOGD("QueryPackageGroup UID is %{public}d", callingUid);
-    int32_t errCode = 0;
     int32_t result = -1;
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
@@ -479,6 +476,7 @@ int32_t BundleActiveService::QueryPackageGroup(std::string& bundleName, int32_t 
         } else {
             AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
             auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+            int32_t errCode = 0;
             if (CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode) ||
                 tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE ||
                 tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_SHELL) {
@@ -558,7 +556,7 @@ int32_t BundleActiveService::ConvertIntervalType(const int32_t intervalType)
 }
 
 bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_t uid,
-    OHOS::Security::AccessToken::AccessTokenID tokenId, int32_t& errCode)
+    OHOS::Security::AccessToken::AccessTokenID tokenId, int32_t errCode)
 {
     if (!GetBundleMgrProxy()) {
             BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack Get bundle manager proxy failed!");
