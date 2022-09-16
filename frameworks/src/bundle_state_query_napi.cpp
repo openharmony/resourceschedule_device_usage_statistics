@@ -96,7 +96,7 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value GetModuleUsageRecord(napi_env env, napi_callback_info info)
+napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info)
 {
     ModuleRecordParamsInfo params;
     ParseModuleRecordsParameters(env, info, params);
@@ -120,7 +120,7 @@ napi_value GetModuleUsageRecord(napi_env env, napi_callback_info info)
     callbackPtr->maxNum = params.maxNum;
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "GetModuleUsageRecord", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_string_latin1(env, "QueryModuleUsageRecords", NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
@@ -231,103 +231,6 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
                 napi_get_boolean(env, asyncCallbackInfo->state, &result);
-                BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
-            }
-        },
-        (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    if (callbackPtr->isCallback) {
-        callbackPtr.release();
-        return BundleStateCommon::NapiGetNull(env);
-    } else {
-        callbackPtr.release();
-        return promise;
-    }
-}
-
-napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback_info &info,
-    PriorityGroupParamsInfo &params, AsyncCallbackInfoPriorityGroup* &asyncCallbackInfo)
-{
-    size_t argc = PRIORITY_GROUP_PARAMS;
-    napi_value argv[PRIORITY_GROUP_PARAMS] = {nullptr};
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == PRIORITY_GROUP_MIN_PARAMS || argc == PRIORITY_GROUP_MIDDLE_PARAMS ||
-        argc == PRIORITY_GROUP_PARAMS, "Invalid number of parameters");
-    std::string result = "";
-    params.bundleName = "";
-    if (argc == PRIORITY_GROUP_MIDDLE_PARAMS) {
-        napi_valuetype valuetype = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-        if (valuetype == napi_function) {
-            napi_valuetype valuetype = napi_undefined;
-            NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-            NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
-                "Function expected.");
-            napi_create_reference(env, argv[0], 1, &params.callback);
-        } else {
-            params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
-            if (params.bundleName.empty()) {
-                BUNDLE_ACTIVE_LOGE("ParsePriorityGroupParameters failed, bundleName is empty.");
-                params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
-            }
-        }
-    } else if (argc == PRIORITY_GROUP_PARAMS) {
-        // argv[0] : bundleName
-        params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
-        if (params.bundleName.empty()) {
-            BUNDLE_ACTIVE_LOGE("ParsePriorityGroupParameters failed, bundleName is empty.");
-            params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
-        }
-        // argv[1]: callback
-        if (argc == PRIORITY_GROUP_PARAMS) {
-            napi_valuetype valuetype = napi_undefined;
-            NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-            NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
-                "Function expected.");
-            napi_create_reference(env, argv[1], 1, &params.callback);
-        }
-    }
-    BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
-    return BundleStateCommon::NapiGetNull(env);
-}
-
-napi_value QueryAppGroup(napi_env env, napi_callback_info info)
-{
-    PriorityGroupParamsInfo params;
-    AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = nullptr;
-    ParsePriorityGroupParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
-        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
-    }
-    std::unique_ptr<AsyncCallbackInfoPriorityGroup> callbackPtr {asyncCallbackInfo};
-    callbackPtr->bundleName = params.bundleName;
-    BUNDLE_ACTIVE_LOGD("QueryAppGroup callbackPtr->bundleName: %{public}s",
-        callbackPtr->bundleName.c_str());
-    napi_value promise = nullptr;
-    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "QueryAppGroup", NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL(env, napi_create_async_work(env,
-        nullptr,
-        resourceName,
-        [](napi_env env, void *data) {
-            AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = (AsyncCallbackInfoPriorityGroup *)data;
-            if (asyncCallbackInfo) {
-                asyncCallbackInfo->priorityGroup =
-                    BundleActiveClient::GetInstance().QueryAppGroup(asyncCallbackInfo->bundleName);
-            } else {
-                BUNDLE_ACTIVE_LOGE("QueryAppGroup, asyncCallbackInfo == nullptr");
-            }
-        },
-        [](napi_env env, napi_status status, void *data) {
-            AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = (AsyncCallbackInfoPriorityGroup *)data;
-            if (asyncCallbackInfo) {
-                if (asyncCallbackInfo->priorityGroup == -1) {
-                    asyncCallbackInfo->errorCode = ERR_SERVICE_FAILED;
-                }
-                napi_value result = nullptr;
-                napi_create_int32(env, asyncCallbackInfo->priorityGroup, &result);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
@@ -693,7 +596,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
+napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info)
 {
     AppUsageParamsInfo params;
     ParseAppUsageParameters(env, info, params);
@@ -715,14 +618,14 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
     }
     std::unique_ptr<AsyncCallbackInfoAppUsage> callbackPtr {asyncCallbackInfo};
     callbackPtr->beginTime = params.beginTime;
-    BUNDLE_ACTIVE_LOGD("QueryBundleStateInfos callbackPtr->beginTime: %{public}lld",
+    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos callbackPtr->beginTime: %{public}lld",
         (long long)callbackPtr->beginTime);
     callbackPtr->endTime = params.endTime;
-    BUNDLE_ACTIVE_LOGD("QueryBundleStateInfos callbackPtr->endTime: %{public}lld",
+    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos callbackPtr->endTime: %{public}lld",
         (long long)callbackPtr->endTime);
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "QueryBundleStateInfos", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_string_latin1(env, "QueryBundleStatsInfos", NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
@@ -732,7 +635,7 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
                 asyncCallbackInfo->packageStats = BundleStateCommon::GetPackageStats(asyncCallbackInfo->beginTime,
                     asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
             } else {
-                BUNDLE_ACTIVE_LOGE("QueryBundleStateInfos asyncCallbackInfo == nullptr");
+                BUNDLE_ACTIVE_LOGE("QueryBundleStatsInfos asyncCallbackInfo == nullptr");
             }
         },
         [](napi_env env, napi_status status, void *data) {
@@ -741,108 +644,6 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
                 napi_value result = nullptr;
                 napi_create_object(env, &result);
                 BundleStateCommon::GetBundleStateInfoForResult(env, asyncCallbackInfo->packageStats, result);
-                BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
-            }
-        },
-        (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    if (callbackPtr->isCallback) {
-        callbackPtr.release();
-        return BundleStateCommon::NapiGetNull(env);
-    } else {
-        callbackPtr.release();
-        return promise;
-    }
-}
-
-napi_value ParseAppUsageBundleGroupInfoParameters(const napi_env &env, const napi_callback_info &info,
-    ParamsBundleGroupInfo &params, AsyncCallbackInfoSetBundleGroup* &asyncCallbackInfo)
-{
-    size_t argc = APP_USAGE_PARAMS_BUNDLE_GROUP;
-    napi_value argv[APP_USAGE_PARAMS_BUNDLE_GROUP] = {nullptr};
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-    NAPI_ASSERT(env, argc == APP_USAGE_MIN_PARAMS_BUNDLE_GROUP || argc == APP_USAGE_PARAMS_BUNDLE_GROUP,
-        "Invalid number of parameters");
-
-    // argv[0] : bundleName
-    std::string result = "";
-    params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
-    if (params.bundleName.empty()) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageBundleGroupInfoParameters failed, bundleName is empty.");
-        params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
-    }
-    napi_valuetype valuetype;
-    NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-    if ((valuetype != napi_string) && (params.errorCode == ERR_OK)) {
-        BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
-        params.errorCode = ERR_USAGE_STATS_BUNDLENAME_TYPE;
-    }
-    // argv[1] : newGroup
-    if ((params.errorCode == ERR_OK)
-        && (BundleStateCommon::GetInt32NumberValue(env, argv[1], params.newGroup) == nullptr)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageBundleGroupInfoParameters failed, newGroup type is invalid.");
-        params.errorCode = ERR_USAGE_STATS_GROUP_INVALID;
-    }
-    bool flag = false;
-    if (params.errorCode == ERR_OK) {
-        for (const auto& item : GROUP_TYPE) {
-            if (item == params.newGroup) {
-                flag = true;
-                break;
-            }
-        }
-    }
-    if ((params.errorCode == ERR_OK) && !flag) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageBundleGroupInfoParameters failed, newGroup value is invalid.");
-        params.errorCode = ERR_USAGE_STATS_GROUP_INVALID;
-    }
-    // argv[SECOND_ARG]: callback
-    if (argc == APP_USAGE_PARAMS_BUNDLE_GROUP) {
-        napi_valuetype valuetype = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
-        NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageBundleGroupInfoParameters invalid parameter type. "
-            "Function expected.");
-        napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
-    }
-    BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
-    return BundleStateCommon::NapiGetNull(env);
-}
-
-napi_value SetBundleGroup(napi_env env, napi_callback_info info)
-{
-    ParamsBundleGroupInfo params;
-    AsyncCallbackInfoSetBundleGroup *asyncCallbackInfo = nullptr;
-    ParseAppUsageBundleGroupInfoParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
-        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
-    }
-    std::unique_ptr<AsyncCallbackInfoSetBundleGroup> callbackPtr {asyncCallbackInfo};
-    callbackPtr->newGroup = params.newGroup;
-    callbackPtr->bundleName = params.bundleName;
-    BUNDLE_ACTIVE_LOGD("SetBundleGroup, bundleName is %{public}s, newGroup is %{public}d",
-        callbackPtr->bundleName.c_str(), callbackPtr->newGroup);
-    napi_value promise = nullptr;
-    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "SetBundleGroup", NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL(env, napi_create_async_work(env,
-        nullptr,
-        resourceName,
-        [](napi_env env, void *data) {
-            AsyncCallbackInfoSetBundleGroup *asyncCallbackInfo = (AsyncCallbackInfoSetBundleGroup *)data;
-            if (asyncCallbackInfo) {
-                    asyncCallbackInfo->errorCode = BundleActiveClient::GetInstance().SetAppGroup(
-                        asyncCallbackInfo->bundleName, asyncCallbackInfo->newGroup, asyncCallbackInfo->errorCode);
-            } else {
-                BUNDLE_ACTIVE_LOGE("SetBundleGroup, asyncCallbackInfo == nullptr");
-            }
-        },
-        [](napi_env env, napi_status status, void *data) {
-            AsyncCallbackInfoSetBundleGroup *asyncCallbackInfo = (AsyncCallbackInfoSetBundleGroup *)data;
-            if (asyncCallbackInfo) {
-                napi_value result = nullptr;
-                napi_get_null(env, &result);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
@@ -899,7 +700,7 @@ napi_value ParseEventStatesParameters(const napi_env &env, const napi_callback_i
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value QueryBundleActiveEventStates(napi_env env, napi_callback_info info)
+napi_value QueryDeviceEventStates(napi_env env, napi_callback_info info)
 {
     EventStatesParamsInfo params;
     ParseEventStatesParameters(env, info, params);
@@ -916,7 +717,7 @@ napi_value QueryBundleActiveEventStates(napi_env env, napi_callback_info info)
     }
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "QueryBundleActiveEventStates", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_string_latin1(env, "QueryDeviceEventStates", NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
@@ -927,7 +728,7 @@ napi_value QueryBundleActiveEventStates(napi_env env, napi_callback_info info)
                     .QueryDeviceEventStates(asyncCallbackInfo->beginTime,
                     asyncCallbackInfo->endTime, asyncCallbackInfo->eventStats);
             } else {
-                BUNDLE_ACTIVE_LOGE("QueryBundleActiveEventStates, asyncCallbackInfo == nullptr");
+                BUNDLE_ACTIVE_LOGE("QueryDeviceEventStates, asyncCallbackInfo == nullptr");
             }
         },
         [](napi_env env, napi_status status, void *data) {
@@ -951,7 +752,7 @@ napi_value QueryBundleActiveEventStates(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value QueryAppNotificationNumber(napi_env env, napi_callback_info info)
+napi_value QueryNotificationNumber(napi_env env, napi_callback_info info)
 {
     EventStatesParamsInfo params;
     ParseEventStatesParameters(env, info, params);
@@ -968,7 +769,7 @@ napi_value QueryAppNotificationNumber(napi_env env, napi_callback_info info)
     }
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "QueryAppNotificationNumber", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_string_latin1(env, "QueryNotificationNumber", NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env,
         nullptr,
         resourceName,
@@ -979,7 +780,7 @@ napi_value QueryAppNotificationNumber(napi_env env, napi_callback_info info)
                     .QueryNotificationNumber(asyncCallbackInfo->beginTime,
                     asyncCallbackInfo->endTime, asyncCallbackInfo->eventStats);
             } else {
-                BUNDLE_ACTIVE_LOGE("QueryAppNotificationNumber, asyncCallbackInfo == nullptr");
+                BUNDLE_ACTIVE_LOGE("QueryNotificationNumber, asyncCallbackInfo == nullptr");
             }
         },
         [](napi_env env, napi_status status, void *data) {
@@ -1005,4 +806,3 @@ napi_value QueryAppNotificationNumber(napi_env env, napi_callback_info info)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-

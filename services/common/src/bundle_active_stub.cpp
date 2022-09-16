@@ -80,7 +80,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int64_t endTime = data.ReadInt64();
             int32_t userId = data.ReadInt32();
             int32_t errCode = data.ReadInt32();
-            result = QueryEvents(beginTime, endTime, errCode, userId);
+            result = QueryBundleEvents(beginTime, endTime, errCode, userId);
             int32_t size = static_cast<int32_t>(result.size());
             reply.WriteInt32(errCode);
             reply.WriteInt32(size);
@@ -97,7 +97,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int32_t newGroup = data.ReadInt32();
             int32_t errCode = data.ReadInt32();
             int32_t userId = data.ReadInt32();
-            int32_t result = SetBundleGroup(bundleName, newGroup, errCode, userId);
+            int32_t result = SetAppGroup(bundleName, newGroup, errCode, userId);
             return reply.WriteInt32(result);
         }
         case QUERY_CURRENT_USAGE_STATS: {
@@ -122,7 +122,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             std::vector<BundleActiveEvent> result;
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
-            result = QueryCurrentEvents(beginTime, endTime);
+            result = QueryCurrentBundleEvents(beginTime, endTime);
             int32_t size = static_cast<int32_t>(result.size());
             reply.WriteInt32(size);
             for (int32_t i = 0; i < size; i++) {
@@ -136,14 +136,14 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         case QUERY_BUNDLE_GROUP: {
             std::string bundleName = data.ReadString();
             int32_t userId = data.ReadInt32();
-            int32_t result = QueryPackageGroup(bundleName, userId);
+            int32_t result = QueryAppGroup(bundleName, userId);
             return reply.WriteInt32(result);
         }
         case QUERY_FORM_STATS: {
             std::vector<BundleActiveModuleRecord> results;
             int32_t maxNum = data.ReadInt32();
             int32_t userId = data.ReadInt32();
-            int32_t errCode = QueryFormStatistics(maxNum, results, userId);
+            int32_t errCode = QueryModuleUsageRecords(maxNum, results, userId);
             int32_t size = static_cast<int32_t>(results.size());
             reply.WriteInt32(errCode);
             reply.WriteInt32(size);
@@ -158,20 +158,20 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         case REGISTER_GROUP_CALLBACK: {
             auto observer = iface_cast<IBundleActiveGroupCallback>(data.ReadRemoteObject());
             if (!observer) {
-                BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack observer is null, return");
+                BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer is null, return");
                 return false;
             }
-            BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack observer is ok");
-            int32_t result = RegisterGroupCallBack(observer);
+            BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack observer is ok");
+            int32_t result = RegisterAppGroupCallBack(observer);
             return reply.WriteInt32(result);
         }
         case UNREGISTER_GROUP_CALLBACK: {
             auto observer = iface_cast<IBundleActiveGroupCallback>(data.ReadRemoteObject());
             if (!observer) {
-                BUNDLE_ACTIVE_LOGE("unRegisterGroupCallBack observer is null, return");
+                BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer is null, return");
                 return false;
             }
-            int32_t result = UnregisterGroupCallBack(observer);
+            int32_t result = UnRegisterAppGroupCallBack(observer);
             return reply.WriteInt32(result);
         }
         case QUERY_EVENT_STATS: {
@@ -179,7 +179,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             int32_t userId = data.ReadInt32();
-            int32_t errCode = QueryEventStats(beginTime, endTime, result, userId);
+            int32_t errCode = QueryDeviceEventStates(beginTime, endTime, result, userId);
             int32_t size = static_cast<int32_t>(result.size());
             reply.WriteInt32(errCode);
             reply.WriteInt32(size);
@@ -196,7 +196,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             int32_t userId = data.ReadInt32();
-            int32_t errCode = QueryAppNotificationNumber(beginTime, endTime, result, userId);
+            int32_t errCode = QueryNotificationNumber(beginTime, endTime, result, userId);
             int32_t size = static_cast<int32_t>(result.size());
             reply.WriteInt32(errCode);
             reply.WriteInt32(size);

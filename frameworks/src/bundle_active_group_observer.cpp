@@ -320,7 +320,7 @@ napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info)
             AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->errorCode =
-                    BundleActiveClient::GetInstance().UnregisterGroupCallBack(asyncCallbackInfo->observer);
+                    BundleActiveClient::GetInstance().UnRegisterAppGroupCallBack(asyncCallbackInfo->observer);
             } else {
                 BUNDLE_ACTIVE_LOGE("UnRegisterGroupCallBack, asyncCallbackInfo == nullptr");
             }

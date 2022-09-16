@@ -105,27 +105,27 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, F
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryEvents_001
- * @tc.desc: queryevents
+ * @tc.name: DeviceUsageStatisticsTest_QueryBundleEvents_001
+ * @tc.desc: QueryBundleEvents
  * @tc.type: FUNC
  * @tc.require: SR000GGTO6 AR000GH6PH
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEvents_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryBundleEvents_001, Function | MediumTest | Level0)
 {
     int32_t errCode = 0;
-    std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryEvents(0, LARGE_NUM, errCode);
+    std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryBundleEvents(0, LARGE_NUM, errCode);
     EXPECT_EQ(result.size(), 1);
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryCurrentEvents_001
- * @tc.desc: querycurrentevents
+ * @tc.name: DeviceUsageStatisticsTest_QueryCurrentBundleEvents_001
+ * @tc.desc: QueryCurrentBundleEvents
  * @tc.type: FUNC
  * @tc.require: SR000GGTO4 AR000GH6PF
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentEvents_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentBundleEvents_001, Function | MediumTest | Level0)
 {
-    std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryCurrentEvents(0, LARGE_NUM);
+    std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryCurrentBundleEvents(0, LARGE_NUM);
     EXPECT_EQ(result.size(), 0);
 }
 
@@ -183,7 +183,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistic
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001, Function | MediumTest | Level0)
 {
-    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(DEFAULT_BUNDLENAME, COMMON_USERID);
+    int32_t result = BundleActiveClient::GetInstance().QueryAppGroup(DEFAULT_BUNDLENAME, COMMON_USERID);
     DEFAULT_GROUP = (result == DEFAULT_GROUP) ? (result + 10) : DEFAULT_GROUP;
     result = BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP,
         DEFAULT_ERRCODE, COMMON_USERID);
@@ -191,16 +191,16 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryPackageGroup_001
- * @tc.desc: querypackagegroup, no bundleName
+ * @tc.name: DeviceUsageStatisticsTest_QueryAppGroup_001
+ * @tc.desc: QueryAppGroup, no bundleName
  * @tc.type: FUNC
  * @tc.require: SR000H0HAQ AR000H0ROE
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryAppGroup_001, Function | MediumTest | Level0)
 {
     BundleActiveClient::GetInstance().SetBundleGroup(DEFAULT_BUNDLENAME, DEFAULT_GROUP,
         DEFAULT_ERRCODE, COMMON_USERID);
-    int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(DEFAULT_BUNDLENAME, COMMON_USERID);
+    int32_t result = BundleActiveClient::GetInstance().QueryAppGroup(DEFAULT_BUNDLENAME, COMMON_USERID);
     bool flag = false;
     for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
         if (*item == result) {

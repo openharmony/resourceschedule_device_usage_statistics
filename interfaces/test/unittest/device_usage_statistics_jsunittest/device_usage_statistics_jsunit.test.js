@@ -90,7 +90,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest003
-     * @tc.desc: test queryBundleActiveStates promise.
+     * @tc.desc: test QueryBundleEvents promise.
      * @tc.type: FUNC
      * @tc.require: SR000GGTN7 AR000GH89H AR000GH89I AR000GH899
      */
@@ -98,12 +98,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest003---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
-        bundleState.queryBundleActiveStates(beginTime, endTime).then((res) => {
-            console.info('BUNDLE_ACTIVE queryBundleActiveStates promise success.');
+        bundleState.QueryBundleEvents(beginTime, endTime).then((res) => {
+            console.info('BUNDLE_ACTIVE QueryBundleEvents promise success.');
             expect(true).assertEqual(true);
             done();
         }).catch((err) => {
-            console.info('BUNDLE_ACTIVE queryBundleActiveStates promise failure.');
+            console.info('BUNDLE_ACTIVE QueryBundleEvents promise failure.');
             expect(false).assertEqual(true);
             done();
         });
@@ -111,7 +111,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest004
-     * @tc.desc: test queryBundleActiveStates callback.
+     * @tc.desc: test QueryBundleEvents callback.
      * @tc.type: FUNC
      * @tc.require: SR000GGTN7 AR000GH89E AR000GH89F AR000GH89G
      */
@@ -119,13 +119,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest004---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
-        bundleState.queryBundleActiveStates(beginTime, endTime, (err, res) => {
+        bundleState.QueryBundleEvents(beginTime, endTime, (err, res) => {
             if (err) {
-                console.info('BUNDLE_ACTIVE queryBundleActiveStates callback failure.');
+                console.info('BUNDLE_ACTIVE QueryBundleEvents callback failure.');
                 expect(false).assertEqual(true);
                 done();
             } else {
-                console.info('BUNDLE_ACTIVE queryBundleActiveStates callback success.');
+                console.info('BUNDLE_ACTIVE QueryBundleEvents callback success.');
                 expect(true).assertEqual(true);
                 done();
             }
@@ -178,7 +178,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest007
-     * @tc.desc: test queryCurrentBundleActiveStates promise.
+     * @tc.desc: test QueryCurrentBundleEvents promise.
      * @tc.type: FUNC
      * @tc.require: SR000GGTN7 AR000GH89H AR000GH89I AR000GH899
      */
@@ -186,12 +186,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest007---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
-        bundleState.queryCurrentBundleActiveStates(beginTime, endTime).then((res) => {
-            console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates promise success.');
+        bundleState.QueryCurrentBundleEvents(beginTime, endTime).then((res) => {
+            console.info('BUNDLE_ACTIVE QueryCurrentBundleEvents promise success.');
             expect(true).assertEqual(true);
             done();
         }).catch((err) => {
-            console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates promise failure.');
+            console.info('BUNDLE_ACTIVE QueryCurrentBundleEvents promise failure.');
             expect(false).assertEqual(true);
             done();
         });
@@ -199,7 +199,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest008
-     * @tc.desc: test queryCurrentBundleActiveStates callback.
+     * @tc.desc: test QueryCurrentBundleEvents callback.
      * @tc.type: FUNC
      * @tc.require: SR000GGTN7 AR000GH89E AR000GH89F AR000GH89G
      */
@@ -207,13 +207,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest008---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
-        bundleState.queryCurrentBundleActiveStates(beginTime, endTime, (err, res) => {
+        bundleState.QueryCurrentBundleEvents(beginTime, endTime, (err, res) => {
             if (err) {
-                console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates callback failure.');
+                console.info('BUNDLE_ACTIVE QueryCurrentBundleEvents callback failure.');
                 expect(false).assertEqual(true);
                 done();
             } else {
-                console.info('BUNDLE_ACTIVE queryCurrentBundleActiveStates callback success.');
+                console.info('BUNDLE_ACTIVE QueryCurrentBundleEvents callback success.');
                 expect(true).assertEqual(true);
                 done();
             }
@@ -222,7 +222,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest009
-     * @tc.desc: test queryBundleStateInfoByInterval promise.
+     * @tc.desc: test QueryBundleStatsInfoByInterval promise.
      * @tc.type: FUNC
      * @tc.require: SR000GGTN7 AR000GH89H AR000GH89I AR000GH899
      */
@@ -231,12 +231,12 @@ describe("DeviceUsageStatisticsJsTest", function () {
         let intervalType = 0;
         let beginTime = 0;
         let endTime = 20000000000000;
-        bundleState.queryBundleStateInfoByInterval(intervalType, beginTime, endTime).then((res) => {
-            console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise success.');
+        bundleState.QueryBundleStatsInfoByInterval(intervalType, beginTime, endTime).then((res) => {
+            console.info('BUNDLE_ACTIVE QueryBundleStatsInfoByInterval promise success.');
             expect(true).assertEqual(true);
             done();
         }).catch((err) => {
-            console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval promise failure.');
+            console.info('BUNDLE_ACTIVE QueryBundleStatsInfoByInterval promise failure.');
             expect(false).assertEqual(true);
             done();
         });
@@ -244,7 +244,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest010
-     * @tc.desc: test queryBundleStateInfoByInterval callback.
+     * @tc.desc: test QueryBundleStatsInfoByInterval callback.
      * @tc.type: FUNC
      * @tc.require: SR000GGTN7 AR000GH89E AR000GH89F AR000GH89G
      */
@@ -253,13 +253,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
         let intervalType = 0;
         let beginTime = 0;
         let endTime = 20000000000000;
-        bundleState.queryBundleStateInfoByInterval(intervalType, beginTime, endTime, (err, res) => {
+        bundleState.QueryBundleStatsInfoByInterval(intervalType, beginTime, endTime, (err, res) => {
             if (err) {
-                console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval callback failure.');
+                console.info('BUNDLE_ACTIVE QueryBundleStatsInfoByInterval callback failure.');
                 expect(false).assertEqual(true);
                 done();
             } else {
-                console.info('BUNDLE_ACTIVE queryBundleStateInfoByInterval callback success.');
+                console.info('BUNDLE_ACTIVE QueryBundleStatsInfoByInterval callback success.');
                 expect(true).assertEqual(true);
                 done();
             }

@@ -87,7 +87,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t beginTime,
+std::vector<BundleActiveEvent> BundleActiveProxy::QueryBundleEvents(const int64_t beginTime,
     const int64_t endTime, int32_t& errCode, int32_t userId)
 {
     MessageParcel data;
@@ -118,7 +118,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
     return result;
 }
 
-int32_t BundleActiveProxy::SetBundleGroup(const std::string& bundleName, int32_t newGroup,
+int32_t BundleActiveProxy::SetAppGroup(const std::string& bundleName, int32_t newGroup,
     int32_t errCode, int32_t userId)
 {
     MessageParcel data;
@@ -170,7 +170,7 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryCurrentPackageStat
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64_t beginTime, const int64_t endTime)
+std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentBundleEvents(const int64_t beginTime, const int64_t endTime)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -192,14 +192,14 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentEvents(const int64
         result.push_back(*tmp);
     }
     for (uint32_t i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGD("QueryCurrentEvents event id is %{public}d, bundle name is %{public}s,"
+        BUNDLE_ACTIVE_LOGD("QueryCurrentBundleEvents event id is %{public}d, bundle name is %{public}s,"
             "time stamp is %{public}lld",
             result[i].eventId_, result[i].bundleName_.c_str(), (long long)result[i].timeStamp_);
     }
     return result;
 }
 
-int32_t BundleActiveProxy::QueryPackageGroup(std::string& bundleName, const int32_t userId)
+int32_t BundleActiveProxy::QueryAppGroup(std::string& bundleName, const int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -215,7 +215,7 @@ int32_t BundleActiveProxy::QueryPackageGroup(std::string& bundleName, const int3
     return result;
 }
 
-int32_t BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
+int32_t BundleActiveProxy::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
     int32_t userId)
 {
     MessageParcel data;
@@ -251,34 +251,34 @@ int32_t BundleActiveProxy::QueryFormStatistics(int32_t maxNum, std::vector<Bundl
     return errCode;
 }
 
-int32_t BundleActiveProxy::RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+int32_t BundleActiveProxy::RegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
 {
     if (!observer) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack observer is nullptr");
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer is nullptr");
         return false;
     }
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack WriteInterfaceToken fail");
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack WriteInterfaceToken fail");
         return false;
     }
     if (!data.WriteRemoteObject(observer->AsObject())) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack observer write failed.");
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer write failed.");
         return false;
     }
     int32_t ret = Remote()->SendRequest(REGISTER_GROUP_CALLBACK, data, reply, option);
     if (ret!= ERR_OK) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack SendRequest failed, error code: %{public}d", ret);
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack SendRequest failed, error code: %{public}d", ret);
     }
     return reply.ReadInt32();
 }
 
-int32_t BundleActiveProxy::UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+int32_t BundleActiveProxy::UnRegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
 {
     if (!observer) {
-        BUNDLE_ACTIVE_LOGE("UnregisterGroupCallBack observer is nullptr");
+        BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer is nullptr");
         return false;
     }
     MessageParcel data;
@@ -288,30 +288,30 @@ int32_t BundleActiveProxy::UnregisterGroupCallBack(const sptr<IBundleActiveGroup
         return false;
     }
     if (!data.WriteRemoteObject(observer->AsObject())) {
-        BUNDLE_ACTIVE_LOGE("UnregisterGroupCallBack observer write failed.");
+        BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer write failed.");
         return false;
     }
     Remote()->SendRequest(UNREGISTER_GROUP_CALLBACK, data, reply, option);
     return reply.ReadInt32();
 }
 
-int32_t BundleActiveProxy::QueryEventStats(int64_t beginTime, int64_t endTime,
+int32_t BundleActiveProxy::QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     int32_t errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_EVENT_STATS);
     for (const auto& singleEvent : eventStats) {
-        BUNDLE_ACTIVE_LOGD("QueryEventStats name is %{public}s, eventId is %{public}d, count is %{public}d",
+        BUNDLE_ACTIVE_LOGD("QueryDeviceEventStates name is %{public}s, eventId is %{public}d, count is %{public}d",
             singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
     }
     return errCode;
 }
 
-int32_t BundleActiveProxy::QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+int32_t BundleActiveProxy::QueryNotificationNumber(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     int32_t errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_APP_NOTIFICATION_NUMBER);
     for (const auto& singleEvent : eventStats) {
-        BUNDLE_ACTIVE_LOGD("QueryAppNotificationNumber name is %{public}s, eventId is %{public}d, count is %{public}d",
+        BUNDLE_ACTIVE_LOGD("QueryNotificationNumber name is %{public}s, eventId is %{public}d, count is %{public}d",
             singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
     }
     return errCode;

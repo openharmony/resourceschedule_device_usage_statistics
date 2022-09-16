@@ -23,7 +23,7 @@ int32_t BundleActiveGroupCallbackStub::OnRemoteRequest(uint32_t code, MessagePar
     std::u16string descriptor = BundleActiveGroupCallbackStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack OnRemoteRequest cannot get power mgr service");
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack OnRemoteRequest cannot get power mgr service");
         return -1;
     }
     switch (code) {
@@ -31,7 +31,7 @@ int32_t BundleActiveGroupCallbackStub::OnRemoteRequest(uint32_t code, MessagePar
             std::shared_ptr<BundleActiveGroupCallbackInfo> groupInfo(
                 data.ReadParcelable<BundleActiveGroupCallbackInfo>());
             if (!groupInfo) {
-                BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack ReadParcelable<AbilityStateData> failed");
+                BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack ReadParcelable<AbilityStateData> failed");
                 return -1;
             }
             OnBundleGroupChanged(*(groupInfo.get()));

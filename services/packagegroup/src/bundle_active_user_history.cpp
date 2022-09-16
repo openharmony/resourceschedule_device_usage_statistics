@@ -193,20 +193,20 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     }
     oneBundleUsageHistory->reasonInGroup_ = GROUP_CONTROL_REASON_USAGE | groupReason;
     oneBundleUsageHistory->isChanged_ = true;
-    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack will ReportUsage");
+    BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack will ReportUsage");
     bool isGroupChanged = (oldGroup == newGroup) ? true : false;
     if (!isGroupChanged) {
         BundleActiveGroupCallbackInfo callbackInfo(
             userId, oldGroup, newGroup, oneBundleUsageHistory->reasonInGroup_, bundleName);
-        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack BundleActiveGroupCallbackInfo build success");
+        BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack BundleActiveGroupCallbackInfo build success");
         if (!bundleActiveCore_.expired()) {
-            BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack will callback!");
+            BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack will callback!");
             bundleActiveCore_.lock()->OnBundleGroupChanged(callbackInfo);
         }
     }
 }
 
-int32_t BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int32_t userId,
+int32_t BundleActiveUserHistory::SetAppGroup(const string& bundleName, const int32_t userId,
     const int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason, const bool isFlush)
 {
     std::lock_guard<std::mutex> lock(setGroupMutex_);
@@ -229,7 +229,7 @@ int32_t BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const 
     oneBundleHistory->currentGroup_ = newGroup;
     oneBundleHistory->reasonInGroup_ = groupReason;
     oneBundleHistory->isChanged_ = true;
-    BUNDLE_ACTIVE_LOGI("SetBundleGroup set success");
+    BUNDLE_ACTIVE_LOGI("SetAppGroup set success");
     if (isFlush) {
         WriteBundleUsage(userId);
     }

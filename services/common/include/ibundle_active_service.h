@@ -68,11 +68,11 @@ public:
     virtual std::vector<BundleActivePackageStats> QueryPackageStats(const int32_t intervalType, const int64_t beginTime,
         const int64_t endTime, int32_t& errCode, int32_t userId) = 0;
     /*
-    * function: QueryEvents, query all events in specific time span for calling user.
+    * function: QueryBundleEvents, query all events in specific time span for calling user.
     * parameters: beginTime, endTime, errCode
     * return: vector of events.
     */
-    virtual std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime,
+    virtual std::vector<BundleActiveEvent> QueryBundleEvents(const int64_t beginTime, const int64_t endTime,
         int32_t& errCode, int32_t userId) = 0;
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
@@ -82,50 +82,50 @@ public:
     virtual std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int32_t intervalType,
         const int64_t beginTime, const int64_t endTime) = 0;
     /*
-    * function: QueryCurrentEvents, query bundle usage statistics in specific time span for calling bundle.
+    * function: QueryCurrentBundleEvents, query bundle usage statistics in specific time span for calling bundle.
     * parameters: beginTime, endTime
     * return: vector of calling bundle events.
     */
-    virtual std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime) = 0;
+    virtual std::vector<BundleActiveEvent> QueryCurrentBundleEvents(const int64_t beginTime, const int64_t endTime) = 0;
     /*
-    * function: QueryPackageGroup, query bundle priority group calling bundle.
+    * function: QueryAppGroup, query bundle priority group calling bundle.
     * return: the priority group of calling bundle.
     */
-    virtual int32_t QueryPackageGroup(std::string& bundleName, int32_t userId) = 0;
+    virtual int32_t QueryAppGroup(std::string& bundleName, int32_t userId) = 0;
     /*
-    * function: SetBundleGroup, set specific bundle of specific user to a priority group.
+    * function: SetAppGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    virtual int32_t SetBundleGroup(const std::string& bundleName, int32_t newGroup,
+    virtual int32_t SetAppGroup(const std::string& bundleName, int32_t newGroup,
         int32_t errCode, int32_t userId) = 0;
     /*
-    * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
+    * function: QueryModuleUsageRecords, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    virtual int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
+    virtual int32_t QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
         int32_t userId) = 0;
 
-    virtual int32_t RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
-    virtual int32_t UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
+    virtual int32_t RegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
+    virtual int32_t UnRegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
 
     /*
-    * function: QueryEventStats, query all from event stats in specific time span for calling user.
+    * function: QueryDeviceEventStates, query all from event stats in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    virtual int32_t QueryEventStats(int64_t beginTime, int64_t endTime,
+    virtual int32_t QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) = 0;
 
     /*
-    * function: QueryAppNotificationNumber, query all app notification number in specific time span for calling user.
+    * function: QueryNotificationNumber, query all app notification number in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    virtual int32_t QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+    virtual int32_t QueryNotificationNumber(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) = 0;
 public:
     enum {

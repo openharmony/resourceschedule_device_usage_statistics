@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-#include "bundle_state_init.h"
+#include "usage_statistics_init.h"
 
 #include "bundle_state_condition.h"
-#include "bundle_active_group_observer.h"
-#include "bundle_state_query.h"
+#include "bundle_active_app_group_napi.h"
+#include "bundle_state_query_napi.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -30,24 +30,24 @@ napi_ref typeConstructor_ = nullptr;
 /*
  * Module export function
  */
-static napi_value BundleStateInit(napi_env env, napi_value exports)
+static napi_value UsageStatisticsInit(napi_env env, napi_value exports)
 {
     /*
      * Propertise define
      */
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_FUNCTION("isIdleState", IsIdleState),
-        DECLARE_NAPI_FUNCTION("queryAppUsagePriorityGroup", QueryAppUsagePriorityGroup),
-        DECLARE_NAPI_FUNCTION("queryCurrentBundleActiveStates", QueryCurrentBundleActiveStates),
-        DECLARE_NAPI_FUNCTION("queryBundleActiveStates", QueryBundleActiveStates),
-        DECLARE_NAPI_FUNCTION("queryBundleStateInfoByInterval", QueryBundleStateInfoByInterval),
-        DECLARE_NAPI_FUNCTION("queryBundleStateInfos", QueryBundleStateInfos),
-        DECLARE_NAPI_FUNCTION("getRecentlyUsedModules", GetModuleUsageRecord),
-        DECLARE_NAPI_FUNCTION("setBundleGroup", SetBundleGroup),
-        DECLARE_NAPI_FUNCTION("registerGroupCallBack", RegisterGroupCallBack),
-        DECLARE_NAPI_FUNCTION("unRegisterGroupCallBack", UnRegisterGroupCallBack),
-        DECLARE_NAPI_FUNCTION("queryBundleActiveEventStates", QueryBundleActiveEventStates),
-        DECLARE_NAPI_FUNCTION("queryAppNotificationNumber", QueryAppNotificationNumber)
+        DECLARE_NAPI_FUNCTION("queryAppGroup", QueryAppUsagePriorityGroup),
+        DECLARE_NAPI_FUNCTION("queryCurrentBundleEvents", QueryCurrentBundleActiveStates),
+        DECLARE_NAPI_FUNCTION("queryBundleEvents", QueryBundleActiveStates),
+        DECLARE_NAPI_FUNCTION("queryBundleStatsInfoByInterval", QueryBundleStateInfoByInterval),
+        DECLARE_NAPI_FUNCTION("queryBundleStatsInfos", QueryBundleStatsInfos),
+        DECLARE_NAPI_FUNCTION("queryModuleUsageRecords", QueryModuleUsageRecords),
+        DECLARE_NAPI_FUNCTION("setAppGroup", SetAppGroup),
+        DECLARE_NAPI_FUNCTION("registerAppGroupCallBack", RegisterAppGroupCallBack),
+        DECLARE_NAPI_FUNCTION("unRegisterAppGroupCallBack", UnRegisterAppGroupCallBack),
+        DECLARE_NAPI_FUNCTION("queryDeviceEventStates", QueryDeviceEventStates),
+        DECLARE_NAPI_FUNCTION("queryNotificationNumber", QueryNotificationNumber)
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
@@ -153,7 +153,6 @@ napi_value EnumTypeConstructor(napi_env env, napi_callback_info info)
  */
 __attribute__((constructor)) void RegisterModule(void)
 {
-    napi_module_register(&_module);
     napi_module_register(&_usageStatisticsModule);
 }
 EXTERN_C_END

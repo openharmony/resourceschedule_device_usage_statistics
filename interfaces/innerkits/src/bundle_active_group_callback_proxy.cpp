@@ -29,16 +29,16 @@ void BundleActiveGroupCallbackProxy::OnBundleGroupChanged(
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack remote is dead.");
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack remote is dead.");
         return;
     }
     MessageParcel data;
     if (!data.WriteInterfaceToken(BundleActiveGroupCallbackProxy::GetDescriptor())) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack write interface token failed.");
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack write interface token failed.");
         return;
     }
     if (!data.WriteParcelable(&bundleActiveGroupCallbackInfo)) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack write parcel failed.");
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack write parcel failed.");
         return;
     }
     MessageParcel reply;
@@ -46,7 +46,7 @@ void BundleActiveGroupCallbackProxy::OnBundleGroupChanged(
     int32_t ret = remote->SendRequest(
         static_cast<uint32_t>(IBundleActiveGroupCallback::message::ON_BUNDLE_GROUP_CHANGED), data, reply, option);
     if (ret!= ERR_OK) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack SendRequest failed, error code: %{public}d", ret);
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack SendRequest failed, error code: %{public}d", ret);
     }
 }
 }  // namespace BackgroundTaskMgr

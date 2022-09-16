@@ -1599,7 +1599,7 @@ void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std:
     }
 }
 
-void BundleActiveUsageDatabase::QueryEventStats(int32_t eventId, int64_t beginTime,
+void BundleActiveUsageDatabase::QueryDeviceEventStates(int32_t eventId, int64_t beginTime,
     int64_t endTime, std::map<std::string, BundleActiveEventStats>& eventStats, int32_t userId)
 {
     lock_guard<mutex> lock(databaseMutex_);
@@ -1658,7 +1658,7 @@ std::string BundleActiveUsageDatabase::GetSystemEventName(const int32_t userId)
     return systemEventName;
 }
 
-void BundleActiveUsageDatabase::QueryAppNotificationNumber(int32_t eventId, int64_t beginTime,
+void BundleActiveUsageDatabase::QueryNotificationNumber(int32_t eventId, int64_t beginTime,
     int64_t endTime, std::map<std::string, BundleActiveEventStats>& notificationEventStats, int32_t userId)
 {
     lock_guard<mutex> lock(databaseMutex_);

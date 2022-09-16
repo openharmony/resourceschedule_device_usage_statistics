@@ -63,14 +63,14 @@ public:
     void OnUserRemoved(const int32_t userId);
     void OnBundleUninstalled(const int32_t userId, const std::string bundleName);
     void OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp);
-    int32_t SetBundleGroup(const std::string& bundleName, const int32_t userId, int32_t newGroup, uint32_t reason,
+    int32_t SetAppGroup(const std::string& bundleName, const int32_t userId, int32_t newGroup, uint32_t reason,
         const int64_t bootBasedTimeStamp, const bool isFlush);
     void RestoreToDatabase(const int32_t userId);
     void RestoreDurationToDatabase();
     bool IsBundleInstalled(const std::string& bundleName, const int32_t userId);
     bool IsScreenOn();
     int32_t IsBundleIdle(const std::string& bundleName, const int32_t userId);
-    int32_t QueryPackageGroup(const std::string& bundleName, const int32_t userId);
+    int32_t QueryAppGroup(const std::string& bundleName, const int32_t userId);
     void ShutDown(const int64_t bootBasedTimeStamp, const int32_t userId);
     void OnUserSwitched(const int32_t userId, const int32_t currentUsedUser);
 

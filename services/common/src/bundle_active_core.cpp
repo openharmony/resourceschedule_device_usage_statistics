@@ -576,10 +576,10 @@ std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const 
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int32_t userId, const int64_t beginTime,
+std::vector<BundleActiveEvent> BundleActiveCore::QueryBundleEvents(const int32_t userId, const int64_t beginTime,
     const int64_t endTime, std::string bundleName)
 {
-    BUNDLE_ACTIVE_LOGD("QueryEvents called");
+    BUNDLE_ACTIVE_LOGD("QueryBundleEvents called");
     std::vector<BundleActiveEvent> result;
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
@@ -593,11 +593,11 @@ std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int32_t userI
     if (service == nullptr) {
         return result;
     }
-    result = service->QueryEvents(beginTime, endTime, userId, bundleName);
+    result = service->QueryBundleEvents(beginTime, endTime, userId, bundleName);
     return result;
 }
 
-int32_t BundleActiveCore::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
+int32_t BundleActiveCore::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
     int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -609,11 +609,11 @@ int32_t BundleActiveCore::QueryFormStatistics(int32_t maxNum, std::vector<Bundle
     if (service == nullptr) {
         return -1;
     }
-    int32_t errCode = service->QueryFormStatistics(maxNum, results);
+    int32_t errCode = service->QueryModuleUsageRecords(maxNum, results);
     return errCode;
 }
 
-int32_t BundleActiveCore::QueryEventStats(int64_t beginTime, int64_t endTime,
+int32_t BundleActiveCore::QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -625,11 +625,11 @@ int32_t BundleActiveCore::QueryEventStats(int64_t beginTime, int64_t endTime,
     if (!service) {
         return -1;
     }
-    int32_t errCode = service->QueryEventStats(beginTime, endTime, eventStats, userId);
+    int32_t errCode = service->QueryDeviceEventStates(beginTime, endTime, eventStats, userId);
     return errCode;
 }
 
-int32_t BundleActiveCore::QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+int32_t BundleActiveCore::QueryNotificationNumber(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -641,23 +641,23 @@ int32_t BundleActiveCore::QueryAppNotificationNumber(int64_t beginTime, int64_t 
     if (!service) {
         return -1;
     }
-    int32_t errCode = service->QueryAppNotificationNumber(beginTime, endTime, eventStats, userId);
+    int32_t errCode = service->QueryNotificationNumber(beginTime, endTime, eventStats, userId);
     return errCode;
 }
 
-int32_t BundleActiveCore::SetBundleGroup(
+int32_t BundleActiveCore::SetAppGroup(
     const std::string& bundleName, const int32_t newGroup, const int32_t userId, const bool isFlush)
 {
     int32_t newReason = GROUP_CONTROL_REASON_FORCED;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    return bundleGroupController_->SetBundleGroup(
+    return bundleGroupController_->SetAppGroup(
         bundleName, userId, newGroup, newReason, bootBasedTimeStamp, isFlush);
 }
 
-int32_t BundleActiveCore::QueryPackageGroup(const std::string bundleName, const int32_t userId)
+int32_t BundleActiveCore::QueryAppGroup(const std::string bundleName, const int32_t userId)
 {
-    return bundleGroupController_->QueryPackageGroup(bundleName, userId);
+    return bundleGroupController_->QueryAppGroup(bundleName, userId);
 }
 
 int32_t BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int32_t userId)
@@ -709,7 +709,7 @@ void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo&
         auto observer = item.second;
         if (observer) {
             BUNDLE_ACTIVE_LOGI(
-                "RegisterGroupCallBack will OnBundleGroupChanged!,oldGroup is %{public}d, newGroup is %{public}d",
+                "RegisterAppGroupCallBack will OnBundleGroupChanged!,oldGroup is %{public}d, newGroup is %{public}d",
                 callbackInfo.GetOldGroup(), callbackInfo.GetNewGroup());
             if (AccessToken::AccessTokenKit::GetTokenType(item.first) == AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
                 observer->OnBundleGroupChanged(callbackInfo);
@@ -724,7 +724,7 @@ void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo&
     }
 }
 
-int32_t BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+int32_t BundleActiveCore::RegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
     const sptr<IBundleActiveGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(callbackMutex_);
@@ -737,17 +737,17 @@ int32_t BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID
     }
     groupChangeObservers_.emplace(tokenId, observer);
     AddObserverDeathRecipient(observer);
-    BUNDLE_ACTIVE_LOGD("RegisterGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
+    BUNDLE_ACTIVE_LOGD("RegisterAppGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
     return 0;
 }
 
-int32_t BundleActiveCore::UnregisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+int32_t BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
     const sptr<IBundleActiveGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(callbackMutex_);
     auto item = groupChangeObservers_.find(tokenId);
     if (item == groupChangeObservers_.end()) {
-        BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not exist, return");
+        BUNDLE_ACTIVE_LOGI("UnRegisterAppGroupCallBack observer is not exist, return");
         return 1;
     }
     RemoveObserverDeathRecipient(item->second);

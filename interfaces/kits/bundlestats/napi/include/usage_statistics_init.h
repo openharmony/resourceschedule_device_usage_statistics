@@ -26,11 +26,10 @@ extern "C" {
 #endif
 
 __attribute__((constructor)) void RegisterModule(void);
-static napi_value BundleStateInit(napi_env env, napi_value exports);
+static napi_value UsageStatisticsInit(napi_env env, napi_value exports);
 static napi_value InitIntervalType(napi_env env, napi_value exports);
 static napi_value InitGroupType(napi_env env, napi_value exports);
 static napi_value EnumTypeConstructor(napi_env env, napi_callback_info info);
-static napi_value UsageStatisticsInit(napi_env env, napi_value exports);
 
 #ifdef __cplusplus
 }
@@ -39,16 +38,6 @@ static napi_value UsageStatisticsInit(napi_env env, napi_value exports);
 /*
  * Module define
  */
-napi_module _module = {
-    .nm_version = 1,
-    .nm_flags = 0,
-    .nm_filename = nullptr,
-    .nm_register_func = BundleStateInit,
-    .nm_modname = "bundleState",
-    .nm_priv = ((void *)0),
-    .reserved = {0}
-};
-
 napi_module _usageStatisticsModule = {
     .nm_version = 1,
     .nm_flags = 0,
