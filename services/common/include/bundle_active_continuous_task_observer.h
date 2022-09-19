@@ -16,6 +16,7 @@
 #ifndef BUNDLE_ACTIVE_CONTINUOUS_TASK_OBSERVER_H
 #define BUNDLE_ACTIVE_CONTINUOUS_TASK_OBSERVER_H
 
+#ifdef BGTASKMGR_ENABLE
 #include <memory>
 #ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
@@ -48,5 +49,6 @@ private:
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+#endif
 #endif  // BUNDLE_ACTIVE_CONTINUOUS_TASK_OBSERVER_H
 

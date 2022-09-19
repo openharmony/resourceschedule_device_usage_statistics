@@ -172,10 +172,12 @@ void BundleActiveService::InitAppStateSubscriber(const std::shared_ptr<BundleAct
 
 void BundleActiveService::InitContinuousSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
 {
+#ifdef BGTASKMGR_ENABLE
     if (continuousTaskObserver_ == nullptr) {
         continuousTaskObserver_ = std::make_shared<BundleActiveContinuousTaskObserver>();
         continuousTaskObserver_->Init(reportHandler);
     }
+#endif
 }
 
 bool BundleActiveService::SubscribeAppState()
@@ -196,6 +198,7 @@ bool BundleActiveService::SubscribeAppState()
 
 bool BundleActiveService::SubscribeContinuousTask()
 {
+#ifdef BGTASKMGR_ENABLE
     if (continuousTaskObserver_ == nullptr) {
         BUNDLE_ACTIVE_LOGE("SubscribeContinuousTask continuousTaskObserver_ is null, return");
         return false;
@@ -205,6 +208,7 @@ bool BundleActiveService::SubscribeContinuousTask()
         BUNDLE_ACTIVE_LOGE("SubscribeBackgroundTask failed.");
         return false;
     }
+#endif
     return true;
 }
 

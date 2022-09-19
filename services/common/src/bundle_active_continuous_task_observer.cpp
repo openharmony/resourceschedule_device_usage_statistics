@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#ifdef BGTASKMGR_ENABLE
 #include "time_service_client.h"
 
 #include "bundle_active_app_state_observer.h"
@@ -116,3 +117,4 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 
+#endif
