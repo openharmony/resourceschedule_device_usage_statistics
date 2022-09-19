@@ -144,14 +144,14 @@ public:
     * parameters: observer
     * return: errorcode.
     */
-    int32_t RegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    int32_t RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) override;
 
     /*
     * function: UnRegisterAppGroupCallBack, remove the observer from groupObservers.
     * parameters: observer
     * return: errorcode.
     */
-    int32_t UnRegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    int32_t UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) override;
 
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;
 

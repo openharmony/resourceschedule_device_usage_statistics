@@ -22,7 +22,7 @@
 #include "bundle_state_common.h"
 #include "bundle_state_data.h"
 #include "bundle_state_inner_errors.h"
-#include "bundle_active_group_callback_info.h"
+#include "app_group_callback_info.h"
 
 #include "app_group_observer_napi.h"
 
@@ -77,15 +77,15 @@ napi_value SetBundleGroupChangedData(const CallbackReceiveDataWorker *commonEven
     return BundleStateCommon::NapiGetNull(commonEventDataWorkerData->env);
 }
 
-void UvQueueWorkOnBundleGroupChanged(uv_work_t *work, int status)
+void UvQueueWorkOnAppGroupChanged(uv_work_t *work, int status)
 {
-    BUNDLE_ACTIVE_LOGD("OnBundleGroupChanged uv_work_t start");
+    BUNDLE_ACTIVE_LOGD("OnAppGroupChanged uv_work_t start");
     if (!work) {
         return;
     }
     CallbackReceiveDataWorker *callbackReceiveDataWorkerData = (CallbackReceiveDataWorker *)work->data;
     if (!callbackReceiveDataWorkerData || !callbackReceiveDataWorkerData->ref) {
-        BUNDLE_ACTIVE_LOGE("OnBundleGroupChanged commonEventDataWorkerData or ref is null");
+        BUNDLE_ACTIVE_LOGE("OnAppGroupChanged commonEventDataWorkerData or ref is null");
         delete work;
         work = nullptr;
         return;
@@ -122,9 +122,9 @@ void UvQueueWorkOnBundleGroupChanged(uv_work_t *work, int status)
 /*
 * observer callback when group change
 */
-void AppGroupObserver::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo &bundleActiveGroupCallbackInfo)
+void AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
 {
-    BUNDLE_ACTIVE_LOGD("OnBundleGroupChanged start");
+    BUNDLE_ACTIVE_LOGD("OnAppGroupChanged start");
     uv_loop_s *loop = nullptr;
     napi_get_uv_event_loop(bundleGroupCallbackInfo_.env, &loop);
     if (!loop) {
@@ -144,10 +144,10 @@ void AppGroupObserver::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo 
         return;
     }
     MessageParcel data;
-    if (!bundleActiveGroupCallbackInfo.Marshalling(data)) {
+    if (!appGroupCallbackInfo.Marshalling(data)) {
         BUNDLE_ACTIVE_LOGE("Marshalling fail");
     }
-    BundleActiveGroupCallbackInfo* callBackInfo = bundleActiveGroupCallbackInfo.Unmarshalling(data);
+    AppGroupCallbackInfo* callBackInfo = appGroupCallbackInfo.Unmarshalling(data);
     callbackReceiveDataWorker->oldGroup     = callBackInfo->GetOldGroup();
     callbackReceiveDataWorker->newGroup     = callBackInfo->GetNewGroup();
     callbackReceiveDataWorker->changeReason = callBackInfo->GetChangeReason();
@@ -158,7 +158,7 @@ void AppGroupObserver::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo 
     delete callBackInfo;
 
     work->data = (void *)callbackReceiveDataWorker;
-    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnBundleGroupChanged);
+    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnAppGroupChanged);
     if (ret != 0) {
         delete callbackReceiveDataWorker;
         callbackReceiveDataWorker = nullptr;

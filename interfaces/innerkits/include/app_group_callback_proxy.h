@@ -13,35 +13,35 @@
  * limitations under the License.
  */
 
-#ifndef BUNDLE_ACTIVE_GROUP_CALLBACK_PROXY_H
-#define BUNDLE_ACTIVE_GROUP_CALLBACK_PROXY_H
+#ifndef APP_GROUP_CALLBACK_PROXY_H
+#define APP_GROUP_CALLBACK_PROXY_H
 
 #include <functional>
 #include "nocopyable.h"
 
 #include "iremote_proxy.h"
 
-#include "ibundle_active_group_callback.h"
-#include "bundle_active_group_callback_info.h"
+#include "iapp_group_callback.h"
+#include "app_group_callback_info.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveGroupCallbackProxy : public IRemoteProxy<IBundleActiveGroupCallback> {
+class BundleActiveGroupCallbackProxy : public IRemoteProxy<IAppGroupCallback> {
 public:
     explicit BundleActiveGroupCallbackProxy(const sptr<IRemoteObject>& impl);
     virtual ~BundleActiveGroupCallbackProxy() override;
     DISALLOW_COPY_AND_MOVE(BundleActiveGroupCallbackProxy);
     /*
-    * function: OnBundleGroupChanged, bundleGroupChanged callback, IPC proxy, send message to stub.
-    * parameters: bundleActiveGroupCallbackInfo
+    * function: OnAppGroupChanged, bundleGroupChanged callback, IPC proxy, send message to stub.
+    * parameters: AppGroupCallbackInfo
     * return: void.
     */
-    virtual void OnBundleGroupChanged(
-        const BundleActiveGroupCallbackInfo& continuousTaskCallbackInfo) override;
+    virtual void OnAppGroupChanged(
+        const AppGroupCallbackInfo& appGroupCallbackInfo) override;
 
 private:
     static inline BrokerDelegator<BundleActiveGroupCallbackProxy> delegator_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-#endif  // BUNDLE_ACTIVE_GROUP_CALLBACK_PROXY_H
+#endif  // APP_GROUP_CALLBACK_PROXY_H

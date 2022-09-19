@@ -251,7 +251,7 @@ int32_t BundleActiveProxy::QueryModuleUsageRecords(int32_t maxNum, std::vector<B
     return errCode;
 }
 
-int32_t BundleActiveProxy::RegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+int32_t BundleActiveProxy::RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
     if (!observer) {
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer is nullptr");
@@ -275,7 +275,7 @@ int32_t BundleActiveProxy::RegisterAppGroupCallBack(const sptr<IBundleActiveGrou
     return reply.ReadInt32();
 }
 
-int32_t BundleActiveProxy::UnRegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+int32_t BundleActiveProxy::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
     if (!observer) {
         BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer is nullptr");

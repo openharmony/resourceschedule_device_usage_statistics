@@ -13,29 +13,29 @@
  * limitations under the License.
  */
 
-#ifndef IBUNDLE_ACTIVE_GROUP_CALLBACK
-#define IBUNDLE_ACTIVE_GROUP_CALLBACK
+#ifndef IAPP_GROUP_CALLBACK_H
+#define IAPP_GROUP_CALLBACK_H
 
 #include <ipc_types.h>
 #include <iremote_broker.h>
 
 #include "bundle_active_log.h"
-#include "bundle_active_group_callback_info.h"
+#include "app_group_callback_info.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class IBundleActiveGroupCallback : public IRemoteBroker {
+class IAppGroupCallback : public IRemoteBroker {
 public:
 
     /**
-     * @brief Called back when a continuous task stop.
+     * @brief Called back when a app priority group change.
      *
-     * @param continuousTaskCallbackInfo Continuous task app info.
+     * @param appGroupCallbackInfo app group info.
      */
-    virtual void OnBundleGroupChanged(
-        const BundleActiveGroupCallbackInfo &bundleActiveGroupCallbackInfo) = 0;
+    virtual void OnAppGroupChanged(
+        const AppGroupCallbackInfo &appGroupCallbackInfo) = 0;
 public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"Resourceschedule.IBundleActiveGroupCallback");
+    DECLARE_INTERFACE_DESCRIPTOR(u"Resourceschedule.IAppGroupCallback");
 
 protected:
     enum class message {
@@ -44,4 +44,4 @@ protected:
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // IBUNDLE_ACTIVE_GROUP_CALLBACK
+#endif  // IAPP_GROUP_CALLBACK_H

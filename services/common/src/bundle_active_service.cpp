@@ -489,7 +489,7 @@ int32_t BundleActiveService::QueryAppGroup(std::string& bundleName, int32_t user
     return result;
 }
 
-int32_t BundleActiveService::RegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+int32_t BundleActiveService::RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
     int result = -1;
     if (!bundleActiveCore_) {
@@ -506,7 +506,7 @@ int32_t BundleActiveService::RegisterAppGroupCallBack(const sptr<IBundleActiveGr
     return result;
 }
 
-int32_t BundleActiveService::UnRegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+int32_t BundleActiveService::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
     int32_t result = -1;
     if (!bundleActiveCore_) {

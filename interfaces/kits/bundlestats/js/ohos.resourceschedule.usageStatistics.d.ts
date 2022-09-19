@@ -492,7 +492,7 @@ declare namespace usageStatistics {
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
      * @systemapi Hide this for inner system use.
-     * @param Callback<BundleActiveGroupCallbackInfo>, callback when application group change,return the BundleActiveGroupCallbackInfo.
+     * @param Callback<AppGroupCallbackInfo>, callback when application group change,return the AppGroupCallbackInfo.
      * @throws { BusinessError } If the input parameter is not valid parameter.
      * @return Returns AppGroupCallbackInfo when the group of bundle changed.
      */

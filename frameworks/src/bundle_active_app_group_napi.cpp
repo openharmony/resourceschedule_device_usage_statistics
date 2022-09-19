@@ -22,7 +22,7 @@
 #include "bundle_state_common.h"
 #include "bundle_state_data.h"
 #include "bundle_state_inner_errors.h"
-#include "bundle_active_group_callback_info.h"
+#include "app_group_callback_info.h"
 
 #include "bundle_active_app_group_napi.h"
 

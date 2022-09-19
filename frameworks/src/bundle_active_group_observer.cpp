@@ -14,7 +14,6 @@
  */
 
 #include <string>
-
 #include <uv.h>
 #include "securec.h"
 
@@ -22,8 +21,8 @@
 #include "bundle_state_common.h"
 #include "bundle_state_data.h"
 #include "bundle_state_inner_errors.h"
-#include "bundle_active_group_callback_info.h"
-#include "app_group_observer_napi.h"
+#include "app_group_callback_info.h"
+#include "bundle_active_group_observer.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -39,7 +38,7 @@ napi_value GetBundleGroupChangeCallback(const napi_env &env, const napi_value &v
 {
     napi_ref result = nullptr;
     
-    registerObserver = new (std::nothrow) BundleActiveGroupObserver();
+    registerObserver = new (std::nothrow) AppGroupObserver();
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack callback is null");
         return nullptr;

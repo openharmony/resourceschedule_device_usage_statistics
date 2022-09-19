@@ -25,7 +25,7 @@
 
 #include "bundle_active_client.h"
 #include "bundle_active_event.h"
-#include "bundle_active_group_callback_stub.h"
+#include "app_group_callback_stub.h"
 #include "bundle_active_group_map.h"
 
 using namespace testing::ext;
@@ -45,7 +45,7 @@ static int32_t DEFAULT_ERRCODE = 0;
 static int64_t LARGE_NUM = 20000000000000;
 static int32_t DEFAULT_GROUP = 10;
 static std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50};
-static sptr<BundleActiveGroupCallbackStub> observer = nullptr;
+static sptr<AppGroupCallbackStub> observer = nullptr;
 
 class DeviceUsageStatisticsTest : public testing::Test {
 public:

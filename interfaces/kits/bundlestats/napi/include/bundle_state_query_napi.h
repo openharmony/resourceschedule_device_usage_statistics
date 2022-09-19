@@ -27,7 +27,7 @@ namespace DeviceUsageStats {
     napi_value QueryBundleStatsInfoByInterval(napi_env env, napi_callback_info info);
     napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info);
     napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info);
-    napi_value QueryBundleActiveEventStates(napi_env env, napi_callback_info info);
+    napi_value QueryDeviceEventStates(napi_env env, napi_callback_info info);
     napi_value QueryNotificationNumber(napi_env env, napi_callback_info info);
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

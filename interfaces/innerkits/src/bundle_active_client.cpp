@@ -154,7 +154,7 @@ int32_t BundleActiveClient::QueryModuleUsageRecords(int32_t maxNum, std::vector<
     return bundleActiveProxy_->QueryModuleUsageRecords(maxNum, results, userId);
 }
 
-int32_t BundleActiveClient::RegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+int32_t BundleActiveClient::RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
     if (!GetBundleActiveProxy()) {
         return -1;
@@ -166,7 +166,7 @@ int32_t BundleActiveClient::RegisterAppGroupCallBack(const sptr<IBundleActiveGro
     return result;
 }
 
-int32_t BundleActiveClient::UnRegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+int32_t BundleActiveClient::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
     if (!GetBundleActiveProxy()) {
         return -1;
@@ -196,7 +196,7 @@ int32_t BundleActiveClient::QueryNotificationNumber(int64_t beginTime, int64_t e
     return bundleActiveProxy_->QueryNotificationNumber(beginTime, endTime, eventStats, userId);
 }
 
-void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const sptr<IBundleActiveGroupCallback> &observer)
+void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const sptr<IAppGroupCallback> &observer)
 {
     if (observer) {
         observer_ = observer;

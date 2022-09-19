@@ -23,7 +23,7 @@
 #include "bundle_active_log.h"
 #include "bundle_active_module_record.h"
 #include "bundle_active_package_stats.h"
-#include "ibundle_active_group_callback.h"
+#include "iapp_group_callback.h"
 
 
 namespace OHOS {
@@ -156,7 +156,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             return size == 0;
         }
         case REGISTER_GROUP_CALLBACK: {
-            auto observer = iface_cast<IBundleActiveGroupCallback>(data.ReadRemoteObject());
+            auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
             if (!observer) {
                 BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer is null, return");
                 return false;
@@ -166,7 +166,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             return reply.WriteInt32(result);
         }
         case UNREGISTER_GROUP_CALLBACK: {
-            auto observer = iface_cast<IBundleActiveGroupCallback>(data.ReadRemoteObject());
+            auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
             if (!observer) {
                 BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer is null, return");
                 return false;

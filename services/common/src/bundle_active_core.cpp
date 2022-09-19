@@ -701,7 +701,7 @@ int64_t BundleActiveCore::GetSystemTimeMs()
     return static_cast<int64_t>(tarDate);
 }
 
-void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo& callbackInfo)
+void BundleActiveCore::OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo)
 {
     std::lock_guard<std::mutex> lock(callbackMutex_);
     AccessToken::HapTokenInfo tokenInfo = AccessToken::HapTokenInfo();
@@ -709,15 +709,15 @@ void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo&
         auto observer = item.second;
         if (observer) {
             BUNDLE_ACTIVE_LOGI(
-                "RegisterAppGroupCallBack will OnBundleGroupChanged!,oldGroup is %{public}d, newGroup is %{public}d",
+                "RegisterAppGroupCallBack will OnAppGroupChanged!,oldGroup is %{public}d, newGroup is %{public}d",
                 callbackInfo.GetOldGroup(), callbackInfo.GetNewGroup());
             if (AccessToken::AccessTokenKit::GetTokenType(item.first) == AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
-                observer->OnBundleGroupChanged(callbackInfo);
+                observer->OnAppGroupChanged(callbackInfo);
             } else if (AccessToken::AccessTokenKit::GetTokenType(item.first) ==
                         AccessToken::ATokenTypeEnum::TOKEN_HAP) {
                 AccessToken::AccessTokenKit::GetHapTokenInfo(item.first, tokenInfo);
                 if (tokenInfo.userID == callbackInfo.GetUserId()) {
-                    observer->OnBundleGroupChanged(callbackInfo);
+                    observer->OnAppGroupChanged(callbackInfo);
                 }
             }
         }
@@ -725,7 +725,7 @@ void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo&
 }
 
 int32_t BundleActiveCore::RegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
-    const sptr<IBundleActiveGroupCallback> &observer)
+    const sptr<IAppGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(callbackMutex_);
     if (!observer) {
@@ -742,7 +742,7 @@ int32_t BundleActiveCore::RegisterAppGroupCallBack(const AccessToken::AccessToke
 }
 
 int32_t BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
-    const sptr<IBundleActiveGroupCallback> &observer)
+    const sptr<IAppGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(callbackMutex_);
     auto item = groupChangeObservers_.find(tokenId);
@@ -755,7 +755,7 @@ int32_t BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTo
     return 0;
 }
 
-void BundleActiveCore::AddObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer)
+void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(deathRecipientMutex_);
     if (!observer || !(observer->AsObject())) {
@@ -778,7 +778,7 @@ void BundleActiveCore::AddObserverDeathRecipient(const sptr<IBundleActiveGroupCa
         recipientMap_.emplace(observer->AsObject(), deathRecipient);
     }
 }
-void BundleActiveCore::RemoveObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer)
+void BundleActiveCore::RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(deathRecipientMutex_);
     if (!observer || !(observer->AsObject())) {

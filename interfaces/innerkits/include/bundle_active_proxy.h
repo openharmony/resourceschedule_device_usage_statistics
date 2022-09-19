@@ -21,7 +21,7 @@
 #include "bundle_active_event_stats.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_module_record.h"
-#include "ibundle_active_group_callback.h"
+#include "iapp_group_callback.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -123,14 +123,14 @@ public:
     * parameters: observer
     * return: result of RegisterAppGroupCallBack, true or false.
     */
-    int32_t RegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    int32_t RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) override;
 
     /*
     * function: UnRegisterAppGroupCallBack, remove the observer from groupObservers.
     * parameters: observer
     * return: result of UnRegisterAppGroupCallBack, true or false.
     */
-    int32_t UnRegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    int32_t UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) override;
 
     /*
     * function: ~BundleActiveProxy, default destructor.

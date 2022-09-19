@@ -591,7 +591,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value queryBundleStatsInfos(napi_env env, napi_callback_info info)
+napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info)
 {
     AppUsageParamsInfo params;
     ParseAppUsageParameters(env, info, params);

@@ -18,19 +18,19 @@
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-#include "bundle_active_group_callback_stub.h"
-#include "bundle_active_group_callback_info.h"
+#include "app_group_callback_stub.h"
+#include "app_group_callback_info.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
 static const int8_t NO_ERROR = 0;
-class AppGroupObserver : public BundleActiveGroupCallbackStub {
+class AppGroupObserver : public AppGroupCallbackStub {
 public:
     AppGroupObserver() =default;
 
     ~AppGroupObserver();
 
-    virtual void OnBundleGroupChanged(const BundleActiveGroupCallbackInfo &bundleActiveGroupCallbackInfo) override;
+    virtual void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
 
     void SetCallbackInfo(const napi_env &env, const napi_ref &ref);
 

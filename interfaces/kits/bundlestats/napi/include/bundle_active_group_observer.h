@@ -20,8 +20,8 @@
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-#include "bundle_active_group_callback_stub.h"
-#include "bundle_active_group_callback_info.h"
+#include "app_group_callback_stub.h"
+#include "app_group_callback_info.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "bundle_active_core.h"
-#include "bundle_active_group_callback_info.h"
+#include "app_group_callback_info.h"
 #include "bundle_active_user_history.h"
 
 namespace OHOS {
@@ -196,12 +196,12 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack will ReportUsage");
     bool isGroupChanged = (oldGroup == newGroup) ? true : false;
     if (!isGroupChanged) {
-        BundleActiveGroupCallbackInfo callbackInfo(
+        AppGroupCallbackInfo callbackInfo(
             userId, oldGroup, newGroup, oneBundleUsageHistory->reasonInGroup_, bundleName);
-        BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack BundleActiveGroupCallbackInfo build success");
+        BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack AppGroupCallbackInfo build success");
         if (!bundleActiveCore_.expired()) {
             BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack will callback!");
-            bundleActiveCore_.lock()->OnBundleGroupChanged(callbackInfo);
+            bundleActiveCore_.lock()->OnAppGroupChanged(callbackInfo);
         }
     }
 }
@@ -236,10 +236,10 @@ int32_t BundleActiveUserHistory::SetAppGroup(const string& bundleName, const int
 
     bool isGroupChanged = (oldGroup == newGroup) ? true : false;
     if (!isGroupChanged) {
-        BundleActiveGroupCallbackInfo callbackInfo(
+        AppGroupCallbackInfo callbackInfo(
             userId, oldGroup, newGroup, oneBundleHistory->reasonInGroup_, bundleName);
         if (!bundleActiveCore_.expired()) {
-            bundleActiveCore_.lock()->OnBundleGroupChanged(callbackInfo);
+            bundleActiveCore_.lock()->OnAppGroupChanged(callbackInfo);
         }
     }
     return 0;

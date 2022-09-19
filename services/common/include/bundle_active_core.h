@@ -25,7 +25,7 @@
 #endif // OS_ACCOUNT_PART_ENABLED
 #include "ibundle_active_service.h"
 #include "remote_death_recipient.h"
-#include "ibundle_active_group_callback.h"
+#include "iapp_group_callback.h"
 #include "bundle_active_debug_mode.h"
 #include "bundle_active_stats_update_listener.h"
 #include "bundle_active_user_service.h"
@@ -211,7 +211,7 @@ public:
     * return: result of RegisterAppGroupCallBack, true or false.
     */
     int32_t RegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
-        const sptr<IBundleActiveGroupCallback> &observer);
+        const sptr<IAppGroupCallback> &observer);
 
     /*
     * function: UnRegisterAppGroupCallBack, remove the observer from groupObservers.
@@ -219,14 +219,14 @@ public:
     * return: result of UnRegisterAppGroupCallBack, true or false.
     */
     int32_t UnRegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
-        const sptr<IBundleActiveGroupCallback> &observer);
+        const sptr<IAppGroupCallback> &observer);
 
     int32_t currentUsedUser_;
-    void OnBundleGroupChanged(const BundleActiveGroupCallbackInfo& callbackInfo);
+    void OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo);
 
 private:
-    void AddObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer);
-    void RemoveObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer);
+    void AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer);
+    void RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer);
     void OnObserverDied(const wptr<IRemoteObject> &remote);
     void OnObserverDiedInner(const wptr<IRemoteObject> &remote);
     int64_t flushInterval_;
@@ -246,7 +246,7 @@ private:
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
     void RestoreAllData();
-    std::map<AccessToken::AccessTokenID, sptr<IBundleActiveGroupCallback>> groupChangeObservers_;
+    std::map<AccessToken::AccessTokenID, sptr<IAppGroupCallback>> groupChangeObservers_;
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> recipientMap_;
     void ObtainSystemEventName(BundleActiveEvent& event);
     bool debugCore_;

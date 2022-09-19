@@ -106,14 +106,14 @@ public:
     * parameters: observer
     * return: errorcode.
     */
-    int32_t RegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer);
+    int32_t RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer);
 
     /*
     * function: unobserve bundle group change event
     * parameters: observer
     * return: errorcode.
     */
-    int32_t UnRegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer);
+    int32_t UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer);
 
     /*
     * function: QueryDeviceEventStates, query all from event stats in specific time span for calling user.
@@ -153,7 +153,7 @@ private:
         /*
         * function: AddObserver.
         */
-        void AddObserver(const sptr<IBundleActiveGroupCallback> &observer);
+        void AddObserver(const sptr<IAppGroupCallback> &observer);
 
         /*
         * function: RemoveObserver.
@@ -171,7 +171,7 @@ private:
         void OnServiceDiedInner(const wptr<IRemoteObject> &object);
 
     private:
-        sptr<IBundleActiveGroupCallback> observer_ = nullptr;
+        sptr<IAppGroupCallback> observer_ = nullptr;
     };
 private:
     bool GetBundleActiveProxy();

@@ -31,8 +31,8 @@
 #include "system_ability_definition.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
-#include "ibundle_active_group_callback.h"
-#include "bundle_active_group_callback_proxy.h"
+#include "iapp_group_callback.h"
+#include "app_group_callback_proxy.h"
 
 #include "bundle_active_log.h"
 
@@ -122,14 +122,14 @@ public:
     * parameters: observer
     * return: errorcode.
     */
-    virtual int32_t RegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
+    virtual int32_t RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) = 0;
 
     /*
     * function: UnRegisterAppGroupCallBack, remove the observer from groupObservers.
     * parameters: observer
     * return: errorcode.
     */
-    virtual int32_t UnRegisterAppGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) = 0;
+    virtual int32_t UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) = 0;
 
     /*
     * function: QueryDeviceEventStates, query all from event stats in specific time span for calling user.
