@@ -117,7 +117,7 @@ public:
     * parameters: parcel
     * return: point to a BundleActiveEvent.
     */
-    std::shared_ptr<BundleActiveEvent> UnMarshalling(Parcel &parcel);
+    static std::shared_ptr<BundleActiveEvent> UnMarshalling(Parcel &parcel);
     /*
     * function: ToString, change event object to string.
     * return: string of bundlename, timestamp, eventid.
