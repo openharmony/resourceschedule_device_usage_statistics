@@ -12,6 +12,8 @@
 设备使用信息统计，包括app usage/notification usage/system usage等使用统计。例如应用使用信息统计，用于保存和查询应用使用详情（app usage）、事件日志数据（event log）、应用分组（bundle group）情况。
 部件缓存的应用记录（使用历史统计和使用事件记录）会在事件上报后30分钟内刷新到数据库持久化保存。
 
+![](figures/zh-cn_image001.png)
+
 ## 目录<a name="section161941989596"></a>
 
 ```

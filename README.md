@@ -10,9 +10,11 @@
 
 ## Introduction<a name="section11660541593"></a>
 
-The **device usage statistics** includes app usage, notification usage, system usage and other usage statistics. For example, application usage statistics is used to save 
-and query application usage details, event log data and application grouping.The application records (usage history statistics and usage event records) cached by 
+The **device usage statistics** includes app usage, notification usage, system usage and other usage statistics. For example, application usage statistics is used to save
+and query application usage details, event log data and application grouping.The application records (usage history statistics and usage event records) cached by
 the component will be periodically refreshed to the database for persistent storage.
+
+![](figures/en-us_image001.png)
 
 ## Directory Structure<a name="section161941989596"></a>
 
@@ -34,7 +36,7 @@ the component will be periodically refreshed to the database for persistent stor
 
 ### Available APIs<a name="section1551164914237"></a>
 
-Device usage statistics interfaces include app usage, notification usage, system usage and other interfaces. 
+Device usage statistics interfaces include app usage, notification usage, system usage and other interfaces.
 Taking app usage interface as an example, the main exposed interfaces are as follows.
 
 <a name="table775715438253"></a>
