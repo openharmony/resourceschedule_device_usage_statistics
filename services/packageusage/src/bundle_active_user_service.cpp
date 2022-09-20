@@ -257,7 +257,7 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
     std::map<std::string, std::map<std::string, int>> continueAbilities;
     std::map<std::string, std::map<std::string, int>> continueServices;
     for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator it = currentStats_.begin(); // 更新使用时长
-        it != currentStats_.end(); it++) {
+        it != currentStats_.end(); ++it) {
         if (*it == nullptr) {
             continue;
         }
@@ -286,10 +286,10 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
     for (std::string continueBundleName : continueBundles) { // 更新所有事件的时间戳到新的begintime
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
-            itInterval != currentStats_.end(); itInterval++) {
+            itInterval != currentStats_.end(); ++itInterval) {
             if (continueAbilities.find(continueBundleName) != continueAbilities.end()) {
                 for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
-                    it != continueAbilities[continueBundleName].end(); it++) {
+                    it != continueAbilities[continueBundleName].end(); ++it) {
                     if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
                         continue;
                     }
@@ -298,7 +298,7 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
             }
             if (continueServices.find(continueBundleName) != continueServices.end()) {
                 for (std::map<std::string, int>::iterator it = continueServices[continueBundleName].begin();
-                    it != continueServices[continueBundleName].end(); it++) {
+                    it != continueServices[continueBundleName].end(); ++it) {
                     (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
                 }
             }
@@ -437,7 +437,7 @@ int32_t BundleActiveUserService::QueryEventStats(int64_t beginTime, int64_t endT
         GetCachedSystemEvents(currentStats, beginTime, endTime, systemEventStats);
     }
     std::map<std::string, BundleActiveEventStats>::iterator iter;
-    for (iter = systemEventStats.begin(); iter != systemEventStats.end(); iter++) {
+    for (iter = systemEventStats.begin(); iter != systemEventStats.end(); ++iter) {
         eventStats.push_back(iter->second);
     }
     return BUNDLE_ACTIVE_SUCCESS;
@@ -493,7 +493,7 @@ int32_t BundleActiveUserService::QueryAppNotificationNumber(int64_t beginTime, i
         GetCachedNotificationEvents(currentStats, beginTime, endTime, notificationEventStats);
     }
     std::map<std::string, BundleActiveEventStats>::iterator iter;
-    for (iter = notificationEventStats.begin(); iter != notificationEventStats.end(); iter++) {
+    for (iter = notificationEventStats.begin(); iter != notificationEventStats.end(); ++iter) {
         eventStats.push_back(iter->second);
     }
     return BUNDLE_ACTIVE_SUCCESS;
@@ -604,9 +604,6 @@ void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
     BUNDLE_ACTIVE_LOGI("ReportFormEvent called");
     auto moduleRecord = GetOrCreateModuleRecord(event);
     if (event.eventId_ == BundleActiveEvent::FORM_IS_CLICKED && moduleRecord) {
-        if (!moduleRecord) {
-            return;
-        }
         moduleRecord->AddOrUpdateOneFormRecord(event.formName_, event.formDimension_, event.formId_, event.timeStamp_);
         NotifyStatsChanged();
     } else if (event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED && moduleRecord) {

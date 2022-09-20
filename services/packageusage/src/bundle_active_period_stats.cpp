@@ -47,7 +47,7 @@ void BundleActivePeriodStats::Update(const std::string bundleName, const std::st
 {
     if (eventId == BundleActiveEvent::SHUTDOWN || eventId == BundleActiveEvent::FLUSH) {
         for (std::map<std::string, std::shared_ptr<BundleActivePackageStats>>::iterator it = bundleStats_.begin();
-            it != bundleStats_.end(); it++) {
+            it != bundleStats_.end(); ++it) {
             std::shared_ptr<BundleActivePackageStats> tmpUsageStats = it->second;
             if (tmpUsageStats != nullptr) {
                 tmpUsageStats->Update("", timeStamp, eventId, abilityId);
