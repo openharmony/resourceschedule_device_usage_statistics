@@ -474,8 +474,8 @@ declare namespace bundleState {
      * @param Callback<BundleActiveGroupCallbackInfo>, callback when application group change,return the BundleActiveGroupCallbackInfo.
      * @return Returns BundleActiveGroupCallbackInfo when the group of bundle changed. the result of AsyncCallback is true or false.
      */
-    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<void>): void;
-    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>): Promise<void>;
+    function registerGroupCallBack(groupChangerCallback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<void>): void;
+    function registerGroupCallBack(groupChangerCallback: Callback<BundleActiveGroupCallbackInfo>): Promise<void>;
 
     /**
      * unRegister callback from service.
