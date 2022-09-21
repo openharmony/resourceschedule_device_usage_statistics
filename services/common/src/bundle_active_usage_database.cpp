@@ -716,7 +716,6 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
     string bundleName;
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userUsageHistory =
         make_shared<map<string, shared_ptr<BundleActivePackageHistory>>>();
-    shared_ptr<BundleActivePackageHistory> usageHistory;
     int32_t currentBundleGroupReason = 0;
     for (int32_t i = 0; i < tableRowNumber; i++) {
         bundleActiveResult->GoToRow(i);
@@ -879,7 +878,6 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         // 加载event信息
         eventBeginTime_ = currentPackageTime;
     }
-    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t systemTime = GetSystemTimeMs();
     intervalStats->lastTimeSaved_ = systemTime;
     return intervalStats;
@@ -1206,7 +1204,6 @@ void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, Bund
         DeleteExcessiveTableData(databaseType);
     }
     FlushPackageInfo(databaseType, stats);
-    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t systemTime = GetSystemTimeMs();
     stats.lastTimeSaved_ = systemTime;
 }
@@ -1239,11 +1236,11 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
         return databaseUsageStats;
         }
     }
-    int64_t packageTableTime;
-    string packageTableName;
-    string queryPackageSql;
-    vector<string> queryCondition;
     for (int32_t i = startIndex; i <= endIndex; i++) {
+            int64_t packageTableTime;
+            string packageTableName;
+            string queryPackageSql;
+            vector<string> queryCondition;
         packageTableTime = sortedTableArray_.at(databaseType).at(i);
         packageTableName = PACKAGE_LOG_TABLE + to_string(packageTableTime);
         queryCondition.push_back(to_string(userId));
