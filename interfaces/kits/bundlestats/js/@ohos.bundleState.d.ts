@@ -393,7 +393,7 @@ declare namespace bundleState {
      * @return Returns the {@link BundleActiveModuleInfo} object Array containing the usage data of the modules.
      */
     function getRecentlyUsedModules(callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
-    function getRecentlyUsedModules(maxNum:? number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
+    function getRecentlyUsedModules(maxNum: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
     function getRecentlyUsedModules(maxNum?: number): Promise<Array<BundleActiveModuleInfo>>;
 
     /**
