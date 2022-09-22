@@ -180,7 +180,7 @@ napi_value ParseIsIdleStateParameters(const napi_env &env, const napi_callback_i
 
     // argv[1]: callback
     if (argc == IS_IDLE_STATE_PARAMS) {
-        napi_valuetype valuetype = napi_undefined;
+        valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function,
             "ParseIsIdleStateParameters invalid parameter type, function expected.");
@@ -260,10 +260,6 @@ napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
         if (valuetype == napi_function) {
-            napi_valuetype valuetype = napi_undefined;
-            NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-            NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
-                "Function expected.");
             napi_create_reference(env, argv[0], 1, &params.callback);
         } else {
             params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
@@ -279,14 +275,13 @@ napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback
             BUNDLE_ACTIVE_LOGE("ParsePriorityGroupParameters failed, bundleName is empty.");
             params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
         }
+
         // argv[1]: callback
-        if (argc == PRIORITY_GROUP_PARAMS) {
-            napi_valuetype valuetype = napi_undefined;
-            NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-            NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
-                "Function expected.");
-            napi_create_reference(env, argv[1], 1, &params.callback);
-        }
+        napi_valuetype valuetype = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
+        NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
+            "Function expected.");
+        napi_create_reference(env, argv[1], 1, &params.callback);
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
@@ -799,7 +794,7 @@ napi_value ParseAppUsageBundleGroupInfoParameters(const napi_env &env, const nap
     }
     // argv[SECOND_ARG]: callback
     if (argc == APP_USAGE_PARAMS_BUNDLE_GROUP) {
-        napi_valuetype valuetype = napi_undefined;
+        valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageBundleGroupInfoParameters invalid parameter type. "
             "Function expected.");
