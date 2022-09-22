@@ -392,8 +392,8 @@ declare namespace bundleState {
      * @param maxNum Indicates max record number in result, max value is 1000, default value is 1000.
      * @return Returns the {@link BundleActiveModuleInfo} object Array containing the usage data of the modules.
      */
-    function getRecentlyUsedModules(maxNum?: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
-    function getRecentlyUsedModules(maxNum?: number): Promise<Array<BundleActiveModuleInfo>>;
+    function getRecentlyUsedModules(maxNum: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
+    function getRecentlyUsedModules(maxNum: number): Promise<Array<BundleActiveModuleInfo>>;
 
     /**
      * Queries the usage priority group of the calling application.
@@ -408,8 +408,8 @@ declare namespace bundleState {
      * @param bundleName, name of the application.
      * @return Returns the usage priority group of the calling application.
      */
-     function queryAppUsagePriorityGroup(bundleName? : string, callback: AsyncCallback<number>): void;
-     function queryAppUsagePriorityGroup(bundleName? : string): Promise<number>;
+     function queryAppUsagePriorityGroup(bundleName: string, callback: AsyncCallback<number>): void;
+     function queryAppUsagePriorityGroup(bundleName: string): Promise<number>;
 
      /**
      * Declares group type.
