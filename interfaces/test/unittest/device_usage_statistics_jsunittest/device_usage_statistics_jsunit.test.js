@@ -351,6 +351,46 @@ describe("DeviceUsageStatisticsJsTest", function () {
     })
 
     /*
+     * @tc.name: DeviceUsageStatisticsJsTest015
+     * @tc.desc: test queryAppUsagePriorityGroup promise, with no param.
+     * @tc.type: FUNC
+     * @tc.require: SR000H0HAQ AR000H0ROE
+     */
+    it("DeviceUsageStatisticsJsTest015", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest015---------------------------');
+        bundleState.queryAppUsagePriorityGroup().then( res => {
+            console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup promise success.');
+            expect(true).assertEqual(true);
+            done();
+        }).catch( err => {
+            console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup promise failure.');
+            expect(false).assertEqual(true);
+            done();
+        });
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest016
+     * @tc.desc: test queryAppUsagePriorityGroup callback, with no param.
+     * @tc.type: FUNC
+     * @tc.require: SR000H0HAQ AR000H0ROE
+     */
+    it("DeviceUsageStatisticsJsTest016", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest016---------------------------');
+        bundleState.queryAppUsagePriorityGroup((err, res) => {
+            if (err) {
+                console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup callback failure.');
+                expect(false).assertEqual(true);
+                done();
+            } else {
+                console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup callback success.');
+                expect(true).assertEqual(true);
+                done();
+            }
+        });
+    })
+
+    /*
      * @tc.name: DeviceUsageStatisticsJsTest017
      * @tc.desc: test setBundleGroup promise.
      * @tc.type: FUNC
