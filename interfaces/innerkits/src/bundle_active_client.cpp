@@ -21,6 +21,7 @@ namespace DeviceUsageStats {
 namespace {
     const std::string BUNDLE_ACTIVE_CLIENT_NAME = "bundleActiveName";
     static const int32_t DELAY_TIME = 5000;
+    static const int32_t SLEEP_TIME = 1000;
 }
 BundleActiveClient& BundleActiveClient::GetInstance()
 {
@@ -226,7 +227,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner(const wptr<IRemoteObject> &object)
 {
     while (!BundleActiveClient::GetInstance().GetBundleActiveProxy()) {
-        sleep(1000);
+        sleep(SLEEP_TIME);
     }
     if (observer_) {
         BundleActiveClient::GetInstance().RegisterGroupCallBack(observer_);

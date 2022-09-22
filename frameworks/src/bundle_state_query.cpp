@@ -292,7 +292,7 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
     PriorityGroupParamsInfo params;
     AsyncCallbackInfoPriorityGroup *asyncCallbackInfo = nullptr;
     ParsePriorityGroupParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
+    if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     std::unique_ptr<AsyncCallbackInfoPriorityGroup> callbackPtr {asyncCallbackInfo};
@@ -809,7 +809,7 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
     ParamsBundleGroupInfo params;
     AsyncCallbackInfoSetBundleGroup *asyncCallbackInfo = nullptr;
     ParseAppUsageBundleGroupInfoParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
+    if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     std::unique_ptr<AsyncCallbackInfoSetBundleGroup> callbackPtr {asyncCallbackInfo};

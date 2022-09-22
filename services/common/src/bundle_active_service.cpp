@@ -498,7 +498,8 @@ int32_t BundleActiveService::RegisterGroupCallBack(const sptr<IBundleActiveGroup
     int32_t errCode = 0;
     auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
     if (CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode) ||
-        tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
+        tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE ||
+        tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_SHELL) {
         result = bundleActiveCore_->RegisterGroupCallBack(tokenId, observer);
     }
     return result;
@@ -516,7 +517,8 @@ int32_t BundleActiveService::UnregisterGroupCallBack(const sptr<IBundleActiveGro
     int32_t errCode = 0;
     auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
     if (CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode) ||
-        tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
+        tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE ||
+        tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_SHELL) {
         result = bundleActiveCore_->UnregisterGroupCallBack(tokenId, observer);
     }
     return result;
