@@ -490,7 +490,7 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->BundleActiveState =
                     BundleActiveClient::GetInstance().QueryEvents(asyncCallbackInfo->beginTime,
-                        asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
+                        asyncCallbackInfo->endTime);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleActiveStates, asyncCallbackInfo == nullptr");
             }
@@ -828,7 +828,7 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
             AsyncCallbackInfoSetBundleGroup *asyncCallbackInfo = (AsyncCallbackInfoSetBundleGroup *)data;
             if (asyncCallbackInfo) {
                     asyncCallbackInfo->errorCode = BundleActiveClient::GetInstance().SetBundleGroup(
-                        asyncCallbackInfo->bundleName, asyncCallbackInfo->newGroup, asyncCallbackInfo->errorCode);
+                        asyncCallbackInfo->bundleName, asyncCallbackInfo->newGroup);
             } else {
                 BUNDLE_ACTIVE_LOGE("SetBundleGroup, asyncCallbackInfo == nullptr");
             }

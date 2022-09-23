@@ -78,8 +78,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             int32_t userId = data.ReadInt32();
-            int32_t errCode = data.ReadInt32();
-            result = QueryEvents(beginTime, endTime, errCode, userId);
+            result = QueryEvents(beginTime, endTime, userId);
             int32_t size = static_cast<int32_t>(result.size());
             reply.WriteInt32(errCode);
             reply.WriteInt32(size);
@@ -94,9 +93,8 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         case SET_BUNDLE_GROUP: {
             std::string bundleName = data.ReadString();
             int32_t newGroup = data.ReadInt32();
-            int32_t errCode = data.ReadInt32();
             int32_t userId = data.ReadInt32();
-            int32_t result = SetBundleGroup(bundleName, newGroup, errCode, userId);
+            int32_t result = SetBundleGroup(bundleName, newGroup, userId);
             return reply.WriteInt32(result);
         }
         case QUERY_CURRENT_USAGE_STATS: {

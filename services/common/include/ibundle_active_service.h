@@ -73,7 +73,7 @@ public:
     * return: vector of events.
     */
     virtual std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime,
-        int32_t& errCode, int32_t userId) = 0;
+        int32_t userId) = 0;
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
@@ -96,8 +96,7 @@ public:
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    virtual int32_t SetBundleGroup(const std::string& bundleName, int32_t newGroup,
-        int32_t errCode, int32_t userId) = 0;
+    virtual int32_t SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) = 0;
     /*
     * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,

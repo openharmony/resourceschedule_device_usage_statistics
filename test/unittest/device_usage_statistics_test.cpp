@@ -111,7 +111,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, F
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEvents_001, Function | MediumTest | Level0)
 {
     int32_t errCode = 0;
-    std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryEvents(0, LARGE_NUM, errCode);
+    std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryEvents(0, LARGE_NUM);
     EXPECT_EQ(result.size(), 1);
 }
 
@@ -197,8 +197,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001
 {
     int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(g_defaultBundleName, COMMON_USERID);
     DEFAULT_GROUP = (result == DEFAULT_GROUP) ? (result + 10) : DEFAULT_GROUP;
-    result = BundleActiveClient::GetInstance().SetBundleGroup(g_defaultBundleName, DEFAULT_GROUP,
-        DEFAULT_ERRCODE, COMMON_USERID);
+    result = BundleActiveClient::GetInstance().SetBundleGroup(g_defaultBundleName, DEFAULT_GROUP, COMMON_USERID);
     EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
 
@@ -210,8 +209,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_001, Function | MediumTest | Level0)
 {
-    BundleActiveClient::GetInstance().SetBundleGroup(g_defaultBundleName, DEFAULT_GROUP,
-        DEFAULT_ERRCODE, COMMON_USERID);
+    BundleActiveClient::GetInstance().SetBundleGroup(g_defaultBundleName, DEFAULT_GROUP, COMMON_USERID);
     int32_t result = BundleActiveClient::GetInstance().QueryPackageGroup(g_defaultBundleName, COMMON_USERID);
     bool flag = false;
     for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
