@@ -392,7 +392,8 @@ declare namespace bundleState {
      * @param maxNum Indicates max record number in result, max value is 1000, default value is 1000.
      * @return Returns the {@link BundleActiveModuleInfo} object Array containing the usage data of the modules.
      */
-    function getRecentlyUsedModules(maxNum?: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
+    function getRecentlyUsedModules(callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
+    function getRecentlyUsedModules(maxNum: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
     function getRecentlyUsedModules(maxNum?: number): Promise<Array<BundleActiveModuleInfo>>;
 
     /**
@@ -408,8 +409,9 @@ declare namespace bundleState {
      * @param bundleName, name of the application.
      * @return Returns the usage priority group of the calling application.
      */
-     function queryAppUsagePriorityGroup(bundleName? : string, callback: AsyncCallback<number>): void;
-     function queryAppUsagePriorityGroup(bundleName? : string): Promise<number>;
+    function queryAppUsagePriorityGroup(callback: AsyncCallback<number>): void;
+    function queryAppUsagePriorityGroup(bundleName: string, callback: AsyncCallback<number>): void;
+    function queryAppUsagePriorityGroup(bundleName?: string): Promise<number>;
 
      /**
      * Declares group type.
@@ -474,8 +476,8 @@ declare namespace bundleState {
      * @param Callback<BundleActiveGroupCallbackInfo>, callback when application group change,return the BundleActiveGroupCallbackInfo.
      * @return Returns BundleActiveGroupCallbackInfo when the group of bundle changed. the result of AsyncCallback is true or false.
      */
-    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<void>): void;
-    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>): Promise<void>;
+    function registerGroupCallBack(groupCallback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<void>): void;
+    function registerGroupCallBack(groupCallback: Callback<BundleActiveGroupCallbackInfo>): Promise<void>;
 
     /**
      * unRegister callback from service.
@@ -519,4 +521,3 @@ declare namespace bundleState {
 }
 
 export default bundleState;
-
