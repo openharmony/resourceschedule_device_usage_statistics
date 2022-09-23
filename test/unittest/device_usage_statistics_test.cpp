@@ -15,8 +15,6 @@
 
 #define private public
 #define protected public
-#undef private
-#undef protected
 
 #include <string>
 
@@ -188,6 +186,23 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistic
 }
 
 /*
+ * @tc.name: DeviceUsageStatisticsTest_RegisterGroupCallBack_001
+ * @tc.desc: registercallback
+ * @tc.type: FUNC
+ * @tc.require: SR000H0HAQ AR000H0ROE
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallBack_001, Function | MediumTest | Level0)
+{
+    if (!observer) {
+        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack construct observer!");
+        observer = std::make_unique<BundleActiveGroupCallbackStub>().release();
+    }
+    ASSERT_NE(observer, nullptr);
+    int32_t result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer);
+    EXPECT_EQ(result, DEFAULT_ERRCODE);
+}
+
+/*
  * @tc.name: DeviceUsageStatisticsTest_SetBundleGroup_001
  * @tc.desc: setbundlename
  * @tc.type: FUNC
@@ -221,23 +236,6 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackageGroup_
         }
     }
     EXPECT_EQ(flag, true);
-}
-
-/*
- * @tc.name: DeviceUsageStatisticsTest_RegisterGroupCallBack_001
- * @tc.desc: registercallback
- * @tc.type: FUNC
- * @tc.require: SR000H0HAQ AR000H0ROE
- */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallBack_001, Function | MediumTest | Level0)
-{
-    if (!observer) {
-        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack construct observer!");
-        observer = std::make_unique<BundleActiveGroupCallbackStub>().release();
-    }
-    ASSERT_NE(observer, nullptr);
-    int32_t result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer);
-    EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
 
 /*
@@ -309,6 +307,20 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveGroupM
     minInterval = DeviceUsageStatsGroupMap::groupIntervalMap_
         .at(DeviceUsageStatsGroupConst::ACTIVE_GROUP_RARE);
     EXPECT_EQ(minInterval, DeviceUsageStatsGroupConst::FOURTY_EIGHT_HOUR);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_DeathRecipient_001
+ * @tc.desc: DeathRecipient_001
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_DeathRecipient_001, Function
+    | MediumTest | Level0)
+{
+    auto deathTest = std::make_shared<BundleActiveClient::BundleActiveClientDeathRecipient>();
+    EXPECT_TRUE(deathTest!=nullptr);
+    deathTest->OnRemoteDied(nullptr);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
