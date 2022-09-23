@@ -289,7 +289,7 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName, int32_t& e
 }
 
 std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(const int32_t intervalType,
-    const int64_t beginTime, const int64_t endTime, int32_t userId)
+    const int64_t beginTime, const int64_t endTime, int32_t& errCode, int32_t userId)
 {
     BUNDLE_ACTIVE_LOGD("QueryPackageStats stats called, intervaltype is %{public}d", intervalType);
     std::vector<BundleActivePackageStats> result;
@@ -310,7 +310,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
 }
 
 std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t beginTime,
-    const int64_t endTime, int32_t userId)
+    const int64_t endTime, int32_t& errCode, int32_t userId)
 {
     std::vector<BundleActiveEvent> result;
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
@@ -318,6 +318,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
         if (ret != ERR_OK || userId == -1) {
+            errCode = -1;
             return result;
         }
     }

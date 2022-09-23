@@ -98,13 +98,13 @@ std::vector<BundleActivePackageStats> BundleActiveClient::QueryPackageStats(cons
     return bundleActiveProxy_->QueryPackageStats(intervalType, beginTime, endTime, errCode, userId);
 }
 
-std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t beginTime, const int64_t endTime,
-    int32_t userId)
+std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t beginTime,
+    const int64_t endTime, int32_t& errCode, int32_t userId)
 {
     if (!GetBundleActiveProxy()) {
         return std::vector<BundleActiveEvent>(0);
     }
-    return bundleActiveProxy_->QueryEvents(beginTime, endTime, userId);
+    return bundleActiveProxy_->QueryEvents(beginTime, endTime, errCode, userId);
 }
 
 int32_t BundleActiveClient::SetBundleGroup(std::string bundleName, const int32_t newGroup, int32_t userId)

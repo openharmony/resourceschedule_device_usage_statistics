@@ -490,7 +490,7 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 asyncCallbackInfo->BundleActiveState =
                     BundleActiveClient::GetInstance().QueryEvents(asyncCallbackInfo->beginTime,
-                        asyncCallbackInfo->endTime);
+                        asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleActiveStates, asyncCallbackInfo == nullptr");
             }

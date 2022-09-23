@@ -87,8 +87,8 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryPackageStats(const
     return result;
 }
 
-std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t beginTime, const int64_t endTime,
-    int32_t userId)
+std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t beginTime,
+    const int64_t endTime, int32_t& errCode, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -100,6 +100,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryEvents(const int64_t begi
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
     data.WriteInt32(userId);
+    data.WriteInt32(errCode);
     Remote() -> SendRequest(QUERY_EVENTS, data, reply, option);
     errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();

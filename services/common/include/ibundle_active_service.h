@@ -73,7 +73,7 @@ public:
     * return: vector of events.
     */
     virtual std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime,
-        int32_t userId) = 0;
+        int32_t& errCode, int32_t userId) = 0;
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime

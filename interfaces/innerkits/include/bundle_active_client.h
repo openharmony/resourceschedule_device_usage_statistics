@@ -57,7 +57,8 @@ public:
     * parameters: beginTime, endTime, errCode
     * return: vector of events.
     */
-    std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, int32_t userId = -1);
+    std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, int32_t& errCode,
+        int32_t userId = -1);
     /*
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
