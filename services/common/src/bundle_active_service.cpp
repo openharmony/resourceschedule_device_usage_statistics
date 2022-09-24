@@ -271,6 +271,7 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName, int32_t& e
         BundleActiveAccountHelper::GetUserId(callingUid, userId);
     }
     if (userId == -1) {
+        errCode = -1;
         return false;
     }
 
@@ -278,8 +279,12 @@ bool BundleActiveService::IsBundleIdle(const std::string& bundleName, int32_t& e
         BUNDLE_ACTIVE_LOGI("%{public}s check its own idle state", bundleName.c_str());
         result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
     } else {
-        if (CheckSystemAppOrNativePermission(callingUid, tokenId)) {
+        if (CheckSystemAppOrNativePermission(callingUid, tokenId, errCode)) {
+            errCode = 0;
             result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
+        } else {
+            errCode = -1;
+            return false;
         }
     }
     if (result == 0 || result == -1) {
@@ -298,11 +303,12 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryPackageStats(con
     if (userId == -1) {
         OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
         if (ret != ERR_OK || userId == -1) {
+            errCode = -1;
             return result;
         }
     }
     BUNDLE_ACTIVE_LOGI("QueryPackageStats user id is %{public}d", userId);
-    if (CheckSystemAppOrNativePermission(callingUid, tokenId)) {
+    if (CheckSystemAppOrNativePermission(callingUid, tokenId, errCode)) {
         int32_t convertedIntervalType = ConvertIntervalType(intervalType);
         result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime, "");
     }
@@ -323,7 +329,7 @@ std::vector<BundleActiveEvent> BundleActiveService::QueryEvents(const int64_t be
         }
     }
     BUNDLE_ACTIVE_LOGI("QueryEvents userid is %{public}d", userId);
-    if (CheckSystemAppOrNativePermission(callingUid, tokenId)) {
+    if (CheckSystemAppOrNativePermission(callingUid, tokenId, errCode)) {
         result = bundleActiveCore_->QueryEvents(userId, beginTime, endTime, "");
     }
     return result;
@@ -353,7 +359,8 @@ int32_t BundleActiveService::SetBundleGroup(const std::string& bundleName, int32
         isFlush = true;
     }
     BUNDLE_ACTIVE_LOGI("SetBundleGroup userid is %{public}d", userId);
-    if (CheckSystemAppOrNativePermission(callingUid, tokenId)) {
+    int32_t errCode = 0;
+    if (CheckSystemAppOrNativePermission(callingUid, tokenId, errCode)) {
         result = bundleActiveCore_->SetBundleGroup(bundleName, newGroup, userId, isFlush);
     }
     return result;
@@ -379,7 +386,8 @@ std::vector<BundleActivePackageStats> BundleActiveService::QueryCurrentPackageSt
         }
         std::string bundleName = "";
         sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
-        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId);
+        int32_t errCode = 0;
+        bool isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId, errCode);
         if (!bundleName.empty() && isSystemAppAndHasPermission == true) {
             int32_t convertedIntervalType = ConvertIntervalType(intervalType);
             result = bundleActiveCore_->QueryPackageStats(userId, convertedIntervalType, beginTime, endTime,
@@ -440,7 +448,8 @@ int32_t BundleActiveService::QueryPackageGroup(std::string& bundleName, int32_t 
         result = bundleActiveCore_->QueryPackageGroup(bundleName, userId);
     } else {
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-        if (CheckSystemAppOrNativePermission(callingUid, tokenId)) {
+        int32_t errCode = 0;
+        if (CheckSystemAppOrNativePermission(callingUid, tokenId, errCode)) {
             result = bundleActiveCore_->QueryPackageGroup(bundleName, userId);
         }
     }
@@ -455,7 +464,8 @@ int32_t BundleActiveService::RegisterGroupCallBack(const sptr<IBundleActiveGroup
     }
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    if (CheckSystemAppOrNativePermission(callingUid, tokenId)) {
+    int32_t errCode = 0;
+    if (CheckSystemAppOrNativePermission(callingUid, tokenId, errCode)) {
         result = bundleActiveCore_->RegisterGroupCallBack(tokenId, observer);
     }
     return result;
@@ -470,7 +480,8 @@ int32_t BundleActiveService::UnregisterGroupCallBack(const sptr<IBundleActiveGro
 
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    if (CheckSystemAppOrNativePermission(callingUid, tokenId)) {
+    int32_t errCode = 0;
+    if (CheckSystemAppOrNativePermission(callingUid, tokenId, errCode)) {
         result = bundleActiveCore_->UnregisterGroupCallBack(tokenId, observer);
     }
     return result;
@@ -510,7 +521,7 @@ int32_t BundleActiveService::ConvertIntervalType(const int32_t intervalType)
 }
 
 bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_t uid,
-    OHOS::Security::AccessToken::AccessTokenID tokenId)
+    OHOS::Security::AccessToken::AccessTokenID tokenId, int32_t& errCode)
 {
     if (!GetBundleMgrProxy()) {
         BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack Get bundle manager proxy failed!");
@@ -521,6 +532,7 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_t u
 
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
     if (bundleHasPermission != 0) {
+        errCode = -1;
         BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
         return false;
     } else {
@@ -530,9 +542,9 @@ bool BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_t u
 }
 
 bool BundleActiveService::CheckSystemAppOrNativePermission(const int32_t uid,
-    OHOS::Security::AccessToken::AccessTokenID tokenId)
+    OHOS::Security::AccessToken::AccessTokenID tokenId, int32_t& errCode)
 {
-    if (CheckBundleIsSystemAppAndHasPermission(uid, tokenId)) {
+    if (CheckBundleIsSystemAppAndHasPermission(uid, tokenId, errCode)) {
         return true;
     }
     auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
@@ -564,7 +576,7 @@ int32_t BundleActiveService::QueryFormStatistics(int32_t maxNum, std::vector<Bun
     }
     BUNDLE_ACTIVE_LOGI("QueryFormStatistics userid is %{public}d", userId);
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    if (CheckSystemAppOrNativePermission(callingUid, tokenId)) {
+    if (CheckSystemAppOrNativePermission(callingUid, tokenId, errCode)) {
         errCode = bundleActiveCore_->QueryFormStatistics(maxNum, results, userId);
         for (auto& oneResult : results) {
             QueryModuleRecordInfos(oneResult);
@@ -587,7 +599,7 @@ int32_t BundleActiveService::QueryEventStats(int64_t beginTime, int64_t endTime,
     }
     BUNDLE_ACTIVE_LOGI("QueryEventStats userid is %{public}d", userId);
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    if (CheckSystemAppOrNativePermission(callingUid, tokenId)) {
+    if (CheckSystemAppOrNativePermission(callingUid, tokenId, errCode)) {
         errCode = bundleActiveCore_->QueryEventStats(beginTime, endTime, eventStats, userId);
     }
     BUNDLE_ACTIVE_LOGD("QueryEventStats result size is %{public}zu", eventStats.size());
@@ -610,7 +622,7 @@ int32_t BundleActiveService::QueryAppNotificationNumber(int64_t beginTime, int64
     }
     BUNDLE_ACTIVE_LOGI("QueryAppNotificationNumber userid is %{public}d", userId);
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    if (CheckSystemAppOrNativePermission(callingUid, tokenId)) {
+    if (CheckSystemAppOrNativePermission(callingUid, tokenId, errCode)) {
         errCode = bundleActiveCore_->QueryAppNotificationNumber(beginTime, endTime, eventStats, userId);
     }
     BUNDLE_ACTIVE_LOGI("QueryAppNotificationNumber result size is %{public}zu", eventStats.size());

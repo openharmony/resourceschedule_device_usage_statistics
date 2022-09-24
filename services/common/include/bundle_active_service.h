@@ -167,8 +167,10 @@ private:
     void InitNecessaryState();
     void InitService();
     bool GetBundleMgrProxy();
-    bool CheckBundleIsSystemAppAndHasPermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId);
-    bool CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId);
+    bool CheckBundleIsSystemAppAndHasPermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId,
+        int32_t& errCode);
+    bool CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId,
+        int32_t& errCode);
     void InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     void InitContinuousSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     bool SubscribeAppState();
