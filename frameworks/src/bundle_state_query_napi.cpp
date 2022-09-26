@@ -19,6 +19,7 @@
 #include "bundle_active_log.h"
 #include "bundle_state_common.h"
 #include "bundle_state_data.h"
+#include "bundle_state_query_napi.h"
 #include "app_group_observer_napi.h"
 #include "bundle_state_inner_errors.h"
 
@@ -42,7 +43,7 @@ const std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50, 60};
 const uint32_t EVENT_STATES_MIN_PARAMS = 2;
 const uint32_t EVENT_STATES_PARAMS = 3;
 
-napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback_info &info,
+napi_value ParseQueryModuleUsageRecords(const napi_env &env, const napi_callback_info &info,
     ModuleRecordParamsInfo &params)
 {
     size_t argc = MODULE_RECORDS_PARAMS;
@@ -60,24 +61,24 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
             napi_valuetype valuetype = napi_undefined;
             NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
             NAPI_ASSERT(env, valuetype == napi_function,
-                "ParseModuleRecordsParameters invalid parameter type, function expected.");
+                "ParseQueryModuleUsageRecords invalid parameter type, function expected.");
             params.maxNum = MAXNUM_UP_LIMIT;
             napi_create_reference(env, argv[0], 1, &params.callback);
         } else if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
             BUNDLE_ACTIVE_LOGI("get module info has only one maxNum param");
-            BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum is larger than 1000 or less/equal than 0");
+            BUNDLE_ACTIVE_LOGE("ParseQueryModuleUsageRecords failed, maxNum is larger than 1000 or less/equal than 0");
             params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
         }
     }
     if (argc == MODULE_RECORDS_PARAMS) {
         // argv[0] : maxNum
         if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.maxNum) == nullptr) {
-            BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum type is invalid.");
+            BUNDLE_ACTIVE_LOGE("ParseQueryModuleUsageRecords failed, maxNum type is invalid.");
             params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
         }
 
         if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
-            BUNDLE_ACTIVE_LOGE("ParseModuleRecordsParameters failed, maxNum is larger than 1000 or less/equal than 0");
+            BUNDLE_ACTIVE_LOGE("ParseQueryModuleUsageRecords failed, maxNum is larger than 1000 or less/equal than 0");
             params.errorCode = ERR_MODULE_STATS_MAXNUM_INVALID;
         }
 
@@ -85,7 +86,7 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function,
-            "ParseModuleRecordsParameters invalid parameter type, function expected.");
+            "ParseQueryModuleUsageRecords invalid parameter type, function expected.");
         napi_create_reference(env, argv[1], 1, &params.callback);
     }
     return BundleStateCommon::NapiGetNull(env);
@@ -94,7 +95,7 @@ napi_value ParseModuleRecordsParameters(const napi_env &env, const napi_callback
 napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info)
 {
     ModuleRecordParamsInfo params;
-    ParseModuleRecordsParameters(env, info, params);
+    ParseQueryModuleUsageRecords(env, info, params);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
@@ -241,7 +242,8 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &info, StatesParamsInfo &params)
+napi_value ParseQueryCurrentBundleEventsParameters(const napi_env &env, const napi_callback_info &info,
+    StatesParamsInfo &params)
 {
     size_t argc = STATES_PARAMS;
     napi_value argv[STATES_PARAMS] = {nullptr};
@@ -251,28 +253,28 @@ napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &
 
     // argv[0] : beginTime
     if (BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
-        BUNDLE_ACTIVE_LOGE("ParseStatesParameters failed, beginTime type is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, beginTime type is invalid.");
         params.errorCode = ERR_USAGE_STATS_BEGIN_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK)
         && (params.beginTime < TIME_NUMBER_MIN)) {
-        BUNDLE_ACTIVE_LOGE("ParseStatesParameters failed, beginTime value is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, beginTime value is invalid.");
         params.errorCode = ERR_USAGE_STATS_BEGIN_TIME_INVALID;
     }
 
     // argv[1] : endTime
     if ((params.errorCode == ERR_OK)
         && (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr)) {
-        BUNDLE_ACTIVE_LOGE("ParseStatesParameters failed, endTime type is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, endTime type is invalid.");
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK)
         && (params.endTime < TIME_NUMBER_MIN)) {
-        BUNDLE_ACTIVE_LOGE("ParseStatesParameters failed, endTime value is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, endTime value is invalid.");
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
-        BUNDLE_ACTIVE_LOGE("ParseStatesParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
+        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
             (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
@@ -281,7 +283,7 @@ napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &
     if (argc == STATES_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
-        NAPI_ASSERT(env, valuetype == napi_function, "ParseStatesParameters invalid parameter type. "
+        NAPI_ASSERT(env, valuetype == napi_function, "ParseQueryCurrentBundleEventsParameters invalid parameter type. "
             "Function expected.");
         napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
     }
@@ -291,7 +293,7 @@ napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &
 napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info)
 {
     StatesParamsInfo params;
-    ParseStatesParameters(env, info, params);
+    ParseQueryCurrentBundleEventsParameters(env, info, params);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
@@ -356,7 +358,7 @@ napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info)
 napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
 {
     StatesParamsInfo params;
-    ParseStatesParameters(env, info, params);
+    ParseQueryCurrentBundleEventsParameters(env, info, params);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
@@ -419,7 +421,7 @@ napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_callback_info &info,
+napi_value ParseQueryBundleStatsInfoByInterval(const napi_env &env, const napi_callback_info &info,
     AppUsageParamsByIntervalInfo &params)
 {
     size_t argc = APP_USAGE_PARAMS_BY_INTERVAL;
@@ -430,40 +432,40 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
 
     // argv[0] : intervalType
     if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.intervalType) == nullptr) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, intervalType is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, intervalType is invalid.");
         params.errorCode = ERR_USAGE_STATS_INTERVAL_TYPE;
     }
     if ((params.errorCode == ERR_OK) && ((params.intervalType < INTERVAL_NUMBER_MIN)
         || (params.intervalType > INTERVAL_NUMBER_MAX))) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, intervalType number is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, intervalType number is invalid.");
         params.errorCode = ERR_USAGE_STATS_INTERVAL_NUMBER;
     }
 
     // argv[1] : beginTime
     if ((params.errorCode == ERR_OK)
         && (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.beginTime) == nullptr)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, beginTime type is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, beginTime type is invalid.");
         params.errorCode = ERR_USAGE_STATS_BEGIN_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK)
         && (params.beginTime < TIME_NUMBER_MIN)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, beginTime value is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, beginTime value is invalid.");
         params.errorCode = ERR_USAGE_STATS_BEGIN_TIME_INVALID;
     }
 
     // argv[SECOND_ARG] : endTime
     if ((params.errorCode == ERR_OK)
         && (BundleStateCommon::GetInt64NumberValue(env, argv[SECOND_ARG], params.endTime) == nullptr)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, endTime type is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, endTime type is invalid.");
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK)
         && (params.endTime < TIME_NUMBER_MIN)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, endTime value is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, endTime value is invalid.");
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval endTime(%{public}lld) <= beginTime(%{public}lld)",
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval endTime(%{public}lld) <= beginTime(%{public}lld)",
             (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
@@ -472,7 +474,7 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
     if (argc == APP_USAGE_PARAMS_BY_INTERVAL) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[THIRD_ARG], &valuetype));
-        NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageParametersByInterval invalid parameter type. "
+        NAPI_ASSERT(env, valuetype == napi_function, "ParseQueryBundleStatsInfoByInterval invalid parameter type. "
             "Function expected.");
         napi_create_reference(env, argv[THIRD_ARG], 1, &params.callback);
     }
@@ -482,7 +484,7 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
 napi_value QueryBundleStatsInfoByInterval(napi_env env, napi_callback_info info)
 {
     AppUsageParamsByIntervalInfo params;
-    ParseAppUsageParametersByInterval(env, info, params);
+    ParseQueryBundleStatsInfoByInterval(env, info, params);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
@@ -546,7 +548,7 @@ napi_value QueryBundleStatsInfoByInterval(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info &info, AppUsageParamsInfo &params)
+napi_value ParseQueryBundleStatsInfos(const napi_env &env, const napi_callback_info &info, QueryBundleStatsParamsInfo &params)
 {
     size_t argc = APP_USAGE_PARAMS;
     napi_value argv[APP_USAGE_PARAMS] = {nullptr};
@@ -556,26 +558,26 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
 
     // argv[0] : beginTime
     if (BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters failed, beginTime type is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos failed, beginTime type is invalid.");
         params.errorCode = ERR_USAGE_STATS_BEGIN_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK) && (params.beginTime < TIME_NUMBER_MIN)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters failed failed, beginTime value is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos failed failed, beginTime value is invalid.");
         params.errorCode = ERR_USAGE_STATS_BEGIN_TIME_INVALID;
     }
 
     // argv[1] : endTime
     if ((params.errorCode == ERR_OK)
         && (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters failed, endTime type is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos failed, endTime type is invalid.");
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK) && (params.endTime < TIME_NUMBER_MIN)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters failed failed, endTime value is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos failed failed, endTime value is invalid.");
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
-        BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
+        BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos endTime(%{public}lld) <= beginTime(%{public}lld)",
             (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
@@ -584,7 +586,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
     if (argc == APP_USAGE_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
-        NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageParameters invalid parameter type. "
+        NAPI_ASSERT(env, valuetype == napi_function, "ParseQueryBundleStatsInfos invalid parameter type. "
             "Function expected.");
         napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
     }
@@ -593,8 +595,8 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
 
 napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info)
 {
-    AppUsageParamsInfo params;
-    ParseAppUsageParameters(env, info, params);
+    QueryBundleStatsParamsInfo params;
+    ParseQueryBundleStatsInfos(env, info, params);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
@@ -654,7 +656,7 @@ napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value ParseEventStatesParameters(const napi_env &env, const napi_callback_info &info,
+napi_value ParseDeviceEventStates(const napi_env &env, const napi_callback_info &info,
     EventStatesParamsInfo &params)
 {
     size_t argc = EVENT_STATES_PARAMS;
@@ -667,7 +669,7 @@ napi_value ParseEventStatesParameters(const napi_env &env, const napi_callback_i
     if ((params.errorCode == ERR_OK)
         && ((BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr)
         || (params.beginTime < TIME_NUMBER_MIN))) {
-        BUNDLE_ACTIVE_LOGE("ParseEventStatesParameters failed, beginTime is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseDeviceEventStates failed, beginTime is invalid.");
         params.errorCode = ERR_USAGE_STATS_BEGIN_TIME_INVALID;
     }
 
@@ -675,11 +677,11 @@ napi_value ParseEventStatesParameters(const napi_env &env, const napi_callback_i
     if ((params.errorCode == ERR_OK)
         && ((BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr)
         || (params.endTime < TIME_NUMBER_MIN))) {
-        BUNDLE_ACTIVE_LOGE("ParseEventStatesParameters failed, endTime is invalid.");
+        BUNDLE_ACTIVE_LOGE("ParseDeviceEventStates failed, endTime is invalid.");
         params.errorCode = ERR_USAGE_STATS_END_TIME_INVALID;
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
-        BUNDLE_ACTIVE_LOGE("ParseEventStatesParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
+        BUNDLE_ACTIVE_LOGE("ParseDeviceEventStates endTime(%{public}lld) <= beginTime(%{public}lld)",
             (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
@@ -688,7 +690,7 @@ napi_value ParseEventStatesParameters(const napi_env &env, const napi_callback_i
     if (argc == EVENT_STATES_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
-        NAPI_ASSERT(env, valuetype == napi_function, "ParseEventStatesParameters invalid parameter type. "
+        NAPI_ASSERT(env, valuetype == napi_function, "ParseDeviceEventStates invalid parameter type. "
             "Function expected.");
         napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
     }
@@ -698,7 +700,7 @@ napi_value ParseEventStatesParameters(const napi_env &env, const napi_callback_i
 napi_value QueryDeviceEventStates(napi_env env, napi_callback_info info)
 {
     EventStatesParamsInfo params;
-    ParseEventStatesParameters(env, info, params);
+    ParseDeviceEventStates(env, info, params);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
@@ -750,7 +752,7 @@ napi_value QueryDeviceEventStates(napi_env env, napi_callback_info info)
 napi_value QueryNotificationNumber(napi_env env, napi_callback_info info)
 {
     EventStatesParamsInfo params;
-    ParseEventStatesParameters(env, info, params);
+    ParseDeviceEventStates(env, info, params);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }

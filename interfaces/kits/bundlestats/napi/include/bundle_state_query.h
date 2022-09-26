@@ -21,7 +21,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-    napi_value IsIdleState(napi_env env, napi_callback_info info);
+    // napi_value IsIdleState(napi_env env, napi_callback_info info);
     napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info);
     napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info);
     napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info);
@@ -34,4 +34,3 @@ namespace DeviceUsageStats {
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_H
-

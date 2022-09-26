@@ -43,8 +43,8 @@ const std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50, 60};
 static sptr<AppGroupObserver> registerObserver = nullptr;
 static std::mutex g_observerMutex_;
 
-napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback_info &info,
-    PriorityGroupParamsInfo &params, AsyncQueryAppGroupCallbackInfo* &asyncCallbackInfo)
+napi_value ParseQueryAppGroupParameters(const napi_env &env, const napi_callback_info &info,
+    QueryAppGroupParamsInfo &params, AsyncQueryAppGroupCallbackInfo* &asyncCallbackInfo)
 {
     size_t argc = PRIORITY_GROUP_PARAMS;
     napi_value argv[PRIORITY_GROUP_PARAMS] = {nullptr};
@@ -59,13 +59,13 @@ napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback
         if (valuetype == napi_function) {
             napi_valuetype valuetype = napi_undefined;
             NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-            NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
+            NAPI_ASSERT(env, valuetype == napi_function, "ParseQueryAppGroupParameters invalid parameter type. "
                 "Function expected.");
             napi_create_reference(env, argv[0], 1, &params.callback);
         } else {
             params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
             if (params.bundleName.empty()) {
-                BUNDLE_ACTIVE_LOGE("ParsePriorityGroupParameters failed, bundleName is empty.");
+                BUNDLE_ACTIVE_LOGE("ParseQueryAppGroupParameters failed, bundleName is empty.");
                 params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
             }
         }
@@ -73,14 +73,14 @@ napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback
         // argv[0] : bundleName
         params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
         if (params.bundleName.empty()) {
-            BUNDLE_ACTIVE_LOGE("ParsePriorityGroupParameters failed, bundleName is empty.");
+            BUNDLE_ACTIVE_LOGE("ParseQueryAppGroupParameters failed, bundleName is empty.");
             params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
         }
         // argv[1]: callback
         if (argc == PRIORITY_GROUP_PARAMS) {
             napi_valuetype valuetype = napi_undefined;
             NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-            NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
+            NAPI_ASSERT(env, valuetype == napi_function, "ParseQueryAppGroupParameters invalid parameter type. "
                 "Function expected.");
             napi_create_reference(env, argv[1], 1, &params.callback);
         }
@@ -91,9 +91,9 @@ napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback
 
 napi_value QueryAppGroup(napi_env env, napi_callback_info info)
 {
-    PriorityGroupParamsInfo params;
+    QueryAppGroupParamsInfo params;
     AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = nullptr;
-    ParsePriorityGroupParameters(env, info, params, asyncCallbackInfo);
+    ParseQueryAppGroupParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
@@ -242,7 +242,7 @@ napi_value SetAppGroup(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value GetBundleGroupChangeCallback(const napi_env &env, const napi_value &value)
+napi_value GetAppGroupChangeCallback(const napi_env &env, const napi_value &value)
 {
     napi_ref result = nullptr;
     
@@ -273,7 +273,7 @@ napi_value ParseRegisterAppGroupCallBackParameters(const napi_env &env, const na
     if (registerObserver) {
         BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack repeat!");
         params.errorCode = ERR_REPEAT_OPERATION;
-    } else if (valuetype != napi_function || !GetBundleGroupChangeCallback(env, argv[0])) {
+    } else if (valuetype != napi_function || !GetAppGroupChangeCallback(env, argv[0])) {
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack bundleActiveGroupObserverInfo parse failed");
         params.errorCode = ERR_OBSERVER_CALLBACK_IS_INVALID;
     }

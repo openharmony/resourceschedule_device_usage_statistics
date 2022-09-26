@@ -25,7 +25,7 @@ namespace DeviceUsageStats {
     napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info);
     napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info);
     napi_value QueryBundleStatsInfoByInterval(napi_env env, napi_callback_info info);
-    napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info);
+    napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info);
     napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info);
     napi_value QueryDeviceEventStates(napi_env env, napi_callback_info info);
     napi_value QueryNotificationNumber(napi_env env, napi_callback_info info);

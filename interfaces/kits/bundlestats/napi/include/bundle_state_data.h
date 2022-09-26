@@ -139,7 +139,7 @@ struct IsIdleStateParamsInfo {
     int32_t errorCode = 0;
 };
 
-struct PriorityGroupParamsInfo {
+struct QueryAppGroupParamsInfo {
     std::string bundleName;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
@@ -160,7 +160,7 @@ struct AppUsageParamsByIntervalInfo {
     int32_t errorCode = 0;
 };
 
-struct AppUsageParamsInfo {
+struct QueryBundleStatsParamsInfo {
     int64_t beginTime = -1;
     int64_t endTime = -1;
     napi_ref callback = nullptr;

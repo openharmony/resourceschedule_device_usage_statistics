@@ -67,7 +67,6 @@ ohos_shared_library("bundlestate") {
     "frameworks/src/bundle_state_query.cpp",
     "frameworks/src/app_group_observer_napi.cpp",
     "frameworks/src/bundle_active_app_group_napi.cpp",
-    "frameworks/src/usage_statistics_init.cpp",
     "frameworks/src/bundle_state_query_napi.cpp",
   ]
   include_dirs = [
