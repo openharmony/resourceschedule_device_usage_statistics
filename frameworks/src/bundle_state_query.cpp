@@ -260,10 +260,6 @@ napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
         if (valuetype == napi_function) {
-            napi_valuetype valuetype = napi_undefined;
-            NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-            NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
-                "Function expected.");
             napi_create_reference(env, argv[0], 1, &params.callback);
         } else {
             params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
@@ -279,14 +275,13 @@ napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback
             BUNDLE_ACTIVE_LOGE("ParsePriorityGroupParameters failed, bundleName is empty.");
             params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
         }
+
         // argv[1]: callback
-        if (argc == PRIORITY_GROUP_PARAMS) {
-            napi_valuetype valuetype = napi_undefined;
-            NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-            NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
-                "Function expected.");
-            napi_create_reference(env, argv[1], 1, &params.callback);
-        }
+        napi_valuetype valuetype = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
+        NAPI_ASSERT(env, valuetype == napi_function, "ParsePriorityGroupParameters invalid parameter type. "
+            "Function expected.");
+        napi_create_reference(env, argv[1], 1, &params.callback);
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
@@ -297,7 +292,7 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
     QueryAppGroupParamsInfo params;
     AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = nullptr;
     ParsePriorityGroupParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
+    if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     std::unique_ptr<AsyncQueryAppGroupCallbackInfo> callbackPtr {asyncCallbackInfo};
@@ -799,7 +794,7 @@ napi_value ParseAppUsageBundleGroupInfoParameters(const napi_env &env, const nap
     }
     // argv[SECOND_ARG]: callback
     if (argc == APP_USAGE_PARAMS_BUNDLE_GROUP) {
-        napi_valuetype valuetype = napi_undefined;
+        valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseAppUsageBundleGroupInfoParameters invalid parameter type. "
             "Function expected.");
@@ -814,7 +809,7 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
     ParamsBundleGroupInfo params;
     AsyncCallbackInfoSetAppGroup *asyncCallbackInfo = nullptr;
     ParseAppUsageBundleGroupInfoParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
+    if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     std::unique_ptr<AsyncCallbackInfoSetAppGroup> callbackPtr {asyncCallbackInfo};
@@ -833,7 +828,7 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
             AsyncCallbackInfoSetAppGroup *asyncCallbackInfo = (AsyncCallbackInfoSetAppGroup *)data;
             if (asyncCallbackInfo) {
                     asyncCallbackInfo->errorCode = BundleActiveClient::GetInstance().SetAppGroup(
-                        asyncCallbackInfo->bundleName, asyncCallbackInfo->newGroup, asyncCallbackInfo->errorCode);
+                        asyncCallbackInfo->bundleName, asyncCallbackInfo->newGroup);
             } else {
                 BUNDLE_ACTIVE_LOGE("SetBundleGroup, asyncCallbackInfo == nullptr");
             }

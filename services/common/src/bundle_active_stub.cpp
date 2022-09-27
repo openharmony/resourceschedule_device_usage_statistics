@@ -37,8 +37,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
     switch (code) {
         case REPORT_EVENT: {
             int32_t userId = data.ReadInt32();
-            std::shared_ptr<BundleActiveEvent> tmpEvent;
-            tmpEvent = tmpEvent->UnMarshalling(data);
+            std::shared_ptr<BundleActiveEvent> tmpEvent = BundleActiveEvent::UnMarshalling(data);
             if (!tmpEvent) {
                 return -1;
             }
@@ -95,9 +94,8 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         case SET_BUNDLE_GROUP: {
             std::string bundleName = data.ReadString();
             int32_t newGroup = data.ReadInt32();
-            int32_t errCode = data.ReadInt32();
             int32_t userId = data.ReadInt32();
-            int32_t result = SetAppGroup(bundleName, newGroup, errCode, userId);
+            int32_t result = SetAppGroup(bundleName, newGroup, userId);
             return reply.WriteInt32(result);
         }
         case QUERY_CURRENT_USAGE_STATS: {

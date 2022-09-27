@@ -21,6 +21,7 @@ namespace DeviceUsageStats {
 namespace {
     const std::string BUNDLE_ACTIVE_CLIENT_NAME = "bundleActiveName";
     static const int32_t DELAY_TIME = 5000;
+    static const int32_t SLEEP_TIME = 1000;
 }
 BundleActiveClient& BundleActiveClient::GetInstance()
 {
@@ -106,13 +107,12 @@ std::vector<BundleActiveEvent> BundleActiveClient::QueryBundleEvents(const int64
     return bundleActiveProxy_->QueryBundleEvents(beginTime, endTime, errCode, userId);
 }
 
-int32_t BundleActiveClient::SetAppGroup(std::string bundleName, const int32_t newGroup,
-    int32_t errCode, int32_t userId)
+int32_t BundleActiveClient::SetAppGroup(std::string bundleName, const int32_t newGroup, int32_t userId)
 {
     if (!GetBundleActiveProxy()) {
         return -1;
     }
-    return bundleActiveProxy_->SetAppGroup(bundleName, newGroup, errCode, userId);
+    return bundleActiveProxy_->SetAppGroup(bundleName, newGroup, userId);
 }
 
 std::vector<BundleActivePackageStats> BundleActiveClient::QueryBundleStatsInfos(const int32_t intervalType,
@@ -226,7 +226,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner(const wptr<IRemoteObject> &object)
 {
     while (!BundleActiveClient::GetInstance().GetBundleActiveProxy()) {
-        sleep(1000);
+        sleep(SLEEP_TIME);
     }
     if (observer_) {
         BundleActiveClient::GetInstance().RegisterAppGroupCallBack(observer_);

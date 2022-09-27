@@ -61,7 +61,7 @@ public:
     * function: SetAppGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    int32_t SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId) override;
+    int32_t SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) override;
 
     /*
     * function: QueryBundleStatsInfos, query bundle usage statistics in specific time span for calling bundle.

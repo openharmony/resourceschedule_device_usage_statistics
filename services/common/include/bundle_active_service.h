@@ -83,8 +83,7 @@ public:
     * function: SetAppGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    int32_t SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId) override;
-
+    int32_t SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) override;
     /*
     * function: QueryBundleStatsInfos, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
@@ -169,7 +168,9 @@ private:
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;
     std::shared_ptr<BundleActiveReportHandler> reportHandler_;
     std::shared_ptr<BundleActiveAppStateObserver> appStateObserver_;
+#ifdef BGTASKMGR_ENABLE
     std::shared_ptr<BundleActiveContinuousTaskObserver> continuousTaskObserver_;
+#endif
     sptr<IBundleMgr> sptrBundleMgr_;
     sptr<BundleActiveShutdownCallbackService> shutdownCallback_;
     sptr<BundleActivePowerStateCallbackService> powerStateCallback_;
@@ -181,6 +182,8 @@ private:
     void InitService();
     bool GetBundleMgrProxy();
     bool CheckBundleIsSystemAppAndHasPermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId,
+        int32_t& errCode);
+    bool CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId,
         int32_t& errCode);
     void InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     void InitContinuousSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);

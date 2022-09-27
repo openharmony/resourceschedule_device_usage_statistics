@@ -69,7 +69,7 @@ public:
     * parameters: bundleName, newGroup, userId
     * return : void
     */
-    int32_t SetAppGroup(std::string bundleName, const int32_t newGroup, int32_t errCode, int32_t userId = -1);
+    int32_t SetAppGroup(std::string bundleName, const int32_t newGroup, int32_t userId = -1);
 
     /*
     * function: QueryBundleStatsInfos, query bundle usage statistics in specific time span for calling bundle.

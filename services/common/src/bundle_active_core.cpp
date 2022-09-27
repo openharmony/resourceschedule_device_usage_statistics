@@ -269,8 +269,7 @@ void BundleActiveCore::OnStatsChanged(const int32_t userId)
 
 void BundleActiveCore::RestoreAllData()
 {
-    for (std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.begin();
-        it != userStatServices_.end(); it++) {
+    for (auto it = userStatServices_.begin(); it != userStatServices_.end(); ++it) {
         std::shared_ptr<BundleActiveUserService> service = it->second;
         if (service == nullptr) {
             BUNDLE_ACTIVE_LOGI("service in BundleActiveCore::RestoreToDatabaseLocked() is null");
@@ -294,7 +293,6 @@ void BundleActiveCore::RestoreAllData()
 void BundleActiveCore::RestoreToDatabase(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGD("RestoreToDatabase called");
-    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     BundleActiveEvent event;
     event.eventId_ = BundleActiveEvent::FLUSH;
     event.timeStamp_ = GetSystemTimeMs();
@@ -535,8 +533,7 @@ int32_t BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
     if (userStatServices_.empty()) {
         return DEFAULT_USER_ID;
     }
-    for (std::map<int, std::shared_ptr<BundleActiveUserService>>::iterator it = userStatServices_.begin();
-        it != userStatServices_.end(); it++) {
+    for (auto it = userStatServices_.begin(); it != userStatServices_.end(); ++it) {
         ConvertToSystemTimeLocked(event);
         std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(it->first, timeNow,
             debugCore_);
@@ -762,7 +759,6 @@ void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &
         BUNDLE_ACTIVE_LOGI("observer nullptr.");
         return;
     }
-    auto remoteObj = observer->AsObject();
     auto it = recipientMap_.find(observer->AsObject());
     if (it != recipientMap_.end()) {
         BUNDLE_ACTIVE_LOGI("This death recipient has been added.");

@@ -72,7 +72,7 @@ napi_value ParseRegisterGroupCallBackParameters(const napi_env &env, const napi_
 
     // argv[1]: asyncCallback
     if (argc == REGISTER_GROUP_CALLBACK_PARAMS) {
-        napi_valuetype valuetype = napi_undefined;
+        valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
         NAPI_ASSERT(env, valuetype == napi_function, "ParseStatesParameters invalid parameter type. Function expected");
         napi_create_reference(env, argv[1], 1, &params.callback);

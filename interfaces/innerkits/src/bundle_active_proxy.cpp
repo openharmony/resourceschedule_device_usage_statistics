@@ -118,8 +118,7 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryBundleEvents(const int64_
     return result;
 }
 
-int32_t BundleActiveProxy::SetAppGroup(const std::string& bundleName, int32_t newGroup,
-    int32_t errCode, int32_t userId)
+int32_t BundleActiveProxy::SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -129,7 +128,6 @@ int32_t BundleActiveProxy::SetAppGroup(const std::string& bundleName, int32_t ne
     }
     data.WriteString(bundleName);
     data.WriteInt32(newGroup);
-    data.WriteInt32(errCode);
     data.WriteInt32(userId);
 
     Remote() -> SendRequest(SET_BUNDLE_GROUP, data, reply, option);

@@ -424,7 +424,8 @@ declare namespace bundleState {
      * @deprecated since 9
      * @useinstead @ohos.resourceschedule.usageStatistics
      */
-    function getRecentlyUsedModules(maxNum?: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
+    function getRecentlyUsedModules(callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
+    function getRecentlyUsedModules(maxNum: number, callback: AsyncCallback<Array<BundleActiveModuleInfo>>): void;
     function getRecentlyUsedModules(maxNum?: number): Promise<Array<BundleActiveModuleInfo>>;
 
     /**
@@ -442,8 +443,9 @@ declare namespace bundleState {
      * @deprecated since 9
      * @useinstead @ohos.resourceschedule.usageStatistics
      */
-     function queryAppUsagePriorityGroup(bundleName? : string, callback: AsyncCallback<number>): void;
-     function queryAppUsagePriorityGroup(bundleName? : string): Promise<number>;
+    function queryAppUsagePriorityGroup(callback: AsyncCallback<number>): void;
+    function queryAppUsagePriorityGroup(bundleName: string, callback: AsyncCallback<number>): void;
+    function queryAppUsagePriorityGroup(bundleName?: string): Promise<number>;
 
      /**
      * Declares group type.
@@ -514,8 +516,8 @@ declare namespace bundleState {
      * @deprecated since 9
      * @useinstead @ohos.resourceschedule.usageStatistics
      */
-    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<void>): void;
-    function registerGroupCallBack(callback: Callback<BundleActiveGroupCallbackInfo>): Promise<void>;
+    function registerGroupCallBack(groupCallback: Callback<BundleActiveGroupCallbackInfo>, callback: AsyncCallback<void>): void;
+    function registerGroupCallBack(groupCallback: Callback<BundleActiveGroupCallbackInfo>): Promise<void>;
 
     /**
      * unRegister callback from service.
