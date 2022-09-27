@@ -78,7 +78,7 @@ public:
     * function: SetBundleGroup, set specific bundle of specific user to a priority group.
     * parameters: bundleName, newGroup, userId
     */
-    int32_t SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t errCode, int32_t userId) override;
+    int32_t SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) override;
     /*
     * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
@@ -168,7 +168,9 @@ private:
     void InitService();
     bool GetBundleMgrProxy();
     bool CheckBundleIsSystemAppAndHasPermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId,
-        int32_t errCode);
+        int32_t& errCode);
+    bool CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId,
+        int32_t& errCode);
     void InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     void InitContinuousSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     bool SubscribeAppState();

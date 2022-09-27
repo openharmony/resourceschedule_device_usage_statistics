@@ -828,7 +828,7 @@ napi_value SetBundleGroup(napi_env env, napi_callback_info info)
             AsyncCallbackInfoSetBundleGroup *asyncCallbackInfo = (AsyncCallbackInfoSetBundleGroup *)data;
             if (asyncCallbackInfo) {
                     asyncCallbackInfo->errorCode = BundleActiveClient::GetInstance().SetBundleGroup(
-                        asyncCallbackInfo->bundleName, asyncCallbackInfo->newGroup, asyncCallbackInfo->errorCode);
+                        asyncCallbackInfo->bundleName, asyncCallbackInfo->newGroup);
             } else {
                 BUNDLE_ACTIVE_LOGE("SetBundleGroup, asyncCallbackInfo == nullptr");
             }
