@@ -16,6 +16,7 @@
       "package": "com.example.deviceUsageStatistics",
       "name": ".MyApplication",
       "deviceType": [
+        "default",
         "phone"
       ],
       "distro": {
