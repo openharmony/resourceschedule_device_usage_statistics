@@ -17,13 +17,13 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-int32_t BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int32_t userId)
+ErrCode BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return -1;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     data.WriteInt32(userId);
     event.Marshalling(data);
@@ -33,40 +33,37 @@ int32_t BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int32_t u
     return result;
 }
 
-bool BundleActiveProxy::IsBundleIdle(const std::string& bundleName, int32_t& errCode, int32_t userId)
+ErrCode BundleActiveProxy::IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(GetDescriptor()) ||
         !data.WriteString(bundleName) ||
-        !data.WriteInt32(errCode) ||
         !data.WriteInt32(userId)) {
-        return false;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     Remote() -> SendRequest(IS_BUNDLE_IDLE, data, reply, option);
-    bool result = reply.ReadInt32();
-    errCode = reply.ReadInt32();
-    return result;
+    ErrCode errCode = reply.ReadInt32();
+    isBundleIdle = reply.ReadInt32();
+    return errCode;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveProxy::QueryBundleStatsInfoByInterval(const int32_t intervalType,
-    const int64_t beginTime, const int64_t endTime, int32_t& errCode, int32_t userId)
+ErrCode BundleActiveProxy::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
+    const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-    std::vector<BundleActivePackageStats> result;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return result;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     data.WriteInt32(intervalType);
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
     data.WriteInt32(userId);
-    data.WriteInt32(errCode);
-    Remote() -> SendRequest(QUERY_USAGE_STATS, data, reply, option);
-    errCode = reply.ReadInt32();
+    Remote() -> SendRequest(QUERY_BUNDLE_STATS_INFO_BY_INTERVAL, data, reply, option);
+    ErrCode errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int32_t i = 0; i < size; i++) {
@@ -74,35 +71,33 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryBundleStatsInfoByI
         if (tmp == nullptr) {
             continue;
         }
-        result.push_back(*tmp);
+        PackageStats.push_back(*tmp);
     }
-    for (uint32_t i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfoByInterval result idx is %{public}d, bundleName_ is %{public}s, "
+    for (uint32_t i = 0; i < PackageStats.size(); i++) {
+        BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfoByInterval PackageStats idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
-            i + 1, result[i].bundleName_.c_str(),
-            (long long)result[i].lastTimeUsed_, (long long)result[i].lastContiniousTaskUsed_,
-            (long long)result[i].totalInFrontTime_, (long long)result[i].totalContiniousTaskUsedTime_);
+            i + 1, PackageStats[i].bundleName_.c_str(),
+            (long long)PackageStats[i].lastTimeUsed_, (long long)PackageStats[i].lastContiniousTaskUsed_,
+            (long long)PackageStats[i].totalInFrontTime_, (long long)PackageStats[i].totalContiniousTaskUsedTime_);
     }
-    return result;
+    return errCode;
 }
 
-std::vector<BundleActiveEvent> BundleActiveProxy::QueryBundleEvents(const int64_t beginTime,
-    const int64_t endTime, int32_t& errCode, int32_t userId)
+ErrCode BundleActiveProxy::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
+    const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-    std::vector<BundleActiveEvent> result;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return result;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
     data.WriteInt32(userId);
-    data.WriteInt32(errCode);
-    Remote() -> SendRequest(QUERY_EVENTS, data, reply, option);
-    errCode = reply.ReadInt32();
+    Remote() -> SendRequest(QUERY_BUNDLE_EVENTS, data, reply, option);
+    ErrCode errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int32_t i = 0; i < size; i++) {
@@ -110,44 +105,45 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryBundleEvents(const int64_
         if (tmp == nullptr) {
             continue;
         }
-        result.push_back(*tmp);
+        bundleActiveEvents.push_back(*tmp);
     }
-    for (uint32_t i = 0; i < result.size(); i++) {
-        result[i].PrintEvent(true);
+    for (uint32_t i = 0; i < bundleActiveEvents.size(); i++) {
+        bundleActiveEvents[i].PrintEvent(true);
     }
-    return result;
+    return errCode;
 }
 
-int32_t BundleActiveProxy::SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t userId)
+ErrCode BundleActiveProxy::SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return -1;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     data.WriteString(bundleName);
     data.WriteInt32(newGroup);
     data.WriteInt32(userId);
 
-    Remote() -> SendRequest(SET_BUNDLE_GROUP, data, reply, option);
+    Remote() -> SendRequest(SET_APP_GROUP, data, reply, option);
     return reply.ReadInt32();
 }
 
-std::vector<BundleActivePackageStats> BundleActiveProxy::QueryBundleStatsInfos(const int32_t intervalType,
-    const int64_t beginTime, const int64_t endTime)
+ErrCode BundleActiveProxy::QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& bundleActivePackageStats,
+    const int32_t intervalType, const int64_t beginTime, const int64_t endTime)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     std::vector<BundleActivePackageStats> result;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return result;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     data.WriteInt32(intervalType);
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
-    Remote() -> SendRequest(QUERY_CURRENT_USAGE_STATS, data, reply, option);
+    Remote() -> SendRequest(QUERY_BUNDLE_STATS_INFOS, data, reply, option);
+    ErrCode errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int32_t i = 0; i < size; i++) {
@@ -155,31 +151,32 @@ std::vector<BundleActivePackageStats> BundleActiveProxy::QueryBundleStatsInfos(c
         if (tmp == nullptr) {
             continue;
         }
-        result.push_back(*tmp);
+        bundleActivePackageStats.push_back(*tmp);
     }
-    for (uint32_t i = 0; i < result.size(); i++) {
-        BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos result idx is %{public}d, bundleName_ is %{public}s, "
+    for (uint32_t i = 0; i < bundleActivePackageStats.size(); i++) {
+        BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos bundleActivePackageStats idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
-            i + 1, result[i].bundleName_.c_str(),
-            (long long)result[i].lastTimeUsed_, (long long)result[i].lastContiniousTaskUsed_,
-            (long long)result[i].totalInFrontTime_, (long long)result[i].totalContiniousTaskUsedTime_);
+            i + 1, bundleActivePackageStats[i].bundleName_.c_str(),
+            (long long)bundleActivePackageStats[i].lastTimeUsed_, (long long)bundleActivePackageStats[i].lastContiniousTaskUsed_,
+            (long long)bundleActivePackageStats[i].totalInFrontTime_, (long long)bundleActivePackageStats[i].totalContiniousTaskUsedTime_);
     }
-    return result;
+    return errCode;
 }
 
-std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentBundleEvents(const int64_t beginTime, const int64_t endTime)
+ErrCode BundleActiveProxy::QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
+    const int64_t beginTime, const int64_t endTime)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-    std::vector<BundleActiveEvent> result;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return result;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
-    Remote() -> SendRequest(QUERY_CURRENT_EVENTS, data, reply, option);
+    Remote() -> SendRequest(QUERY_CURRENT_BUNDLE_EVENTS, data, reply, option);
+    ErrCode errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int32_t i = 0; i < size; i++) {
@@ -187,45 +184,45 @@ std::vector<BundleActiveEvent> BundleActiveProxy::QueryCurrentBundleEvents(const
         if (tmp == nullptr) {
             continue;
         }
-        result.push_back(*tmp);
+        bundleActiveEvents.push_back(*tmp);
     }
-    for (uint32_t i = 0; i < result.size(); i++) {
+    for (uint32_t i = 0; i < bundleActiveEvents.size(); i++) {
         BUNDLE_ACTIVE_LOGD("QueryCurrentBundleEvents event id is %{public}d, bundle name is %{public}s,"
-            "time stamp is %{public}lld",
-            result[i].eventId_, result[i].bundleName_.c_str(), (long long)result[i].timeStamp_);
+            "time stamp is %{public}lld", bundleActiveEvents[i].eventId_, bundleActiveEvents[i].bundleName_.c_str(),
+            (long long)bundleActiveEvents[i].timeStamp_);
     }
-    return result;
+    return errCode;
 }
 
-int32_t BundleActiveProxy::QueryAppGroup(std::string& bundleName, const int32_t userId)
+ErrCode BundleActiveProxy::QueryAppGroup(int32_t& appGroup, std::string& bundleName, const int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
 
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return -1;
+        return ERR_PARCEL_WRITE_FALIED;
     }
+    data.WriteInt32(appGroup);
     data.WriteString(bundleName);
     data.WriteInt32(userId);
-    Remote() -> SendRequest(QUERY_BUNDLE_GROUP, data, reply, option);
-    int32_t result = reply.ReadInt32();
-    return result;
+    Remote() -> SendRequest(QUERY_APP_GROUP, data, reply, option);
+    return reply.ReadInt32();
 }
 
-int32_t BundleActiveProxy::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
+ErrCode BundleActiveProxy::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
     int32_t userId)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return -1;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     data.WriteInt32(maxNum);
     data.WriteInt32(userId);
-    Remote() -> SendRequest(QUERY_FORM_STATS, data, reply, option);
-    int32_t errCode = reply.ReadInt32();
+    Remote() -> SendRequest(QUERY_MODULE_USAGE_RECORDS, data, reply, option);
+    ErrCode errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveModuleRecord> tmp;
     for (int32_t i = 0; i < size; i++) {
@@ -249,54 +246,54 @@ int32_t BundleActiveProxy::QueryModuleUsageRecords(int32_t maxNum, std::vector<B
     return errCode;
 }
 
-int32_t BundleActiveProxy::RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
+ErrCode BundleActiveProxy::RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
     if (!observer) {
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer is nullptr");
-        return false;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack WriteInterfaceToken fail");
-        return false;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     if (!data.WriteRemoteObject(observer->AsObject())) {
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer write failed.");
-        return false;
+        return ERR_PARCEL_WRITE_FALIED;
     }
-    int32_t ret = Remote()->SendRequest(REGISTER_GROUP_CALLBACK, data, reply, option);
+    int32_t ret = Remote()->SendRequest(REGISTER_APP_GROUP_CALLBACK, data, reply, option);
     if (ret!= ERR_OK) {
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack SendRequest failed, error code: %{public}d", ret);
     }
     return reply.ReadInt32();
 }
 
-int32_t BundleActiveProxy::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
+ErrCode BundleActiveProxy::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
     if (!observer) {
         BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer is nullptr");
-        return false;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return false;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     if (!data.WriteRemoteObject(observer->AsObject())) {
         BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer write failed.");
-        return false;
+        return ERR_PARCEL_WRITE_FALIED;
     }
-    Remote()->SendRequest(UNREGISTER_GROUP_CALLBACK, data, reply, option);
+    Remote()->SendRequest(UNREGISTER_APP_GROUP_CALLBACK, data, reply, option);
     return reply.ReadInt32();
 }
 
-int32_t BundleActiveProxy::QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveProxy::QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    int32_t errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_EVENT_STATS);
+    ErrCode errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_DEVICE_EVENT_STATES);
     for (const auto& singleEvent : eventStats) {
         BUNDLE_ACTIVE_LOGD("QueryDeviceEventStates name is %{public}s, eventId is %{public}d, count is %{public}d",
             singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
@@ -304,10 +301,10 @@ int32_t BundleActiveProxy::QueryDeviceEventStates(int64_t beginTime, int64_t end
     return errCode;
 }
 
-int32_t BundleActiveProxy::QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveProxy::QueryNotificationNumber(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    int32_t errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_APP_NOTIFICATION_NUMBER);
+    ErrCode errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_NOTIFICATION_NUMBER);
     for (const auto& singleEvent : eventStats) {
         BUNDLE_ACTIVE_LOGD("QueryNotificationNumber name is %{public}s, eventId is %{public}d, count is %{public}d",
             singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
@@ -315,20 +312,20 @@ int32_t BundleActiveProxy::QueryNotificationNumber(int64_t beginTime, int64_t en
     return errCode;
 }
 
-int32_t BundleActiveProxy::IPCCommunication(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveProxy::IPCCommunication(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId, int32_t communicationFlag)
 {
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
-        return -1;
+        return ERR_PARCEL_WRITE_FALIED;
     }
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
     data.WriteInt32(userId);
     Remote() -> SendRequest(communicationFlag, data, reply, option);
-    int32_t errCode = reply.ReadInt32();
+    ErrCode errCode = reply.ReadInt32();
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEventStats> tmp;
     for (int32_t i = 0; i < size; i++) {

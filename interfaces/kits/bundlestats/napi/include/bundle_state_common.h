@@ -34,7 +34,13 @@ public:
 
     static napi_value NapiGetUndefined(napi_env env);
 
+    static napi_value HandleParamErr(const napi_env &env, int32_t errCode, const std::string& operation);
+
     static napi_value GetErrorValue(napi_env env, int32_t errCode);
+
+    static std::string GetSaErrCodeMsg(int32_t errCode, int32_t reflectCode);
+
+    static int32_t GetReflectErrCode(int32_t errCode, int32_t sysCapCode, int32_t startCode);
 
     static void SettingAsyncWorkData(
         const napi_env &env, const napi_ref &callback, AsyncWorkData &workData, napi_value &promise);
@@ -93,16 +99,18 @@ template <typename PARAMT, typename ASYNCT>
 void BundleStateCommon::AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo)
 {
     if (params.errorCode != ERR_OK) {
-        return ;
+        return;
     }
     asyncCallbackInfo = new (std::nothrow) ASYNCT(env);
     if (!asyncCallbackInfo) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
-        return ;
+        params.errorCode = ERR_ASYNC_CALLBACK_NULLPTR;
+        BundleStateCommon::HandleParamErr(env, ERR_ASYNC_CALLBACK_NULLPTR, "");
+        return;
     }
     if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo))
         != EOK) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        params.errorCode = ERR_ASYNC_CALLBACK_INIT_FAILED;
+        BundleStateCommon::HandleParamErr(env, ERR_ASYNC_CALLBACK_INIT_FAILED, "");
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
     }

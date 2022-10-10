@@ -307,10 +307,10 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
     RestoreStats(true);
 }
 
-std::vector<BundleActivePackageStats> BundleActiveUserService::QueryBundleStatsInfos(int32_t intervalType,
-    const int64_t beginTime, const int64_t endTime, const int32_t userId, const std::string& bundleName)
+ErrCode BundleActiveUserService::QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& PackageStats,
+    int32_t intervalType, const int64_t beginTime, const int64_t endTime, const int32_t userId,
+    const std::string& bundleName)
 {
-    std::vector<BundleActivePackageStats> result;
     if (intervalType == BundleActivePeriodStats::PERIOD_BEST) {
         intervalType = database_.GetOptimalIntervalType(beginTime, endTime);
         if (intervalType < 0) {
@@ -318,66 +318,65 @@ std::vector<BundleActivePackageStats> BundleActiveUserService::QueryBundleStatsI
         }
     }
     if (intervalType < 0 || intervalType >= static_cast<int32_t>(currentStats_.size())) {
-        return result;
+        return ERR_USAGE_STATS_INTERVAL_NUMBER;
     }
     auto currentStats = currentStats_[intervalType];
     if (currentStats == nullptr) {
         BUNDLE_ACTIVE_LOGE("current interval stat is null!");
-        return result;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
     if (currentStats->endTime_ == 0) {
         if (beginTime > currentStats->beginTime_ + periodLength_[intervalType]) {
-            return result;
+            return ERR_QUERY_TIME_OUT_OF_RANGE;
         } else {
-            result = database_.QueryDatabaseUsageStats(intervalType, beginTime, endTime, userId);
-            return result;
+            PackageStats = database_.QueryDatabaseUsageStats(intervalType, beginTime, endTime, userId);
+            return ERR_OK;
         }
     } else if (beginTime >= currentStats->endTime_) {
-        return result;
+        return ERR_QUERY_TIME_OUT_OF_RANGE;
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
-    result = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
-    BUNDLE_ACTIVE_LOGI("Query package data in db result size is %{public}zu", result.size());
+    PackageStats = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
+    BUNDLE_ACTIVE_LOGI("Query package data in db PackageStats size is %{public}zu", PackageStats.size());
     PrintInMemPackageStats(intervalType, debugUserService_);
-    // if we need a in-memory stats, combine current stats with result from database.
+    // if we need a in-memory stats, combine current stats with PackageStats from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos need in memory stats");
         for (auto it : currentStats->bundleStats_) {
             if (bundleName.empty()) {
                 if ((it.second->totalInFrontTime_ != 0 || it.second->totalContiniousTaskUsedTime_ != 0) &&
                     it.second->lastTimeUsed_ >= beginTime && it.second->lastTimeUsed_ <= endTime) {
-                    result.push_back(*(it.second));
+                    PackageStats.push_back(*(it.second));
                 }
             } else {
                 if ((it.second->totalInFrontTime_ != 0 || it.second->totalContiniousTaskUsedTime_ != 0) &&
                     it.second->bundleName_ == bundleName && it.second->lastTimeUsed_ >= beginTime &&
                     it.second->lastTimeUsed_ <= endTime) {
-                    result.push_back(*(it.second));
+                    PackageStats.push_back(*(it.second));
                 }
             }
         }
     }
-    return result;
+    return ERR_OK;
 }
 
-std::vector<BundleActiveEvent> BundleActiveUserService::QueryBundleEvents(const int64_t beginTime, const int64_t endTime,
-    const int32_t userId, const std::string& bundleName)
+ErrCode BundleActiveUserService::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvent,
+    const int64_t beginTime, const int64_t endTime, const int32_t userId, const std::string& bundleName)
 {
     BUNDLE_ACTIVE_LOGI("QueryBundleEvents called");
-    std::vector<BundleActiveEvent> result;
     auto currentStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentStats == nullptr) {
         BUNDLE_ACTIVE_LOGE("current interval stat is null!");
-        return result;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
     if (beginTime >= currentStats->endTime_) {
-        return result;
+        return ERR_QUERY_TIME_OUT_OF_RANGE;
     }
     BUNDLE_ACTIVE_LOGI("Query event bundle name is %{public}s", bundleName.c_str());
-    result = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
-    BUNDLE_ACTIVE_LOGI("Query event data in db result size is %{public}zu", result.size());
+    bundleActiveEvent = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
+    BUNDLE_ACTIVE_LOGI("Query event data in db bundleActiveEvent size is %{public}zu", bundleActiveEvent.size());
     PrintInMemEventStats(debugUserService_);
-    // if we need a in-memory stats, combine current stats with result from database.
+    // if we need a in-memory stats, combine current stats with bundleActiveEvent from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryBundleEvents need in memory stats");
         int32_t eventBeginIdx = currentStats->events_.FindBestIndex(beginTime);
@@ -385,12 +384,12 @@ std::vector<BundleActiveEvent> BundleActiveUserService::QueryBundleEvents(const 
         for (int32_t i = eventBeginIdx; i < eventSize; i++) {
             if (currentStats->events_.events_[i].timeStamp_ <= endTime) {
                 if (bundleName.empty() || currentStats->events_.events_[i].bundleName_ == bundleName) {
-                    result.push_back(currentStats->events_.events_[i]);
+                    bundleActiveEvent.push_back(currentStats->events_.events_[i]);
                 }
             }
         }
     }
-    return result;
+    return ERR_OK;
 }
 
 int32_t BundleActiveUserService::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results)

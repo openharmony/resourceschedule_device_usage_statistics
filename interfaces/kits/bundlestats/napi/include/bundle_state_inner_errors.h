@@ -60,6 +60,86 @@ enum : int32_t {
     ERR_USAGE_STATS_METHOD_CALLED_FAILED,
     ERR_USAGE_STATS_INVALID_PARAM,
 };
+
+enum {
+    ERR_PERMISSION_DENIED = 201,
+    ERR_PARAM_ERROR = 401,
+    ERR_MEMORY_OPERATION_FAILED = 10000001,
+    ERR_PARCEL_WRITE_FALIED,
+    ERR_SYSTEM_SERVICE_OPERATION_FAILED,
+    ERR_IPC_COMMUNICATION_FAILED,
+    ERR_APPLICATION_IS_NOT_INSTALLED,
+    ERR_GET_APPLICATION_INFO_FAILED,
+    ERR_TIME_OPERATION_FAILED,
+    ERR_APPLICATION_GROUP_OPERATION_REPEATED = 10100001,
+    ERR_NO_APP_GROUP_INFO_IN_DATABASE,
+};
+
+enum ParamError {
+    ERR_PARAMETERS_NUMBER = 401001,
+    ERR_PARAMETERS_EMPTY,
+    ERR_BUNDLE_NAME_TYPE,
+    ERR_BEGIN_TIME_TYPE,
+    ERR_BEGIN_TIME_LESS_THEN_ZERO,
+    ERR_END_TIME_TYPE,
+    ERR_END_TIME_LESS_THEN_BEGIN_TIME,
+    ERR_BEGIN_TIME_BIGER_THEN_END_TIME,
+    ERR_INTERVAL_TYPE,
+    ERR_INTERVAL_OUT_OF_RANGE,
+    ERR_NEW_GROUP_TYPE,
+    ERR_NEW_GROUP_OUT_OF_RANGE,
+    ERR_MAX_RECORDS_NUM_TYPE,
+    ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND,
+    ERR_APP_GROUP_OBSERVER_CALLBACK_TYPE,
+    ERR_REPEAT_REGISTER_APP_GROUP_OBSERVER,
+    ERR_APP_GROUP_OBSERVER_IS_NULLPTR,
+    ERR_ASYNC_CALLBACK_NULLPTR,
+    ERR_ASYNC_CALLBACK_INIT_FAILED,
+};
+
+enum ServiceError {
+    ERR_GET_SYSTEM_ABILITY_MANAGER_FAILED = 10000201,
+    ERR_GET_SYSTEM_ABILITY_FAILED,
+    ERR_CHECK_SYSTEM_ABILITY_FAILED,
+    ERR_SYSTEM_SERVICES_NOT_READY,
+    ERR_REMOTE_OBJECT_IF_CAST_FAILED,
+    ERR_SYSTEM_ABILITY_SUPPORT_FAILED,
+    ERR_FIND_APP_USAGE_RECORDS_FAILED,
+    ERR_NO_RECORDS_INFO_BY_INTERVAL,
+    ERR_NO_RECORDS_INFO_BY_TIMES,
+    ERR_GET_ACTUAL_TIME_FAILED,
+    ERR_QUERY_TIME_OUT_OF_RANGE,
+    ERR_REPEAT_REGISTER_OR_DEREGISTER_GROUP_CALLBACK = 10100101,
+    ERR_REPEAT_SET_APP_GROUP,
+};
+
+static std::map<int32_t, std::string> saErrCodeMsgMap = {
+    {ERR_PARCEL_WRITE_FALIED, "Parcel operation failed. Failed to write the parcel."},
+    {ERR_GET_SYSTEM_ABILITY_MANAGER_FAILED, "System service operation failed. Failed to get system ability manager."},
+    {ERR_CHECK_SYSTEM_ABILITY_FAILED, "System service operation failed. Failed to get system ability."},
+    {ERR_SYSTEM_SERVICES_NOT_READY, "System service operation failed. The service is not ready."},
+    {ERR_IPC_COMMUNICATION_FAILED, "IPC communication failed. Failed to access the system service."},
+};
+
+static std::map<int32_t, std::string> paramErrCodeMsgMap = {
+    {ERR_PARAMETERS_EMPTY, " cannot be empty."},
+    {ERR_BUNDLE_NAME_TYPE, "The type of bundleName must be string."},
+    {ERR_BEGIN_TIME_TYPE, "The type of beginTime must be int64."},
+    {ERR_BEGIN_TIME_LESS_THEN_ZERO, "The beginTime value must be greater than or equal to 0."},
+    {ERR_END_TIME_TYPE, "The type of endTime must be int64."},
+    {ERR_END_TIME_LESS_THEN_BEGIN_TIME, "The endTime value must be greater than beginTime."},
+    {ERR_INTERVAL_TYPE, "The type of byInterval must be int32."},
+    {ERR_INTERVAL_OUT_OF_RANGE, "The value of byInterval must range from BY_OPTIMIZED to BY_ANNUALLY."},
+    {ERR_NEW_GROUP_TYPE, "The type of newGroup must be int32."},
+    {ERR_NEW_GROUP_OUT_OF_RANGE, "The type of newGroup must be int32."},
+    {ERR_MAX_RECORDS_NUM_TYPE, "The type of maxNum must be int32."},
+    {ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND, "The maxNum cannot exceed 1000."},
+    {ERR_APP_GROUP_OBSERVER_CALLBACK_TYPE, "The type of callback must be Callback<AppGroupCallbackInfo>."},
+    {ERR_REPEAT_REGISTER_APP_GROUP_OBSERVER, "Repeat register app group observer, one process only hava one observer"},
+    {ERR_APP_GROUP_OBSERVER_IS_NULLPTR, "App observer is nullptr, please register before unRegister."},
+    {ERR_ASYNC_CALLBACK_NULLPTR, "Create async callback info object failed."},
+    {ERR_ASYNC_CALLBACK_INIT_FAILED, "Init async callback info object failed."},
+};
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_INNER_ERRORS_H

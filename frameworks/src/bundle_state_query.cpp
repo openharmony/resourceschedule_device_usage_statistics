@@ -309,8 +309,8 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
         [](napi_env env, void *data) {
             AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = (AsyncQueryAppGroupCallbackInfo *)data;
             if (asyncCallbackInfo) {
-                asyncCallbackInfo->priorityGroup =
-                    BundleActiveClient::GetInstance().QueryAppGroup(asyncCallbackInfo->bundleName);
+                asyncCallbackInfo->errorCode = BundleActiveClient::GetInstance().QueryAppGroup(
+                    asyncCallbackInfo->priorityGroup, asyncCallbackInfo->bundleName);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryAppUsagePriorityGroup, asyncCallbackInfo == nullptr");
             }
@@ -422,9 +422,9 @@ napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info)
         [](napi_env env, void *data) {
             AsyncCallbackInfoStates *asyncCallbackInfo = (AsyncCallbackInfoStates *)data;
             if (asyncCallbackInfo != nullptr) {
-                asyncCallbackInfo->BundleActiveState =
-                    BundleActiveClient::GetInstance().QueryCurrentBundleEvents(asyncCallbackInfo->beginTime,
-                        asyncCallbackInfo->endTime);
+                asyncCallbackInfo->errorCode =
+                    BundleActiveClient::GetInstance().QueryCurrentBundleEvents(asyncCallbackInfo->BundleActiveState,
+                        asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryCurrentBundleActiveStates, asyncCallbackInfo == nullptr");
             }
@@ -488,9 +488,9 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
         [](napi_env env, void *data) {
             AsyncCallbackInfoStates *asyncCallbackInfo = (AsyncCallbackInfoStates *)data;
             if (asyncCallbackInfo != nullptr) {
-                asyncCallbackInfo->BundleActiveState =
-                    BundleActiveClient::GetInstance().QueryBundleEvents(asyncCallbackInfo->beginTime,
-                        asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
+                asyncCallbackInfo->errorCode =
+                    BundleActiveClient::GetInstance().QueryBundleEvents(asyncCallbackInfo->BundleActiveState,
+                        asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleActiveStates, asyncCallbackInfo == nullptr");
             }
@@ -615,9 +615,9 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
         [](napi_env env, void *data) {
             AsyncCallbackInfoAppUsageByInterval *asyncCallbackInfo = (AsyncCallbackInfoAppUsageByInterval *)data;
             if (asyncCallbackInfo != nullptr) {
-                asyncCallbackInfo->packageStats =
-                    BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(asyncCallbackInfo->intervalType,
-                        asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
+                asyncCallbackInfo->errorCode =
+                    BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(asyncCallbackInfo->packageStats,
+                        asyncCallbackInfo->intervalType, asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleStateInfoByInterval, asyncCallbackInfo == nullptr");
             }
@@ -918,8 +918,8 @@ napi_value QueryBundleActiveEventStates(napi_env env, napi_callback_info info)
         [](napi_env env, void *data) {
             AsyncCallbackInfoEventStats *asyncCallbackInfo = (AsyncCallbackInfoEventStats *)data;
             if (asyncCallbackInfo != nullptr) {
-                asyncCallbackInfo->errorCode = BundleActiveClient::GetInstance()
-                    .QueryDeviceEventStates(asyncCallbackInfo->beginTime,
+                asyncCallbackInfo->errorCode =
+                    BundleActiveClient::GetInstance().QueryDeviceEventStates(asyncCallbackInfo->beginTime,
                     asyncCallbackInfo->endTime, asyncCallbackInfo->eventStats);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryBundleActiveEventStates, asyncCallbackInfo == nullptr");
@@ -970,8 +970,8 @@ napi_value QueryAppNotificationNumber(napi_env env, napi_callback_info info)
         [](napi_env env, void *data) {
             AsyncCallbackInfoEventStats *asyncCallbackInfo = (AsyncCallbackInfoEventStats *)data;
             if (asyncCallbackInfo != nullptr) {
-                asyncCallbackInfo->errorCode = BundleActiveClient::GetInstance()
-                    .QueryNotificationNumber(asyncCallbackInfo->beginTime,
+                asyncCallbackInfo->errorCode =
+                    BundleActiveClient::GetInstance().QueryNotificationNumber(asyncCallbackInfo->beginTime,
                     asyncCallbackInfo->endTime, asyncCallbackInfo->eventStats);
             } else {
                 BUNDLE_ACTIVE_LOGE("QueryAppNotificationNumber, asyncCallbackInfo == nullptr");

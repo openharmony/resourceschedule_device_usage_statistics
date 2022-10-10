@@ -28,6 +28,7 @@
 #include "iapp_group_callback.h"
 #include "bundle_active_debug_mode.h"
 #include "bundle_active_stats_update_listener.h"
+#include "bundle_state_inner_errors.h"
 #include "bundle_active_user_service.h"
 #include "bundle_active_group_controller.h"
 #include "bundle_active_group_handler.h"
@@ -139,20 +140,20 @@ public:
     * parameters: userId, intervalType, beginTime, endTime, bundleName
     * return: vector of BundleActivePackageStats
     */
-    std::vector<BundleActivePackageStats> QueryBundleStatsInfos(const int32_t userId, const int32_t intervalType,
-        const int64_t beginTime, const int64_t endTime, std::string bundleName);
+    ErrCode QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& packageStats, const int32_t userId,
+        const int32_t intervalType, const int64_t beginTime, const int64_t endTime, std::string bundleName);
 
     // query the event stat for calling user.
-    std::vector<BundleActiveEvent> QueryBundleEvents(const int32_t userId, const int64_t beginTime,
-        const int64_t endTime, std::string bundleName);
+    ErrCode QueryBundleEvents(std::vector<BundleActiveEvent> eventsVector, const int32_t userId,
+        const int64_t beginTime, const int64_t endTime, std::string bundleName);
 
     // check the app idle state for calling user.
     int32_t IsBundleIdle(const std::string& bundleName, const int32_t userId);
 
     // query the app group for calling app.
-    int32_t QueryAppGroup(const std::string bundleName, const int32_t userId);
+    ErrCode QueryAppGroup(int32_t& appGroup, const std::string& bundleName, const int32_t userId);
 
-    int32_t QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId);
+    ErrCode QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId);
 
     /*
     * function: QueryDeviceEventStates, query all from event stats in specific time span for calling user.
@@ -160,7 +161,7 @@ public:
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    int32_t QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+    ErrCode QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
 
     /*
@@ -169,7 +170,7 @@ public:
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    int32_t QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+    ErrCode QueryNotificationNumber(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
 
     // get the wall time and check if the wall time is changed.
@@ -193,7 +194,7 @@ public:
     * parameters: bundleName, newGroup, userId, isFlush,
     * return: errorcode.
     */
-    int32_t SetAppGroup(
+    ErrCode SetAppGroup(
         const std::string& bundleName, const int32_t newGroup, const int32_t userId, const bool isFlush);
 
     // get all user in device.
@@ -208,17 +209,17 @@ public:
     /*
     * function: RegisterAppGroupCallBack, register the observer to groupObservers.
     * parameters: observer
-    * return: result of RegisterAppGroupCallBack, true or false.
+    * return: errCode.
     */
-    int32_t RegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+    ErrCode RegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
         const sptr<IAppGroupCallback> &observer);
 
     /*
     * function: UnRegisterAppGroupCallBack, remove the observer from groupObservers.
     * parameters: observer
-    * return: result of UnRegisterAppGroupCallBack, true or false.
+    * return: errCode.
     */
-    int32_t UnRegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+    ErrCode UnRegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
         const sptr<IAppGroupCallback> &observer);
 
     int32_t currentUsedUser_;

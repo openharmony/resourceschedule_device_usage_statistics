@@ -25,6 +25,7 @@
 #include "ibundle_active_service.h"
 #include "bundle_active_event.h"
 #include "bundle_active_user_history.h"
+#include "bundle_state_inner_errors.h"
 #include "bundle_mgr_interface.h"
 
 namespace OHOS {
@@ -70,7 +71,7 @@ public:
     bool IsBundleInstalled(const std::string& bundleName, const int32_t userId);
     bool IsScreenOn();
     int32_t IsBundleIdle(const std::string& bundleName, const int32_t userId);
-    int32_t QueryAppGroup(const std::string& bundleName, const int32_t userId);
+    ErrCode QueryAppGroup(int32_t& appGroup, const std::string& bundleName, const int32_t userId);
     void ShutDown(const int64_t bootBasedTimeStamp, const int32_t userId);
     void OnUserSwitched(const int32_t userId, const int32_t currentUsedUser);
 

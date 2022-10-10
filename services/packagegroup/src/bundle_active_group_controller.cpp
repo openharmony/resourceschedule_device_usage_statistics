@@ -314,16 +314,16 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     }
 }
 
-int32_t BundleActiveGroupController::SetAppGroup(const std::string& bundleName, const int32_t userId,
+ErrCode BundleActiveGroupController::SetAppGroup(const std::string& bundleName, const int32_t userId,
     int32_t newGroup, uint32_t reason, const int64_t bootBasedTimeStamp, const bool isFlush)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!IsBundleInstalled(bundleName, userId)) {
-        return -1;
+        return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
     auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName, userId, bootBasedTimeStamp, true);
     if (!oneBundleHistory) {
-        return -1;
+        return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
     return bundleUserHistory_->SetAppGroup(bundleName, userId, bootBasedTimeStamp, newGroup, reason, isFlush);
 }
@@ -348,25 +348,27 @@ int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName,
     }
 }
 
-int32_t BundleActiveGroupController::QueryAppGroup(const std::string& bundleName, const int32_t userId)
+ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
+    const std::string& bundleName, const int32_t userId)
 {
     if (bundleName.empty()) {
         BUNDLE_ACTIVE_LOGE("bundleName can not get by userId");
-        return -1;
+        return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     if (!IsBundleInstalled(bundleName, userId)) {
         BUNDLE_ACTIVE_LOGI("QueryAppGroup is not bundleInstalled");
-        return -1;
+        return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(
         bundleName, userId, bootBasedTimeStamp, false);
     if (!oneBundleHistory) {
-        return -1;
+        return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
     BUNDLE_ACTIVE_LOGI("QueryAppGroup group is %{public}d", oneBundleHistory->currentGroup_);
-    return oneBundleHistory->currentGroup_;
+    appGroup = oneBundleHistory->currentGroup_;
+    return ERR_OK;
 }
 
 bool BundleActiveGroupController::IsBundleInstalled(const std::string& bundleName, const int32_t userId)

@@ -39,6 +39,34 @@ AsyncWorkData::~AsyncWorkData()
     }
 }
 
+napi_value BundleStateCommon::HandleParamErr(const napi_env &env, int32_t errCode, const std::string& operation)
+{
+    if (errCode == ERR_OK) {
+        return nullptr;
+    }
+    BUNDLE_ACTIVE_LOGE("HandleParamErr %{public}d", errCode);
+    auto iter = paramErrCodeMsgMap.find(errCode);
+    if (iter != paramErrCodeMsgMap.end()) {
+        std::string errMessage = "BussinessError 401: Parameter error. ";
+        errMessage.append(operation);
+        errMessage.append(iter->second);
+        napi_throw_error(env, std::to_string(ERR_PARAM_ERROR).c_str(), errMessage.c_str());
+    }
+    return nullptr;
+}
+
+std::string BundleStateCommon::GetSaErrCodeMsg(int32_t errCode, int32_t reflectCode)
+{
+    BUNDLE_ACTIVE_LOGE("GetSaErrCodeMsg %{public}d", errCode);
+    auto iter = saErrCodeMsgMap.find(errCode);
+    std::string errMessage;
+    if (iter != saErrCodeMsgMap.end()) {
+        errMessage.append("BussinessError ");
+        errMessage.append(std::to_string(reflectCode)).append(":").append(iter->second);
+    }
+    return errMessage;
+}
+
 napi_value BundleStateCommon::NapiGetNull(napi_env env)
 {
     napi_value result = nullptr;
@@ -66,13 +94,7 @@ void BundleStateCommon::SetCallbackInfo(
     napi_value resultout = nullptr;
     napi_get_reference_value(env, callbackIn, &callback);
     napi_value results[ARGS_TWO] = {nullptr};
-    if (errorCode == -1) {
-        results[PARAM_FIRST] = GetErrorValue(env, ERR_SERVICE_FAILED);
-    } else if (errorCode == 1) {
-        results[PARAM_FIRST] = GetErrorValue(env, ERR_REPEAT_OPERATION);
-    } else {
-        results[PARAM_FIRST] = GetErrorValue(env, errorCode);
-    }
+    results[PARAM_FIRST] = GetErrorValue(env, errorCode);
     results[PARAM_SECOND] = result;
     NAPI_CALL_RETURN_VOID(env, napi_call_function(env, undefined, callback, ARGS_TWO, &results[PARAM_FIRST],
         &resultout));
@@ -309,16 +331,15 @@ void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred 
         case ERR_OK:
             napi_resolve_deferred(env, deferred, result);
             break;
-        case -1:
-            napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_SERVICE_FAILED));
-            break;
-        case 1:
-            napi_reject_deferred(env, deferred, GetErrorValue(env, ERR_REPEAT_OPERATION));
-            break;
         default:
             napi_reject_deferred(env, deferred, GetErrorValue(env, errorCode));
             break;
     }
+}
+
+int32_t BundleStateCommon::GetReflectErrCode(int32_t errCode, int32_t sysCapCode, int32_t startCode)
+{
+    return ((errCode >> 2) % sysCapCode) + startCode;
 }
 
 napi_value BundleStateCommon::GetErrorValue(napi_env env, int32_t errCode)
@@ -328,9 +349,14 @@ napi_value BundleStateCommon::GetErrorValue(napi_env env, int32_t errCode)
     }
     napi_value result = nullptr;
     napi_value eCode = nullptr;
+    napi_value eMsg = nullptr;
+    int32_t reflectCode = GetReflectErrCode(errCode, 100000, ERR_MEMORY_OPERATION_FAILED);
+    std::string errMsg = GetSaErrCodeMsg(errCode, reflectCode);
     NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
+    NAPI_CALL(env, napi_create_string_utf8(env, errMsg.c_str(), errMsg.length(), &eMsg));
     NAPI_CALL(env, napi_create_object(env, &result));
-    NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
+    NAPI_CALL(env, napi_set_named_property(env, result, "errCode", eCode));
+    NAPI_CALL(env, napi_set_named_property(env, result, "errMessage", eMsg));
     return result;
 }
 
@@ -427,8 +453,9 @@ void BundleStateCommon::SettingAsyncWorkData(
 std::shared_ptr<std::map<std::string, BundleActivePackageStats>> BundleStateCommon::QueryBundleStatsInfos(
     int64_t &beginTime, int64_t &endTime, int32_t &errCode)
 {
-    std::vector<BundleActivePackageStats> packageStats =
-        BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(INTERVAL_TYPE_DEFAULT, beginTime, endTime, errCode);
+    std::vector<BundleActivePackageStats> packageStats;
+    errCode = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats, INTERVAL_TYPE_DEFAULT,
+        beginTime, endTime);
     std::shared_ptr<std::map<std::string, BundleActivePackageStats>> mergedPackageStats =
         std::make_shared<std::map<std::string, BundleActivePackageStats>>();
     if (packageStats.empty()) {

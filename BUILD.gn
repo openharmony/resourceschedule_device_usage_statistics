@@ -25,6 +25,7 @@ config("usagestatsinner_public_config") {
     "services/packageusage/include",
     "services/packagegroup/include",
     "interfaces/innerkits/include",
+    "interfaces/kits/bundlestats/napi/include",
   ]
 }
 
