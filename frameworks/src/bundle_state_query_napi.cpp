@@ -455,14 +455,8 @@ napi_value QueryBundleStatsInfoByInterval(napi_env env, napi_callback_info info)
     napi_value promise = nullptr;
     std::unique_ptr<AsyncCallbackInfoAppUsageByInterval> callbackPtr {asyncCallbackInfo};
     callbackPtr->intervalType = params.intervalType;
-    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfoByInterval callbackPtr->intervalType: %{public}d",
-        callbackPtr->intervalType);
     callbackPtr->beginTime = params.beginTime;
-    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfoByInterval callbackPtr->beginTime: %{public}lld",
-        (long long)callbackPtr->beginTime);
     callbackPtr->endTime = params.endTime;
-    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfoByInterval callbackPtr->endTime: %{public}lld",
-        (long long)callbackPtr->endTime);
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
     NAPI_CALL(env, napi_create_string_latin1(env, "QueryBundleStatsInfoByInterval", NAPI_AUTO_LENGTH, &resourceName));

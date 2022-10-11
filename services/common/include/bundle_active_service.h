@@ -64,7 +64,7 @@ public:
     ErrCode IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId) override;
 
     /*
-    * function: QueryBundleStatsInfoByInterval, query all bundle usage statistics in specific time span for calling user.
+    * function: QueryBundleStatsInfoByInterval, query all usage statistics in specific time span for calling user.
     * parameters: intervalType, beginTime, endTime, errCode
     * return: vector of bundle usage statistics.
     */
@@ -182,7 +182,8 @@ private:
     void InitNecessaryState();
     void InitService();
     ErrCode GetBundleMgrProxy();
-    ErrCode CheckBundleIsSystemAppAndHasPermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId);
+    ErrCode CheckBundleIsSystemAppAndHasPermission(const int32_t uid,
+        OHOS::Security::AccessToken::AccessTokenID tokenId);
     ErrCode CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId);
     void InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     void InitContinuousSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);

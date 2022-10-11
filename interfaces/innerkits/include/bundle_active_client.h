@@ -130,7 +130,8 @@ public:
      * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
      * @return errCode.
      */
-    ErrCode QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId = -1);
+    ErrCode QueryModuleUsageRecords(int32_t maxNum,
+        std::vector<BundleActiveModuleRecord>& results, int32_t userId = -1);
 
     /**
      * @brief RegisterAppGroupCallBack, observe bundle group change event.

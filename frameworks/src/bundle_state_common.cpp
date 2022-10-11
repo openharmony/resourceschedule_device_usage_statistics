@@ -20,6 +20,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+const int ERR_MULTIPLE = 100;
 AsyncWorkData::AsyncWorkData(napi_env napiEnv)
 {
     env = napiEnv;
@@ -337,9 +338,12 @@ void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred 
     }
 }
 
-int32_t BundleStateCommon::GetReflectErrCode(int32_t errCode, int32_t sysCapCode, int32_t startCode)
+int32_t BundleStateCommon::GetReflectErrCode(int32_t errCode)
 {
-    return ((errCode >> 2) % sysCapCode) + startCode;
+    if (errCode > ERR_APPLICATION_GROUP_OPERATION_REPEATED * ERR_MULTIPLE) {
+        return errCode / ERR_MULTIPLE;
+    }
+    return errCode;
 }
 
 napi_value BundleStateCommon::GetErrorValue(napi_env env, int32_t errCode)

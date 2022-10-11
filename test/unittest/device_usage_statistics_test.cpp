@@ -119,7 +119,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryBundleEvents_
  * @tc.type: FUNC
  * @tc.require: SR000GGTO4 AR000GH6PF
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentBundleEvents_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest,
+    DeviceUsageStatisticsTest_QueryCurrentBundleEvents_001, Function | MediumTest | Level0)
 {
     std::vector<BundleActiveEvent> result;
     BundleActiveClient::GetInstance().QueryCurrentBundleEvents(result, 0, LARGE_NUM);
@@ -173,7 +174,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleIdle_001, 
  * @tc.type: FUNC
  * @tc.require: SR000GU2T1 AR000GU37U
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryModuleUsageRecords_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest,
+    DeviceUsageStatisticsTest_QueryModuleUsageRecords_001, Function | MediumTest | Level0)
 {
     int32_t maxNum = 1;
     BundleActiveEvent eventA(g_defaultBundleName, g_defaultMoudleName, g_defaultFormName,
@@ -191,7 +193,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryModuleUsageRe
  * @tc.type: FUNC
  * @tc.require: SR000H0HAQ AR000H0ROE
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterAppGroupCallBack_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest,
+    DeviceUsageStatisticsTest_RegisterAppGroupCallBack_001, Function | MediumTest | Level0)
 {
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack construct observer!");
@@ -262,7 +265,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_UnRegisterAppGroup
  * @tc.type: FUNC
  * @tc.require: SR000H0H9H AR000H0ROG
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryDeviceEventStates_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest,
+    DeviceUsageStatisticsTest_QueryDeviceEventStates_001, Function | MediumTest | Level0)
 {
     std::vector<BundleActiveEventStats> eventStats;
     int32_t errCode = BundleActiveClient::GetInstance().QueryDeviceEventStates(0, LARGE_NUM, eventStats);

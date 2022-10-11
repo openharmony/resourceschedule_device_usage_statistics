@@ -311,7 +311,8 @@ ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleAc
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
     if (ret == ERR_OK) {
         int32_t convertedIntervalType = ConvertIntervalType(intervalType);
-        ret = bundleActiveCore_->QueryBundleStatsInfos(PackageStats, userId, convertedIntervalType, beginTime, endTime, "");
+        ret = bundleActiveCore_->QueryBundleStatsInfos(
+            PackageStats, userId, convertedIntervalType, beginTime, endTime, "");
     }
     return ret;
 }
@@ -369,7 +370,7 @@ ErrCode BundleActiveService::SetAppGroup(const std::string& bundleName, int32_t 
 }
 
 ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& bundleActivePackageStats,
-        const int32_t intervalType, const int64_t beginTime, const int64_t endTime)
+    const int32_t intervalType, const int64_t beginTime, const int64_t endTime)
 {
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
@@ -399,7 +400,7 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
 }
 
 ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
-        const int64_t beginTime, const int64_t endTime)
+    const int64_t beginTime, const int64_t endTime)
 {
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
@@ -558,7 +559,7 @@ ErrCode BundleActiveService::CheckSystemAppOrNativePermission(const int32_t uid,
 ErrCode BundleActiveService::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
     int32_t userId)
 {
-    ErrCode errCode = ERR_OK; 
+    ErrCode errCode = ERR_OK;
     if (maxNum > MAXNUM_UP_LIMIT || maxNum <= 0) {
         BUNDLE_ACTIVE_LOGE("MaxNum is Invalid!");
         return errCode;

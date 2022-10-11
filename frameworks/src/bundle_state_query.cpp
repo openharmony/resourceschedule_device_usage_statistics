@@ -526,7 +526,8 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info &info, QueryBundleStatsParamsInfo &params)
+napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info &info,
+    QueryBundleStatsParamsInfo &params)
 {
     size_t argc = APP_USAGE_PARAMS;
     napi_value argv[APP_USAGE_PARAMS] = {nullptr};

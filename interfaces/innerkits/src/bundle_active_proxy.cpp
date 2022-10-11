@@ -154,12 +154,14 @@ ErrCode BundleActiveProxy::QueryBundleStatsInfos(std::vector<BundleActivePackage
         bundleActivePackageStats.push_back(*tmp);
     }
     for (uint32_t i = 0; i < bundleActivePackageStats.size(); i++) {
-        BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos bundleActivePackageStats idx is %{public}d, bundleName_ is %{public}s, "
+        BUNDLE_ACTIVE_LOGD("bundleActivePackageStats idx is %{public}d, bundleName_ is %{public}s, "
             "lastTimeUsed_ is %{public}lld, lastContiniousTaskUsed_ is %{public}lld, "
             "totalInFrontTime_ is %{public}lld, totalContiniousTaskUsedTime_ is %{public}lld",
             i + 1, bundleActivePackageStats[i].bundleName_.c_str(),
-            (long long)bundleActivePackageStats[i].lastTimeUsed_, (long long)bundleActivePackageStats[i].lastContiniousTaskUsed_,
-            (long long)bundleActivePackageStats[i].totalInFrontTime_, (long long)bundleActivePackageStats[i].totalContiniousTaskUsedTime_);
+            (long long)bundleActivePackageStats[i].lastTimeUsed_,
+            (long long)bundleActivePackageStats[i].lastContiniousTaskUsed_,
+            (long long)bundleActivePackageStats[i].totalInFrontTime_,
+            (long long)bundleActivePackageStats[i].totalContiniousTaskUsedTime_);
     }
     return errCode;
 }

@@ -571,7 +571,7 @@ ErrCode BundleActiveCore::QueryBundleStatsInfos(std::vector<BundleActivePackageS
         BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos service is null, failed");
         return ERR_MEMORY_OPERATION_FAILED;
     }
-    return service->QueryBundleStatsInfos(packageStats, intervalType, beginTime, endTime, userId, bundleName);;
+    return service->QueryBundleStatsInfos(packageStats, intervalType, beginTime, endTime, userId, bundleName);
 }
 
 ErrCode BundleActiveCore::QueryBundleEvents(std::vector<BundleActiveEvent> eventsVector, const int32_t userId,

@@ -64,7 +64,7 @@ public:
     virtual ErrCode IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId) = 0;
 
     /*
-    * function: QueryBundleStatsInfoByInterval, query all bundle usage statistics in specific time span for calling user.
+    * function: QueryBundleStatsInfoByInterval, query all usage statistics in specific time span for calling user.
     * parameters: intervalType, beginTime, endTime, errCode
     * return: errCode.
     */

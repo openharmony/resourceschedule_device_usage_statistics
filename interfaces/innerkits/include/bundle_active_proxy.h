@@ -43,11 +43,11 @@ public:
     ErrCode IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId = -1) override;
 
     /*
-    * function: QueryBundleStatsInfoByInterval, query all bundle usage statistics in specific time span for calling user.
+    * function: QueryBundleStatsInfoByInterval, query all usage statistics in specific time span for calling user.
     * parameters: intervalType, beginTime, endTime, errCode
     * return: vector of bundle usage statistics.
     */
-    ErrCode QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats, 
+    ErrCode QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
         const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId) override;
 
     /*
