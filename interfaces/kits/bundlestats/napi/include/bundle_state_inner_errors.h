@@ -98,27 +98,40 @@ enum ParamError {
 };
 
 enum ServiceError {
-    ERR_GET_SYSTEM_ABILITY_MANAGER_FAILED = 10000201,
+    ERR_GET_SYSTEM_ABILITY_MANAGER_FAILED = 10000301,
     ERR_GET_SYSTEM_ABILITY_FAILED,
     ERR_CHECK_SYSTEM_ABILITY_FAILED,
     ERR_SYSTEM_SERVICES_NOT_READY,
     ERR_REMOTE_OBJECT_IF_CAST_FAILED,
     ERR_SYSTEM_ABILITY_SUPPORT_FAILED,
-    ERR_FIND_APP_USAGE_RECORDS_FAILED,
+    ERR_FIND_APP_USAGE_RECORDS_FAILED = 10000601,
     ERR_NO_RECORDS_INFO_BY_INTERVAL,
     ERR_NO_RECORDS_INFO_BY_TIMES,
-    ERR_GET_ACTUAL_TIME_FAILED,
     ERR_QUERY_TIME_OUT_OF_RANGE,
+    ERR_GET_BUNDLE_USED_HISTORY_FAILED,
     ERR_REPEAT_REGISTER_OR_DEREGISTER_GROUP_CALLBACK = 10100101,
     ERR_REPEAT_SET_APP_GROUP,
 };
 
 static std::map<int32_t, std::string> saErrCodeMsgMap = {
+    {ERR_MEMORY_OPERATION_FAILED, "Parcel operation failed. Failed to write the parcel."},
     {ERR_PARCEL_WRITE_FALIED, "Parcel operation failed. Failed to write the parcel."},
     {ERR_GET_SYSTEM_ABILITY_MANAGER_FAILED, "System service operation failed. Failed to get system ability manager."},
+    {ERR_GET_SYSTEM_ABILITY_FAILED, "System service operation failed. Failed to get system ability manager."},
     {ERR_CHECK_SYSTEM_ABILITY_FAILED, "System service operation failed. Failed to get system ability."},
     {ERR_SYSTEM_SERVICES_NOT_READY, "System service operation failed. The service is not ready."},
+    {ERR_REMOTE_OBJECT_IF_CAST_FAILED, "System service operation failed. The service is not ready."},
+    {ERR_SYSTEM_ABILITY_SUPPORT_FAILED, "System service operation failed. The service is not ready."},
     {ERR_IPC_COMMUNICATION_FAILED, "IPC communication failed. Failed to access the system service."},
+    {ERR_APPLICATION_IS_NOT_INSTALLED, "System service operation failed. The service is not ready."},
+    {ERR_FIND_APP_USAGE_RECORDS_FAILED, "System service operation failed. The service is not ready."},
+    {ERR_NO_RECORDS_INFO_BY_INTERVAL, "System service operation failed. The service is not ready."},
+    {ERR_NO_RECORDS_INFO_BY_TIMES, "System service operation failed. The service is not ready."},
+    {ERR_QUERY_TIME_OUT_OF_RANGE, "System service operation failed. The service is not ready."},
+    {ERR_GET_BUNDLE_USED_HISTORY_FAILED, "System service operation failed. The service is not ready."},
+    {ERR_TIME_OPERATION_FAILED, "System service operation failed. The service is not ready."},
+    {ERR_REPEAT_REGISTER_OR_DEREGISTER_GROUP_CALLBACK, "System service operation failed. The service is not ready."},
+    {ERR_REPEAT_SET_APP_GROUP, "System service operation failed. The service is not ready."},
 };
 
 static std::map<int32_t, std::string> paramErrCodeMsgMap = {

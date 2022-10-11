@@ -57,14 +57,14 @@ public:
     /**
      * @brief QueryBundleStatsInfoByInterval, query all bundle usage statistics in specific time span for calling user.
      *
-     * @param PackageStats .
+     * @param bundleActivePackageStats .
      * @param intervalType .
      * @param beginTime .
      * @param endTime .
      * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
      * @return errCode.
      */
-    ErrCode QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
+    ErrCode QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& bundleActivePackageStats,
         const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId = -1);
 
     /**

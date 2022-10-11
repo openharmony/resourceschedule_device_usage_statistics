@@ -382,7 +382,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
     int64_t expectedSystemTime = (actualRealTime - realTimeShot_) + systemTimeShot_;
     int64_t diffSystemTime = actualSystemTime - expectedSystemTime;
     if (actualSystemTime == -1 || actualRealTime == -1) {
-        return ERR_GET_ACTUAL_TIME_FAILED;
+        return ERR_TIME_OPERATION_FAILED;
     }
     BUNDLE_ACTIVE_LOGD("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, "
         "diff is %{public}lld", (long long)actualSystemTime,
@@ -555,8 +555,8 @@ ErrCode BundleActiveCore::QueryBundleStatsInfos(std::vector<BundleActivePackageS
     BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos called");
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == ERR_GET_ACTUAL_TIME_FAILED) {
-        return ERR_GET_ACTUAL_TIME_FAILED;
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
     }
 
     BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos begin time is %{public}lld, end time is %{public}lld, "
@@ -581,8 +581,8 @@ ErrCode BundleActiveCore::QueryBundleEvents(std::vector<BundleActiveEvent> event
     std::vector<BundleActiveEvent> result;
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == ERR_GET_ACTUAL_TIME_FAILED) {
-        return ERR_GET_ACTUAL_TIME_FAILED;
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
     }
     if (beginTime > timeNow || beginTime >= endTime) {
         return ERR_QUERY_TIME_OUT_OF_RANGE;
@@ -599,8 +599,8 @@ ErrCode BundleActiveCore::QueryModuleUsageRecords(int32_t maxNum, std::vector<Bu
 {
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == ERR_GET_ACTUAL_TIME_FAILED) {
-        return ERR_GET_ACTUAL_TIME_FAILED;
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
     }
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (!service) {
@@ -614,8 +614,8 @@ ErrCode BundleActiveCore::QueryDeviceEventStates(int64_t beginTime, int64_t endT
 {
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == ERR_GET_ACTUAL_TIME_FAILED) {
-        return ERR_GET_ACTUAL_TIME_FAILED;
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
     }
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (!service) {
@@ -629,8 +629,8 @@ ErrCode BundleActiveCore::QueryNotificationNumber(int64_t beginTime, int64_t end
 {
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == ERR_GET_ACTUAL_TIME_FAILED) {
-        return ERR_GET_ACTUAL_TIME_FAILED;
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
     }
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (!service) {

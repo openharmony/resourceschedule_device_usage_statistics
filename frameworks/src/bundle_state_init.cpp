@@ -16,7 +16,6 @@
 #include "bundle_state_init.h"
 
 #include "bundle_state_condition.h"
-#include "bundle_active_group_observer.h"
 #include "bundle_state_query.h"
 #include "bundle_state_query_napi.h"
 #include "bundle_active_app_group_napi.h"
@@ -44,12 +43,6 @@ static napi_value BundleStateInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("queryBundleActiveStates", QueryBundleActiveStates),
         DECLARE_NAPI_FUNCTION("queryBundleStateInfoByInterval", QueryBundleStateInfoByInterval),
         DECLARE_NAPI_FUNCTION("queryBundleStateInfos", QueryBundleStateInfos),
-        DECLARE_NAPI_FUNCTION("getRecentlyUsedModules", GetModuleUsageRecord),
-        DECLARE_NAPI_FUNCTION("setBundleGroup", SetBundleGroup),
-        DECLARE_NAPI_FUNCTION("registerGroupCallBack", RegisterGroupCallBack),
-        DECLARE_NAPI_FUNCTION("unRegisterGroupCallBack", UnRegisterGroupCallBack),
-        DECLARE_NAPI_FUNCTION("queryBundleActiveEventStates", QueryBundleActiveEventStates),
-        DECLARE_NAPI_FUNCTION("queryAppNotificationNumber", QueryAppNotificationNumber)
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));

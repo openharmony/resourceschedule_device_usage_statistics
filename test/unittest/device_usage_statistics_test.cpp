@@ -110,8 +110,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, F
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryBundleEvents_001, Function | MediumTest | Level0)
 {
-    int32_t errCode = 0;
-    std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryBundleEvents(0, LARGE_NUM, errCode);
+    std::vector<BundleActiveEvent> result;
+    BundleActiveClient::GetInstance().QueryBundleEvents(result, 0, LARGE_NUM);
     EXPECT_EQ(result.size(), 1);
 }
 
@@ -123,7 +123,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryBundleEvents_
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentBundleEvents_001, Function | MediumTest | Level0)
 {
-    std::vector<BundleActiveEvent> result = BundleActiveClient::GetInstance().QueryCurrentBundleEvents(0, LARGE_NUM);
+    std::vector<BundleActiveEvent> result;
+    BundleActiveClient::GetInstance().QueryCurrentBundleEvents(result, 0, LARGE_NUM);
     EXPECT_EQ(result.size(), 0);
 }
 
@@ -135,23 +136,22 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentBundle
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackagesStats_001, Function | MediumTest | Level0)
 {
-    int32_t errCode = 0;
-    std::vector<BundleActivePackageStats> result = BundleActiveClient::GetInstance().QueryPackageStats(4, 0,
-        LARGE_NUM, errCode);
+    std::vector<BundleActivePackageStats> result;
+    BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(result, 4, 0, LARGE_NUM);
     EXPECT_EQ(result.size(), 0);
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryCurrentPackageStats_001
- * @tc.desc: querycurrentpackagestats
+ * @tc.name: DeviceUsageStatisticsTest_QueryBundleStatsInfos_001
+ * @tc.desc: QueryBundleStatsInfos
  * @tc.type: FUNC
  * @tc.require: issuesI5QJD9
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentPackageStats_001,
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryBundleStatsInfos_001,
     Function | MediumTest | Level0)
 {
-    std::vector<BundleActivePackageStats> result =
-        BundleActiveClient::GetInstance().QueryCurrentPackageStats(4, 0, LARGE_NUM);
+    std::vector<BundleActivePackageStats> result;
+    BundleActiveClient::GetInstance().QueryBundleStatsInfos(result, 4, 0, LARGE_NUM);
     EXPECT_EQ(result.size(), 0);
 }
 
@@ -163,41 +163,42 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryCurrentPackag
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleIdle_001, Function | MediumTest | Level0)
 {
-    int32_t errCode = 0;
-    bool result = BundleActiveClient::GetInstance().IsBundleIdle(g_defaultBundleName, errCode, DEFAULT_USERID);
+    bool result = false;
+    int32_t errCode = BundleActiveClient::GetInstance().IsBundleIdle(result, g_defaultBundleName, DEFAULT_USERID);
     EXPECT_EQ(result, false);
     EXPECT_EQ(errCode, 0);
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryFormStatistics_001
- * @tc.desc: QueryFormStatistics
+ * @tc.name: DeviceUsageStatisticsTest_QueryModuleUsageRecords_001
+ * @tc.desc: QueryModuleUsageRecords
  * @tc.type: FUNC
  * @tc.require: SR000GU2T1 AR000GU37U
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryFormStatistics_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryModuleUsageRecords_001, Function | MediumTest | Level0)
 {
     int32_t maxNum = 1;
     BundleActiveEvent eventA(g_defaultBundleName, g_defaultMoudleName, g_defaultFormName,
         DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_CLICKED);
     BundleActiveClient::GetInstance().ReportEvent(eventA, DEFAULT_USERID);
     std::vector<BundleActiveModuleRecord> results;
-    int32_t errCode = BundleActiveClient::GetInstance().QueryFormStatistics(maxNum, results, DEFAULT_USERID);
+    int32_t errCode = BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, results, DEFAULT_USERID);
     EXPECT_EQ(errCode, 0);
     EXPECT_EQ(results.size(), 0);
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_SetBundleGroup_001
- * @tc.desc: setbundlename
+ * @tc.name: DeviceUsageStatisticsTest_SetAppGroup_001
+ * @tc.desc: SetAppGroup
  * @tc.type: FUNC
  * @tc.require: SR000H0HAQ AR000H0ROE
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetAppGroup_001, Function | MediumTest | Level0)
 {
-    int32_t result = BundleActiveClient::GetInstance().QueryAppGroup(g_defaultBundleName, COMMON_USERID);
+    int32_t result = 0;
+    BundleActiveClient::GetInstance().QueryAppGroup(result, g_defaultBundleName, COMMON_USERID);
     DEFAULT_GROUP = (result == DEFAULT_GROUP) ? (result + 10) : DEFAULT_GROUP;
-    result = BundleActiveClient::GetInstance().SetBundleGroup(g_defaultBundleName, DEFAULT_GROUP, COMMON_USERID);
+    result = BundleActiveClient::GetInstance().SetAppGroup(g_defaultBundleName, DEFAULT_GROUP, COMMON_USERID);
     EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
 
@@ -209,8 +210,9 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetBundleGroup_001
  */
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryAppGroup_001, Function | MediumTest | Level0)
 {
-    BundleActiveClient::GetInstance().SetBundleGroup(g_defaultBundleName, DEFAULT_GROUP, COMMON_USERID);
-    int32_t result = BundleActiveClient::GetInstance().QueryAppGroup(g_defaultBundleName, COMMON_USERID);
+    BundleActiveClient::GetInstance().SetAppGroup(g_defaultBundleName, DEFAULT_GROUP, COMMON_USERID);
+    int32_t result = 0;
+    BundleActiveClient::GetInstance().QueryAppGroup(result, g_defaultBundleName, COMMON_USERID);
     bool flag = false;
     for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
         if (*item == result) {
@@ -222,64 +224,64 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryAppGroup_001,
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_RegisterGroupCallBack_001
- * @tc.desc: registercallback
+ * @tc.name: DeviceUsageStatisticsTest_RegisterAppGroupCallBack_001
+ * @tc.desc: RegisterAppGroupCallBack
  * @tc.type: FUNC
  * @tc.require: SR000H0HAQ AR000H0ROE
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterGroupCallBack_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterAppGroupCallBack_001, Function | MediumTest | Level0)
 {
     if (!observer) {
-        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack construct observer!");
-        observer = std::make_unique<BundleActiveGroupCallbackStub>().release();
+        BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack construct observer!");
+        observer = std::make_unique<AppGroupCallbackStub>().release();
     }
     ASSERT_NE(observer, nullptr);
-    int32_t result = BundleActiveClient::GetInstance().RegisterGroupCallBack(observer);
+    int32_t result = BundleActiveClient::GetInstance().RegisterAppGroupCallBack(observer);
     EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_UnRegisterGroupCallBack_001
- * @tc.desc: unregistercallback
+ * @tc.name: DeviceUsageStatisticsTest_UnRegisterAppGroupCallBack_001
+ * @tc.desc: UnRegisterAppGroupCallBack
  * @tc.type: FUNC
  * @tc.require: SR000H0HAQ AR000H0ROE
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_UnRegisterGroupCallBack_001,
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_UnRegisterAppGroupCallBack_001,
     Function | MediumTest | Level0)
 {
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("observer has been delete");
     }
     ASSERT_NE(observer, nullptr);
-    int32_t result = BundleActiveClient::GetInstance().UnregisterGroupCallBack(observer);
+    int32_t result = BundleActiveClient::GetInstance().UnRegisterAppGroupCallBack(observer);
     observer = nullptr;
     EXPECT_EQ(result, DEFAULT_ERRCODE);
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryEventStats_001
- * @tc.desc: QueryEventStats
+ * @tc.name: DeviceUsageStatisticsTest_QueryDeviceEventStates_001
+ * @tc.desc: QueryDeviceEventStates
  * @tc.type: FUNC
  * @tc.require: SR000H0H9H AR000H0ROG
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryEventStats_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryDeviceEventStates_001, Function | MediumTest | Level0)
 {
     std::vector<BundleActiveEventStats> eventStats;
-    int32_t errCode = BundleActiveClient::GetInstance().QueryEventStats(0, LARGE_NUM, eventStats);
+    int32_t errCode = BundleActiveClient::GetInstance().QueryDeviceEventStates(0, LARGE_NUM, eventStats);
     EXPECT_EQ(errCode, 0);
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryAppNotificationNumber_001
- * @tc.desc: QueryAppNotificationNumber
+ * @tc.name: DeviceUsageStatisticsTest_QueryNotificationNumber_001
+ * @tc.desc: QueryNotificationNumber
  * @tc.type: FUNC
  * @tc.require: SR000H0H7D AR000H0RR6
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryAppNotificationNumber_001, Function
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryNotificationNumber_001, Function
     | MediumTest | Level0)
 {
     std::vector<BundleActiveEventStats> eventStats;
-    int32_t errCode = BundleActiveClient::GetInstance().QueryAppNotificationNumber(0, LARGE_NUM, eventStats);
+    int32_t errCode = BundleActiveClient::GetInstance().QueryNotificationNumber(0, LARGE_NUM, eventStats);
     EXPECT_EQ(errCode, 0);
 }
 

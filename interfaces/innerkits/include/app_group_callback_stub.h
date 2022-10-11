@@ -37,8 +37,7 @@ public:
     * parameters: AppGroupCallbackInfo
     * return: void.
     */
-    virtual void OnAppGroupChanged(
-        const AppGroupCallbackInfo &appGroupCallbackInfo) override;
+    virtual void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
 private:
     DISALLOW_COPY_AND_MOVE(AppGroupCallbackStub);
 };
