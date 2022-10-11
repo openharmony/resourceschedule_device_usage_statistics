@@ -93,6 +93,7 @@ napi_value ParseQueryAppGroupParameters(const napi_env &env, const napi_callback
 
 napi_value QueryAppGroup(napi_env env, napi_callback_info info)
 {
+    BUNDLE_ACTIVE_LOGI("QueryAppGroup");
     QueryAppGroupParamsInfo params;
     AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = nullptr;
     ParseQueryAppGroupParameters(env, info, params, asyncCallbackInfo);

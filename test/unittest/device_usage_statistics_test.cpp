@@ -195,7 +195,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_RegisterAppGroupCa
 {
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack construct observer!");
-        observer = std::make_unique<BundleActiveGroupCallbackStub>().release();
+        observer = std::make_unique<AppGroupCallbackStub>().release();
     }
     ASSERT_NE(observer, nullptr);
     int32_t result = BundleActiveClient::GetInstance().RegisterAppGroupCallBack(observer);
