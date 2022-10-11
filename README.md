@@ -10,9 +10,11 @@
 
 ## Introduction<a name="section11660541593"></a>
 
-The **device usage statistics** includes app usage, notification usage, system usage and other usage statistics. For example, application usage statistics is used to save 
-and query application usage details, event log data and application grouping.The application records (usage history statistics and usage event records) cached by 
+The **device usage statistics** includes app usage, notification usage, system usage and other usage statistics. For example, application usage statistics is used to save
+and query application usage details, event log data and application grouping.The application records (usage history statistics and usage event records) cached by
 the component will be periodically refreshed to the database for persistent storage.
+
+![](figures/en-us_image001.png)
 
 ## Directory Structure<a name="section161941989596"></a>
 
@@ -34,7 +36,7 @@ the component will be periodically refreshed to the database for persistent stor
 
 ### Available APIs<a name="section1551164914237"></a>
 
-Device usage statistics interfaces include app usage, notification usage, system usage and other interfaces. 
+Device usage statistics interfaces include app usage, notification usage, system usage and other interfaces.
 Taking app usage interface as an example, the main exposed interfaces are as follows.
 
 <a name="table775715438253"></a>
@@ -76,13 +78,15 @@ Taking app usage interface as an example, the main exposed interfaces are as fol
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query the application notification times according to the start and end time(callback).</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppNotificationNumber(begin: number, end: number): Promise&lt;Array&lt;BundleActiveEventState&gt;&gt;</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query the application notification times according to the start and end time(Promise).</p>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>getRecentlyUsedModules(maxNum?: number, callback: AsyncCallback&lt;Array&lt;BundleActiveModuleInfo&gt;&gt;): void</p>
-<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query FA usage records. The maximum returned quantity does not exceed the value set by maxnum. FA usage records are sorted from near to far. The maximum maxnum is 1000. If the maxnum parameter is not filled in, the default maxnum is 1000(callback).</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>getRecentlyUsedModules(callback: AsyncCallback&lt;Array&lt;BundleActiveModuleInfo&gt;&gt;): void</p>
+<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query FA usage records. The maximum returned quantity does not exceed the value set by 1000.(callback)</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>getRecentlyUsedModules(maxNum: number, callback: AsyncCallback&lt;Array&lt;BundleActiveModuleInfo&gt;&gt;): void</p>
+<td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query FA usage records. The maximum returned quantity does not exceed the value set by maxnum. FA usage records are sorted from near to far. The maximum maxnum is 1000.(callback)
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>getRecentlyUsedModules(maxNum?: number): Promise&lt;Array&lt;BundleActiveModuleInfo&gt;&gt;</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query FA usage records. The maximum returned quantity does not exceed the value set by maxnum. FA usage records are sorted from near to far. The maximum maxnum is 1000. If the maxnum parameter is not filled in, the default maxnum is 1000(Promise).</p>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(bundleName? : string, callback: AsyncCallback&lt;number&gt;): void</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(bundleName : string, callback: AsyncCallback&lt;number&gt;): void</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query the group of the current application or the application of specified bundlename.</p>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(bundleName? : string): Promise&lt;number&gt;</p>
+<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>queryAppUsagePriorityGroup(bundleName : string): Promise&lt;number&gt;</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Query the group of the current application or the application of specified bundlename.</p>
 <tr id="row09311240175710"><td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>setBundleGroup(bundleName: string, newGroup: GroupType, callback: AsyncCallback&lt;void&gt;): void</p>
 <td class="cellrowborder" valign="top" width="50%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Set the group of the specified application as the group provided by the parameter(callback).</p>
