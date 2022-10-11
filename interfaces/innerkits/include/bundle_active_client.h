@@ -207,7 +207,7 @@ private:
         /*
         * function: OnServiceDiedInner, get bundleActiveProxy_ and RegisterAppGroupCallBack again.
         */
-        void OnServiceDiedInner(const wptr<IRemoteObject> &object);
+        void OnServiceDiedInner();
 
     private:
         sptr<IAppGroupCallback> observer_ = nullptr;

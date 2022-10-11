@@ -225,18 +225,15 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::RemoveObserver()
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &object)
 {
-    if (object == nullptr) {
-        BUNDLE_ACTIVE_LOGE("remote object is null.");
-        return;
-    }
+    (void)object;
     BundleActiveClient::GetInstance().bundleActiveProxy_ = nullptr;
-    BundleActiveClient::GetInstance().bundleClientHandler_->PostTask([this, &object]() {
-            this->OnServiceDiedInner(object);
+    BundleActiveClient::GetInstance().bundleClientHandler_->PostTask([this]() {
+            this->OnServiceDiedInner();
         },
         DELAY_TIME);
 }
 
-void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner(const wptr<IRemoteObject> &object)
+void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
 {
     while (!BundleActiveClient::GetInstance().GetBundleActiveProxy()) {
         sleep(SLEEP_TIME);
