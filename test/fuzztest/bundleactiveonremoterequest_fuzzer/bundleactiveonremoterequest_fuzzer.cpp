@@ -18,33 +18,34 @@
 #include "accesstoken_kit.h"
 #include "app_mgr_interface.h"
 
-#include "bundle_active_stub.h"
 #define private public
-#include "bundle_active_service.h"
+#include "system_ability_definition.h"
+#include "iservice_registry.h"
+#include "bundle_active_stub.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
     constexpr int32_t MIN_LEN = 4;
     constexpr int32_t MAX_CODE_TEST = 15; // current max code is 9
     static bool isInited = false;
+    std::mutex mutexLock;
+    sptr<IRemoteObject> remoteObject;
 
     bool DoInit()
     {
-        auto instance = DelayedSingleton<BundleActiveService>::GetInstance();
-        if (!instance->runner_) {
-            instance->runner_ = AppExecFwk::EventRunner::Create("device_usage_stats_init_handler");
+        std::lock_guard<std::mutex> lock(mutexLock);
+        if (remoteObject != nullptr) {
+            return true;
         }
-        if (!instance->runner_) {
+        sptr<ISystemAbilityManager> SystemAbilityManager =
+            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        if (SystemAbilityManager == nullptr) {
             return false;
         }
-
-        if (!instance->handler_) {
-            instance->handler_ = std::make_shared<OHOS::AppExecFwk::EventHandler>(instance->runner_);
-        }
-        if (!instance->handler_) {
+        remoteObject = SystemAbilityManager->GetSystemAbility(DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID);
+        if (remoteObject == nullptr) {
             return false;
         }
-        instance->InitNecessaryState();
         return true;
     }
 
@@ -52,7 +53,7 @@ namespace DeviceUsageStats {
     {
         MessageParcel reply;
         MessageOption option;
-        int32_t ret = DelayedSingleton<BundleActiveService>::GetInstance()->OnRemoteRequest(code, data, reply, option);
+        int32_t ret = remoteObject->SendRequest(code, data, reply, option);
         return ret;
     }
 
