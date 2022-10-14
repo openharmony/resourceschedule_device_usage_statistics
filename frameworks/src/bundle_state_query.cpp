@@ -24,8 +24,8 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-// const uint32_t IS_IDLE_STATE_MIN_PARAMS = 1;
-// const uint32_t IS_IDLE_STATE_PARAMS = 2;
+const uint32_t IS_IDLE_STATE_MIN_PARAMS = 1;
+const uint32_t IS_IDLE_STATE_PARAMS = 2;
 const uint32_t PRIORITY_GROUP_MIN_PARAMS = 0;
 const uint32_t PRIORITY_GROUP_MIDDLE_PARAMS = 1;
 const uint32_t PRIORITY_GROUP_PARAMS = 2;
@@ -38,96 +38,96 @@ const uint32_t APP_USAGE_PARAMS = 3;
 const uint32_t SECOND_ARG = 2;
 const uint32_t THIRD_ARG = 3;
 
-// napi_value ParseIsIdleStateParameters(const napi_env &env, const napi_callback_info &info,
-//     IsIdleStateParamsInfo &params)
-// {
-//     size_t argc = IS_IDLE_STATE_PARAMS;
-//     napi_value argv[IS_IDLE_STATE_PARAMS] = {nullptr};
-//     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
-//     NAPI_ASSERT(env, argc == IS_IDLE_STATE_MIN_PARAMS || argc == IS_IDLE_STATE_PARAMS,
-//         "Invalid number of parameters");
+napi_value ParseIsIdleStateParameters(const napi_env &env, const napi_callback_info &info,
+    IsIdleStateParamsInfo &params)
+{
+    size_t argc = IS_IDLE_STATE_PARAMS;
+    napi_value argv[IS_IDLE_STATE_PARAMS] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    NAPI_ASSERT(env, argc == IS_IDLE_STATE_MIN_PARAMS || argc == IS_IDLE_STATE_PARAMS,
+        "Invalid number of parameters");
 
-//     // argv[0] : bundleName
-//     std::string result = "";
-//     params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
-//     if (params.bundleName.empty()) {
-//         BUNDLE_ACTIVE_LOGE("ParseIsIdleStateParameters failed, bundleName is empty.");
-//         params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
-//     }
-//     napi_valuetype valuetype;
-//     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-//     if ((valuetype != napi_string) && (params.errorCode == ERR_OK)) {
-//         BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
-//         params.errorCode = ERR_USAGE_STATS_BUNDLENAME_TYPE;
-//     }
+    // argv[0] : bundleName
+    std::string result = "";
+    params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
+    if (params.bundleName.empty()) {
+        BUNDLE_ACTIVE_LOGE("ParseIsIdleStateParameters failed, bundleName is empty.");
+        params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
+    }
+    napi_valuetype valuetype;
+    NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
+    if ((valuetype != napi_string) && (params.errorCode == ERR_OK)) {
+        BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
+        params.errorCode = ERR_USAGE_STATS_BUNDLENAME_TYPE;
+    }
 
-//     // argv[1]: callback
-//     if (argc == IS_IDLE_STATE_PARAMS) {
-//         napi_valuetype valuetype = napi_undefined;
-//         NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-//         NAPI_ASSERT(env, valuetype == napi_function,
-//             "ParseIsIdleStateParameters invalid parameter type, function expected.");
-//         napi_create_reference(env, argv[1], 1, &params.callback);
-//     }
-//     return BundleStateCommon::NapiGetNull(env);
-// }
+    // argv[1]: callback
+    if (argc == IS_IDLE_STATE_PARAMS) {
+        napi_valuetype valuetype = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
+        NAPI_ASSERT(env, valuetype == napi_function,
+            "ParseIsIdleStateParameters invalid parameter type, function expected.");
+        napi_create_reference(env, argv[1], 1, &params.callback);
+    }
+    return BundleStateCommon::NapiGetNull(env);
+}
 
-// napi_value IsIdleState(napi_env env, napi_callback_info info)
-// {
-//     IsIdleStateParamsInfo params;
-//     ParseIsIdleStateParameters(env, info, params);
-//     if (params.errorCode != ERR_OK) {
-//         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
-//     }
-//     napi_value promise = nullptr;
-//     AsyncCallbackInfoIsIdleState *asyncCallbackInfo =
-//         new (std::nothrow) AsyncCallbackInfoIsIdleState(env);
-//     if (!asyncCallbackInfo) {
-//         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
-//         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
-//     }
-//     if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
-//         params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
-//         delete asyncCallbackInfo;
-//         asyncCallbackInfo = nullptr;
-//         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
-//     }
-//     std::unique_ptr<AsyncCallbackInfoIsIdleState> callbackPtr {asyncCallbackInfo};
-//     callbackPtr->bundleName = params.bundleName;
-//     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
-//     napi_value resourceName = nullptr;
-//     NAPI_CALL(env, napi_create_string_latin1(env, "IsIdleState", NAPI_AUTO_LENGTH, &resourceName));
-//     NAPI_CALL(env, napi_create_async_work(env,
-//         nullptr,
-//         resourceName,
-//         [](napi_env env, void *data) {
-//             AsyncCallbackInfoIsIdleState *asyncCallbackInfo = (AsyncCallbackInfoIsIdleState *)data;
-//             if (asyncCallbackInfo != nullptr) {
-//                 asyncCallbackInfo->state = BundleActiveClient::GetInstance().IsBundleIdle(
-//                     asyncCallbackInfo->bundleName, asyncCallbackInfo->errorCode);
-//             } else {
-//                 BUNDLE_ACTIVE_LOGE("IsIdleState, asyncCallbackInfo == nullptr");
-//             }
-//         },
-//         [](napi_env env, napi_status status, void *data) {
-//             AsyncCallbackInfoIsIdleState *asyncCallbackInfo = (AsyncCallbackInfoIsIdleState *)data;
-//             if (asyncCallbackInfo != nullptr) {
-//                 napi_value result = nullptr;
-//                 napi_get_boolean(env, asyncCallbackInfo->state, &result);
-//                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
-//             }
-//         },
-//         (void *)asyncCallbackInfo,
-//         &asyncCallbackInfo->asyncWork));
-//     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-//     if (callbackPtr->isCallback) {
-//         callbackPtr.release();
-//         return BundleStateCommon::NapiGetNull(env);
-//     } else {
-//         callbackPtr.release();
-//         return promise;
-//     }
-// }
+napi_value IsIdleState(napi_env env, napi_callback_info info)
+{
+    IsIdleStateParamsInfo params;
+    ParseIsIdleStateParameters(env, info, params);
+    if (params.errorCode != ERR_OK) {
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    napi_value promise = nullptr;
+    AsyncCallbackInfoIsIdleState *asyncCallbackInfo =
+        new (std::nothrow) AsyncCallbackInfoIsIdleState(env);
+    if (!asyncCallbackInfo) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
+        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+    }
+    std::unique_ptr<AsyncCallbackInfoIsIdleState> callbackPtr {asyncCallbackInfo};
+    callbackPtr->bundleName = params.bundleName;
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, "IsIdleState", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env,
+        nullptr,
+        resourceName,
+        [](napi_env env, void *data) {
+            AsyncCallbackInfoIsIdleState *asyncCallbackInfo = (AsyncCallbackInfoIsIdleState *)data;
+            if (asyncCallbackInfo != nullptr) {
+                asyncCallbackInfo->errorCode = BundleActiveClient::GetInstance().IsBundleIdle(asyncCallbackInfo->state,
+                    asyncCallbackInfo->bundleName);
+            } else {
+                BUNDLE_ACTIVE_LOGE("IsIdleState, asyncCallbackInfo == nullptr");
+            }
+        },
+        [](napi_env env, napi_status status, void *data) {
+            AsyncCallbackInfoIsIdleState *asyncCallbackInfo = (AsyncCallbackInfoIsIdleState *)data;
+            if (asyncCallbackInfo != nullptr) {
+                napi_value result = nullptr;
+                napi_get_boolean(env, asyncCallbackInfo->state, &result);
+                BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
+            }
+        },
+        (void *)asyncCallbackInfo,
+        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
+        return BundleStateCommon::NapiGetNull(env);
+    } else {
+        callbackPtr.release();
+        return promise;
+    }
+}
 
 napi_value ParsePriorityGroupParameters(const napi_env &env, const napi_callback_info &info,
     QueryAppGroupParamsInfo &params, AsyncQueryAppGroupCallbackInfo* &asyncCallbackInfo)

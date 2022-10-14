@@ -374,7 +374,6 @@ ErrCode BundleActiveUserService::QueryBundleEvents(std::vector<BundleActiveEvent
     }
     BUNDLE_ACTIVE_LOGI("Query event bundle name is %{public}s", bundleName.c_str());
     bundleActiveEvent = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
-    BUNDLE_ACTIVE_LOGI("Query event data in db bundleActiveEvent size is %{public}zu", bundleActiveEvent.size());
     PrintInMemEventStats(debugUserService_);
     // if we need a in-memory stats, combine current stats with bundleActiveEvent from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
@@ -389,6 +388,7 @@ ErrCode BundleActiveUserService::QueryBundleEvents(std::vector<BundleActiveEvent
             }
         }
     }
+    BUNDLE_ACTIVE_LOGI("QueryBundleEvents bundleActiveEvent is %{public}zu", bundleActiveEvent.size());
     return ERR_OK;
 }
 
@@ -411,35 +411,35 @@ int32_t BundleActiveUserService::QueryModuleUsageRecords(int32_t maxNum, std::ve
     return 0;
 }
 
-int32_t BundleActiveUserService::QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+int32_t BundleActiveUserService::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("QueryDeviceEventStates called");
+    BUNDLE_ACTIVE_LOGI("QueryDeviceEventStats called");
     auto currentStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentStats == nullptr) {
         BUNDLE_ACTIVE_LOGE("current interval stat is null!");
-        return BUNDLE_ACTIVE_FAIL;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
     if (beginTime >= currentStats->endTime_) {
-        return BUNDLE_ACTIVE_FAIL;
+        return ERR_TIME_OPERATION_FAILED;
     }
     std::map<std::string, BundleActiveEventStats> systemEventStats;
-    database_.QueryDeviceEventStates(BundleActiveEvent::SYSTEM_LOCK, beginTime, endTime, systemEventStats, userId);
-    database_.QueryDeviceEventStates(BundleActiveEvent::SYSTEM_UNLOCK, beginTime, endTime, systemEventStats, userId);
-    database_.QueryDeviceEventStates(BundleActiveEvent::SYSTEM_SLEEP, beginTime, endTime, systemEventStats, userId);
-    database_.QueryDeviceEventStates(BundleActiveEvent::SYSTEM_WAKEUP, beginTime, endTime, systemEventStats, userId);
+    database_.QueryDeviceEventStats(BundleActiveEvent::SYSTEM_LOCK, beginTime, endTime, systemEventStats, userId);
+    database_.QueryDeviceEventStats(BundleActiveEvent::SYSTEM_UNLOCK, beginTime, endTime, systemEventStats, userId);
+    database_.QueryDeviceEventStats(BundleActiveEvent::SYSTEM_SLEEP, beginTime, endTime, systemEventStats, userId);
+    database_.QueryDeviceEventStats(BundleActiveEvent::SYSTEM_WAKEUP, beginTime, endTime, systemEventStats, userId);
     BUNDLE_ACTIVE_LOGI("Query eventStats data in db result size is %{public}zu", systemEventStats.size());
     PrintInMemEventStats(debugUserService_);
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
-        BUNDLE_ACTIVE_LOGI("QueryDeviceEventStates need in memory stats");
+        BUNDLE_ACTIVE_LOGI("QueryDeviceEventStats need in memory stats");
         GetCachedSystemEvents(currentStats, beginTime, endTime, systemEventStats);
     }
     std::map<std::string, BundleActiveEventStats>::iterator iter;
     for (iter = systemEventStats.begin(); iter != systemEventStats.end(); ++iter) {
         eventStats.push_back(iter->second);
     }
-    return BUNDLE_ACTIVE_SUCCESS;
+    return ERR_OK;
 }
 
 void BundleActiveUserService::GetCachedSystemEvents(std::shared_ptr<BundleActivePeriodStats> currentStats,
@@ -469,33 +469,33 @@ void BundleActiveUserService::GetCachedSystemEvents(std::shared_ptr<BundleActive
     }
 }
 
-int32_t BundleActiveUserService::QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+int32_t BundleActiveUserService::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("QueryNotificationNumber called");
+    BUNDLE_ACTIVE_LOGI("QueryNotificationEventStats called");
     auto currentStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentStats == nullptr) {
         BUNDLE_ACTIVE_LOGE("current interval stat is null!");
-        return BUNDLE_ACTIVE_FAIL;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
     if (beginTime >= currentStats->endTime_) {
-        return BUNDLE_ACTIVE_FAIL;
+        return ERR_TIME_OPERATION_FAILED;
     }
     std::map<std::string, BundleActiveEventStats> notificationEventStats;
-    database_.QueryNotificationNumber(BundleActiveEvent::NOTIFICATION_SEEN,
+    database_.QueryNotificationEventStats(BundleActiveEvent::NOTIFICATION_SEEN,
         beginTime, endTime, notificationEventStats, userId);
     BUNDLE_ACTIVE_LOGI("Query eventStats data in db result size is %{public}zu", notificationEventStats.size());
     PrintInMemEventStats(debugUserService_);
     // if we need a in-memory stats, combine current stats with result from database.
     if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
-        BUNDLE_ACTIVE_LOGI("QueryNotificationNumber need in memory stats");
+        BUNDLE_ACTIVE_LOGI("QueryNotificationEventStats need in memory stats");
         GetCachedNotificationEvents(currentStats, beginTime, endTime, notificationEventStats);
     }
     std::map<std::string, BundleActiveEventStats>::iterator iter;
     for (iter = notificationEventStats.begin(); iter != notificationEventStats.end(); ++iter) {
         eventStats.push_back(iter->second);
     }
-    return BUNDLE_ACTIVE_SUCCESS;
+    return ERR_OK;
 }
 
 void BundleActiveUserService::GetCachedNotificationEvents(std::shared_ptr<BundleActivePeriodStats> currentStats,

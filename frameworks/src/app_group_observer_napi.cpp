@@ -51,11 +51,11 @@ napi_value SetBundleGroupChangedData(const CallbackReceiveDataWorker *commonEven
 
     // oldGroup
     napi_create_int32(commonEventDataWorkerData->env, commonEventDataWorkerData->oldGroup, &value);
-    napi_set_named_property(commonEventDataWorkerData->env, result, "appUsageOldGroup", value);
+    napi_set_named_property(commonEventDataWorkerData->env, result, "appOldGroup", value);
 
     // newGroup
     napi_create_int32(commonEventDataWorkerData->env, commonEventDataWorkerData->newGroup, &value);
-    napi_set_named_property(commonEventDataWorkerData->env, result, "appUsageNewGroup", value);
+    napi_set_named_property(commonEventDataWorkerData->env, result, "appNewGroup", value);
 
     // userId
     napi_create_int32(commonEventDataWorkerData->env, commonEventDataWorkerData->userId, &value);
@@ -69,7 +69,7 @@ napi_value SetBundleGroupChangedData(const CallbackReceiveDataWorker *commonEven
         commonEventDataWorkerData->env, commonEventDataWorkerData->bundleName.c_str(), NAPI_AUTO_LENGTH, &value);
     napi_set_named_property(commonEventDataWorkerData->env, result, "bundleName", value);
     BUNDLE_ACTIVE_LOGD(
-        "RegisterGroupCallBack appUsageOldGroup = %{public}d, appUsageNewGroup = %{public}d, userId=%{public}d, "
+        "RegisterGroupCallBack appOldGroup = %{public}d, appNewGroup = %{public}d, userId=%{public}d, "
         "changeReason=%{public}d, bundleName=%{public}s",
         commonEventDataWorkerData->oldGroup, commonEventDataWorkerData->newGroup, commonEventDataWorkerData->userId,
         commonEventDataWorkerData->changeReason, commonEventDataWorkerData->bundleName.c_str());

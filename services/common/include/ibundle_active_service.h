@@ -133,21 +133,21 @@ public:
     virtual ErrCode UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) = 0;
 
     /*
-    * function: QueryDeviceEventStates, query all from event stats in specific time span for calling user.
+    * function: QueryDeviceEventStats, query all from event stats in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    virtual ErrCode QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+    virtual ErrCode QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) = 0;
 
     /*
-    * function: QueryNotificationNumber, query all app notification number in specific time span for calling user.
+    * function: QueryNotificationEventStats, query all app notification number in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    virtual ErrCode QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+    virtual ErrCode QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) = 0;
 public:
     enum {

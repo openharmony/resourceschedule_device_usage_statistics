@@ -31,6 +31,7 @@ declare namespace usageStatistics {
     /**
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
      */
     interface BundleStatsInfo {
         /**
@@ -75,17 +76,6 @@ declare namespace usageStatistics {
          * in milliseconds.
          */
         infosEndTime?: number;
-
-        /**
-         * Merges a specified {@link BundleActiveInfo} object with this {@link BundleActiveInfo} object.
-         * The bundle name of both objects must be the same.
-         *
-         * @since 9
-         * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
-         * @param toMerge Indicates the {@link BundleActiveInfo} object to merge.
-         * if the bundle names of the two {@link BundleActiveInfo} objects are different.
-         */
-        merge(toMerge: BundleStatsInfo): void;
     }
 
     /**
@@ -173,7 +163,7 @@ declare namespace usageStatistics {
         /**
          * the form usage record list of current module.
          */
-        formRecords: Array<HapModuleInfo>;
+        formRecords: Array<HapFormInfo>;
     }
 
     /**
@@ -201,12 +191,34 @@ declare namespace usageStatistics {
     /**
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     */
+     interface NotificationEventStats {
+        /**
+         * the bundle name or notification event name.
+         */
+        name: string;
+
+        /**
+         * the event id.
+         */
+        eventId: number;
+
+        /**
+         * the the event occurrence number.
+         */
+        count: number;
+    }
+
+    /**
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      */
      interface BundleEvents {
         /**
          * the usage group of the application.
          */
-        appUsageGroup?: number;
+        appGroup?: number;
         /**
          * the bundle name.
          */
@@ -224,7 +236,7 @@ declare namespace usageStatistics {
          */
         eventOccurredTime?: number;
         /**
-         * the event type.
+         * the event id.
          */
         eventId?: number;
     }
@@ -237,11 +249,11 @@ declare namespace usageStatistics {
         /*
          * the usage old group of the application
          */
-        appUsageOldGroup: number;
+        appOldGroup: number;
         /*
          * the usage new group of the application
          */
-        appUsageNewGroup: number;
+        appNewGroup: number;
         /*
          * the use id
          */
@@ -303,6 +315,7 @@ declare namespace usageStatistics {
     /**
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
      */
      interface BundleStatsMap {
         [key: string]: BundleStatsInfo;
@@ -338,6 +351,7 @@ declare namespace usageStatistics {
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
      */
     export enum IntervalType {
         /**
@@ -607,7 +621,7 @@ declare namespace usageStatistics {
     function unRegisterAppGroupCallBack(): Promise<void>;
 
     /** 
-     * Queries system event states data within a specified period identified by the start and end time.
+     * Queries device event states data within a specified period identified by the start and end time.
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
@@ -626,8 +640,8 @@ declare namespace usageStatistics {
      * @throws { BusinessError } 10000007 - Get system or actual time failed.
      * @return Returns the {@link DeviceEventStats} object Array containing the event states data.
      */
-    function queryDeviceEventStates(begin: number, end: number, callback: AsyncCallback<Array<DeviceEventStats>>): void;
-    function queryDeviceEventStates(begin: number, end: number): Promise<Array<DeviceEventStats>>;
+    function queryDeviceEventStats(begin: number, end: number, callback: AsyncCallback<Array<DeviceEventStats>>): void;
+    function queryDeviceEventStats(begin: number, end: number): Promise<Array<DeviceEventStats>>;
 
     /**
      * Queries app notification number within a specified period identified by the start and end time.
@@ -647,10 +661,10 @@ declare namespace usageStatistics {
      * @throws { BusinessError } 10000004 - IPC Communication failed.
      * @throws { BusinessError } 10000006 - Get application info failed.
      * @throws { BusinessError } 10000007 - Get system or actual time failed.
-     * @return Returns the {@link DeviceEventStats} object Array containing the event states data.
+     * @return Returns the {@link NotificationEventStats} object Array containing the event states data.
      */
-    function queryNotificationNumber(begin: number, end: number, callback: AsyncCallback<Array<DeviceEventStats>>): void;
-    function queryNotificationNumber(begin: number, end: number): Promise<Array<DeviceEventStats>>;
+    function queryNotificationEventStats(begin: number, end: number, callback: AsyncCallback<Array<NotificationEventStats>>): void;
+    function queryNotificationEventStats(begin: number, end: number): Promise<Array<NotificationEventStats>>;
 }
 
 export default usageStatistics;

@@ -124,35 +124,6 @@ declare namespace bundleState {
          */
         stateType?: number;
     }
-    /**
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
-     * @systemapi Hide this for inner system use.
-     * @deprecated since 9
-     * @useinstead @ohos.resourceschedule.usageStatistics
-     */
-    interface BundleActiveGroupCallbackInfo {
-        /*
-         * the usage old group of the application
-         */
-        appUsageOldGroup: number;
-        /*
-         * the usage new group of the application
-         */
-        appUsageNewGroup: number;
-        /*
-         * the use id
-         */
-        userId: number;
-        /*
-         * the change reason
-         */
-        changeReason: number;
-        /*
-         * the bundle name
-         */
-        bundleName: string;
-    }
 
     /**
      * Checks whether the application with a specified bundle name is in the idle state.

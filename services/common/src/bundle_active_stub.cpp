@@ -132,10 +132,11 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             return size == 0;
         }
         case QUERY_APP_GROUP: {
-            int32_t appGroup = data.ReadInt32();
+            int32_t appGroup = -1;
             std::string bundleName = data.ReadString();
             int32_t userId = data.ReadInt32();
             ErrCode errCode = QueryAppGroup(appGroup, bundleName, userId);
+            reply.WriteInt32(appGroup);
             return reply.WriteInt32(errCode);
         }
         case QUERY_MODULE_USAGE_RECORDS: {
@@ -178,7 +179,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             int32_t userId = data.ReadInt32();
-            ErrCode errCode = QueryDeviceEventStates(beginTime, endTime, result, userId);
+            ErrCode errCode = QueryDeviceEventStats(beginTime, endTime, result, userId);
             int32_t size = static_cast<int32_t>(result.size());
             reply.WriteInt32(errCode);
             reply.WriteInt32(size);
@@ -195,7 +196,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
             int32_t userId = data.ReadInt32();
-            ErrCode errCode = QueryNotificationNumber(beginTime, endTime, result, userId);
+            ErrCode errCode = QueryNotificationEventStats(beginTime, endTime, result, userId);
             int32_t size = static_cast<int32_t>(result.size());
             reply.WriteInt32(errCode);
             reply.WriteInt32(size);

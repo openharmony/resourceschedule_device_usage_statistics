@@ -108,7 +108,9 @@ ErrCode BundleActiveClient::QueryBundleEvents(std::vector<BundleActiveEvent>& bu
     if (ret != ERR_OK) {
         return ret;
     }
-    return bundleActiveProxy_->QueryBundleEvents(bundleActiveEvents, beginTime, endTime, userId);
+    auto err = bundleActiveProxy_->QueryBundleEvents(bundleActiveEvents, beginTime, endTime, userId);
+    BUNDLE_ACTIVE_LOGI("QueryBundleEvents bundleActiveEvents is %{public}zu", bundleActiveEvents.size());
+    return err;
 }
 
 ErrCode BundleActiveClient::SetAppGroup(std::string bundleName, const int32_t newGroup, int32_t userId)
@@ -189,24 +191,24 @@ ErrCode BundleActiveClient::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallb
     return ret;
 }
 
-ErrCode BundleActiveClient::QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveClient::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
     }
-    return bundleActiveProxy_->QueryDeviceEventStates(beginTime, endTime, eventStats, userId);
+    return bundleActiveProxy_->QueryDeviceEventStats(beginTime, endTime, eventStats, userId);
 }
 
-ErrCode BundleActiveClient::QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveClient::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
     }
-    return bundleActiveProxy_->QueryNotificationNumber(beginTime, endTime, eventStats, userId);
+    return bundleActiveProxy_->QueryNotificationEventStats(beginTime, endTime, eventStats, userId);
 }
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const sptr<IAppGroupCallback> &observer)

@@ -574,11 +574,10 @@ ErrCode BundleActiveCore::QueryBundleStatsInfos(std::vector<BundleActivePackageS
     return service->QueryBundleStatsInfos(packageStats, intervalType, beginTime, endTime, userId, bundleName);
 }
 
-ErrCode BundleActiveCore::QueryBundleEvents(std::vector<BundleActiveEvent> eventsVector, const int32_t userId,
+ErrCode BundleActiveCore::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvent, const int32_t userId,
     const int64_t beginTime, const int64_t endTime, std::string bundleName)
 {
     BUNDLE_ACTIVE_LOGD("QueryBundleEvents called");
-    std::vector<BundleActiveEvent> result;
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == ERR_TIME_OPERATION_FAILED) {
@@ -591,7 +590,8 @@ ErrCode BundleActiveCore::QueryBundleEvents(std::vector<BundleActiveEvent> event
     if (service == nullptr) {
         return ERR_MEMORY_OPERATION_FAILED;
     }
-    return service->QueryBundleEvents(eventsVector, beginTime, endTime, userId, bundleName);
+    auto item = service->QueryBundleEvents(bundleActiveEvent, beginTime, endTime, userId, bundleName);
+    return item;
 }
 
 ErrCode BundleActiveCore::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
@@ -609,7 +609,7 @@ ErrCode BundleActiveCore::QueryModuleUsageRecords(int32_t maxNum, std::vector<Bu
     return service->QueryModuleUsageRecords(maxNum, results);
 }
 
-ErrCode BundleActiveCore::QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveCore::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -621,10 +621,10 @@ ErrCode BundleActiveCore::QueryDeviceEventStates(int64_t beginTime, int64_t endT
     if (!service) {
         return ERR_MEMORY_OPERATION_FAILED;
     }
-    return service->QueryDeviceEventStates(beginTime, endTime, eventStats, userId);
+    return service->QueryDeviceEventStats(beginTime, endTime, eventStats, userId);
 }
 
-ErrCode BundleActiveCore::QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveCore::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -636,7 +636,7 @@ ErrCode BundleActiveCore::QueryNotificationNumber(int64_t beginTime, int64_t end
     if (!service) {
         return ERR_MEMORY_OPERATION_FAILED;
     }
-    return service->QueryNotificationNumber(beginTime, endTime, eventStats, userId);
+    return service->QueryNotificationEventStats(beginTime, endTime, eventStats, userId);
 }
 
 ErrCode BundleActiveCore::SetAppGroup(

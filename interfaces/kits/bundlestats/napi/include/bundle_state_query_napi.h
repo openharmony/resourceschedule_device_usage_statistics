@@ -23,12 +23,12 @@ namespace OHOS {
 namespace DeviceUsageStats {
     napi_value IsIdleState(napi_env env, napi_callback_info info);
     napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info);
-    napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info);
+    napi_value QueryBundleEvents(napi_env env, napi_callback_info info);
     napi_value QueryBundleStatsInfoByInterval(napi_env env, napi_callback_info info);
     napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info);
     napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info);
-    napi_value QueryDeviceEventStates(napi_env env, napi_callback_info info);
-    napi_value QueryNotificationNumber(napi_env env, napi_callback_info info);
+    napi_value QueryDeviceEventStats(napi_env env, napi_callback_info info);
+    napi_value QueryNotificationEventStats(napi_env env, napi_callback_info info);
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_NAPI_H

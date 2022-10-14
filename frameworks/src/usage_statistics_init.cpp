@@ -39,15 +39,15 @@ static napi_value UsageStatisticsInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("isIdleState", IsIdleState),
         DECLARE_NAPI_FUNCTION("queryAppGroup", QueryAppGroup),
         DECLARE_NAPI_FUNCTION("queryCurrentBundleEvents", QueryCurrentBundleEvents),
-        DECLARE_NAPI_FUNCTION("queryBundleEvents", QueryBundleActiveStates),
+        DECLARE_NAPI_FUNCTION("queryBundleEvents", QueryBundleEvents),
         DECLARE_NAPI_FUNCTION("queryBundleStatsInfoByInterval", QueryBundleStatsInfoByInterval),
         DECLARE_NAPI_FUNCTION("queryBundleStatsInfos", QueryBundleStatsInfos),
         DECLARE_NAPI_FUNCTION("queryModuleUsageRecords", QueryModuleUsageRecords),
         DECLARE_NAPI_FUNCTION("setAppGroup", SetAppGroup),
         DECLARE_NAPI_FUNCTION("registerAppGroupCallBack", RegisterAppGroupCallBack),
         DECLARE_NAPI_FUNCTION("unRegisterAppGroupCallBack", UnRegisterAppGroupCallBack),
-        DECLARE_NAPI_FUNCTION("queryDeviceEventStates", QueryDeviceEventStates),
-        DECLARE_NAPI_FUNCTION("queryNotificationNumber", QueryNotificationNumber)
+        DECLARE_NAPI_FUNCTION("queryDeviceEventStats", QueryDeviceEventStats),
+        DECLARE_NAPI_FUNCTION("queryNotificationEventStats", QueryNotificationEventStats)
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));

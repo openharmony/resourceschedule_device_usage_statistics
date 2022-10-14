@@ -109,8 +109,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, F
 HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryBundleEvents_001, Function | MediumTest | Level0)
 {
     std::vector<BundleActiveEvent> result;
-    BundleActiveClient::GetInstance().QueryBundleEvents(result, 0, LARGE_NUM);
-    EXPECT_EQ(result.size(), 1);
+    BundleActiveClient::GetInstance().QueryBundleEvents(result, 0, LARGE_NUM, 100);
+    EXPECT_EQ(result.size() > 0, true);
 }
 
 /*
@@ -260,30 +260,30 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_UnRegisterAppGroup
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryDeviceEventStates_001
- * @tc.desc: QueryDeviceEventStates
+ * @tc.name: DeviceUsageStatisticsTest_QueryDeviceEventStats_001
+ * @tc.desc: QueryDeviceEventStats
  * @tc.type: FUNC
  * @tc.require: SR000H0H9H AR000H0ROG
  */
 HWTEST_F(DeviceUsageStatisticsTest,
-    DeviceUsageStatisticsTest_QueryDeviceEventStates_001, Function | MediumTest | Level0)
+    DeviceUsageStatisticsTest_QueryDeviceEventStats_001, Function | MediumTest | Level0)
 {
     std::vector<BundleActiveEventStats> eventStats;
-    int32_t errCode = BundleActiveClient::GetInstance().QueryDeviceEventStates(0, LARGE_NUM, eventStats);
+    int32_t errCode = BundleActiveClient::GetInstance().QueryDeviceEventStats(0, LARGE_NUM, eventStats);
     EXPECT_EQ(errCode, 0);
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsTest_QueryNotificationNumber_001
- * @tc.desc: QueryNotificationNumber
+ * @tc.name: DeviceUsageStatisticsTest_QueryNotificationEventStats_001
+ * @tc.desc: QueryNotificationEventStats
  * @tc.type: FUNC
  * @tc.require: SR000H0H7D AR000H0RR6
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryNotificationNumber_001, Function
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryNotificationEventStats_001, Function
     | MediumTest | Level0)
 {
     std::vector<BundleActiveEventStats> eventStats;
-    int32_t errCode = BundleActiveClient::GetInstance().QueryNotificationNumber(0, LARGE_NUM, eventStats);
+    int32_t errCode = BundleActiveClient::GetInstance().QueryNotificationEventStats(0, LARGE_NUM, eventStats);
     EXPECT_EQ(errCode, 0);
 }
 

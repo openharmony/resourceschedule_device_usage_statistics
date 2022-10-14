@@ -49,108 +49,150 @@ public:
     using ApplicationFlag = OHOS::AppExecFwk::ApplicationFlag;
     using AbilityType = OHOS::AppExecFwk::AbilityType;
 
-    /*
-    * function: ReportEvent, used to report event.
-    * parameters: event, userId
-    * return: errorcode.
-    */
+    /**
+     * @brief ReportEvent, used to report event.
+     *
+     * @param event .
+     * @param userId .
+     * @return errCode.
+     */
     ErrCode ReportEvent(BundleActiveEvent& event, const int32_t userId) override;
 
-    /*
-    * function: IsBundleIdle, used to check whether specific bundle is idle.
-    * parameters: bundleName
-    * return: if bundle is idle, return true. if bundle is not idle, return false.
-    */
+    /**
+     * @brief IsBundleIdle, used to check whether specific bundle is idle.
+     *
+     * @param isBundleIdle The result of IsBundleIdle.
+     * @param bundleName .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
     ErrCode IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId) override;
 
-    /*
-    * function: QueryBundleStatsInfoByInterval, query all usage statistics in specific time span for calling user.
-    * parameters: intervalType, beginTime, endTime, errCode
-    * return: vector of bundle usage statistics.
-    */
+    /**
+     * @brief QueryBundleStatsInfoByInterval, query all bundle usage statistics in specific time span for calling user.
+     *
+     * @param PackageStats .
+     * @param intervalType .
+     * @param beginTime .
+     * @param endTime .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
     ErrCode QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
         const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId) override;
 
-    /*
-    * function: QueryBundleEvents, query all events in specific time span for calling user.
-    * parameters: beginTime, endTime, errCode
-    * return: vector of events.
-    */
+    /**
+     * @brief QueryBundleEvents, query all events in specific time span for calling user.
+     *
+     * @param bundleActiveEvents .
+     * @param beginTime .
+     * @param endTime .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
     ErrCode QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents, const int64_t beginTime,
         const int64_t endTime, int32_t userId) override;
 
-    /*
-    * function: SetAppGroup, set specific bundle of specific user to a priority group.
-    * parameters: bundleName, newGroup, userId
-    */
+    /**
+     * @brief SetAppGroup, set specific bundle of specific user to a priority group.
+     *
+     * @param bundleName .
+     * @param newGroup .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
     ErrCode SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) override;
-    /*
-    * function: QueryBundleStatsInfos, query bundle usage statistics in specific time span for calling bundle.
-    * parameters: intervalType, beginTime, endTime
-    * return: vector of calling bundle usage statistics.
-    */
+
+    /**
+     * @brief QueryBundleStatsInfos, query bundle usage statistics in specific time span for calling bundle.
+     *
+     * @param bundleActivePackageStats, The result of QueryBundleStatsInfos.
+     * @param intervalType .
+     * @param beginTime .
+     * @param endTime .
+     * @return errCode.
+     */
     ErrCode QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& bundleActivePackageStats,
         const int32_t intervalType, const int64_t beginTime, const int64_t endTime) override;
 
-    /*
-    * function: QueryCurrentBundleEvents, query bundle usage statistics in specific time span for calling bundle.
-    * parameters: beginTime, endTime
-    * return: vector of calling bundle events.
-    */
+    /**
+     * @brief QueryCurrentBundleEvents, query bundle usage statistics in specific time span for calling bundle.
+     *
+     * @param bundleActiveEvents the std::vector<BundleActiveEvent>, as the result of QueryCurrentBundleEvents.
+     * @param beginTime .
+     * @param endTime .
+     * @return errCode.
+     */
     ErrCode QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
         const int64_t beginTime, const int64_t endTime) override;
 
-    /*
-    * function: QueryAppGroup, query bundle priority group calling bundle.
-    * return: the priority group of calling bundle.
-    */
+    /**
+     * @brief QueryAppGroup, query appGroup by bundleName and userId.
+     *
+     * @param appGroup as the result of QueryAppGroup.
+     * @param bundleName .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
     ErrCode QueryAppGroup(int32_t& appGroup, std::string& bundleName, const int32_t userId) override;
 
-    /*
-    * function: QueryModuleUsageRecords, query all from usage statistics in specific time span for calling user.
-    * parameters: maxNum, results, userId, default userId is -1 for JS API,
-    * if other SAs call this API, they should explicit define userId.
-    * return: errorcode.
-    */
+    /**
+     * @brief QueryModuleUsageRecords, query all from usage statistics in specific time span for calling user.
+     *
+     * @param maxNum .
+     * @param results .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
     ErrCode QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
         int32_t userId = -1) override;
 
-    /*
-    * function: QueryDeviceEventStates, query all from event stats in specific time span for calling user.
-    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
-    * if other SAs call this API, they should explicit define userId.
-    * return: errorcode.
-    */
-    ErrCode QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+    /**
+     * @brief QueryDeviceEventStats, query all from event stats in specific time span for calling user.
+     *
+     * @param beginTime .
+     * @param endTime .
+     * @param eventStats .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
+    ErrCode QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
 
-    /*
-    * function: QueryNotificationNumber, query all app notification number in specific time span for calling user.
-    * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
-    * if other SAs call this API, they should explicit define userId.
-    * return: errorcode.
-    */
-    ErrCode QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+    /**
+     * @brief QueryNotificationEventStats, query all app notification number in specific time span for calling user.
+     *
+     * @param beginTime .
+     * @param endTime .
+     * @param eventStats .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
+    ErrCode QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
 
-    /*
-    * function: BundleActiveService, default constructor.
-    * parameters: systemAbilityId, runOnCreate
-    */
+    /**
+     * @brief BundleActiveService, default constructor.
+     *
+     * @param systemAbilityId .
+     * @param runOnCreate .
+     */
     BundleActiveService(const int32_t systemAbilityId, bool runOnCreate);
 
-    /*
-    * function: RegisterAppGroupCallBack, register the observer to groupObservers.
-    * parameters: observer
-    * return: errorcode.
-    */
+    /**
+     * @brief RegisterAppGroupCallBack, observe bundle group change event.
+     *
+     * @param observer .
+     * @return errCode.
+     */
     int32_t RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) override;
 
-    /*
-    * function: UnRegisterAppGroupCallBack, remove the observer from groupObservers.
-    * parameters: observer
-    * return: errorcode.
-    */
+    /**
+     * @brief UnRegisterAppGroupCallBack, unobserve bundle group change event.
+     *
+     * @param observer .
+     * @return errCode.
+     */
     int32_t UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) override;
 
     int32_t Dump(int32_t fd, const std::vector<std::u16string> &args) override;

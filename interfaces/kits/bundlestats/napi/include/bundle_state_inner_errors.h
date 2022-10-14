@@ -49,14 +49,7 @@ enum : int32_t {
     ERR_USAGE_STATS_TIME_INTERVAL,
     ERR_USAGE_STATS_INTERVAL_TYPE,
     ERR_USAGE_STATS_INTERVAL_NUMBER,
-    ERR_USAGE_STATS_GROUP_INVALID,
-    ERR_MODULE_STATS_MAXNUM_INVALID,
-    ERR_EVENT_TYPE,
-    ERR_EVENT_TYPE_NUMBER,
     ERR_SERVICE_FAILED,
-    ERR_REPEAT_OPERATION,
-    ERR_REGISTER_OBSERVER_IS_NULL,
-    ERR_OBSERVER_CALLBACK_IS_INVALID,
     ERR_USAGE_STATS_METHOD_CALLED_FAILED,
     ERR_USAGE_STATS_INVALID_PARAM,
 };
@@ -77,13 +70,13 @@ enum {
 
 enum ParamError {
     ERR_PARAMETERS_NUMBER = 401001,
+    ERR_CALL_BACK_TYPE,
     ERR_PARAMETERS_EMPTY,
     ERR_BUNDLE_NAME_TYPE,
     ERR_BEGIN_TIME_TYPE,
     ERR_BEGIN_TIME_LESS_THEN_ZERO,
     ERR_END_TIME_TYPE,
     ERR_END_TIME_LESS_THEN_BEGIN_TIME,
-    ERR_BEGIN_TIME_BIGER_THEN_END_TIME,
     ERR_INTERVAL_TYPE,
     ERR_INTERVAL_OUT_OF_RANGE,
     ERR_NEW_GROUP_TYPE,
@@ -135,7 +128,9 @@ static std::map<int32_t, std::string> saErrCodeMsgMap = {
 };
 
 static std::map<int32_t, std::string> paramErrCodeMsgMap = {
+    {ERR_PARAMETERS_NUMBER, " api interface parameters count is error."},
     {ERR_PARAMETERS_EMPTY, " cannot be empty."},
+    {ERR_CALL_BACK_TYPE, " Callback type must be function."},
     {ERR_BUNDLE_NAME_TYPE, "The type of bundleName must be string."},
     {ERR_BEGIN_TIME_TYPE, "The type of beginTime must be int64."},
     {ERR_BEGIN_TIME_LESS_THEN_ZERO, "The beginTime value must be greater than or equal to 0."},

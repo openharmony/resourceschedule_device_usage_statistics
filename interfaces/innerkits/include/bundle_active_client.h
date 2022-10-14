@@ -47,8 +47,8 @@ public:
     /**
      * @brief IsBundleIdle, used to check whether specific bundle is idle.
      *
+     * @param isBundleIdle The result of IsBundleIdle.
      * @param bundleName .
-     * @param errCode .
      * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
      * @return errCode.
      */
@@ -92,7 +92,7 @@ public:
     /**
      * @brief QueryBundleStatsInfos, query bundle usage statistics in specific time span for calling bundle.
      *
-     * @param bundleActivePackageStats .
+     * @param bundleActivePackageStats bundleActivePackageStats, The result of QueryBundleStatsInfos.
      * @param intervalType .
      * @param beginTime .
      * @param endTime .
@@ -150,7 +150,7 @@ public:
     ErrCode UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer);
 
     /**
-     * @brief QueryDeviceEventStates, query all from event stats in specific time span for calling user.
+     * @brief QueryDeviceEventStats, query all from event stats in specific time span for calling user.
      *
      * @param beginTime .
      * @param endTime .
@@ -158,11 +158,11 @@ public:
      * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
      * @return errCode.
      */
-    ErrCode QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+    ErrCode QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId = -1);
 
     /**
-     * @brief QueryNotificationNumber, query all app notification number in specific time span for calling user.
+     * @brief QueryNotificationEventStats, query all app notification number in specific time span for calling user.
      *
      * @param beginTime .
      * @param endTime .
@@ -170,7 +170,7 @@ public:
      * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
      * @return errCode.
      */
-    ErrCode QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+    ErrCode QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId = -1);
     /*
     * function: GetInstance, get single instance of client.

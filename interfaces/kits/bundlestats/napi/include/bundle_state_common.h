@@ -40,7 +40,7 @@ public:
 
     static std::string GetSaErrCodeMsg(int32_t errCode, int32_t reflectCode);
 
-    static int32_t GetReflectErrCode(int32_t errCode, int32_t sysCapCode, int32_t startCode);
+    static int32_t GetReflectErrCode(int32_t errCode);
 
     static void SettingAsyncWorkData(
         const napi_env &env, const napi_ref &callback, AsyncWorkData &workData, napi_value &promise);
@@ -88,7 +88,7 @@ public:
 
     static void MergePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right);
 
-    static std::unique_ptr<AsyncCallbackInfoEventStats> HandleEventStatsInfo(
+    static std::unique_ptr<AsyncCallbackInfoEventStats> HandleEventStatsInfo(const napi_env &env,
         AsyncCallbackInfoEventStats *asyncCallbackInfo, EventStatesParamsInfo &params);
 
     template <typename PARAMT, typename ASYNCT>

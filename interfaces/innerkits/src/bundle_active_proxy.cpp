@@ -44,9 +44,8 @@ ErrCode BundleActiveProxy::IsBundleIdle(bool& isBundleIdle, const std::string& b
         return ERR_PARCEL_WRITE_FALIED;
     }
     Remote() -> SendRequest(IS_BUNDLE_IDLE, data, reply, option);
-    ErrCode errCode = reply.ReadInt32();
     isBundleIdle = reply.ReadInt32();
-    return errCode;
+    return reply.ReadInt32();
 }
 
 ErrCode BundleActiveProxy::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
@@ -205,10 +204,11 @@ ErrCode BundleActiveProxy::QueryAppGroup(int32_t& appGroup, std::string& bundleN
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return ERR_PARCEL_WRITE_FALIED;
     }
-    data.WriteInt32(appGroup);
+    
     data.WriteString(bundleName);
     data.WriteInt32(userId);
     Remote() -> SendRequest(QUERY_APP_GROUP, data, reply, option);
+    appGroup = reply.ReadInt32();
     return reply.ReadInt32();
 }
 
@@ -292,23 +292,23 @@ ErrCode BundleActiveProxy::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallba
     return reply.ReadInt32();
 }
 
-ErrCode BundleActiveProxy::QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveProxy::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     ErrCode errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_DEVICE_EVENT_STATES);
     for (const auto& singleEvent : eventStats) {
-        BUNDLE_ACTIVE_LOGD("QueryDeviceEventStates name is %{public}s, eventId is %{public}d, count is %{public}d",
+        BUNDLE_ACTIVE_LOGD("QueryDeviceEventStats name is %{public}s, eventId is %{public}d, count is %{public}d",
             singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
     }
     return errCode;
 }
 
-ErrCode BundleActiveProxy::QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveProxy::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     ErrCode errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_NOTIFICATION_NUMBER);
     for (const auto& singleEvent : eventStats) {
-        BUNDLE_ACTIVE_LOGD("QueryNotificationNumber name is %{public}s, eventId is %{public}d, count is %{public}d",
+        BUNDLE_ACTIVE_LOGD("QueryNotificationEventStats name is %{public}s, eventId is %{public}d, count is %{public}d",
             singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
     }
     return errCode;

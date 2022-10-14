@@ -144,7 +144,7 @@ public:
         const int32_t intervalType, const int64_t beginTime, const int64_t endTime, std::string bundleName);
 
     // query the event stat for calling user.
-    ErrCode QueryBundleEvents(std::vector<BundleActiveEvent> eventsVector, const int32_t userId,
+    ErrCode QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvent, const int32_t userId,
         const int64_t beginTime, const int64_t endTime, std::string bundleName);
 
     // check the app idle state for calling user.
@@ -156,21 +156,21 @@ public:
     ErrCode QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId);
 
     /*
-    * function: QueryDeviceEventStates, query all from event stats in specific time span for calling user.
+    * function: QueryDeviceEventStats, query all from event stats in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    ErrCode QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+    ErrCode QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
 
     /*
-    * function: QueryNotificationNumber, query all app notification number in specific time span for calling user.
+    * function: QueryNotificationEventStats, query all app notification number in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    ErrCode QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+    ErrCode QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
 
     // get the wall time and check if the wall time is changed.

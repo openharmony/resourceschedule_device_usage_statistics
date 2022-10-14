@@ -334,6 +334,7 @@ ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& b
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
     if (ret == ERR_OK) {
         ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, "");
+        BUNDLE_ACTIVE_LOGI("QueryBundleEvents result is %{public}zu", result.size());
     }
     return ret;
 }
@@ -583,7 +584,7 @@ ErrCode BundleActiveService::QueryModuleUsageRecords(int32_t maxNum, std::vector
     return errCode;
 }
 
-ErrCode BundleActiveService::QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveService::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
@@ -594,21 +595,21 @@ ErrCode BundleActiveService::QueryDeviceEventStates(int64_t beginTime, int64_t e
             return errCode;
         }
     }
-    BUNDLE_ACTIVE_LOGI("QueryDeviceEventStates userid is %{public}d", userId);
+    BUNDLE_ACTIVE_LOGI("QueryDeviceEventStats userid is %{public}d", userId);
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     errCode = CheckSystemAppOrNativePermission(callingUid, tokenId);
     if (errCode == ERR_OK) {
-        errCode = bundleActiveCore_->QueryDeviceEventStates(beginTime, endTime, eventStats, userId);
+        errCode = bundleActiveCore_->QueryDeviceEventStats(beginTime, endTime, eventStats, userId);
     }
-    BUNDLE_ACTIVE_LOGD("QueryDeviceEventStates result size is %{public}zu", eventStats.size());
+    BUNDLE_ACTIVE_LOGD("QueryDeviceEventStats result size is %{public}zu", eventStats.size());
     return errCode;
 }
 
-ErrCode BundleActiveService::QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveService::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGD("QueryNotificationNumber UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("QueryNotificationEventStats UID is %{public}d", callingUid);
     // get userid when userId is -1
     ErrCode errCode = ERR_OK;
     if (userId == -1) {
@@ -617,13 +618,12 @@ ErrCode BundleActiveService::QueryNotificationNumber(int64_t beginTime, int64_t 
             return errCode;
         }
     }
-    BUNDLE_ACTIVE_LOGI("QueryNotificationNumber userid is %{public}d", userId);
+    BUNDLE_ACTIVE_LOGI("QueryNotificationEventStats userid is %{public}d", userId);
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     errCode = CheckSystemAppOrNativePermission(callingUid, tokenId);
     if (errCode == ERR_OK) {
-        errCode = bundleActiveCore_->QueryNotificationNumber(beginTime, endTime, eventStats, userId);
+        errCode = bundleActiveCore_->QueryNotificationEventStats(beginTime, endTime, eventStats, userId);
     }
-    BUNDLE_ACTIVE_LOGI("QueryNotificationNumber result size is %{public}zu", eventStats.size());
     return errCode;
 }
 

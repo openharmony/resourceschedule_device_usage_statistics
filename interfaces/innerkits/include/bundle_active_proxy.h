@@ -98,21 +98,21 @@ public:
         int32_t userId = -1) override;
 
     /*
-    * function: QueryDeviceEventStates, query all from event stats in specific time span for calling user.
+    * function: QueryDeviceEventStats, query all from event stats in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    ErrCode QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+    ErrCode QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
 
     /*
-    * function: QueryNotificationNumber, query all app notification number in specific time span for calling user.
+    * function: QueryNotificationEventStats, query all app notification number in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    ErrCode QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+    ErrCode QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
 
     /*

@@ -71,9 +71,9 @@ public:
     ErrCode QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvent, const int64_t beginTime,
         const int64_t endTime, const int32_t userId, const std::string& bundleName);
     int32_t QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results);
-    int32_t QueryDeviceEventStates(int64_t beginTime, int64_t endTime,
+    int32_t QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
-    int32_t QueryNotificationNumber(int64_t beginTime, int64_t endTime,
+    int32_t QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
     void LoadActiveStats(const int64_t timeStamp, const bool& force, const bool& timeChanged);
     void LoadModuleAndFormStats();

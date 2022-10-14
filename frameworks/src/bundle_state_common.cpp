@@ -114,14 +114,14 @@ void BundleStateCommon::GetBundleActiveEventForResult(
             env, napi_create_string_utf8(env, item.bundleName_.c_str(), NAPI_AUTO_LENGTH, &bundleName));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, bundleActiveState, "bundleName", bundleName));
 
-        napi_value stateType = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.eventId_, &stateType));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, bundleActiveState, "stateType", stateType));
+        napi_value eventId = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.eventId_, &eventId));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, bundleActiveState, "eventId", eventId));
 
-        napi_value stateOccurredTime = nullptr;
-        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.timeStamp_, &stateOccurredTime));
-        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, bundleActiveState, "stateOccurredTime",
-            stateOccurredTime));
+        napi_value eventOccurredTime = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.timeStamp_, &eventOccurredTime));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, bundleActiveState, "eventOccurredTime",
+            eventOccurredTime));
 
         NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, index, bundleActiveState));
         index++;
@@ -340,7 +340,7 @@ void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred 
 
 int32_t BundleStateCommon::GetReflectErrCode(int32_t errCode)
 {
-    if (errCode > ERR_APPLICATION_GROUP_OPERATION_REPEATED * ERR_MULTIPLE) {
+    if (saErrCodeMsgMap.count(errCode)) {
         return errCode / ERR_MULTIPLE;
     }
     return errCode;
@@ -354,9 +354,9 @@ napi_value BundleStateCommon::GetErrorValue(napi_env env, int32_t errCode)
     napi_value result = nullptr;
     napi_value eCode = nullptr;
     napi_value eMsg = nullptr;
-    int32_t reflectCode = GetReflectErrCode(errCode, 100000, ERR_MEMORY_OPERATION_FAILED);
+    int32_t reflectCode = GetReflectErrCode(errCode);
     std::string errMsg = GetSaErrCodeMsg(errCode, reflectCode);
-    NAPI_CALL(env, napi_create_int32(env, errCode, &eCode));
+    NAPI_CALL(env, napi_create_int32(env, reflectCode, &eCode));
     NAPI_CALL(env, napi_create_string_utf8(env, errMsg.c_str(), errMsg.length(), &eMsg));
     NAPI_CALL(env, napi_create_object(env, &result));
     NAPI_CALL(env, napi_set_named_property(env, result, "errCode", eCode));
@@ -492,15 +492,17 @@ void BundleStateCommon::MergePackageStats(BundleActivePackageStats &left, const 
     left.bundleStartedCount_ += right.bundleStartedCount_;
 }
 
-std::unique_ptr<AsyncCallbackInfoEventStats> BundleStateCommon::HandleEventStatsInfo(
+std::unique_ptr<AsyncCallbackInfoEventStats> BundleStateCommon::HandleEventStatsInfo(const napi_env &env,
     AsyncCallbackInfoEventStats *asyncCallbackInfo, EventStatesParamsInfo &params)
 {
     if (!asyncCallbackInfo) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
+        params.errorCode = ERR_ASYNC_CALLBACK_NULLPTR;
+        BundleStateCommon::HandleParamErr(env, ERR_ASYNC_CALLBACK_NULLPTR, "");
         return nullptr;
     }
     if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo)) != EOK) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        params.errorCode = ERR_ASYNC_CALLBACK_INIT_FAILED;
+        BundleStateCommon::HandleParamErr(env, ERR_ASYNC_CALLBACK_INIT_FAILED, "");
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
         return nullptr;
