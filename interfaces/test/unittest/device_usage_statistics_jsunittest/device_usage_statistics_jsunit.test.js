@@ -855,73 +855,73 @@ describe("DeviceUsageStatisticsJsTest", function () {
         }
     })
 
-    // /*
-    //  * @tc.name: DeviceUsageStatisticsJsTest033
-    //  * @tc.desc: test registerAppGroupCallBack callback.
-    //  * @tc.type: FUNC
-    //  * @tc.require: issueI5V2T4
-    //  */
-    // it("DeviceUsageStatisticsJsTest033", 0, async function (done) {
-    //     console.info('----------------------DeviceUsageStatisticsJsTest033---------------------------');
-    //     let onBundleGroupChanged = (err, res) =>{
-    //         console.log('BUNDLE_ACTIVE onBundleGroupChanged registerAppGroupCallBack callback success.');
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appUsageOldGroup is : ' + res.appOldGroup);
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appUsageNewGroup is : ' + res.appNewGroup);
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack result changeReason is : ' + res.changeReason);
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack result userId is : ' + res.userId);
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack result bundleName is : ' + res.bundleName);
-    //       };
-    //     try{
-    //         usageStatistics.registerAppGroupCallBack(onBundleGroupChanged, (err, res) => {
-    //         if(err) {
-    //             console.info('BUNDLE_ACTIVE registerAppGroupCallBack callback failure.');
-    //             expect(false).assertEqual(true);
-    //             done();
-    //         } else {
-    //             console.info('BUNDLE_ACTIVE registerAppGroupCallBack callback success.');
-    //             expect(true).assertEqual(true);
-    //             done();
-    //         }
-    //         });
-    //     } catch (error) {
-    //         console.info('BUNDLE_ACTIVE registerAppGroupCallBack callback failure.');
-    //         expect(false).assertEqual(true);
-    //         done();
-    //     }
-    // })
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest033
+     * @tc.desc: test registerAppGroupCallBack callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest033", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest033---------------------------');
+        let onBundleGroupChanged = (err, res) =>{
+            console.log('BUNDLE_ACTIVE onBundleGroupChanged registerAppGroupCallBack callback success.');
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appUsageOldGroup is : ' + res.appOldGroup);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appUsageNewGroup is : ' + res.appNewGroup);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result changeReason is : ' + res.changeReason);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result userId is : ' + res.userId);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result bundleName is : ' + res.bundleName);
+          };
+        try{
+            usageStatistics.registerAppGroupCallBack(onBundleGroupChanged, (err, res) => {
+            if(err) {
+                console.info('BUNDLE_ACTIVE registerAppGroupCallBack callback failure.');
+                expect(false).assertEqual(true);
+                done();
+            } else {
+                console.info('BUNDLE_ACTIVE registerAppGroupCallBack callback success.');
+                expect(true).assertEqual(true);
+                done();
+            }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE registerAppGroupCallBack callback failure.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
 
-    // /*
-    //  * @tc.name: DeviceUsageStatisticsJsTest034
-    //  * @tc.desc: test registerAppGroupCallBack promise.
-    //  * @tc.type: FUNC
-    //  * @tc.require: issueI5V2T4
-    //  */
-    // it("DeviceUsageStatisticsJsTest034", 0, async function (done) {
-    //     console.info('----------------------DeviceUsageStatisticsJsTest034---------------------------');
-    //     let onBundleGroupChanged = (err, res) =>{
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack registerAppGroupCallBack callback success.');
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appOldGroup is : ' + res.appOldGroup);
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appNewGroup is : ' + res.appNewGroup);
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack result changeReason is : ' + res.changeReason);
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack result userId is : ' + res.userId);
-    //         console.log('BUNDLE_ACTIVE registerAppGroupCallBack result bundleName is : ' + res.bundleName);
-    //     };
-    //     try{
-    //         usageStatistics.registerAppGroupCallBack(onBundleGroupChanged).then( (res) => {
-    //             console.info('BUNDLE_ACTIVE registerAppGroupCallBack promise success.');
-    //             expect(false).assertEqual(true);
-    //             done();
-    //         }).catch( err => {
-    //             console.info('BUNDLE_ACTIVE registerAppGroupCallBack promise failure.');
-    //             expect(true).assertEqual(true);
-    //             done();
-    //         });
-    //     } catch (error) {
-    //         console.info('BUNDLE_ACTIVE registerAppGroupCallBack promise failure.');
-    //         expect(true).assertEqual(true);
-    //         done();
-    //     }
-    // })
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest034
+     * @tc.desc: test registerAppGroupCallBack promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest034", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest034---------------------------');
+        let onBundleGroupChanged = (err, res) =>{
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack registerAppGroupCallBack callback success.');
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appOldGroup is : ' + res.appOldGroup);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appNewGroup is : ' + res.appNewGroup);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result changeReason is : ' + res.changeReason);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result userId is : ' + res.userId);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result bundleName is : ' + res.bundleName);
+        };
+        try{
+            usageStatistics.registerAppGroupCallBack(onBundleGroupChanged).then( (res) => {
+                console.info('BUNDLE_ACTIVE registerAppGroupCallBack promise success.');
+                expect(false).assertEqual(true);
+                done();
+            }).catch( err => {
+                console.info('BUNDLE_ACTIVE registerAppGroupCallBack promise failure.');
+                expect(true).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE registerAppGroupCallBack promise failure.');
+            expect(true).assertEqual(true);
+            done();
+        }
+    })
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest035
