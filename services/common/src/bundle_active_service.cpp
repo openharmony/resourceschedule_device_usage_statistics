@@ -542,7 +542,7 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
 ErrCode BundleActiveService::CheckSystemAppOrNativePermission(const int32_t uid,
     OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
-    if ( CheckBundleIsSystemAppAndHasPermission(uid, tokenId) == ERR_OK) {
+    if (CheckBundleIsSystemAppAndHasPermission(uid, tokenId) == ERR_OK) {
         return ERR_OK;
     }
     auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
