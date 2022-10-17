@@ -396,7 +396,6 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
                 beginTime, endTime, bundleName);
         }
     }
-    BUNDLE_ACTIVE_LOGI("bundleActivePackageStats size is %{public}zu", bundleActivePackageStats.size());
     return ret;
 }
 

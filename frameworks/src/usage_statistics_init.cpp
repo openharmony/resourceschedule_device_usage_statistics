@@ -45,7 +45,7 @@ static napi_value UsageStatisticsInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("queryModuleUsageRecords", QueryModuleUsageRecords),
         DECLARE_NAPI_FUNCTION("setAppGroup", SetAppGroup),
         DECLARE_NAPI_FUNCTION("registerAppGroupCallBack", RegisterAppGroupCallBack),
-        DECLARE_NAPI_FUNCTION("unRegisterAppGroupCallBack", UnRegisterAppGroupCallBack),
+        DECLARE_NAPI_FUNCTION("unregisterAppGroupCallBack", UnRegisterAppGroupCallBack),
         DECLARE_NAPI_FUNCTION("queryDeviceEventStats", QueryDeviceEventStats),
         DECLARE_NAPI_FUNCTION("queryNotificationEventStats", QueryNotificationEventStats)
     };

@@ -35,44 +35,44 @@ declare namespace usageStatistics {
      */
     interface BundleStatsInfo {
         /**
-         * the identifier of BundleStatsInfo.
+         * The identifier of BundleStatsInfo.
          */
         id: number;
         /**
-         * the total duration, in milliseconds.
+         * The total duration, in milliseconds.
          */
         abilityInFgTotalTime?: number;
         /**
-         * the last time when the application was accessed, in milliseconds.
+         * The last time when the application was accessed, in milliseconds.
          */
         abilityPrevAccessTime?: number;
         /**
-         * the last time when the application was visible in the foreground, in milliseconds.
+         * The last time when the application was visible in the foreground, in milliseconds.
          */
         abilityPrevSeenTime?: number;
         /**
-         * the total duration, in milliseconds.
+         * The total duration, in milliseconds.
          */
         abilitySeenTotalTime?: number;
         /**
-         * the bundle name of the application.
+         * The bundle name of the application.
          */
         bundleName?: string;
         /**
-         * the total duration, in milliseconds.
+         * The total duration, in milliseconds.
          */
         fgAbilityAccessTotalTime?: number;
         /**
-         * the last time when the foreground application was accessed, in milliseconds.
+         * The last time when the foreground application was accessed, in milliseconds.
          */
         fgAbilityPrevAccessTime?: number;
         /**
-         * the time of the first bundle usage record in this {@code BundleActiveInfo} object,
+         * The time of the first bundle usage record in this {@code BundleActiveInfo} object,
          * in milliseconds.
          */
         infosBeginTime?: number;
         /**
-         * the time of the last bundle usage record in this {@code BundleActiveInfo} object,
+         * The time of the last bundle usage record in this {@code BundleActiveInfo} object,
          * in milliseconds.
          */
         infosEndTime?: number;
@@ -85,23 +85,23 @@ declare namespace usageStatistics {
      */
     interface HapFormInfo {
         /**
-         * the form name.
+         * The form name.
          */
         formName: string;
         /**
-         * the form dimension.
+         * The form dimension.
          */
         formDimension: number;
         /**
-         * the form id.
+         * The form id.
          */
         formId: number;
         /**
-         * the last time when the form was accessed, in milliseconds..
+         * The last time when the form was accessed, in milliseconds..
          */
         formLastUsedTime: number;
         /**
-         * the click count of module.
+         * The click count of module.
          */
         count: number;
     }
@@ -113,55 +113,55 @@ declare namespace usageStatistics {
      */
     interface HapModuleInfo {
         /**
-         * the device id of module.
+         * The device id of module.
          */
         deviceId?: string;
         /**
-         * the bundle name.
+         * The bundle name.
          */
         bundleName: string;
         /**
-         * the module name.
+         * The module name.
          */
         moduleName: string;
         /**
-         * the main ability name of module.
+         * The main ability name of module.
          */
         abilityName?: string;
         /**
-         * the label id of application.
+         * The label id of application.
          */
         appLabelId?: number;
         /**
-         * the label id of module.
+         * The label id of module.
          */
         labelId?: number;
         /**
-         * the description id of application.
+         * The description id of application.
          */
         descriptionId?: number;
         /**
-         * the ability id of main ability.
+         * The ability id of main ability.
          */
         abilityLableId?: number;
         /**
-         * the description id of main ability.
+         * The description id of main ability.
          */
         abilityDescriptionId?: number;
         /**
-         * the icon id of main ability.
+         * The icon id of main ability.
          */
         abilityIconId?: number;
         /**
-         * the launch count of module.
+         * The launch count of module.
          */
         launchedCount: number;
         /**
-         * the last time when the module was accessed, in milliseconds.
+         * The last time when the module was accessed, in milliseconds.
          */
         lastModuleUsedTime: number;
         /**
-         * the form usage record list of current module.
+         * The form usage record list of current module.
          */
         formRecords: Array<HapFormInfo>;
     }
@@ -173,17 +173,17 @@ declare namespace usageStatistics {
      */
     interface DeviceEventStats {
         /**
-         * the bundle name or system event name.
+         * The bundle name or system event name.
          */
         name: string;
 
         /**
-         * the event id.
+         * The event id.
          */
         eventId: number;
 
         /**
-         * the the event occurrence number.
+         * The the event occurrence number.
          */
         count: number;
     }
@@ -194,27 +194,27 @@ declare namespace usageStatistics {
      */
      interface BundleEvents {
         /**
-         * the usage group of the application.
+         * The usage group of the application.
          */
         appGroup?: number;
         /**
-         * the bundle name.
+         * The bundle name.
          */
         bundleName?: string;
         /**
-         * the shortcut ID.
+         * The shortcut ID.
          */
         indexOfLink?: string;
         /**
-         * the class name.
+         * The class name.
          */
         nameOfClass?: string;
         /**
-         * the time when this state occurred, in milliseconds.
+         * The time when this state occurred, in milliseconds.
          */
         eventOccurredTime?: number;
         /**
-         * the event id.
+         * The event id.
          */
         eventId?: number;
     }
@@ -225,23 +225,23 @@ declare namespace usageStatistics {
      */
     interface AppGroupCallbackInfo {
         /*
-         * the usage old group of the application
+         * The usage old group of the application
          */
         appOldGroup: number;
         /*
-         * the usage new group of the application
+         * The usage new group of the application
          */
         appNewGroup: number;
         /*
-         * the use id
+         * The use id
          */
         userId: number;
         /*
-         * the change reason
+         * The change reason
          */
         changeReason: number;
         /*
-         * the bundle name
+         * The bundle name
          */
         bundleName: string;
     }
@@ -537,7 +537,7 @@ declare namespace usageStatistics {
     }
 
     /**
-     * set app group by bundleName and number.
+     * Set app group by bundleName and number.
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
@@ -559,7 +559,7 @@ declare namespace usageStatistics {
     function setAppGroup(bundleName: string, newGroup: GroupType): Promise<void>;
 
     /**
-     * register callback to service.
+     * Register callback to service.
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
@@ -580,7 +580,7 @@ declare namespace usageStatistics {
     function registerAppGroupCallBack(groupCallback: Callback<AppGroupCallbackInfo>): Promise<void>;
 
     /**
-     * unRegister callback from service.
+     * Unregister callback from service.
      *
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
@@ -595,8 +595,8 @@ declare namespace usageStatistics {
      * @throws { BusinessError } 10000004 - IPC Communication failed.
      * @throws { BusinessError } 10100001 - Application group operation repeated.
      */
-    function unRegisterAppGroupCallBack(callback: AsyncCallback<void>): void;
-    function unRegisterAppGroupCallBack(): Promise<void>;
+    function unregisterAppGroupCallBack(callback: AsyncCallback<void>): void;
+    function unregisterAppGroupCallBack(): Promise<void>;
 
     /** 
      * Queries device event states data within a specified period identified by the start and end time.

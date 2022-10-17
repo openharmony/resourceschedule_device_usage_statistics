@@ -41,7 +41,7 @@ const uint32_t SECOND_ARG = 2;
 const std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50, 60};
 
 static sptr<AppGroupObserver> registerObserver = nullptr;
-static std::mutex g_observerMutex_;
+std::mutex g_observerMutex_;
 
 napi_value ParseQueryAppGroupParameters(const napi_env &env, const napi_callback_info &info,
     QueryAppGroupParamsInfo &params, AsyncQueryAppGroupCallbackInfo* &asyncCallbackInfo)
