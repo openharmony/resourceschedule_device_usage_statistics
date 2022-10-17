@@ -191,28 +191,6 @@ declare namespace usageStatistics {
     /**
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
-     * @systemapi Hide this for inner system use.
-     */
-     interface NotificationEventStats {
-        /**
-         * the bundle name or notification event name.
-         */
-        name: string;
-
-        /**
-         * the event id.
-         */
-        eventId: number;
-
-        /**
-         * the the event occurrence number.
-         */
-        count: number;
-    }
-
-    /**
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      */
      interface BundleEvents {
         /**
@@ -663,8 +641,8 @@ declare namespace usageStatistics {
      * @throws { BusinessError } 10000007 - Get system or actual time failed.
      * @return Returns the {@link NotificationEventStats} object Array containing the event states data.
      */
-    function queryNotificationEventStats(begin: number, end: number, callback: AsyncCallback<Array<NotificationEventStats>>): void;
-    function queryNotificationEventStats(begin: number, end: number): Promise<Array<NotificationEventStats>>;
+    function queryNotificationEventStats(begin: number, end: number, callback: AsyncCallback<Array<DeviceEventStats>>): void;
+    function queryNotificationEventStats(begin: number, end: number): Promise<Array<DeviceEventStats>>;
 }
 
 export default usageStatistics;
