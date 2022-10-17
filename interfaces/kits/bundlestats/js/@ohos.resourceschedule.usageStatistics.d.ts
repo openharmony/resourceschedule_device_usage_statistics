@@ -313,6 +313,32 @@ declare namespace usageStatistics {
     function queryAppGroup(): Promise<number>;
 
     /**
+     * Queries the usage priority group of the calling application.
+     *
+     * <p>The priority defined in a priority group restricts the resource usage of an application,
+     * for example, restricting the running of background tasks. </p>
+     *
+     * @since 9
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @systemapi Hide this for inner system use.
+     * @param bundleName, name of the application.
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC Communication failed.
+     * @throws { BusinessError } 10000005 - Application is not installed.
+     * @throws { BusinessError } 10000006 - Get application info failed.
+     * @throws { BusinessError } 10100002 - Get Application group info failed.
+     * @return Returns the usage priority group of the calling application.
+     */
+     function queryAppGroup(bundleName : string, callback: AsyncCallback<number>): void;
+     function queryAppGroup(bundleName : string): Promise<number>;
+
+    /**
      * @since 9
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @systemapi Hide this for inner system use.
@@ -492,32 +518,6 @@ declare namespace usageStatistics {
      */
     function queryModuleUsageRecords(callback: AsyncCallback<Array<HapModuleInfo>>): void;
     function queryModuleUsageRecords(): Promise<Array<HapModuleInfo>>;
-
-    /**
-     * Queries the usage priority group of the calling application.
-     *
-     * <p>The priority defined in a priority group restricts the resource usage of an application,
-     * for example, restricting the running of background tasks. </p>
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
-     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
-     * @param bundleName, name of the application.
-     * @throws { BusinessError } 201 - Parameter error.
-     * @throws { BusinessError } 401 - Permission denied.
-     * @throws { BusinessError } 801 - Capability not supported.
-     * @throws { BusinessError } 10000001 - Memory operation failed.
-     * @throws { BusinessError } 10000002 - Parcel operation failed.
-     * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000005 - Application is not installed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10100002 - Get Application group info failed.
-     * @return Returns the usage priority group of the calling application.
-     */
-     function queryAppGroup(bundleName : string, callback: AsyncCallback<number>): void;
-     function queryAppGroup(bundleName : string): Promise<number>;
 
      /**
      * Declares group type.

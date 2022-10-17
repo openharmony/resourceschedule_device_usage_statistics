@@ -213,7 +213,7 @@ napi_value SetAppGroup(napi_env env, napi_callback_info info)
     AsyncCallbackInfoSetAppGroup *asyncCallbackInfo = nullptr;
     ParseSetAppGroupParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK) {
-        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+        return BundleStateCommon::NapiGetNull(env);
     }
     std::unique_ptr<AsyncCallbackInfoSetAppGroup> callbackPtr {asyncCallbackInfo};
     callbackPtr->newGroup = params.newGroup;
@@ -398,7 +398,7 @@ napi_value UnRegisterAppGroupCallBack(napi_env env, napi_callback_info info)
     AsyncUnRegisterCallbackInfo *asyncCallbackInfo = nullptr;
     ParseUnRegisterAppGroupCallBackParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK) {
-        return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+        return BundleStateCommon::NapiGetNull(env);
     }
     std::unique_ptr<AsyncUnRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
     callbackPtr->observer = registerObserver;

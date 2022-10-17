@@ -431,7 +431,7 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundl
 {
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    BUNDLE_ACTIVE_LOGD("QueryPackageGroup UID is %{public}d", callingUid);
+    BUNDLE_ACTIVE_LOGD("QueryAppGroup UID is %{public}d", callingUid);
     ErrCode ret = ERR_OK;
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
@@ -451,7 +451,7 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundl
         ret = bundleActiveCore_->QueryAppGroup(appGroup, bundleName, userId);
     } else {
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-        ErrCode ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
+        ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
         if (ret == ERR_OK) {
             ret = bundleActiveCore_->QueryAppGroup(appGroup, bundleName, userId);
         }
@@ -523,10 +523,10 @@ int32_t BundleActiveService::ConvertIntervalType(const int32_t intervalType)
 ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_t uid,
     OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
-    ErrCode ret = GetBundleMgrProxy();
-    if (ret != ERR_OK) {
+    ErrCode errCode = GetBundleMgrProxy();
+    if (errCode != ERR_OK) {
         BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack Get bundle manager proxy failed!");
-        return ret;
+        return errCode;
     }
     std::string bundleName = "";
     sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
@@ -535,16 +535,15 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
     if (bundleHasPermission != 0) {
         BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
         return ERR_PERMISSION_DENIED;
-    } else {
-        BUNDLE_ACTIVE_LOGI("%{public}s has permission", bundleName.c_str());
-        return ERR_OK;
     }
+    BUNDLE_ACTIVE_LOGI("%{public}s has permission", bundleName.c_str());
+    return ERR_OK;
 }
 
 ErrCode BundleActiveService::CheckSystemAppOrNativePermission(const int32_t uid,
     OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
-    if (CheckBundleIsSystemAppAndHasPermission(uid, tokenId) == ERR_OK) {
+    if ( CheckBundleIsSystemAppAndHasPermission(uid, tokenId) == ERR_OK) {
         return ERR_OK;
     }
     auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);

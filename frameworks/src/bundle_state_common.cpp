@@ -340,10 +340,10 @@ void BundleStateCommon::SetPromiseInfo(const napi_env &env, const napi_deferred 
 
 int32_t BundleStateCommon::GetReflectErrCode(int32_t errCode)
 {
-    if (saErrCodeMsgMap.count(errCode)) {
-        return errCode / ERR_MULTIPLE;
+    if (errCode < ERR_GET_SYSTEM_ABILITY_MANAGER_FAILED) {
+        return errCode;
     }
-    return errCode;
+    return errCode / ERR_MULTIPLE;
 }
 
 napi_value BundleStateCommon::GetErrorValue(napi_env env, int32_t errCode)

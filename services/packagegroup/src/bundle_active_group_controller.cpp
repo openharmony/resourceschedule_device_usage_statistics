@@ -358,7 +358,7 @@ ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     if (!IsBundleInstalled(bundleName, userId)) {
         BUNDLE_ACTIVE_LOGI("QueryAppGroup is not bundleInstalled");
-        return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
+        return ERR_APPLICATION_IS_NOT_INSTALLED;
     }
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(

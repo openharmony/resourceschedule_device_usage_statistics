@@ -166,16 +166,19 @@ napi_value ParseIsIdleStateParameters(const napi_env &env, const napi_callback_i
 
     // argv[0] : bundleName
     std::string result = "";
-    params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
-    if (params.bundleName.empty()) {
-        BUNDLE_ACTIVE_LOGE("ParseIsIdleStateParameters failed, bundleName is empty.");
-        params.errorCode = ERR_USAGE_STATS_BUNDLENAME_EMPTY;
-    }
     napi_valuetype valuetype;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
     if ((valuetype != napi_string) && (params.errorCode == ERR_OK)) {
         BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
-        params.errorCode = ERR_USAGE_STATS_BUNDLENAME_TYPE;
+        params.errorCode = ERR_BUNDLE_NAME_TYPE;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
+    }
+
+    params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
+    if (params.bundleName.empty()) {
+        BUNDLE_ACTIVE_LOGE("ParseIsIdleStateParameters failed, bundleName is empty.");
+        params.errorCode = ERR_PARAMETERS_EMPTY;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "bundleName");
     }
 
     // argv[1]: callback

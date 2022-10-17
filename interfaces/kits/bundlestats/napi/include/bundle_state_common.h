@@ -45,8 +45,7 @@ public:
     static void SettingAsyncWorkData(
         const napi_env &env, const napi_ref &callback, AsyncWorkData &workData, napi_value &promise);
 
-    static void GetCallbackPromiseResult(const napi_env &env, const AsyncWorkData &workData,
-        const napi_value &result);
+    static void GetCallbackPromiseResult(const napi_env &env, const AsyncWorkData &workData, const napi_value &result);
 
     static void SetCallbackInfo(
         const napi_env &env, const napi_ref &callbackIn, const int32_t &errorCode, const napi_value &result);
