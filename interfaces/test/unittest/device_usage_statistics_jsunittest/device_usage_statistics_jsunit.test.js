@@ -451,15 +451,15 @@ describe("DeviceUsageStatisticsJsTest", function () {
     it("DeviceUsageStatisticsJsTest018", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest018---------------------------');
         try{
-         usageStatistics.queryAppGroup().then( res => {
-            console.info('BUNDLE_ACTIVE queryAppGroup promise success.');
-            expect(true).assertEqual(true);
-            done();
-        }).catch( err => {
-            console.info('BUNDLE_ACTIVE queryAppGroup promise failure.');
-            expect(false).assertEqual(true);
-            done();
-        });
+            usageStatistics.queryAppGroup().then( res => {
+                console.info('BUNDLE_ACTIVE queryAppGroup promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch( err => {
+                console.info('BUNDLE_ACTIVE queryAppGroup promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
         } catch (error) {
             console.info('BUNDLE_ACTIVE queryAppGroup promise throw error.');
             expect(false).assertEqual(true);
