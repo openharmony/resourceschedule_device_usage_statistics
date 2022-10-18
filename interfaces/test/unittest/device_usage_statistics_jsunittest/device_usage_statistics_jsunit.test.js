@@ -14,6 +14,7 @@
  */
 
 import bundleState from '@ohos.bundleState'
+import usageStatistics from '@ohos.resourceschedule.usageStatistics'
 
 import {describe, beforeAll, beforeEach, afterEach, afterAll, it, expect} from 'deccjsunit/index'
 
@@ -304,6 +305,718 @@ describe("DeviceUsageStatisticsJsTest", function () {
                 done();
             }
         });
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest013
+     * @tc.desc: test isIdleState callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest013", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest013---------------------------');
+        let bundleName = 'com.example.deviceUsageStatistics';
+        try{
+            usageStatistics.isIdleState(bundleName, (err, res) => {
+                if (err) {
+                    console.info('BUNDLE_ACTIVE isIdleState callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE isIdleState callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch(error) {
+            console.info('BUNDLE_ACTIVE isIdleState callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest014
+     * @tc.desc: test isIdleState promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest014", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest014---------------------------');
+        let bundleName = 'com.example.deviceUsageStatistics';
+        try{
+            usageStatistics.isIdleState(bundleName).then((res) => {
+                console.info('BUNDLE_ACTIVE isIdleState promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch((err) => {
+                console.info('BUNDLE_ACTIVE isIdleState promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE isIdleState promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest015
+     * @tc.desc: test queryAppGroup callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest015", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest015---------------------------');
+        let bundleName = 'com.example.deviceUsageStatistics';
+        try{
+            usageStatistics.queryAppGroup(bundleName, (err, res) => {
+                if(err) {
+                    console.info('BUNDLE_ACTIVE queryAppGroup callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE queryAppGroup callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryAppGroup callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest016
+     * @tc.desc: test queryAppGroup promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest016", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest016---------------------------');
+        let bundleName = 'com.example.deviceUsageStatistics';
+        try{
+            usageStatistics.queryAppGroup(bundleName).then( res => {
+                console.info('BUNDLE_ACTIVE queryAppGroup promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch( err => {
+                console.info('BUNDLE_ACTIVE queryAppGroup promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryAppGroup promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest017
+     * @tc.desc: test queryAppGroup callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest017", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest017---------------------------');
+        try{
+            usageStatistics.queryAppGroup((err, res) => {
+                if(err) {
+                    console.info('BUNDLE_ACTIVE queryAppGroup callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE queryAppGroup callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryAppGroup callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest018
+     * @tc.desc: test queryAppGroup promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest018", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest018---------------------------');
+        try{
+         usageStatistics.queryAppGroup().then( res => {
+            console.info('BUNDLE_ACTIVE queryAppGroup promise success.');
+            expect(true).assertEqual(true);
+            done();
+        }).catch( err => {
+            console.info('BUNDLE_ACTIVE queryAppGroup promise failure.');
+            expect(false).assertEqual(true);
+            done();
+        });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryAppGroup promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest019
+     * @tc.desc: test queryBundleStatsInfos callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest019", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest019---------------------------');
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try {
+            usageStatistics.queryBundleStatsInfos(beginTime, endTime, (err, res) => {
+                if (err) {
+                    console.info('BUNDLE_ACTIVE queryBundleStatsInfos callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE queryBundleStatsInfos callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryBundleStatsInfos callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest020
+     * @tc.desc: test queryBundleStatsInfos promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest020", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest020---------------------------');
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryBundleStatsInfos(beginTime, endTime).then((res) => {
+                console.info('BUNDLE_ACTIVE queryBundleStatsInfos promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch((err) => {
+                console.info('BUNDLE_ACTIVE queryBundleStatsInfos promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryBundleStatsInfos promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest021
+     * @tc.desc: test queryBundleStatsInfoByInterval callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest021", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest021---------------------------');
+        let intervalType = 0;
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryBundleStatsInfoByInterval(intervalType, beginTime, endTime, (err, res) => {
+                if (err) {
+                    console.info('BUNDLE_ACTIVE queryBundleStatsInfoByInterval callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE queryBundleStatsInfoByInterval callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryBundleStatsInfoByInterval callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest022
+     * @tc.desc: test queryBundleStatsInfoByInterval promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest022", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest022---------------------------');
+        let intervalType = 0;
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryBundleStatsInfoByInterval(intervalType, beginTime, endTime).then((res) => {
+                console.info('BUNDLE_ACTIVE queryBundleStatsInfoByInterval promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch((err) => {
+                console.info('BUNDLE_ACTIVE queryBundleStatsInfoByInterval promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryBundleStatsInfoByInterval promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest023
+     * @tc.desc: test queryBundleEvents callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest023", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest023---------------------------');
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryBundleEvents(beginTime, endTime, (err, res) => {
+                if (err) {
+                    console.info('BUNDLE_ACTIVE queryBundleEvents callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE queryBundleEvents callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryBundleEvents callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest024
+     * @tc.desc: test queryBundleEvents promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest024", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest024---------------------------');
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryBundleEvents(beginTime, endTime).then((res) => {
+                console.info('BUNDLE_ACTIVE queryBundleEvents promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch((err) => {
+                console.info('BUNDLE_ACTIVE queryBundleEvents promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryBundleEvents promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest025
+     * @tc.desc: test queryCurrentBundleEvents callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest025", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest025---------------------------');
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryCurrentBundleEvents(beginTime, endTime, (err, res) => {
+                if (err) {
+                    console.info('BUNDLE_ACTIVE queryCurrentBundleEvents callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE queryCurrentBundleEvents callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryCurrentBundleEvents callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest026
+     * @tc.desc: test queryCurrentBundleEvents promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest026", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest026---------------------------');
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryCurrentBundleEvents(beginTime, endTime).then((res) => {
+                console.info('BUNDLE_ACTIVE queryCurrentBundleEvents promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch((err) => {
+                console.info('BUNDLE_ACTIVE queryCurrentBundleEvents promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryCurrentBundleEvents promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest027
+     * @tc.desc: test queryModuleUsageRecords callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest027", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest027---------------------------');
+        let maxNum = 1;
+        try{
+            usageStatistics.queryModuleUsageRecords(maxNum, (err, res) => {
+                if(err) {
+                    console.info('BUNDLE_ACTIVE queryModuleUsageRecords callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE queryModuleUsageRecords callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryModuleUsageRecords callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest028
+     * @tc.desc: test queryModuleUsageRecords promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest028", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest028---------------------------');
+        let maxNum = 1;
+        try{
+            usageStatistics.queryModuleUsageRecords(maxNum).then( res => {
+                console.info('BUNDLE_ACTIVE queryModuleUsageRecords promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch( err=> {
+                console.info('BUNDLE_ACTIVE queryModuleUsageRecords promise failure.');
+                expect(false).assertEqual(true);
+                done();
+        });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryModuleUsageRecords promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest029
+     * @tc.desc: test queryModuleUsageRecords callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest029", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest029---------------------------');
+        try{
+            usageStatistics.queryModuleUsageRecords((err, res) => {
+                if(err) {
+                    console.info('BUNDLE_ACTIVE queryModuleUsageRecords callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE queryModuleUsageRecords callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryModuleUsageRecords callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest030
+     * @tc.desc: test queryModuleUsageRecords promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest030", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest030---------------------------');
+        try{
+            usageStatistics.queryModuleUsageRecords().then( res => {
+                console.info('BUNDLE_ACTIVE queryModuleUsageRecords promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch( err=> {
+                console.info('BUNDLE_ACTIVE queryModuleUsageRecords promise failure.');
+                expect(false).assertEqual(true);
+                done();
+        });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryModuleUsageRecords promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest031
+     * @tc.desc: test setAppGroup callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest031", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest031---------------------------');
+        let bundleName = 'com.example.deviceUsageStatistics';
+        let newGroup   = 30;
+        try{
+            usageStatistics.setAppGroup(bundleName, newGroup, (err, res) => {
+                if(err) {
+                    console.info('BUNDLE_ACTIVE setAppGroup callback failure.');
+                    expect(true).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE setAppGroup callback success.');
+                    expect(false).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE setAppGroup callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest032
+     * @tc.desc: test setAppGroup promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest032", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest032---------------------------');
+        let bundleName = 'com.example.deviceUsageStatistics';
+        let newGroup   = 30;
+        try{
+            usageStatistics.setAppGroup(bundleName, newGroup).then( res => {
+                console.info('BUNDLE_ACTIVE setAppGroup promise success.');
+                expect(false).assertEqual(true);
+                done();
+            }).catch( err => {
+                console.info('BUNDLE_ACTIVE setAppGroup promise failure.');
+                expect(true).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE setAppGroup promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest033
+     * @tc.desc: test unRegisterAppGroupCallBack callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest033", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest033---------------------------');
+        try{
+            usageStatistics.unRegisterAppGroupCallBack((err, res) => {
+                if(err) {
+                    console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack callback success.');
+                    expect(false).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack callback throw error.');
+            expect(true).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest034
+     * @tc.desc: test unRegisterAppGroupCallBack promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest034", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest034---------------------------');
+        try{
+            usageStatistics.unRegisterAppGroupCallBack().then( (res) => {
+                console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack promise success.');
+                expect(false).assertEqual(true);
+                done();
+            }).catch( err => {
+                console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack promise throw error.');
+            expect(true).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest035
+     * @tc.desc: test queryDeviceEventStats callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest035", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest035---------------------------');
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryDeviceEventStats(beginTime, endTime, (err, res) => {
+                if(err) {
+                    console.info('BUNDLE_ACTIVE queryDeviceEventStats callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE queryDeviceEventStats callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryDeviceEventStats callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest036
+     * @tc.desc: test queryDeviceEventStats promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest036", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest036---------------------------');
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryDeviceEventStats(beginTime, endTime).then( res => {
+                console.info('BUNDLE_ACTIVE queryDeviceEventStats promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch( err=> {
+                console.info('BUNDLE_ACTIVE queryDeviceEventStats promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryDeviceEventStats promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest037
+     * @tc.desc: test queryNotificationEventStats callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest037", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest037---------------------------');
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryNotificationEventStats(beginTime, endTime, (err, res) => {
+                if(err) {
+                    console.info('BUNDLE_ACTIVE queryNotificationEventStats callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE queryNotificationEventStats callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryNotificationEventStats callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest038
+     * @tc.desc: test queryNotificationEventStats promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest038", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest038---------------------------');
+        let beginTime = 0;
+        let endTime = 20000000000000;
+        try{
+            usageStatistics.queryNotificationEventStats(beginTime, endTime).then( res => {
+                console.info('BUNDLE_ACTIVE queryNotificationEventStats promise success.');
+                expect(true).assertEqual(true);
+                done();
+            }).catch( err => {
+                console.info('BUNDLE_ACTIVE queryNotificationEventStats promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryNotificationEventStats promise throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
     })
 })
 
