@@ -13,28 +13,28 @@
  * limitations under the License.
  */
 
-#include "bundle_active_group_callback_stub.h"
+#include "app_group_callback_stub.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-int32_t BundleActiveGroupCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
+int32_t AppGroupCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
     MessageOption &option)
 {
-    std::u16string descriptor = BundleActiveGroupCallbackStub::GetDescriptor();
+    std::u16string descriptor = AppGroupCallbackStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack OnRemoteRequest cannot get power mgr service");
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack OnRemoteRequest cannot get power mgr service");
         return -1;
     }
     switch (code) {
-        case static_cast<uint32_t>(IBundleActiveGroupCallback::message::ON_BUNDLE_GROUP_CHANGED): {
-            std::shared_ptr<BundleActiveGroupCallbackInfo> groupInfo(
-                data.ReadParcelable<BundleActiveGroupCallbackInfo>());
+        case static_cast<uint32_t>(IAppGroupCallback::message::ON_BUNDLE_GROUP_CHANGED): {
+            std::shared_ptr<AppGroupCallbackInfo> groupInfo(
+                data.ReadParcelable<AppGroupCallbackInfo>());
             if (!groupInfo) {
-                BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack ReadParcelable<AbilityStateData> failed");
+                BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack ReadParcelable<AbilityStateData> failed");
                 return -1;
             }
-            OnBundleGroupChanged(*(groupInfo.get()));
+            OnAppGroupChanged(*(groupInfo.get()));
             groupInfo = nullptr;
             break;
         }
@@ -44,8 +44,7 @@ int32_t BundleActiveGroupCallbackStub::OnRemoteRequest(uint32_t code, MessagePar
     return 0;
 }
 
-void BundleActiveGroupCallbackStub::OnBundleGroupChanged(
-    const BundleActiveGroupCallbackInfo &bundleActiveGroupCallbackInfo)
+void AppGroupCallbackStub::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
 {
 }
 }  // namespace DeviceUsageStats

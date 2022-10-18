@@ -14,11 +14,11 @@
  */
 
 #include "bundle_active_log.h"
-#include "bundle_active_group_callback_info.h"
+#include "app_group_callback_info.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-BundleActiveGroupCallbackInfo::BundleActiveGroupCallbackInfo(int32_t userId, int32_t oldGroup, int32_t newGroup,
+AppGroupCallbackInfo::AppGroupCallbackInfo(int32_t userId, int32_t oldGroup, int32_t newGroup,
     uint32_t changeReason, std::string bundleName)
 {
     userId_ = userId;
@@ -28,32 +28,32 @@ BundleActiveGroupCallbackInfo::BundleActiveGroupCallbackInfo(int32_t userId, int
     bundleName_ = bundleName;
 }
 
-int32_t BundleActiveGroupCallbackInfo::GetUserId() const
+int32_t AppGroupCallbackInfo::GetUserId() const
 {
     return userId_;
 }
 
-int32_t BundleActiveGroupCallbackInfo::GetOldGroup() const
+int32_t AppGroupCallbackInfo::GetOldGroup() const
 {
     return oldGroup_;
 }
 
-int32_t BundleActiveGroupCallbackInfo::GetNewGroup() const
+int32_t AppGroupCallbackInfo::GetNewGroup() const
 {
     return newGroup_;
 }
 
-uint32_t BundleActiveGroupCallbackInfo::GetChangeReason() const
+uint32_t AppGroupCallbackInfo::GetChangeReason() const
 {
     return changeReason_;
 }
 
-std::string BundleActiveGroupCallbackInfo::GetBundleName() const
+std::string AppGroupCallbackInfo::GetBundleName() const
 {
     return bundleName_;
 }
 
-bool BundleActiveGroupCallbackInfo::Marshalling(Parcel &parcel) const
+bool AppGroupCallbackInfo::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteInt32(userId_)) {
         BUNDLE_ACTIVE_LOGE("Failed to write userId_");
@@ -82,9 +82,9 @@ bool BundleActiveGroupCallbackInfo::Marshalling(Parcel &parcel) const
     return true;
 }
 
-BundleActiveGroupCallbackInfo* BundleActiveGroupCallbackInfo::Unmarshalling(Parcel &parcel)
+AppGroupCallbackInfo* AppGroupCallbackInfo::Unmarshalling(Parcel &parcel)
 {
-    BundleActiveGroupCallbackInfo* result = new (std::nothrow) BundleActiveGroupCallbackInfo();
+    AppGroupCallbackInfo* result = new (std::nothrow) AppGroupCallbackInfo();
     result->userId_ = parcel.ReadInt32();
     result->oldGroup_ = parcel.ReadInt32();
     result->newGroup_ = parcel.ReadInt32();

@@ -13,27 +13,24 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_ACTIVE_GROUP_OBSERVER_H
-#define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_ACTIVE_GROUP_OBSERVER_H
-
-#include <map>
+#ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_APP_GROUP_OBSERVER_NAPI_H
+#define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_APP_GROUP_OBSERVER_NAPI_H
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-#include "bundle_active_group_callback_stub.h"
-#include "bundle_active_group_callback_info.h"
+#include "app_group_callback_stub.h"
+#include "app_group_callback_info.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
 static const int8_t NO_ERROR = 0;
-
-class BundleActiveGroupObserver : public BundleActiveGroupCallbackStub {
+class AppGroupObserver : public AppGroupCallbackStub {
 public:
-    BundleActiveGroupObserver() =default;
+    AppGroupObserver() =default;
 
-    ~BundleActiveGroupObserver();
+    ~AppGroupObserver();
 
-    virtual void OnBundleGroupChanged(const BundleActiveGroupCallbackInfo &bundleActiveGroupCallbackInfo) override;
+    virtual void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
 
     void SetCallbackInfo(const napi_env &env, const napi_ref &ref);
 
@@ -47,12 +44,8 @@ private:
 
 struct BundleActiveGroupObserverInfo {
     napi_ref ref = nullptr;
-    sptr<BundleActiveGroupObserver> callback = nullptr;
+    sptr<AppGroupObserver> callback = nullptr;
 };
-
-napi_value RegisterGroupCallBack(napi_env env, napi_callback_info info);
-napi_value UnRegisterGroupCallBack(napi_env env, napi_callback_info info);
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-
-#endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_ACTIVE_GROUP_OBSERVER_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_APP_GROUP_OBSERVER_NAPI_H

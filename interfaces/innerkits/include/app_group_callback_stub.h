@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-#ifndef BUNDLE_ACTIVE_GROUP_CALLBACK_STUB_H
-#define BUNDLE_ACTIVE_GROUP_CALLBACK_STUB_H
+#ifndef APP_GROUP_CALLBACK_STUB_H
+#define APP_GROUP_CALLBACK_STUB_H
 
 #include "iremote_stub.h"
-#include "ibundle_active_group_callback.h"
+#include "iapp_group_callback.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveGroupCallbackStub : public IRemoteStub<IBundleActiveGroupCallback> {
+class AppGroupCallbackStub : public IRemoteStub<IAppGroupCallback> {
 public:
-    BundleActiveGroupCallbackStub()=default;
-    virtual ~BundleActiveGroupCallbackStub()=default;
+    AppGroupCallbackStub()=default;
+    virtual ~AppGroupCallbackStub()=default;
     /*
     * function: OnRemoteRequest, handle message from proxy.
     * parameters: code, data, reply, option
@@ -33,15 +33,14 @@ public:
     virtual int OnRemoteRequest(
         uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
     /*
-    * function: OnBundleGroupChanged, bundleGroupChanged callback, handle message from proxy.
-    * parameters: bundleActiveGroupCallbackInfo
+    * function: OnAppGroupChanged, bundleGroupChanged callback, handle message from proxy.
+    * parameters: AppGroupCallbackInfo
     * return: void.
     */
-    virtual void OnBundleGroupChanged(
-        const BundleActiveGroupCallbackInfo &bundleActiveGroupCallbackInfo) override;
+    virtual void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
 private:
-    DISALLOW_COPY_AND_MOVE(BundleActiveGroupCallbackStub);
+    DISALLOW_COPY_AND_MOVE(AppGroupCallbackStub);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-#endif  // BUNDLE_ACTIVE_GROUP_CALLBACK_STUB_H
+#endif  // APP_GROUP_CALLBACK_STUB_H

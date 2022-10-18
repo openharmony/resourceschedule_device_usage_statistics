@@ -13,20 +13,23 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_H
-#define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_ACTIVE_APP_GROUP_NAPI_H
+#define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_ACTIVE_APP_GROUP_NAPI_H
+
+#include <map>
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
+#include "app_group_callback_stub.h"
+#include "app_group_callback_info.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-    napi_value IsIdleState(napi_env env, napi_callback_info info);
-    napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info);
-    napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info);
-    napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info);
-    napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info);
-    napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info);
+    napi_value QueryAppGroup(napi_env env, napi_callback_info info);
+    napi_value SetAppGroup(napi_env env, napi_callback_info info);
+    napi_value RegisterAppGroupCallBack(napi_env env, napi_callback_info info);
+    napi_value UnRegisterAppGroupCallBack(napi_env env, napi_callback_info info);
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_H
+
+#endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_ACTIVE_APP_GROUP_NAPI_H

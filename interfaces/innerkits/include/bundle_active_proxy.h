@@ -21,7 +21,8 @@
 #include "bundle_active_event_stats.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_module_record.h"
-#include "ibundle_active_group_callback.h"
+#include "bundle_state_inner_errors.h"
+#include "iapp_group_callback.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -32,92 +33,109 @@ public:
     * parameters: event, userId
     * return: errorcode.
     */
-    int32_t ReportEvent(BundleActiveEvent& event, const int32_t userId) override;
+    ErrCode ReportEvent(BundleActiveEvent& event, const int32_t userId) override;
+
     /*
     * function: IsBundleIdle, used to check whether specific bundle is idle.
     * parameters: bundleName
     * return: if bundle is idle, return true. if bundle is not idle, return false.
     */
-    bool IsBundleIdle(const std::string& bundleName, int32_t& errCode, int32_t userId = -1) override;
+    ErrCode IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId = -1) override;
+
     /*
-    * function: QueryPackageStats, query all bundle usage statistics in specific time span for calling user.
+    * function: QueryBundleStatsInfoByInterval, query all usage statistics in specific time span for calling user.
     * parameters: intervalType, beginTime, endTime, errCode
     * return: vector of bundle usage statistics.
     */
-    std::vector<BundleActivePackageStats> QueryPackageStats(const int32_t intervalType, const int64_t beginTime,
-        const int64_t endTime, int32_t& errCode, int32_t userId = -1) override;
+    ErrCode QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
+        const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId) override;
+
     /*
-    * function: QueryEvents, query all events in specific time span for calling user.
+    * function: QueryBundleEvents, query all events in specific time span for calling user.
     * parameters: beginTime, endTime, errCode
-    * return: vector of events.
+    * return: errorcode.
     */
-    std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime,
-        int32_t& errCode, int32_t userId = -1) override;
+    ErrCode QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents, const int64_t beginTime,
+        const int64_t endTime, int32_t userId) override;
+
     /*
-    * function: SetBundleGroup, set specific bundle of specific user to a priority group.
-    * parameters: bundleName, newGroup, userId
+    * function: SetAppGroup, set specific bundle of specific user to a priority group.
+    * parameters: bundleName, newGroup, userId.
+    * return: errorcode.
     */
-    int32_t SetBundleGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) override;
+    ErrCode SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t userId) override;
+
     /*
-    * function: QueryCurrentPackageStats, query bundle usage statistics in specific time span for calling bundle.
+    * function: QueryBundleStatsInfos, query bundle usage statistics in specific time span for calling bundle.
     * parameters: intervalType, beginTime, endTime
-    * return: vector of calling bundle usage statistics.
+    * return: errCode.
     */
-    std::vector<BundleActivePackageStats> QueryCurrentPackageStats(const int32_t intervalType, const int64_t beginTime,
-        const int64_t endTime) override;
+    ErrCode QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& bundleActivePackageStats,
+        const int32_t intervalType, const int64_t beginTime, const int64_t endTime) override;
+
     /*
-    * function: QueryCurrentEvents, query bundle usage statistics in specific time span for calling bundle.
+    * function: QueryCurrentBundleEvents, query bundle usage statistics in specific time span for calling bundle.
     * parameters: beginTime, endTime
-    * return: vector of calling bundle events.
+    * return: errCode.
     */
-    std::vector<BundleActiveEvent> QueryCurrentEvents(const int64_t beginTime, const int64_t endTime) override;
+    ErrCode QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents, const int64_t beginTime,
+        const int64_t endTime) override;
+
     /*
-    * function: QueryPackageGroup, query bundle priority group calling bundle.
+    * function: QueryAppGroup, query bundle priority group calling bundle.
     * return: the priority group of calling bundle.
+    * return: errorcode.
     */
-    int32_t QueryPackageGroup(std::string& bundleName, const int32_t userId) override;
+    ErrCode QueryAppGroup(int32_t& appGroup, std::string& bundleName, const int32_t userId) override;
+
     /*
-    * function: QueryFormStatistics, query all from usage statistics in specific time span for calling user.
+    * function: QueryModuleUsageRecords, query all from usage statistics in specific time span for calling user.
     * parameters: maxNum, results, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
+    ErrCode QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
         int32_t userId = -1) override;
+
     /*
-    * function: QueryEventStats, query all from event stats in specific time span for calling user.
+    * function: QueryDeviceEventStats, query all from event stats in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    int32_t QueryEventStats(int64_t beginTime, int64_t endTime,
+    ErrCode QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
+
     /*
-    * function: QueryAppNotificationNumber, query all app notification number in specific time span for calling user.
+    * function: QueryNotificationEventStats, query all app notification number in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    int32_t QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+    ErrCode QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
+
     /*
     * function: BundleActiveProxy, default constructor.
     * parameters: impl
     */
     explicit BundleActiveProxy(const sptr<IRemoteObject>& impl)
         : IRemoteProxy<IBundleActiveService>(impl) {}
+
     /*
-    * function: RegisterGroupCallBack, register the observer to groupObservers.
-    * parameters: observer
-    * return: result of RegisterGroupCallBack, true or false.
+    * function: RegisterAppGroupCallBack, register the observer to groupObservers.
+    * parameters: observer.
+    * return: errorcode.
     */
-    int32_t RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    ErrCode RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) override;
+
     /*
-    * function: UnregisterGroupCallBack, remove the observer from groupObservers.
-    * parameters: observer
-    * return: result of UnregisterGroupCallBack, true or false.
+    * function: UnRegisterAppGroupCallBack, remove the observer from groupObservers.
+    * parameters: observer.
+    * return: errorcode.
     */
-    int32_t UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer) override;
+    ErrCode UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer) override;
+
     /*
     * function: ~BundleActiveProxy, default destructor.
     */
@@ -125,7 +143,7 @@ public:
 
 private:
     static inline BrokerDelegator<BundleActiveProxy> delegator_;
-    int32_t IPCCommunication(int64_t beginTime, int64_t endTime, std::vector<BundleActiveEventStats>& eventStats,
+    ErrCode IPCCommunication(int64_t beginTime, int64_t endTime, std::vector<BundleActiveEventStats>& eventStats,
         int32_t userId, int32_t communicationFlag);
 };
 }  // namespace DeviceUsageStats

@@ -50,7 +50,8 @@
         "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
         "//foundation/resourceschedule/device_usage_statistics:device_usage_statistics_sa_profile",
         "//foundation/resourceschedule/device_usage_statistics:device_usage_statistics_service_init",
-        "//foundation/resourceschedule/device_usage_statistics:bundlestate"
+        "//foundation/resourceschedule/device_usage_statistics:bundlestate",
+        "//foundation/resourceschedule/device_usage_statistics:usagestatistics"
       ],
       "inner_kits": [
         {

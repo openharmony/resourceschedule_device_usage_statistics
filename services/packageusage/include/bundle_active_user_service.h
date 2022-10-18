@@ -66,14 +66,14 @@ public:
     void DeleteUninstalledBundleStats(const std::string& bundleName);
     int32_t userId_;
     BundleActiveCalendar dailyExpiryDate_;
-    std::vector<BundleActivePackageStats> QueryPackageStats(int32_t intervalType, const int64_t beginTime,
+    ErrCode QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& PackageStats, int32_t intervalType,
+        const int64_t beginTime, const int64_t endTime, const int32_t userId, const std::string& bundleName);
+    ErrCode QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvent, const int64_t beginTime,
         const int64_t endTime, const int32_t userId, const std::string& bundleName);
-    std::vector<BundleActiveEvent> QueryEvents(const int64_t beginTime, const int64_t endTime, const int32_t userId,
-        const std::string& bundleName);
-    int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results);
-    int32_t QueryEventStats(int64_t beginTime, int64_t endTime,
+    int32_t QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results);
+    int32_t QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
-    int32_t QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+    int32_t QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
     void LoadActiveStats(const int64_t timeStamp, const bool& force, const bool& timeChanged);
     void LoadModuleAndFormStats();

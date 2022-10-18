@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef BUNDLE_ACTIVE_GROUP_CALLBACK_INFO_H
-#define BUNDLE_ACTIVE_GROUP_CALLBACK_INFO_H
+#ifndef APP_GROUP_CALLBACK_INFO_H
+#define APP_GROUP_CALLBACK_INFO_H
 
 #include <memory>
 
@@ -22,10 +22,10 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveGroupCallbackInfo : public Parcelable {
+class AppGroupCallbackInfo : public Parcelable {
 public:
-    BundleActiveGroupCallbackInfo() {};
-    BundleActiveGroupCallbackInfo(int32_t userId, int32_t oldGroup, int32_t newGroup, uint32_t changeReason,
+    AppGroupCallbackInfo() {};
+    AppGroupCallbackInfo(int32_t userId, int32_t oldGroup, int32_t newGroup, uint32_t changeReason,
         std::string bundleName);
 
     /**
@@ -70,7 +70,7 @@ public:
      * @return True if success, else false.
      */
     bool Marshalling(Parcel &parcel) const;
-    static BundleActiveGroupCallbackInfo* Unmarshalling(Parcel &parcel);
+    static AppGroupCallbackInfo* Unmarshalling(Parcel &parcel);
 
 private:
     bool ReadFromParcel(Parcel &parcel);
@@ -84,4 +84,4 @@ private:
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-#endif  // BUNDLE_ACTIVE_GROUP_CALLBACK_INFO_H
+#endif  // APP_GROUP_CALLBACK_INFO_H

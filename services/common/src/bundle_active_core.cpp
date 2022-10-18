@@ -382,7 +382,7 @@ int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
     int64_t expectedSystemTime = (actualRealTime - realTimeShot_) + systemTimeShot_;
     int64_t diffSystemTime = actualSystemTime - expectedSystemTime;
     if (actualSystemTime == -1 || actualRealTime == -1) {
-        return -1;
+        return ERR_TIME_OPERATION_FAILED;
     }
     BUNDLE_ACTIVE_LOGD("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, "
         "diff is %{public}lld", (long long)actualSystemTime,
@@ -548,113 +548,110 @@ int32_t BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
     return 0;
 }
 
-std::vector<BundleActivePackageStats> BundleActiveCore::QueryPackageStats(const int32_t userId,
-    const int32_t intervalType, const int64_t beginTime, const int64_t endTime, std::string bundleName)
+ErrCode BundleActiveCore::QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& packageStats,
+    const int32_t userId, const int32_t intervalType, const int64_t beginTime, const int64_t endTime,
+    std::string bundleName)
 {
-    BUNDLE_ACTIVE_LOGD("QueryPackageStats called");
+    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos called");
     std::lock_guard<std::mutex> lock(mutex_);
-    std::vector<BundleActivePackageStats> result;
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == -1) {
-        return result;
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
     }
-    BUNDLE_ACTIVE_LOGD("QueryPackageStats begin time is %{public}lld, end time is %{public}lld, "
+
+    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos begin time is %{public}lld, end time is %{public}lld, "
         "intervaltype is %{public}d", (long long)beginTime, (long long)endTime, intervalType);
     if (beginTime > timeNow || beginTime >= endTime) {
-        BUNDLE_ACTIVE_LOGI("QueryPackageStats time span illegal");
-        return result;
+        BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos time span illegal");
+        return ERR_QUERY_TIME_OUT_OF_RANGE;
     }
+
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (service == nullptr) {
-        BUNDLE_ACTIVE_LOGI("QueryPackageStats service is null, failed");
-        return result;
+        BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos service is null, failed");
+        return ERR_MEMORY_OPERATION_FAILED;
     }
-    result = service->QueryPackageStats(intervalType, beginTime, endTime, userId, bundleName);
-    return result;
+    return service->QueryBundleStatsInfos(packageStats, intervalType, beginTime, endTime, userId, bundleName);
 }
 
-std::vector<BundleActiveEvent> BundleActiveCore::QueryEvents(const int32_t userId, const int64_t beginTime,
-    const int64_t endTime, std::string bundleName)
+ErrCode BundleActiveCore::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvent, const int32_t userId,
+    const int64_t beginTime, const int64_t endTime, std::string bundleName)
 {
-    BUNDLE_ACTIVE_LOGD("QueryEvents called");
-    std::vector<BundleActiveEvent> result;
+    BUNDLE_ACTIVE_LOGD("QueryBundleEvents called");
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == -1) {
-        return result;
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
     }
     if (beginTime > timeNow || beginTime >= endTime) {
-        return result;
+        return ERR_QUERY_TIME_OUT_OF_RANGE;
     }
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (service == nullptr) {
-        return result;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
-    result = service->QueryEvents(beginTime, endTime, userId, bundleName);
-    return result;
+    auto item = service->QueryBundleEvents(bundleActiveEvent, beginTime, endTime, userId, bundleName);
+    return item;
 }
 
-int32_t BundleActiveCore::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
+ErrCode BundleActiveCore::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
     int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == -1) {
-        return -1;
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
     }
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
-    if (service == nullptr) {
-        return -1;
+    if (!service) {
+        return ERR_MEMORY_OPERATION_FAILED;
     }
-    int32_t errCode = service->QueryFormStatistics(maxNum, results);
-    return errCode;
+    return service->QueryModuleUsageRecords(maxNum, results);
 }
 
-int32_t BundleActiveCore::QueryEventStats(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveCore::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == -1) {
-        return -1;
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
     }
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (!service) {
-        return -1;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
-    int32_t errCode = service->QueryEventStats(beginTime, endTime, eventStats, userId);
-    return errCode;
+    return service->QueryDeviceEventStats(beginTime, endTime, eventStats, userId);
 }
 
-int32_t BundleActiveCore::QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveCore::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == -1) {
-        return -1;
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
     }
     std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
     if (!service) {
-        return -1;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
-    int32_t errCode = service->QueryAppNotificationNumber(beginTime, endTime, eventStats, userId);
-    return errCode;
+    return service->QueryNotificationEventStats(beginTime, endTime, eventStats, userId);
 }
 
-int32_t BundleActiveCore::SetBundleGroup(
+ErrCode BundleActiveCore::SetAppGroup(
     const std::string& bundleName, const int32_t newGroup, const int32_t userId, const bool isFlush)
 {
     int32_t newReason = GROUP_CONTROL_REASON_FORCED;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    return bundleGroupController_->SetBundleGroup(
+    return bundleGroupController_->SetAppGroup(
         bundleName, userId, newGroup, newReason, bootBasedTimeStamp, isFlush);
 }
 
-int32_t BundleActiveCore::QueryPackageGroup(const std::string bundleName, const int32_t userId)
+ErrCode BundleActiveCore::QueryAppGroup(int32_t& appGroup, const std::string& bundleName, const int32_t userId)
 {
-    return bundleGroupController_->QueryPackageGroup(bundleName, userId);
+    return bundleGroupController_->QueryAppGroup(appGroup, bundleName, userId);
 }
 
 int32_t BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int32_t userId)
@@ -698,61 +695,62 @@ int64_t BundleActiveCore::GetSystemTimeMs()
     return static_cast<int64_t>(tarDate);
 }
 
-void BundleActiveCore::OnBundleGroupChanged(const BundleActiveGroupCallbackInfo& callbackInfo)
+void BundleActiveCore::OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo)
 {
     std::lock_guard<std::mutex> lock(callbackMutex_);
     AccessToken::HapTokenInfo tokenInfo = AccessToken::HapTokenInfo();
     for (const auto &item : groupChangeObservers_) {
         auto observer = item.second;
-        if (observer) {
-            BUNDLE_ACTIVE_LOGI(
-                "RegisterGroupCallBack will OnBundleGroupChanged!,oldGroup is %{public}d, newGroup is %{public}d",
-                callbackInfo.GetOldGroup(), callbackInfo.GetNewGroup());
-            if (AccessToken::AccessTokenKit::GetTokenType(item.first) == AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
-                observer->OnBundleGroupChanged(callbackInfo);
-            } else if (AccessToken::AccessTokenKit::GetTokenType(item.first) ==
-                        AccessToken::ATokenTypeEnum::TOKEN_HAP) {
-                AccessToken::AccessTokenKit::GetHapTokenInfo(item.first, tokenInfo);
-                if (tokenInfo.userID == callbackInfo.GetUserId()) {
-                    observer->OnBundleGroupChanged(callbackInfo);
-                }
+        if (!observer) {
+            continue;
+        }
+        BUNDLE_ACTIVE_LOGI(
+            "RegisterAppGroupCallBack will OnAppGroupChanged!,oldGroup is %{public}d, newGroup is %{public}d",
+            callbackInfo.GetOldGroup(), callbackInfo.GetNewGroup());
+        if (AccessToken::AccessTokenKit::GetTokenType(item.first) == AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
+            observer->OnAppGroupChanged(callbackInfo);
+        } else if (AccessToken::AccessTokenKit::GetTokenType(item.first) ==
+                    AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+            AccessToken::AccessTokenKit::GetHapTokenInfo(item.first, tokenInfo);
+            if (tokenInfo.userID == callbackInfo.GetUserId()) {
+                observer->OnAppGroupChanged(callbackInfo);
             }
         }
     }
 }
 
-int32_t BundleActiveCore::RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
-    const sptr<IBundleActiveGroupCallback> &observer)
+ErrCode BundleActiveCore::RegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+    const sptr<IAppGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(callbackMutex_);
     if (!observer) {
-        return -1;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
     auto item = groupChangeObservers_.find(tokenId);
     if (item != groupChangeObservers_.end()) {
-        return 1;
+        return ERR_REPEAT_REGISTER_OR_DEREGISTER_GROUP_CALLBACK;
     }
     groupChangeObservers_.emplace(tokenId, observer);
     AddObserverDeathRecipient(observer);
-    BUNDLE_ACTIVE_LOGD("RegisterGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
-    return 0;
+    BUNDLE_ACTIVE_LOGD("RegisterAppGroupCallBack number is %{public}d", static_cast<int>(groupChangeObservers_.size()));
+    return ERR_OK;
 }
 
-int32_t BundleActiveCore::UnregisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
-    const sptr<IBundleActiveGroupCallback> &observer)
+ErrCode BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+    const sptr<IAppGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(callbackMutex_);
     auto item = groupChangeObservers_.find(tokenId);
     if (item == groupChangeObservers_.end()) {
-        BUNDLE_ACTIVE_LOGI("UnRegisterGroupCallBack observer is not exist, return");
-        return 1;
+        BUNDLE_ACTIVE_LOGI("UnRegisterAppGroupCallBack observer is not exist, return");
+        return ERR_REPEAT_REGISTER_OR_DEREGISTER_GROUP_CALLBACK;
     }
     RemoveObserverDeathRecipient(item->second);
     groupChangeObservers_.erase(tokenId);
-    return 0;
+    return ERR_OK;
 }
 
-void BundleActiveCore::AddObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer)
+void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(deathRecipientMutex_);
     if (!observer || !(observer->AsObject())) {
@@ -774,7 +772,7 @@ void BundleActiveCore::AddObserverDeathRecipient(const sptr<IBundleActiveGroupCa
         recipientMap_.emplace(observer->AsObject(), deathRecipient);
     }
 }
-void BundleActiveCore::RemoveObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer)
+void BundleActiveCore::RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(deathRecipientMutex_);
     if (!observer || !(observer->AsObject())) {

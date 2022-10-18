@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "bundle_active_core.h"
-#include "bundle_active_group_callback_info.h"
+#include "app_group_callback_info.h"
 #include "bundle_active_user_history.h"
 
 namespace OHOS {
@@ -193,20 +193,20 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     }
     oneBundleUsageHistory->reasonInGroup_ = GROUP_CONTROL_REASON_USAGE | groupReason;
     oneBundleUsageHistory->isChanged_ = true;
-    BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack will ReportUsage");
+    BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack will ReportUsage");
     bool isGroupChanged = (oldGroup == newGroup) ? true : false;
     if (!isGroupChanged) {
-        BundleActiveGroupCallbackInfo callbackInfo(
+        AppGroupCallbackInfo callbackInfo(
             userId, oldGroup, newGroup, oneBundleUsageHistory->reasonInGroup_, bundleName);
-        BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack BundleActiveGroupCallbackInfo build success");
+        BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack AppGroupCallbackInfo build success");
         if (!bundleActiveCore_.expired()) {
-            BUNDLE_ACTIVE_LOGI("RegisterGroupCallBack will callback!");
-            bundleActiveCore_.lock()->OnBundleGroupChanged(callbackInfo);
+            BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack will callback!");
+            bundleActiveCore_.lock()->OnAppGroupChanged(callbackInfo);
         }
     }
 }
 
-int32_t BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const int32_t userId,
+int32_t BundleActiveUserHistory::SetAppGroup(const string& bundleName, const int32_t userId,
     const int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason, const bool isFlush)
 {
     std::lock_guard<std::mutex> lock(setGroupMutex_);
@@ -229,17 +229,17 @@ int32_t BundleActiveUserHistory::SetBundleGroup(const string& bundleName, const 
     oneBundleHistory->currentGroup_ = newGroup;
     oneBundleHistory->reasonInGroup_ = groupReason;
     oneBundleHistory->isChanged_ = true;
-    BUNDLE_ACTIVE_LOGI("SetBundleGroup set success");
+    BUNDLE_ACTIVE_LOGI("SetAppGroup set success");
     if (isFlush) {
         WriteBundleUsage(userId);
     }
 
     bool isGroupChanged = (oldGroup == newGroup) ? true : false;
     if (!isGroupChanged) {
-        BundleActiveGroupCallbackInfo callbackInfo(
+        AppGroupCallbackInfo callbackInfo(
             userId, oldGroup, newGroup, oneBundleHistory->reasonInGroup_, bundleName);
         if (!bundleActiveCore_.expired()) {
-            bundleActiveCore_.lock()->OnBundleGroupChanged(callbackInfo);
+            bundleActiveCore_.lock()->OnAppGroupChanged(callbackInfo);
         }
     }
     return 0;

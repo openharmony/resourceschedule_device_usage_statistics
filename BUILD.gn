@@ -25,15 +25,16 @@ config("usagestatsinner_public_config") {
     "services/packageusage/include",
     "services/packagegroup/include",
     "interfaces/innerkits/include",
+    "interfaces/kits/bundlestats/napi/include",
   ]
 }
 
 ohos_shared_library("usagestatsinner") {
   sources = [
+    "interfaces/innerkits/src/app_group_callback_info.cpp",
+    "interfaces/innerkits/src/app_group_callback_proxy.cpp",
+    "interfaces/innerkits/src/app_group_callback_stub.cpp",
     "interfaces/innerkits/src/bundle_active_client.cpp",
-    "interfaces/innerkits/src/bundle_active_group_callback_info.cpp",
-    "interfaces/innerkits/src/bundle_active_group_callback_proxy.cpp",
-    "interfaces/innerkits/src/bundle_active_group_callback_stub.cpp",
     "interfaces/innerkits/src/bundle_active_proxy.cpp",
     "services/packageusage/src/bundle_active_event.cpp",
     "services/packageusage/src/bundle_active_package_stats.cpp",
@@ -61,7 +62,6 @@ ohos_prebuilt_etc("device_usage_statistics_service_init") {
 
 ohos_shared_library("bundlestate") {
   sources = [
-    "frameworks/src/bundle_active_group_observer.cpp",
     "frameworks/src/bundle_state_common.cpp",
     "frameworks/src/bundle_state_init.cpp",
     "frameworks/src/bundle_state_query.cpp",
@@ -91,11 +91,44 @@ ohos_shared_library("bundlestate") {
   subsystem_name = "resourceschedule"
 }
 
+ohos_shared_library("usagestatistics") {
+  sources = [
+    "frameworks/src/app_group_observer_napi.cpp",
+    "frameworks/src/bundle_active_app_group_napi.cpp",
+    "frameworks/src/bundle_state_common.cpp",
+    "frameworks/src/bundle_state_query_napi.cpp",
+    "frameworks/src/usage_statistics_init.cpp",
+  ]
+  include_dirs = [
+    "interfaces/kits/bundlestats/napi/include",
+    "services/common/include",
+    "interfaces/innerkits/include",
+    "services/packageusage/include",
+    "services/packagegroup/include",
+    "//base/notification/eventhandler/interfaces/inner_api",
+  ]
+
+  deps = [
+    ":usagestatservice",
+    ":usagestatsinner",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "napi:ace_napi",
+  ]
+  relative_install_dir = "module/resourceschedule"
+  part_name = "${device_usage_statistics_part_name}"
+  subsystem_name = "resourceschedule"
+}
+
 ohos_shared_library("usagestatservice") {
   cflags_cc = []
   sources = [
-    "interfaces/innerkits/src/bundle_active_group_callback_info.cpp",
-    "interfaces/innerkits/src/bundle_active_group_callback_proxy.cpp",
+    "interfaces/innerkits/src/app_group_callback_info.cpp",
+    "interfaces/innerkits/src/app_group_callback_proxy.cpp",
     "services/common/src/bundle_active_account_helper.cpp",
     "services/common/src/bundle_active_app_state_obsever.cpp",
     "services/common/src/bundle_active_binary_search.cpp",

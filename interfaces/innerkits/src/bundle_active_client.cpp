@@ -29,28 +29,28 @@ BundleActiveClient& BundleActiveClient::GetInstance()
     return instance;
 }
 
-bool BundleActiveClient::GetBundleActiveProxy()
+ErrCode BundleActiveClient::GetBundleActiveProxy()
 {
     if (bundleActiveProxy_ != nullptr) {
-        return true;
+        return ERR_OK;
     }
     std::lock_guard<std::mutex> lock(mutex_);
     sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (!samgr) {
         BUNDLE_ACTIVE_LOGE("Failed to get SystemAbilityManager.");
-        return false;
+        return ERR_GET_SYSTEM_ABILITY_MANAGER_FAILED;
     }
 
     sptr<IRemoteObject> object = samgr->GetSystemAbility(DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID);
     if (!object) {
         BUNDLE_ACTIVE_LOGE("Failed to get SystemAbility[1907] .");
-        return false;
+        return ERR_GET_SYSTEM_ABILITY_FAILED;
     }
 
     bundleActiveProxy_ = iface_cast<IBundleActiveService>(object);
     if (!bundleActiveProxy_) {
         BUNDLE_ACTIVE_LOGE("Failed to get BundleActiveProxy.");
-        return false;
+        return ERR_REMOTE_OBJECT_IF_CAST_FAILED;
     }
     if (!recipient_) {
         recipient_ = new (std::nothrow) BundleActiveClientDeathRecipient();
@@ -62,141 +62,156 @@ bool BundleActiveClient::GetBundleActiveProxy()
     bundleClientRunner_ = AppExecFwk::EventRunner::Create(BUNDLE_ACTIVE_CLIENT_NAME);
     if (!bundleClientRunner_) {
         BUNDLE_ACTIVE_LOGE("BundleActiveClient runner create failed!");
-        return false;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
     bundleClientHandler_ = std::make_shared<OHOS::AppExecFwk::EventHandler>(bundleClientRunner_);
     if (!bundleClientHandler_) {
         BUNDLE_ACTIVE_LOGE("BundleActiveClient handler create failed!");
-        return false;
+        return ERR_MEMORY_OPERATION_FAILED;
     }
-    return true;
+    return ERR_OK;
 }
 
-int32_t BundleActiveClient::ReportEvent(BundleActiveEvent event, const int32_t userId)
+ErrCode BundleActiveClient::ReportEvent(BundleActiveEvent event, const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveClient::ReportEvent called");
-    if (!GetBundleActiveProxy()) {
-        return -1;
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
     return bundleActiveProxy_->ReportEvent(event, userId);
 }
 
-bool BundleActiveClient::IsBundleIdle(const std::string& bundleName, int32_t& errCode, int32_t userId)
+ErrCode BundleActiveClient::IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId)
 {
-    if (!GetBundleActiveProxy()) {
-        return -1;
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    return bundleActiveProxy_->IsBundleIdle(bundleName, errCode, userId);
+    return bundleActiveProxy_->IsBundleIdle(isBundleIdle, bundleName, userId);
 }
 
-std::vector<BundleActivePackageStats> BundleActiveClient::QueryPackageStats(const int32_t intervalType,
-    const int64_t beginTime, const int64_t endTime, int32_t& errCode, int32_t userId)
+ErrCode BundleActiveClient::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
+    const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
-    if (!GetBundleActiveProxy()) {
-        return std::vector<BundleActivePackageStats>(0);
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    return bundleActiveProxy_->QueryPackageStats(intervalType, beginTime, endTime, errCode, userId);
+    return bundleActiveProxy_->QueryBundleStatsInfoByInterval(PackageStats, intervalType, beginTime, endTime, userId);
 }
 
-std::vector<BundleActiveEvent> BundleActiveClient::QueryEvents(const int64_t beginTime,
-    const int64_t endTime, int32_t& errCode, int32_t userId)
+ErrCode BundleActiveClient::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
+    const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
-    if (!GetBundleActiveProxy()) {
-        return std::vector<BundleActiveEvent>(0);
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    return bundleActiveProxy_->QueryEvents(beginTime, endTime, errCode, userId);
+    auto err = bundleActiveProxy_->QueryBundleEvents(bundleActiveEvents, beginTime, endTime, userId);
+    BUNDLE_ACTIVE_LOGI("QueryBundleEvents bundleActiveEvents is %{public}zu", bundleActiveEvents.size());
+    return err;
 }
 
-int32_t BundleActiveClient::SetBundleGroup(std::string bundleName, const int32_t newGroup, int32_t userId)
+ErrCode BundleActiveClient::SetAppGroup(std::string bundleName, const int32_t newGroup, int32_t userId)
 {
-    if (!GetBundleActiveProxy()) {
-        return -1;
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    return bundleActiveProxy_->SetBundleGroup(bundleName, newGroup, userId);
+    return bundleActiveProxy_->SetAppGroup(bundleName, newGroup, userId);
 }
 
-std::vector<BundleActivePackageStats> BundleActiveClient::QueryCurrentPackageStats(const int32_t intervalType,
+ErrCode BundleActiveClient::QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& bundleActivePackageStats,
+    const int32_t intervalType, const int64_t beginTime, const int64_t endTime)
+{
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    return bundleActiveProxy_->QueryBundleStatsInfos(bundleActivePackageStats, intervalType, beginTime, endTime);
+}
+
+ErrCode BundleActiveClient::QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
     const int64_t beginTime, const int64_t endTime)
 {
-    if (!GetBundleActiveProxy()) {
-        return std::vector<BundleActivePackageStats>(0);
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    return bundleActiveProxy_->QueryCurrentPackageStats(intervalType, beginTime, endTime);
+    return bundleActiveProxy_->QueryCurrentBundleEvents(bundleActiveEvents, beginTime, endTime);
 }
 
-std::vector<BundleActiveEvent> BundleActiveClient::QueryCurrentEvents(const int64_t beginTime, const int64_t endTime)
+ErrCode BundleActiveClient::QueryAppGroup(int32_t& appGroup, std::string& bundleName, const int32_t userId)
 {
-    if (!GetBundleActiveProxy()) {
-        return std::vector<BundleActiveEvent>(0);
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    return bundleActiveProxy_->QueryCurrentEvents(beginTime, endTime);
+    return bundleActiveProxy_->QueryAppGroup(appGroup, bundleName, userId);
 }
 
-int32_t BundleActiveClient::QueryPackageGroup(std::string& bundleName, const int32_t userId)
-{
-    if (!GetBundleActiveProxy()) {
-        return -1;
-    }
-    int32_t result = bundleActiveProxy_->QueryPackageGroup(bundleName, userId);
-    return result;
-}
-
-int32_t BundleActiveClient::QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
+ErrCode BundleActiveClient::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
     int32_t userId)
 {
     if (maxNum <= 0 || maxNum > MAXNUM_UP_LIMIT) {
         BUNDLE_ACTIVE_LOGI("maxNum is illegal, maxNum is %{public}d", maxNum);
-        return -1;
+        return ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
     }
-    if (!GetBundleActiveProxy()) {
-        return -1;
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    return bundleActiveProxy_->QueryFormStatistics(maxNum, results, userId);
+    return bundleActiveProxy_->QueryModuleUsageRecords(maxNum, results, userId);
 }
 
-int32_t BundleActiveClient::RegisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+ErrCode BundleActiveClient::RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
-    if (!GetBundleActiveProxy()) {
-        return -1;
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    int32_t result = bundleActiveProxy_->RegisterGroupCallBack(observer);
-    if (recipient_ && result == ERR_OK) {
+    ret = bundleActiveProxy_->RegisterAppGroupCallBack(observer);
+    if (recipient_ && ret == ERR_OK) {
         recipient_->AddObserver(observer);
     }
-    return result;
+    return ret;
 }
 
-int32_t BundleActiveClient::UnregisterGroupCallBack(const sptr<IBundleActiveGroupCallback> &observer)
+ErrCode BundleActiveClient::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
-    if (!GetBundleActiveProxy()) {
-        return -1;
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    int32_t result = bundleActiveProxy_->UnregisterGroupCallBack(observer);
-    if (recipient_ && result == ERR_OK) {
+    ret = bundleActiveProxy_->UnRegisterAppGroupCallBack(observer);
+    if (recipient_ && ret == ERR_OK) {
         recipient_->RemoveObserver();
     }
-    return result;
+    return ret;
 }
 
-int32_t BundleActiveClient::QueryEventStats(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveClient::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    if (!GetBundleActiveProxy()) {
-        return -1;
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    return bundleActiveProxy_->QueryEventStats(beginTime, endTime, eventStats, userId);
+    return bundleActiveProxy_->QueryDeviceEventStats(beginTime, endTime, eventStats, userId);
 }
 
-int32_t BundleActiveClient::QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+ErrCode BundleActiveClient::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    if (!GetBundleActiveProxy()) {
-        return -1;
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
     }
-    return bundleActiveProxy_->QueryAppNotificationNumber(beginTime, endTime, eventStats, userId);
+    return bundleActiveProxy_->QueryNotificationEventStats(beginTime, endTime, eventStats, userId);
 }
 
-void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const sptr<IBundleActiveGroupCallback> &observer)
+void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const sptr<IAppGroupCallback> &observer)
 {
     if (observer) {
         observer_ = observer;
@@ -226,7 +241,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
         sleep(SLEEP_TIME);
     }
     if (observer_) {
-        BundleActiveClient::GetInstance().RegisterGroupCallBack(observer_);
+        BundleActiveClient::GetInstance().RegisterAppGroupCallBack(observer_);
     }
 }
 }  // namespace DeviceUsageStats

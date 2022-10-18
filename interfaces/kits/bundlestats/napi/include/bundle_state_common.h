@@ -34,13 +34,18 @@ public:
 
     static napi_value NapiGetUndefined(napi_env env);
 
+    static napi_value HandleParamErr(const napi_env &env, int32_t errCode, const std::string& operation);
+
     static napi_value GetErrorValue(napi_env env, int32_t errCode);
+
+    static std::string GetSaErrCodeMsg(int32_t errCode, int32_t reflectCode);
+
+    static int32_t GetReflectErrCode(int32_t errCode);
 
     static void SettingAsyncWorkData(
         const napi_env &env, const napi_ref &callback, AsyncWorkData &workData, napi_value &promise);
 
-    static void GetCallbackPromiseResult(const napi_env &env, const AsyncWorkData &workData,
-        const napi_value &result);
+    static void GetCallbackPromiseResult(const napi_env &env, const AsyncWorkData &workData, const napi_value &result);
 
     static void SetCallbackInfo(
         const napi_env &env, const napi_ref &callbackIn, const int32_t &errorCode, const napi_value &result);
@@ -77,12 +82,12 @@ public:
 
     static napi_value GetInt32NumberValue(const napi_env &env, const napi_value &value, int32_t &result);
 
-    static std::shared_ptr<std::map<std::string, BundleActivePackageStats>> GetPackageStats(
+    static std::shared_ptr<std::map<std::string, BundleActivePackageStats>> QueryBundleStatsInfos(
 	    int64_t &beginTime, int64_t &endTime, int32_t &errCode);
 
     static void MergePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right);
 
-    static std::unique_ptr<AsyncCallbackInfoEventStats> HandleEventStatsInfo(
+    static std::unique_ptr<AsyncCallbackInfoEventStats> HandleEventStatsInfo(const napi_env &env,
         AsyncCallbackInfoEventStats *asyncCallbackInfo, EventStatesParamsInfo &params);
 
     template <typename PARAMT, typename ASYNCT>
@@ -93,16 +98,18 @@ template <typename PARAMT, typename ASYNCT>
 void BundleStateCommon::AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo)
 {
     if (params.errorCode != ERR_OK) {
-        return ;
+        return;
     }
     asyncCallbackInfo = new (std::nothrow) ASYNCT(env);
     if (!asyncCallbackInfo) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_NULLPTR;
-        return ;
+        params.errorCode = ERR_ASYNC_CALLBACK_NULLPTR;
+        BundleStateCommon::HandleParamErr(env, ERR_ASYNC_CALLBACK_NULLPTR, "");
+        return;
     }
     if (memset_s(asyncCallbackInfo, sizeof(*asyncCallbackInfo), 0, sizeof(*asyncCallbackInfo))
         != EOK) {
-        params.errorCode = ERR_USAGE_STATS_ASYNC_CALLBACK_INIT_FAILED;
+        params.errorCode = ERR_ASYNC_CALLBACK_INIT_FAILED;
+        BundleStateCommon::HandleParamErr(env, ERR_ASYNC_CALLBACK_INIT_FAILED, "");
         delete asyncCallbackInfo;
         asyncCallbackInfo = nullptr;
     }

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "bundle_active_group_callback_proxy.h"
+#include "app_group_callback_proxy.h"
 #include "message_parcel.h"
 #include "bundle_active_log.h"
 #include "errors.h"
@@ -21,32 +21,32 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 BundleActiveGroupCallbackProxy::BundleActiveGroupCallbackProxy(const sptr<IRemoteObject>& impl)
-    : IRemoteProxy<IBundleActiveGroupCallback>(impl) {}
+    : IRemoteProxy<IAppGroupCallback>(impl) {}
 BundleActiveGroupCallbackProxy::~BundleActiveGroupCallbackProxy() {}
 
-void BundleActiveGroupCallbackProxy::OnBundleGroupChanged(
-    const BundleActiveGroupCallbackInfo &bundleActiveGroupCallbackInfo)
+void BundleActiveGroupCallbackProxy::OnAppGroupChanged(
+    const AppGroupCallbackInfo &appGroupCallbackInfo)
 {
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack remote is dead.");
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack remote is dead.");
         return;
     }
     MessageParcel data;
     if (!data.WriteInterfaceToken(BundleActiveGroupCallbackProxy::GetDescriptor())) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack write interface token failed.");
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack write interface token failed.");
         return;
     }
-    if (!data.WriteParcelable(&bundleActiveGroupCallbackInfo)) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack write parcel failed.");
+    if (!data.WriteParcelable(&appGroupCallbackInfo)) {
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack write parcel failed.");
         return;
     }
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
     int32_t ret = remote->SendRequest(
-        static_cast<uint32_t>(IBundleActiveGroupCallback::message::ON_BUNDLE_GROUP_CHANGED), data, reply, option);
+        static_cast<uint32_t>(IAppGroupCallback::message::ON_BUNDLE_GROUP_CHANGED), data, reply, option);
     if (ret!= ERR_OK) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack SendRequest failed, error code: %{public}d", ret);
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack SendRequest failed, error code: %{public}d", ret);
     }
 }
 }  // namespace BackgroundTaskMgr

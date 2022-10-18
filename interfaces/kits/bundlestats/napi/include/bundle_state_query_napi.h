@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_H
-#define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_H
+#ifndef FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_NAPI_H
+#define FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_NAPI_H
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
@@ -22,11 +22,14 @@
 namespace OHOS {
 namespace DeviceUsageStats {
     napi_value IsIdleState(napi_env env, napi_callback_info info);
-    napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info);
-    napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info);
-    napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info);
-    napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info);
-    napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info);
+    napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info);
+    napi_value QueryBundleEvents(napi_env env, napi_callback_info info);
+    napi_value QueryBundleStatsInfoByInterval(napi_env env, napi_callback_info info);
+    napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info);
+    napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info);
+    napi_value QueryDeviceEventStats(napi_env env, napi_callback_info info);
+    napi_value QueryNotificationEventStats(napi_env env, napi_callback_info info);
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-#endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_H
+#endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_NAPI_H
+

@@ -25,9 +25,10 @@
 #endif // OS_ACCOUNT_PART_ENABLED
 #include "ibundle_active_service.h"
 #include "remote_death_recipient.h"
-#include "ibundle_active_group_callback.h"
+#include "iapp_group_callback.h"
 #include "bundle_active_debug_mode.h"
 #include "bundle_active_stats_update_listener.h"
+#include "bundle_state_inner_errors.h"
 #include "bundle_active_user_service.h"
 #include "bundle_active_group_controller.h"
 #include "bundle_active_group_handler.h"
@@ -56,63 +57,75 @@ class BundleActiveCore : public BundleActiveStatsUpdateListener,
 public:
     BundleActiveCore();
     virtual ~BundleActiveCore();
+
     /*
     * function: ReportEvent, used to report ability fourground/background/destroy event.
     * parameters: event, userId
     */
     int32_t ReportEvent(BundleActiveEvent& event, int32_t userId);
+
     /*
     * function: ReportEventToAllUserId, report flush to disk, end_of_day event to service.
     * parameters: event
     */
     int32_t ReportEventToAllUserId(BundleActiveEvent& event);
+
     /*
     * function: OnStatsChanged, report flush to disk, end_of_day event to service.
     * parameters: userId
     */
     void OnStatsChanged(const int32_t userId) override;
+
     /*
     * function: OnStatsChanged, when device reboot after more than one day, BundleActiveUserService
     * will use it to flush group info.
     */
     void OnStatsReload() override;
+
     /*
     * function: OnSystemUpdate, now is emtpy, later will called when system is updated.
     * parameters: userId
     */
     void OnSystemUpdate(int32_t userId) override;
+
     /*
     * function: OnBundleUninstalled when received a PACKATE_REMOVED commen event,
     * BundleActiveCommonEventSubscriber call it to remove data.
     * parameters: userId, bundleName
     */
     void OnBundleUninstalled(const int32_t userId, const std::string& bundleName);
+
     /*
     * function: Init, BundleAciveService call it to init systemTimeShot_, realTimeShot_,
     * create bundleGroupController_ object.
     */
     void Init();
+
     /*
     * function: InitBundleGroupController, BundleAciveService call it to init bundleGroupController_ object,
     * set its handler and subscribe needed common event.
     * create bundleGroupController_ object.
     */
     void InitBundleGroupController();
+
     /*
     * function: SetHandler, BundleActiveService call it to set event report handler
     * parameters: reportHandler
     */
     void SetHandler(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
+
     /*
     * function: RestoreToDatabase, restore bundle usage data and form data to database
     * parameters: userId
     */
     void RestoreToDatabase(const int32_t userId);
+
     /*
     * function: RestoreToDatabaseLocked, flush database for one user data
     * parameters: userId
     */
     void RestoreToDatabaseLocked(const int32_t userId);
+
     /*
     * function: ShutDown, called when device shutdown, update the in-memory stat and flush the database.
     */
@@ -121,82 +134,100 @@ public:
     * function: PreservePowerStateInfo, called when device change power state, preserve power state info.
     */
     void PreservePowerStateInfo(const int32_t eventId);
+
     /*
-    * function: QueryPackageStats, query the package stat for calling user.
+    * function: queryBundleStatsInfos, query the package stat for calling user.
     * parameters: userId, intervalType, beginTime, endTime, bundleName
     * return: vector of BundleActivePackageStats
     */
-    std::vector<BundleActivePackageStats> QueryPackageStats(const int32_t userId, const int32_t intervalType,
-        const int64_t beginTime, const int64_t endTime, std::string bundleName);
+    ErrCode QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& packageStats, const int32_t userId,
+        const int32_t intervalType, const int64_t beginTime, const int64_t endTime, std::string bundleName);
+
     // query the event stat for calling user.
-    std::vector<BundleActiveEvent> QueryEvents(const int32_t userId, const int64_t beginTime,
-        const int64_t endTime, std::string bundleName);
+    ErrCode QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvent, const int32_t userId,
+        const int64_t beginTime, const int64_t endTime, std::string bundleName);
+
     // check the app idle state for calling user.
     int32_t IsBundleIdle(const std::string& bundleName, const int32_t userId);
+
     // query the app group for calling app.
-    int32_t QueryPackageGroup(const std::string bundleName, const int32_t userId);
-    int32_t QueryFormStatistics(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId);
+    ErrCode QueryAppGroup(int32_t& appGroup, const std::string& bundleName, const int32_t userId);
+
+    ErrCode QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results, int32_t userId);
+
     /*
-    * function: QueryEventStats, query all from event stats in specific time span for calling user.
+    * function: QueryDeviceEventStats, query all from event stats in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    int32_t QueryEventStats(int64_t beginTime, int64_t endTime,
+    ErrCode QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
 
     /*
-    * function: QueryAppNotificationNumber, query all app notification number in specific time span for calling user.
+    * function: QueryNotificationEventStats, query all app notification number in specific time span for calling user.
     * parameters: beginTime, endTime, eventStats, userId, default userId is -1 for JS API,
     * if other SAs call this API, they should explicit define userId.
     * return: errorcode.
     */
-    int32_t QueryAppNotificationNumber(int64_t beginTime, int64_t endTime,
+    ErrCode QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
+
     // get the wall time and check if the wall time is changed.
     int64_t CheckTimeChangeAndGetWallTime(int32_t userId = 0);
+
     // convert event timestamp from boot based time to wall time.
     void ConvertToSystemTimeLocked(BundleActiveEvent& event);
+
     // get or create BundleActiveUserService object for specifice user.
     std::shared_ptr<BundleActiveUserService> GetUserDataAndInitializeIfNeeded(const int32_t userId,
         const int64_t timeStamp, const bool debug);
+
     // when received a USER_REMOVED commen event, call it to remove data.
     void OnUserRemoved(const int32_t userId);
+
     // when user switched, restore old userdata.
     void OnUserSwitched(const int32_t userId);
+
     /*
-    * function: SetBundleGroup, change bundleGroup to the newGroup.
+    * function: SetAppGroup, change bundleGroup to the newGroup.
     * parameters: bundleName, newGroup, userId, isFlush,
     * return: errorcode.
     */
-    int32_t SetBundleGroup(
+    ErrCode SetAppGroup(
         const std::string& bundleName, const int32_t newGroup, const int32_t userId, const bool isFlush);
+
     // get all user in device.
     void GetAllActiveUser(std::vector<int32_t>& activatedOsAccountIds);
+
     // when service stop, call it to unregister commen event and shutdown call back.
     void UnRegisterSubscriber();
+
     // get system time in MS.
     int64_t GetSystemTimeMs();
+
     /*
-    * function: RegisterGroupCallBack, register the observer to groupObservers.
+    * function: RegisterAppGroupCallBack, register the observer to groupObservers.
     * parameters: observer
-    * return: result of RegisterGroupCallBack, true or false.
+    * return: errCode.
     */
-    int32_t RegisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
-        const sptr<IBundleActiveGroupCallback> &observer);
+    ErrCode RegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+        const sptr<IAppGroupCallback> &observer);
+
     /*
-    * function: UnregisterGroupCallBack, remove the observer from groupObservers.
+    * function: UnRegisterAppGroupCallBack, remove the observer from groupObservers.
     * parameters: observer
-    * return: result of UnregisterGroupCallBack, true or false.
+    * return: errCode.
     */
-    int32_t UnregisterGroupCallBack(const AccessToken::AccessTokenID& tokenId,
-        const sptr<IBundleActiveGroupCallback> &observer);
+    ErrCode UnRegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
+        const sptr<IAppGroupCallback> &observer);
+
     int32_t currentUsedUser_;
-    void OnBundleGroupChanged(const BundleActiveGroupCallbackInfo& callbackInfo);
+    void OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo);
 
 private:
-    void AddObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer);
-    void RemoveObserverDeathRecipient(const sptr<IBundleActiveGroupCallback> &observer);
+    void AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer);
+    void RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer);
     void OnObserverDied(const wptr<IRemoteObject> &remote);
     void OnObserverDiedInner(const wptr<IRemoteObject> &remote);
     int64_t flushInterval_;
@@ -216,7 +247,7 @@ private:
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
     void RestoreAllData();
-    std::map<AccessToken::AccessTokenID, sptr<IBundleActiveGroupCallback>> groupChangeObservers_;
+    std::map<AccessToken::AccessTokenID, sptr<IAppGroupCallback>> groupChangeObservers_;
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> recipientMap_;
     void ObtainSystemEventName(BundleActiveEvent& event);
     bool debugCore_;

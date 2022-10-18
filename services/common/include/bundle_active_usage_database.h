@@ -68,9 +68,9 @@ public:
         std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
     void LoadFormData(const int32_t userId, std::map<std::string,
         std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
-    void QueryEventStats(int32_t eventId, int64_t beginTime, int64_t endTime,
+    void QueryDeviceEventStats(int32_t eventId, int64_t beginTime, int64_t endTime,
         std::map<std::string, BundleActiveEventStats>& eventStats, int32_t userId);
-    void QueryAppNotificationNumber(int32_t eventId, int64_t beginTime, int64_t endTime,
+    void QueryNotificationEventStats(int32_t eventId, int64_t beginTime, int64_t endTime,
         std::map<std::string, BundleActiveEventStats>& notificationEventStats, int32_t userId);
 
 private:
