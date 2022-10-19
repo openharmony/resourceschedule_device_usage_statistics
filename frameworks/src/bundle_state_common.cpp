@@ -116,10 +116,10 @@ void BundleStateCommon::GetBundleActiveEventForResult(
 
         napi_value eventId = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.eventId_, &eventId));
-        
+
         napi_value eventOccurredTime = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.timeStamp_, &eventOccurredTime));
-        
+
         if (isNewVersion) {
             NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, bundleActiveState, "eventId", eventId));
             NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, bundleActiveState, "eventOccurredTime",
