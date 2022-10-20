@@ -51,7 +51,7 @@ public:
         const napi_env &env, const napi_ref &callbackIn, const int32_t &errorCode, const napi_value &result);
 
     static void GetBundleActiveEventForResult(
-        napi_env env, const std::vector<BundleActiveEvent> &BundleActiveState, napi_value result);
+        napi_env env, const std::vector<BundleActiveEvent> &BundleActiveState, napi_value result, bool isNewVersion);
 
     static void GetBundleStateInfoByIntervalForResult(
         napi_env env, const std::vector<BundleActivePackageStats> &packageStats, napi_value result);
