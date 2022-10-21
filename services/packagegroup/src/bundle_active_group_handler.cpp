@@ -75,13 +75,13 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
                 BUNDLE_ACTIVE_LOGI("query activated account failed");
                 return;
             }
+            if (activatedOsAccountIds.size() == 0) {
+                return;
+            }
 #else // OS_ACCOUNT_PART_ENABLED
             activatedOsAccountIds.push_back(DEFAULT_OS_ACCOUNT_ID);
             BUNDLE_ACTIVE_LOGI("os account part not enabled, use default id.");
 #endif // OS_ACCOUNT_PART_ENABLED
-            if (activatedOsAccountIds.size() == 0) {
-                return;
-            }
             for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
                 bundleActiveGroupController_->CheckEachBundleState(activatedOsAccountIds[i]);
                 bundleActiveGroupController_->RestoreToDatabase(activatedOsAccountIds[i]);

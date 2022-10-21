@@ -237,12 +237,12 @@ void BundleActiveUsageDatabase::HandleTableInfo(uint32_t databaseType)
     }
     int32_t tableNameIndex;
     bundleActiveResult->GetColumnIndex(SQLITE_MASTER_NAME, tableNameIndex);
-    string tableName;
     if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
         if (!sortedTableArray_.at(databaseType).empty()) {
             sortedTableArray_.at(databaseType).clear();
         }
         for (int32_t i = 0; i < tableNumber; i++) {
+            string tableName;
             bundleActiveResult->GoToRow(i);
             bundleActiveResult->GetString(tableNameIndex, tableName);
             sortedTableArray_.at(databaseType).push_back(ParseStartTime(tableName));
@@ -434,8 +434,8 @@ shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbSto
 void BundleActiveUsageDatabase::CheckDatabaseFile(uint32_t databaseType)
 {
     std::string databaseFileName = databaseFiles_.at(databaseType);
-    std::string dbFile;
     for (uint32_t i = 0; i < sizeof(SUFFIX_TYPE) / sizeof(SUFFIX_TYPE[0]); i++) {
+        std::string dbFile;
         dbFile = BUNDLE_ACTIVE_DATABASE_DIR + DATABASE_TYPE[databaseType] + SUFFIX_TYPE[i];
         if ((access(dbFile.c_str(), F_OK) != 0)
             && (bundleActiveRdbStoreCache_.find(databaseFileName) != bundleActiveRdbStoreCache_.end())) {
@@ -1511,8 +1511,8 @@ void BundleActiveUsageDatabase::RemoveFormData(const int32_t userId, const std::
         return;
     }
     int32_t deletedRows = BUNDLE_ACTIVE_FAIL;
-    vector<string> queryCondition;
     if (formRecordsTableName_ != UNKNOWN_TABLE_NAME) {
+        vector<string> queryCondition;
         queryCondition.emplace_back(to_string(userId));
         queryCondition.emplace_back(bundleName);
         queryCondition.emplace_back(moduleName);
