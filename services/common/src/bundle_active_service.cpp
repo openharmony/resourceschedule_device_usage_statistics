@@ -680,7 +680,7 @@ int32_t BundleActiveService::Dump(int32_t fd, const std::vector<std::u16string> 
     int32_t ret = ERR_OK;
     if (argsInStr.size() == NO_DUMP_PARAM_NUMS) {
         DumpUsage(result);
-    } else if {
+    } else {
         std::vector<std::string> infos;
         if (argsInStr[0] == "-h") {
             DumpUsage(result);
