@@ -366,8 +366,8 @@ napi_value BundleStateCommon::GetErrorValue(napi_env env, int32_t errCode)
     NAPI_CALL(env, napi_create_int32(env, reflectCode, &eCode));
     NAPI_CALL(env, napi_create_string_utf8(env, errMsg.c_str(), errMsg.length(), &eMsg));
     NAPI_CALL(env, napi_create_object(env, &result));
-    NAPI_CALL(env, napi_set_named_property(env, result, "errCode", eCode));
-    NAPI_CALL(env, napi_set_named_property(env, result, "errMessage", eMsg));
+    NAPI_CALL(env, napi_set_named_property(env, result, "code", eCode));
+    NAPI_CALL(env, napi_set_named_property(env, result, "message", eMsg));
     return result;
 }
 
