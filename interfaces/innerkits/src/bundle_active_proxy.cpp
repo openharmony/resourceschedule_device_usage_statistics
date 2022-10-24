@@ -134,7 +134,6 @@ ErrCode BundleActiveProxy::QueryBundleStatsInfos(std::vector<BundleActivePackage
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
-    std::vector<BundleActivePackageStats> result;
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return ERR_PARCEL_WRITE_FALIED;
     }
@@ -204,7 +203,7 @@ ErrCode BundleActiveProxy::QueryAppGroup(int32_t& appGroup, std::string& bundleN
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return ERR_PARCEL_WRITE_FALIED;
     }
-    
+
     data.WriteString(bundleName);
     data.WriteInt32(userId);
     Remote() -> SendRequest(QUERY_APP_GROUP, data, reply, option);
