@@ -225,9 +225,6 @@ std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitial
         BUNDLE_ACTIVE_LOGI("first initialize user service");
         std::shared_ptr<BundleActiveUserService> service = std::make_shared<BundleActiveUserService>(userId, *this,
             debug);
-        if (service == nullptr) {
-            return nullptr;
-        }
         service->Init(timeStamp);
         userStatServices_[userId] = service;
         BUNDLE_ACTIVE_LOGI("service is not null");
