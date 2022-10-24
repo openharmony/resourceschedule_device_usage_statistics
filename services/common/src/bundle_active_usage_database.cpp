@@ -435,8 +435,7 @@ void BundleActiveUsageDatabase::CheckDatabaseFile(uint32_t databaseType)
 {
     std::string databaseFileName = databaseFiles_.at(databaseType);
     for (uint32_t i = 0; i < sizeof(SUFFIX_TYPE) / sizeof(SUFFIX_TYPE[0]); i++) {
-        std::string dbFile;
-        dbFile = BUNDLE_ACTIVE_DATABASE_DIR + DATABASE_TYPE[databaseType] + SUFFIX_TYPE[i];
+        std::string dbFile = BUNDLE_ACTIVE_DATABASE_DIR + DATABASE_TYPE[databaseType] + SUFFIX_TYPE[i];
         if ((access(dbFile.c_str(), F_OK) != 0)
             && (bundleActiveRdbStoreCache_.find(databaseFileName) != bundleActiveRdbStoreCache_.end())) {
             bundleActiveRdbStoreCache_.erase(databaseFileName);
