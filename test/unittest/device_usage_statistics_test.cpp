@@ -185,6 +185,16 @@ HWTEST_F(DeviceUsageStatisticsTest,
     int32_t errCode = BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, results, DEFAULT_USERID);
     EXPECT_EQ(errCode, 0);
     EXPECT_EQ(results.size(), 0);
+
+    results.clear();
+    maxNum = 0;
+    errCode = BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, results, DEFAULT_USERID);
+    EXPECT_NE(errCode, 0);
+
+    results.clear();
+    maxNum = 1001;
+    errCode = BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, results, DEFAULT_USERID);
+    EXPECT_NE(errCode, 0);
 }
 
 /*
@@ -218,6 +228,9 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_SetAppGroup_001, F
     DEFAULT_GROUP = (result == DEFAULT_GROUP) ? (result + 10) : DEFAULT_GROUP;
     result = BundleActiveClient::GetInstance().SetAppGroup(g_defaultBundleName, DEFAULT_GROUP, COMMON_USERID);
     EXPECT_EQ(result, DEFAULT_ERRCODE);
+
+    result = BundleActiveClient::GetInstance().SetAppGroup(g_defaultBundleName, DEFAULT_GROUP, -1);
+    EXPECT_NE(result, DEFAULT_ERRCODE);
 }
 
 /*
@@ -293,8 +306,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryNotificationE
  * @tc.type: FUNC
  * @tc.require: SR000H0G4F AR000H2US8
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveGroupMap_001, Function
-    | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveGroupMap_001, Function | MediumTest | Level0)
 {
     int64_t minInterval = DeviceUsageStatsGroupMap::groupIntervalMap_
         .at(DeviceUsageStatsGroupConst::ACTIVE_GROUP_FORCED_SET);
@@ -319,8 +331,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveGroupM
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_DeathRecipient_001, Function
-    | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_DeathRecipient_001, Function | MediumTest | Level0)
 {
     auto deathTest = std::make_shared<BundleActiveClient::BundleActiveClientDeathRecipient>();
     EXPECT_TRUE(deathTest!=nullptr);
