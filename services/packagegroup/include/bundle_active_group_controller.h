@@ -79,11 +79,11 @@ private:
     std::mutex mutex_;
     bool GetBundleMgrProxy();
     std::weak_ptr<BundleActiveGroupHandler> activeGroupHandler_;
-    uint32_t EventToGroupReason(const int32_t eventId);
     int64_t timeoutForDirectlyUse_;
     int64_t timeoutForNotifySeen_;
     int64_t timeoutForSystemInteraction_;
     int64_t timeoutCalculated_ = 0;
+    std::map<int32_t, uint32_t> eventIdMatchReason_;
     sptr<IBundleMgr> sptrBundleMgr_;
     bool calculationTimeOut(const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory,
         const int64_t bootBasedTimeStamp);

@@ -627,7 +627,8 @@ ErrCode BundleActiveService::QueryNotificationEventStats(int64_t beginTime, int6
 
 void BundleActiveService::QueryModuleRecordInfos(BundleActiveModuleRecord& moduleRecord)
 {
-    if (!GetBundleMgrProxy()) {
+    ErrCode errCode = GetBundleMgrProxy();
+    if (errCode != ERR_OK) {
         return;
     }
     ApplicationInfo appInfo;
