@@ -340,7 +340,7 @@ ErrCode BundleActiveUserService::QueryBundleStatsInfos(std::vector<BundleActiveP
     BUNDLE_ACTIVE_LOGI("Query package data in db PackageStats size is %{public}zu", PackageStats.size());
     PrintInMemPackageStats(intervalType, debugUserService_);
     // if we need a in-memory stats, combine current stats with PackageStats from database.
-    if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
+    if (endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos need in memory stats");
         for (auto it : currentStats->bundleStats_) {
             if (bundleName.empty()) {
