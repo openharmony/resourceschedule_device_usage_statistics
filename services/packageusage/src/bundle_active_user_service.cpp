@@ -375,8 +375,12 @@ ErrCode BundleActiveUserService::QueryBundleEvents(std::vector<BundleActiveEvent
     BUNDLE_ACTIVE_LOGI("Query event bundle name is %{public}s", bundleName.c_str());
     bundleActiveEvent = database_.QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
     PrintInMemEventStats(debugUserService_);
+    if (currentStats->endTime_ == 0) {
+        BUNDLE_ACTIVE_LOGI("QueryBundleEvents result in db is %{public}zu", bundleActiveEvent.size());
+        return ERR_OK;
+    }
     // if we need a in-memory stats, combine current stats with bundleActiveEvent from database.
-    if (currentStats->endTime_ != 0 && endTime > currentStats->beginTime_) {
+    if (endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryBundleEvents need in memory stats");
         int32_t eventBeginIdx = currentStats->events_.FindBestIndex(beginTime);
         int32_t eventSize = currentStats->events_.Size();
@@ -388,7 +392,7 @@ ErrCode BundleActiveUserService::QueryBundleEvents(std::vector<BundleActiveEvent
             }
         }
     }
-    BUNDLE_ACTIVE_LOGI("QueryBundleEvents bundleActiveEvent is %{public}zu", bundleActiveEvent.size());
+    BUNDLE_ACTIVE_LOGI("QueryBundleEvents result in db and memory is %{public}zu", bundleActiveEvent.size());
     return ERR_OK;
 }
 
