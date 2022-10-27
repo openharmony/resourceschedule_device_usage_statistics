@@ -20,6 +20,7 @@
 
 #include "bundle_active_event.h"
 #include "bundle_active_event_stats.h"
+#include "bundle_state_inner_errors.h"
 #include "bundle_active_log.h"
 #include "bundle_active_module_record.h"
 #include "bundle_active_package_stats.h"
@@ -159,7 +160,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
             if (!observer) {
                 BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer is null, return");
-                return false;
+                return ERR_MEMORY_OPERATION_FAILED;
             }
             BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack observer is ok");
             ErrCode errCode = RegisterAppGroupCallBack(observer);
@@ -169,7 +170,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
             if (!observer) {
                 BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer is null, return");
-                return false;
+                return ERR_MEMORY_OPERATION_FAILED;
             }
             ErrCode errCode = UnRegisterAppGroupCallBack(observer);
             return reply.WriteInt32(errCode);
