@@ -17,7 +17,6 @@
 #include "power_mgr_client.h"
 #include "unistd.h"
 #include "accesstoken_kit.h"
-#include "app_mgr_interface.h"
 
 #include "bundle_state_inner_errors.h"
 #include "bundle_active_event.h"
