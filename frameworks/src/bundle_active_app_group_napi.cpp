@@ -60,9 +60,9 @@ napi_value ParseQueryAppGroupParameters(const napi_env &env, const napi_callback
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
         if (valuetype == napi_function) {
-            napi_valuetype valuetype = napi_undefined;
-            NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-            if (valuetype != napi_function) {
+            napi_valuetype inputValueType = napi_undefined;
+            NAPI_CALL(env, napi_typeof(env, argv[0], &inputValueType));
+            if (inputValueType != napi_function) {
                 params.errorCode = ERR_CALL_BACK_TYPE;
                 return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
             }
