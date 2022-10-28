@@ -56,7 +56,7 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
 
   configs = [
     ":module_private_config",
-    "//foundation/ability/ability_runtime/interfaces/inner_api/wantagent:wantagent_innerkits_public_config"
+    "//foundation/ability/ability_runtime/interfaces/inner_api/wantagent:wantagent_innerkits_public_config",
   ]
 
   deps = [
