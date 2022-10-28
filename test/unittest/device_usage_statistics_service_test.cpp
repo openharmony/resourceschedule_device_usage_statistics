@@ -56,7 +56,7 @@ void DeviceUsageStatisticsServiceTest::TearDown(void)
  * @tc.name: DeviceUsageStatisticsServiceTest_GetServiceObject_001
  * @tc.desc: get service object
  * @tc.type: FUNC
- * @tc.require: SR000GGTO8 AR000GH6PK
+ * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetServiceObject_001, Function | MediumTest | Level0)
 {
@@ -71,9 +71,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetS
 
 /*
  * @tc.name: DeviceUsageStatisticsServiceTest_dump_001
- * @tc.desc: get service object
+ * @tc.desc: test dump
  * @tc.type: FUNC
- * @tc.require: SR000GGTO8 AR000GH6PK
+ * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump_001, Function | MediumTest | Level0)
 {
@@ -112,18 +112,23 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsServiceTest_Shutdown_001
- * @tc.desc: get service object
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryModuleUsageRecords_001
+ * @tc.desc: QueryModuleUsageRecords
  * @tc.type: FUNC
- * @tc.require: SR000GGTO8 AR000GH6PK
+ * @tc.require: issuesI5SOZY
  */
-HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Shutdown_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryModuleUsageRecords_001,
+    Function | MediumTest | Level0)
 {
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    auto bundleActiveShutdownCallbackService = std::make_shared<BundleActiveShutdownCallbackService>(bundleActiveCore);
-    BUNDLE_ACTIVE_LOGI("DeviceUsageStatisticsServiceTest create BundleActiveService!");
-    bundleActiveShutdownCallbackService->ShutdownCallback();
-    EXPECT_TRUE(bundleActiveShutdownCallbackService != nullptr);
+    auto service = std::make_shared<BundleActiveService>();
+    std::vector<BundleActiveModuleRecord> results;
+    int32_t maxNum = 0;
+    ErrCode errCode = service->QueryModuleUsageRecords(maxNum, results, 100);
+    EXPECT_NE(errCode, 0);
+
+    maxNum = 1001;
+    errCode = service->QueryModuleUsageRecords(maxNum, results, 100);
+    EXPECT_NE(errCode, 0);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

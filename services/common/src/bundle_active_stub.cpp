@@ -160,7 +160,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
             if (!observer) {
                 BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer is null, return");
-                return ERR_MEMORY_OPERATION_FAILED;
+                return false;
             }
             BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack observer is ok");
             ErrCode errCode = RegisterAppGroupCallBack(observer);
@@ -170,7 +170,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
             if (!observer) {
                 BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer is null, return");
-                return ERR_MEMORY_OPERATION_FAILED;
+                return false;
             }
             ErrCode errCode = UnRegisterAppGroupCallBack(observer);
             return reply.WriteInt32(errCode);

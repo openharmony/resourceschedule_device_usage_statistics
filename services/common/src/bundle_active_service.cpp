@@ -560,7 +560,7 @@ ErrCode BundleActiveService::QueryModuleUsageRecords(int32_t maxNum, std::vector
     ErrCode errCode = ERR_OK;
     if (maxNum > MAXNUM_UP_LIMIT || maxNum <= 0) {
         BUNDLE_ACTIVE_LOGE("MaxNum is Invalid!");
-        return errCode;
+        return ERR_FIND_APP_USAGE_RECORDS_FAILED;
     }
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     if (userId == -1) {

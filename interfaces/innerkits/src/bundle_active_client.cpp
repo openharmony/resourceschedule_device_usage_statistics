@@ -237,7 +237,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
 {
-    while (!BundleActiveClient::GetInstance().GetBundleActiveProxy()) {
+    while (BundleActiveClient::GetInstance().GetBundleActiveProxy() != ERR_OK) {
         sleep(SLEEP_TIME);
     }
     if (observer_) {
@@ -246,4 +246,3 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-
