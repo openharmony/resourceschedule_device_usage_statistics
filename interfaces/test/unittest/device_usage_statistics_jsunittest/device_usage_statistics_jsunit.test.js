@@ -857,51 +857,67 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest033
-     * @tc.desc: test unRegisterAppGroupCallBack callback.
+     * @tc.desc: test registerAppGroupCallBack callback.
      * @tc.type: FUNC
      * @tc.require: issueI5V2T4
      */
     it("DeviceUsageStatisticsJsTest033", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest033---------------------------');
+        let onBundleGroupChanged = (err, res) =>{
+            console.log('BUNDLE_ACTIVE onBundleGroupChanged registerAppGroupCallBack callback success.');
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appUsageOldGroup is : ' + res.appOldGroup);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appUsageNewGroup is : ' + res.appNewGroup);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result changeReason is : ' + res.changeReason);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result userId is : ' + res.userId);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result bundleName is : ' + res.bundleName);
+          };
         try{
-            usageStatistics.unRegisterAppGroupCallBack((err, res) => {
+            usageStatistics.registerAppGroupCallBack(onBundleGroupChanged, (err, res) => {
                 if(err) {
-                    console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack callback failure.');
+                    console.info('BUNDLE_ACTIVE registerAppGroupCallBack callback failure.');
                     expect(false).assertEqual(true);
                     done();
                 } else {
-                    console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack callback success.');
-                    expect(false).assertEqual(true);
+                    console.info('BUNDLE_ACTIVE registerAppGroupCallBack callback success.');
+                    expect(true).assertEqual(true);
                     done();
                 }
             });
         } catch (error) {
-            console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack callback throw error.');
-            expect(true).assertEqual(true);
+            console.info('BUNDLE_ACTIVE registerAppGroupCallBack callback failure.');
+            expect(false).assertEqual(true);
             done();
         }
     })
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest034
-     * @tc.desc: test unRegisterAppGroupCallBack promise.
+     * @tc.desc: test registerAppGroupCallBack promise.
      * @tc.type: FUNC
      * @tc.require: issueI5V2T4
      */
     it("DeviceUsageStatisticsJsTest034", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest034---------------------------');
+        let onBundleGroupChanged = (err, res) =>{
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack registerAppGroupCallBack callback success.');
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appOldGroup is : ' + res.appOldGroup);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appNewGroup is : ' + res.appNewGroup);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result changeReason is : ' + res.changeReason);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result userId is : ' + res.userId);
+            console.log('BUNDLE_ACTIVE registerAppGroupCallBack result bundleName is : ' + res.bundleName);
+        };
         try{
-            usageStatistics.unRegisterAppGroupCallBack().then( (res) => {
-                console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack promise success.');
+            usageStatistics.registerAppGroupCallBack(onBundleGroupChanged).then( (res) => {
+                console.info('BUNDLE_ACTIVE registerAppGroupCallBack promise success.');
                 expect(false).assertEqual(true);
                 done();
             }).catch( err => {
-                console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack promise failure.');
-                expect(false).assertEqual(true);
+                console.info('BUNDLE_ACTIVE registerAppGroupCallBack promise failure.');
+                expect(true).assertEqual(true);
                 done();
             });
         } catch (error) {
-            console.info('BUNDLE_ACTIVE unRegisterAppGroupCallBack promise throw error.');
+            console.info('BUNDLE_ACTIVE registerAppGroupCallBack promise failure.');
             expect(true).assertEqual(true);
             done();
         }
@@ -909,12 +925,64 @@ describe("DeviceUsageStatisticsJsTest", function () {
 
     /*
      * @tc.name: DeviceUsageStatisticsJsTest035
-     * @tc.desc: test queryDeviceEventStats callback.
+     * @tc.desc: test unregisterAppGroupCallBack callback.
      * @tc.type: FUNC
      * @tc.require: issueI5V2T4
      */
     it("DeviceUsageStatisticsJsTest035", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest035---------------------------');
+        try{
+            usageStatistics.unregisterAppGroupCallBack((err, res) => {
+                if(err) {
+                    console.info('BUNDLE_ACTIVE unregisterAppGroupCallBack callback failure.');
+                    expect(false).assertEqual(true);
+                    done();
+                } else {
+                    console.info('BUNDLE_ACTIVE unregisterAppGroupCallBack callback success.');
+                    expect(true).assertEqual(true);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE unregisterAppGroupCallBack callback throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest036
+     * @tc.desc: test unregisterAppGroupCallBack promise.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest036", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest036---------------------------');
+        try{
+            usageStatistics.unregisterAppGroupCallBack().then( (res) => {
+                console.info('BUNDLE_ACTIVE unregisterAppGroupCallBack promise success.');
+                expect(false).assertEqual(true);
+                done();
+            }).catch( err => {
+                console.info('BUNDLE_ACTIVE unregisterAppGroupCallBack promise failure.');
+                expect(false).assertEqual(true);
+                done();
+            });
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE unregisterAppGroupCallBack promise throw error.');
+            expect(true).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest037
+     * @tc.desc: test queryDeviceEventStats callback.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest037", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest037---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
         try{
@@ -937,13 +1005,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
     })
 
     /*
-     * @tc.name: DeviceUsageStatisticsJsTest036
+     * @tc.name: DeviceUsageStatisticsJsTest038
      * @tc.desc: test queryDeviceEventStats promise.
      * @tc.type: FUNC
      * @tc.require: issueI5V2T4
      */
-    it("DeviceUsageStatisticsJsTest036", 0, async function (done) {
-        console.info('----------------------DeviceUsageStatisticsJsTest036---------------------------');
+    it("DeviceUsageStatisticsJsTest038", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest038---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
         try{
@@ -964,13 +1032,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
     })
 
     /*
-     * @tc.name: DeviceUsageStatisticsJsTest037
+     * @tc.name: DeviceUsageStatisticsJsTest039
      * @tc.desc: test queryNotificationEventStats callback.
      * @tc.type: FUNC
      * @tc.require: issueI5V2T4
      */
-    it("DeviceUsageStatisticsJsTest037", 0, async function (done) {
-        console.info('----------------------DeviceUsageStatisticsJsTest037---------------------------');
+    it("DeviceUsageStatisticsJsTest039", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest039---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
         try{
@@ -993,13 +1061,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
     })
 
     /*
-     * @tc.name: DeviceUsageStatisticsJsTest038
+     * @tc.name: DeviceUsageStatisticsJsTest040
      * @tc.desc: test queryNotificationEventStats promise.
      * @tc.type: FUNC
      * @tc.require: issueI5V2T4
      */
-    it("DeviceUsageStatisticsJsTest038", 0, async function (done) {
-        console.info('----------------------DeviceUsageStatisticsJsTest038---------------------------');
+    it("DeviceUsageStatisticsJsTest040", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest040---------------------------');
         let beginTime = 0;
         let endTime = 20000000000000;
         try{

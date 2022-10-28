@@ -20,6 +20,7 @@
 
 #include "bundle_active_event.h"
 #include "bundle_active_event_stats.h"
+#include "bundle_state_inner_errors.h"
 #include "bundle_active_log.h"
 #include "bundle_active_module_record.h"
 #include "bundle_active_package_stats.h"
