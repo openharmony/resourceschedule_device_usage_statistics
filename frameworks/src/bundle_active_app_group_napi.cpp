@@ -338,8 +338,8 @@ napi_value RegisterAppGroupCallBack(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
             if (asyncCallbackInfo) {
-                std::lock_guard<std::mutex> lock(g_observerMutex_);
                 if (asyncCallbackInfo->errorCode != ERR_OK) {
+                    std::lock_guard<std::mutex> lock(g_observerMutex_);
                     registerObserver = nullptr;
                 }
                 napi_value result = nullptr;
@@ -370,7 +370,6 @@ napi_value ParseUnRegisterAppGroupCallBackParameters(const napi_env &env, const 
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
     }
 
-    // argv[1]: callback
     if (argc == UN_REGISTER_GROUP_CALLBACK_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
@@ -419,8 +418,8 @@ napi_value UnRegisterAppGroupCallBack(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
             if (asyncCallbackInfo != nullptr) {
-                std::lock_guard<std::mutex> lock(g_observerMutex_);
                 if (asyncCallbackInfo->errorCode == ERR_OK) {
+                    std::lock_guard<std::mutex> lock(g_observerMutex_);
                     registerObserver = nullptr;
                 }
                 napi_value result = nullptr;

@@ -750,36 +750,43 @@ ErrCode BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTo
 void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(deathRecipientMutex_);
-    if (!observer || !(observer->AsObject())) {
+    if (!observer) {
         BUNDLE_ACTIVE_LOGI("observer nullptr.");
+        return;
+    }
+    auto object = observer->AsObject();
+    if (!object) {
+        BUNDLE_ACTIVE_LOGI("observer->AsObject() nullptr.");
         return;
     }
     auto it = recipientMap_.find(observer->AsObject());
     if (it != recipientMap_.end()) {
         BUNDLE_ACTIVE_LOGI("This death recipient has been added.");
         return;
-    } else {
-        sptr<RemoteDeathRecipient> deathRecipient = new (std::nothrow) RemoteDeathRecipient(
-            [this](const wptr<IRemoteObject> &remote) { this->OnObserverDied(remote); });
-        if (!deathRecipient) {
-            BUNDLE_ACTIVE_LOGI("create death recipient failed");
-            return ;
-        }
-        observer->AsObject()->AddDeathRecipient(deathRecipient);
-        recipientMap_.emplace(observer->AsObject(), deathRecipient);
     }
+    sptr<RemoteDeathRecipient> deathRecipient = new (std::nothrow) RemoteDeathRecipient(
+        [this](const wptr<IRemoteObject> &remote) { this->OnObserverDied(remote); });
+    if (!deathRecipient) {
+        BUNDLE_ACTIVE_LOGI("create death recipient failed");
+        return ;
+    }
+    observer->AsObject()->AddDeathRecipient(deathRecipient);
+    recipientMap_.emplace(observer->AsObject(), deathRecipient);
 }
 void BundleActiveCore::RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
     std::lock_guard<std::mutex> lock(deathRecipientMutex_);
-    if (!observer || !(observer->AsObject())) {
+    if (!observer) {
+        return;
+    }
+    auto object = observer->AsObject();
+    if (!object) {
         return ;
     }
     auto iter = recipientMap_.find(observer->AsObject());
     if (iter != recipientMap_.end()) {
         iter->first->RemoveDeathRecipient(iter->second);
         recipientMap_.erase(iter);
-        return ;
     }
 }
 
@@ -802,7 +809,14 @@ void BundleActiveCore::OnObserverDiedInner(const wptr<IRemoteObject> &remote)
         return;
     }
     for (const auto& item : groupChangeObservers_) {
-        if ((item.second) && ((item.second)->AsObject()) && ((item.second)->AsObject() == objectProxy)) {
+        if (!(item.second)) {
+            continue;
+        }
+        auto object = (item.second)->AsObject();
+        if (!object) {
+            continue;
+        }
+        if (object == objectProxy) {
             groupChangeObservers_.erase(item.first);
             break;
         }
