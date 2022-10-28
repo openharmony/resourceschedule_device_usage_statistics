@@ -58,7 +58,8 @@ void DeviceUsageStatisticsServiceTest::TearDown(void)
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetServiceObject_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetServiceObject_001,
+    Function | MediumTest | Level0)
 {
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();

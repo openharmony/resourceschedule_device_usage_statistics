@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//build/test.gni")
-import("//foundation/ability/ability_runtime/ability_runtime.gni")
 
 module_output_path = "device_usage_statistics/deviceusagestatisticstest"
 
@@ -55,15 +54,8 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
 
   sources = [ "device_usage_statistics_service_test.cpp" ]
 
-  include_dirs = [
-    "//foundation/ability/ability_runtime/interfaces/inner_api/app_manager/include/appmgr",
-    "//foundation/resourceschedule/device_usage_statistics/interfaces/innerkits/include",
-    "//foundation/resourceschedule/device_usage_statistics/services/common/include",
-    "//foundation/resourceschedule/device_usage_statistics/services/packageusage/include",
-    "//foundation/resourceschedule/device_usage_statistics/services/packagegroup/include",
-  ]
-
   configs = [
+    ":module_private_config",
     "//foundation/ability/ability_runtime/interfaces/inner_api/wantagent:wantagent_innerkits_public_config"
   ]
 
@@ -91,7 +83,7 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
 group("unittest") {
   testonly = true
   deps = [
-    ":DeviceUsageStatsTest",
     ":DeviceUsageStatsServiceTest",
+    ":DeviceUsageStatsTest",
   ]
 }
