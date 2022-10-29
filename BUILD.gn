@@ -199,7 +199,7 @@ ohos_shared_library("usagestatservice") {
   defines = []
   if (bgtaskmgr_enable) {
     external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
-    defines += [ "RESOURCESCHEDULE_BGTASKMGR_ENABLE" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
   }
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
