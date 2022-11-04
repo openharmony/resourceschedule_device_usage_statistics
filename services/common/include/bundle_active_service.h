@@ -228,6 +228,7 @@ private:
     ErrCode CheckBundleIsSystemAppAndHasPermission(const int32_t uid,
         OHOS::Security::AccessToken::AccessTokenID tokenId);
     ErrCode CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId);
+    ErrCode CheckNativePermission(OHOS::Security::AccessToken::AccessTokenID tokenId);
     void InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     void InitContinuousSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     bool SubscribeAppState();

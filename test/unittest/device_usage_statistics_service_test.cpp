@@ -22,6 +22,8 @@
 #include "system_ability_definition.h"
 
 #include "bundle_active_service.h"
+#include "app_group_callback_stub.h"
+#include "app_group_callback_info.h"
 
 using namespace testing::ext;
 
@@ -50,6 +52,16 @@ void DeviceUsageStatisticsServiceTest::SetUp(void)
 
 void DeviceUsageStatisticsServiceTest::TearDown(void)
 {
+}
+
+class TestServiceAppGroupChangeCallback : public AppGroupCallbackStub {
+public:
+    void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
+};
+
+void TestServiceAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
+{
+    BUNDLE_ACTIVE_LOGI("TestServiceAppGroupChangeCallback::OnAppGroupChanged!");
 }
 
 /*
@@ -130,6 +142,77 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
     maxNum = 1001;
     errCode = service->QueryModuleUsageRecords(maxNum, results, 100);
     EXPECT_NE(errCode, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_AppGroupCallback_001
+ * @tc.desc: QueryModuleUsageRecords
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppGroupCallback_001,
+    Function | MediumTest | Level0)
+{
+    auto service = std::make_shared<BundleActiveService>();
+    BUNDLE_ACTIVE_LOGI("DeviceUsageStatisticsServiceTest create BundleActiveService!");
+    sptr<TestServiceAppGroupChangeCallback> observer = new (std::nothrow) TestServiceAppGroupChangeCallback();
+    service->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    EXPECT_EQ(service->RegisterAppGroupCallBack(observer), ERR_OK);
+    EXPECT_NE(service->RegisterAppGroupCallBack(observer), ERR_OK);
+    service->bundleActiveCore_->AddObserverDeathRecipient(observer);
+
+    EXPECT_EQ(service->UnRegisterAppGroupCallBack(observer), ERR_OK);
+    EXPECT_NE(service->UnRegisterAppGroupCallBack(observer), ERR_OK);
+
+    observer = nullptr;
+    EXPECT_NE(service->RegisterAppGroupCallBack(observer), ERR_OK);
+
+    service->bundleActiveCore_->AddObserverDeathRecipient(observer);
+    service->bundleActiveCore_->RemoveObserverDeathRecipient(observer);
+
+    wptr<IRemoteObject> remote = nullptr;
+    service->bundleActiveCore_->OnObserverDied(remote);
+    service->bundleActiveCore_->OnObserverDiedInner(remote);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_OnUserRemoved_001
+ * @tc.desc: QueryModuleUsageRecords
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_OnUserRemoved_001,
+    Function | MediumTest | Level0)
+{
+    int userId = 100;
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(bundleActiveCore->debugCore_);
+    bundleActiveCore->InitBundleGroupController();
+    auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), false);
+    bundleActiveCore->userStatServices_[userId] = userService;
+    bundleActiveCore->currentUsedUser_ = userId;
+    bundleActiveCore->OnUserRemoved(userId);
+    bundleActiveCore->OnUserSwitched(userId);
+    bundleActiveCore->RestoreAllData();
+    EXPECT_NE(bundleActiveCore, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_RestoreAllData_001
+ * @tc.desc: QueryModuleUsageRecords
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RestoreAllData_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(bundleActiveCore->debugCore_);
+    bundleActiveCore->InitBundleGroupController();
+    bundleActiveCore->RestoreAllData();
+    BundleActiveEvent event;
+    bundleActiveCore->ReportEventToAllUserId(event);
+    EXPECT_NE(bundleActiveCore, nullptr);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

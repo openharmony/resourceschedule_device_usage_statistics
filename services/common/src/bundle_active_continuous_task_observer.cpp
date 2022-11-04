@@ -64,8 +64,13 @@ bool BundleActiveContinuousTaskObserver::GetBundleMgr()
                 return false;
         }
         bundleMgr_ = iface_cast<IBundleMgr>(remoteObject);
-        if ((!bundleMgr_) || (!bundleMgr_->AsObject())) {
-            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability");
+        if (!bundleMgr_) {
+            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability, bundleMgr_");
+            return false;
+        }
+        auto object = bundleMgr_->AsObject();
+        if (!object) {
+            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability, bundleMgr_->AsObject()");
             return false;
         }
     }
