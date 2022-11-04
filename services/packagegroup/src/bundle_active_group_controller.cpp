@@ -121,7 +121,12 @@ bool BundleActiveGroupController::GetBundleMgrProxy()
                 return false;
         }
         sptrBundleMgr_ = iface_cast<IBundleMgr>(remoteObject);
-        if ((!sptrBundleMgr_) || (!sptrBundleMgr_->AsObject())) {
+        if (!sptrBundleMgr_) {
+            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability, sptrBundleMgr_");
+            return false;
+        }
+        auto object = sptrBundleMgr_->AsObject();
+        if (!object) {
             BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability");
             return false;
         }
@@ -374,8 +379,12 @@ ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
 bool BundleActiveGroupController::IsBundleInstalled(const std::string& bundleName, const int32_t userId)
 {
     ApplicationInfo bundleInfo;
-    if (sptrBundleMgr_ != nullptr && sptrBundleMgr_->GetApplicationInfo(
-        bundleName, ApplicationFlag::GET_BASIC_APPLICATION_INFO, userId, bundleInfo) == false) {
+    if (!sptrBundleMgr_) {
+        return false;
+    }
+    bool getInfoIsSuccess = sptrBundleMgr_->GetApplicationInfo(bundleName, ApplicationFlag::GET_BASIC_APPLICATION_INFO,
+        userId, bundleInfo);
+    if (getInfoIsSuccess == false) {
         BUNDLE_ACTIVE_LOGE("IsBundleInstalled bundle is not installed!");
         return false;
     }

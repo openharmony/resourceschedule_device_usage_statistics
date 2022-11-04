@@ -74,31 +74,36 @@ void BundleActiveService::OnStart()
 
 void BundleActiveService::InitNecessaryState()
 {
+    std::set<int32_t> serviceIdSets{
+        APP_MGR_SERVICE_ID, BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, POWER_MANAGER_SERVICE_ID, COMMON_EVENT_SERVICE_ID,
+        BACKGROUND_TASK_MANAGER_SERVICE_ID, TIME_SERVICE_ID,
+    };
     sptr<ISystemAbilityManager> systemAbilityManager
         = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityManager == nullptr
-        || systemAbilityManager->CheckSystemAbility(APP_MGR_SERVICE_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(POWER_MANAGER_SERVICE_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID) == nullptr
-        || systemAbilityManager->CheckSystemAbility(TIME_SERVICE_ID) == nullptr) {
-        BUNDLE_ACTIVE_LOGI("request system service is not ready yet!");
+    if (systemAbilityManager == nullptr) {
+        BUNDLE_ACTIVE_LOGI("GetSystemAbilityManager fail!");
         auto task = [this]() { this->InitNecessaryState(); };
         handler_->PostTask(task, DELAY_TIME);
         return;
     }
+    for (const auto& serviceItem : serviceIdSets) {
+        auto checkResult = systemAbilityManager->CheckSystemAbility(serviceItem);
+        if (!checkResult) {
+            BUNDLE_ACTIVE_LOGI("request system service is not ready yet!");
+            auto task = [this]() { this->InitNecessaryState(); };
+            handler_->PostTask(task, DELAY_TIME);
+            return;
+        }
+    }
 
-    if (systemAbilityManager->GetSystemAbility(APP_MGR_SERVICE_ID) == nullptr
-        || systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID) == nullptr
-        || systemAbilityManager->GetSystemAbility(POWER_MANAGER_SERVICE_ID) == nullptr
-        || systemAbilityManager->GetSystemAbility(COMMON_EVENT_SERVICE_ID) == nullptr
-        || systemAbilityManager->GetSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID) == nullptr
-        || systemAbilityManager->GetSystemAbility(TIME_SERVICE_ID) == nullptr) {
-        BUNDLE_ACTIVE_LOGI("request system service object is not ready yet!");
-        auto task = [this]() { this->InitNecessaryState(); };
-        handler_->PostTask(task, DELAY_TIME);
-        return;
+    for (const auto& serviceItem : serviceIdSets) {
+        auto getAbility = systemAbilityManager->GetSystemAbility(serviceItem);
+        if (!getAbility) {
+            BUNDLE_ACTIVE_LOGI("request system service object is not ready yet!");
+            auto task = [this]() { this->InitNecessaryState(); };
+            handler_->PostTask(task, DELAY_TIME);
+            return;
+        }
     }
     InitService();
     ready_ = true;
@@ -203,8 +208,8 @@ bool BundleActiveService::SubscribeContinuousTask()
         BUNDLE_ACTIVE_LOGE("SubscribeContinuousTask continuousTaskObserver_ is null, return");
         return false;
     }
-    if (OHOS::BackgroundTaskMgr::BackgroundTaskMgrHelper::SubscribeBackgroundTask(*continuousTaskObserver_)
-        != OHOS::ERR_OK) {
+    ErrCode errCode = BackgroundTaskMgr::BackgroundTaskMgrHelper::SubscribeBackgroundTask(*continuousTaskObserver_);
+    if (errCode != ERR_OK) {
         BUNDLE_ACTIVE_LOGE("SubscribeBackgroundTask failed.");
         return false;
     }
@@ -227,7 +232,7 @@ void BundleActiveService::OnStop()
 ErrCode BundleActiveService::ReportEvent(BundleActiveEvent& event, const int32_t userId)
 {
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    if ((AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId) == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE)) {
+    if (CheckNativePermission(tokenId) == ERR_OK) {
         AccessToken::NativeTokenInfo callingTokenInfo;
         AccessToken::AccessTokenKit::GetNativeTokenInfo(tokenId, callingTokenInfo);
         int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
@@ -260,7 +265,7 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     ErrCode ret = GetBundleMgrProxy();
     if (ret != ERR_OK) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack Get bundle manager proxy failed!");
+        BUNDLE_ACTIVE_LOGE("IsBundleIdle Get bundle manager proxy failed!");
         return ret;
     }
     std::string callingBundleName = "";
@@ -341,19 +346,8 @@ ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& b
 
 ErrCode BundleActiveService::SetAppGroup(const std::string& bundleName, int32_t newGroup, int32_t userId)
 {
-    ErrCode ret = GetBundleMgrProxy();
-    if (ret != ERR_OK) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack Get bundle manager proxy failed!");
-        return ret;
-    }
-    std::string localBundleName = "";
+    ErrCode ret = ERR_OK;
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-    sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
-    if (localBundleName == bundleName) {
-        BUNDLE_ACTIVE_LOGI("SetAppGroup can not set its bundleName");
-        return ERR_PERMISSION_DENIED;
-    }
-    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     bool isFlush = false;
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
@@ -362,7 +356,20 @@ ErrCode BundleActiveService::SetAppGroup(const std::string& bundleName, int32_t 
         }
         isFlush = true;
     }
-    BUNDLE_ACTIVE_LOGI("SetAppGroup userid is %{public}d", userId);
+    BUNDLE_ACTIVE_LOGI("SetAppGroup userId is %{public}d", userId);
+
+    ret = GetBundleMgrProxy();
+    if (ret != ERR_OK) {
+        BUNDLE_ACTIVE_LOGE("SetAppGroup Get bundle manager proxy failed!");
+        return ret;
+    }
+    std::string localBundleName = "";
+    sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
+    if (localBundleName == bundleName) {
+        BUNDLE_ACTIVE_LOGI("SetAppGroup can not set its bundleName");
+        return ERR_PERMISSION_DENIED;
+    }
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
     if (ret == ERR_OK) {
         ret = bundleActiveCore_->SetAppGroup(bundleName, newGroup, userId, isFlush);
@@ -441,7 +448,7 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundl
     if (bundleName.empty()) {
         ret = GetBundleMgrProxy();
         if (ret != ERR_OK) {
-            BUNDLE_ACTIVE_LOGE("Get bundle manager proxy failed!");
+            BUNDLE_ACTIVE_LOGE("QueryAppGroup Get bundle manager proxy failed!");
             return ret;
         }
         std::string localBundleName = "";
@@ -501,8 +508,13 @@ ErrCode BundleActiveService::GetBundleMgrProxy()
             return ERR_GET_SYSTEM_ABILITY_FAILED;
         }
         sptrBundleMgr_ = iface_cast<IBundleMgr>(remoteObject);
-        if ((!sptrBundleMgr_) || (!sptrBundleMgr_->AsObject())) {
-            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability");
+        if (!sptrBundleMgr_) {
+            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability, sptrBundleMgr_");
+            return ERR_REMOTE_OBJECT_IF_CAST_FAILED;
+        }
+        auto object = sptrBundleMgr_->AsObject();
+        if (!object) {
+            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability, sptrBundleMgr_->AsObject()");
             return ERR_REMOTE_OBJECT_IF_CAST_FAILED;
         }
     }
@@ -524,7 +536,7 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
 {
     ErrCode errCode = GetBundleMgrProxy();
     if (errCode != ERR_OK) {
-        BUNDLE_ACTIVE_LOGE("RegisterGroupCallBack Get bundle manager proxy failed!");
+        BUNDLE_ACTIVE_LOGE("CheckBundleIsSystemAppAndHasPermission Get bundle manager proxy failed!");
         return errCode;
     }
     std::string bundleName = "";
@@ -539,12 +551,8 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
     return ERR_OK;
 }
 
-ErrCode BundleActiveService::CheckSystemAppOrNativePermission(const int32_t uid,
-    OHOS::Security::AccessToken::AccessTokenID tokenId)
+ErrCode BundleActiveService::CheckNativePermission(OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
-    if (CheckBundleIsSystemAppAndHasPermission(uid, tokenId) == ERR_OK) {
-        return ERR_OK;
-    }
     auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
     if (tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
         return ERR_OK;
@@ -553,6 +561,15 @@ ErrCode BundleActiveService::CheckSystemAppOrNativePermission(const int32_t uid,
         return ERR_OK;
     }
     return ERR_PERMISSION_DENIED;
+}
+
+ErrCode BundleActiveService::CheckSystemAppOrNativePermission(const int32_t uid,
+    OHOS::Security::AccessToken::AccessTokenID tokenId)
+{
+    if (CheckBundleIsSystemAppAndHasPermission(uid, tokenId) == ERR_OK) {
+        return ERR_OK;
+    }
+    return CheckNativePermission(tokenId);
 }
 
 ErrCode BundleActiveService::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
@@ -631,14 +648,16 @@ void BundleActiveService::QueryModuleRecordInfos(BundleActiveModuleRecord& modul
         return;
     }
     ApplicationInfo appInfo;
-    if (!sptrBundleMgr_->GetApplicationInfo(moduleRecord.bundleName_, ApplicationFlag::GET_BASIC_APPLICATION_INFO,
-        moduleRecord.userId_, appInfo)) {
+    bool getInfoIsSuccess = sptrBundleMgr_->GetApplicationInfo(moduleRecord.bundleName_,
+        ApplicationFlag::GET_BASIC_APPLICATION_INFO, moduleRecord.userId_, appInfo);
+    if (!getInfoIsSuccess) {
         BUNDLE_ACTIVE_LOGE("GetApplicationInfo failed!");
         return;
     }
     BundleInfo bundleInfo;
-    if (!sptrBundleMgr_->GetBundleInfo(moduleRecord.bundleName_, BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO,
-        bundleInfo, moduleRecord.userId_)) {
+    getInfoIsSuccess = sptrBundleMgr_->GetBundleInfo(moduleRecord.bundleName_,
+        BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo, moduleRecord.userId_);
+    if (!getInfoIsSuccess) {
         BUNDLE_ACTIVE_LOGE("GetBundleInfo failed!");
         return;
     }

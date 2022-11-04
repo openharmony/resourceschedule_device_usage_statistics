@@ -12,22 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <cstdint>
 
-#ifndef BUNDLE_ACTIVE_ACCOUNT_HELPER_H
-#define BUNDLE_ACTIVE_ACCOUNT_HELPER_H
-
-#include "errors.h"
-#ifdef OS_ACCOUNT_PART_ENABLED
-#include "os_account_manager.h"
-#endif // OS_ACCOUNT_PART_ENABLED
+#include "bundle_active_account_helper.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveAccountHelper {
-public:
-    static ErrCode GetUserId(const int32_t uid, int32_t& userId);
-};
+extern bool isGetUserId;
+ErrCode BundleActiveAccountHelper::GetUserId(const int32_t uid, int32_t& userId)
+{
+    if (!isGetUserId) {
+        return 0;
+    }
+    return -1;
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-#endif  // BUNDLE_ACTIVE_ACCOUNT_HELPER_H
-
