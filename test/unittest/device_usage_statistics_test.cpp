@@ -25,11 +25,8 @@
 #include "bundle_active_event.h"
 #include "app_group_callback_stub.h"
 #include "bundle_active_group_map.h"
-<<<<<<< HEAD
-=======
 #include "app_group_callback_info.h"
 #include "iapp_group_callback.h"
->>>>>>> 4a78761... 新增分支覆盖代码
 
 using namespace testing::ext;
 
@@ -72,8 +69,6 @@ void DeviceUsageStatisticsTest::TearDown(void)
 {
 }
 
-<<<<<<< HEAD
-=======
 class TestAppGroupChangeCallback : public AppGroupCallbackStub {
 public:
     void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
@@ -89,7 +84,6 @@ void TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &a
     appGroupCallbackInfo.Unmarshalling(data);
 }
 
->>>>>>> 4a78761... 新增分支覆盖代码
 /*
  * @tc.name: DeviceUsageStatisticsTest_GetServiceObject_001
  * @tc.desc: get service object
