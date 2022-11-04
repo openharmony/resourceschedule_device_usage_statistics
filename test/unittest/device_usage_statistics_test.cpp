@@ -25,6 +25,11 @@
 #include "bundle_active_event.h"
 #include "app_group_callback_stub.h"
 #include "bundle_active_group_map.h"
+<<<<<<< HEAD
+=======
+#include "app_group_callback_info.h"
+#include "iapp_group_callback.h"
+>>>>>>> 4a78761... 新增分支覆盖代码
 
 using namespace testing::ext;
 
@@ -41,7 +46,7 @@ static int32_t DEFAULT_ERRCODE = 0;
 static int64_t LARGE_NUM = 20000000000000;
 static int32_t DEFAULT_GROUP = 10;
 static std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50};
-static sptr<AppGroupCallbackStub> observer = nullptr;
+static sptr<IAppGroupCallback> observer = nullptr;
 
 class DeviceUsageStatisticsTest : public testing::Test {
 public:
@@ -67,6 +72,24 @@ void DeviceUsageStatisticsTest::TearDown(void)
 {
 }
 
+<<<<<<< HEAD
+=======
+class TestAppGroupChangeCallback : public AppGroupCallbackStub {
+public:
+    void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
+};
+
+void TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
+{
+    BUNDLE_ACTIVE_LOGI("TestAppGroupChangeCallback::OnAppGroupChanged!");
+    MessageParcel data;
+    if (!appGroupCallbackInfo.Marshalling(data)) {
+        BUNDLE_ACTIVE_LOGE("Marshalling fail");
+    }
+    appGroupCallbackInfo.Unmarshalling(data);
+}
+
+>>>>>>> 4a78761... 新增分支覆盖代码
 /*
  * @tc.name: DeviceUsageStatisticsTest_GetServiceObject_001
  * @tc.desc: get service object
@@ -111,6 +134,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryBundleEvents_
     std::vector<BundleActiveEvent> result;
     BundleActiveClient::GetInstance().QueryBundleEvents(result, 0, LARGE_NUM, 100);
     EXPECT_EQ(result.size() > 0, true);
+    EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleEvents(result, LARGE_NUM, LARGE_NUM, 100), 0);
 }
 
 /*
@@ -138,6 +162,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryPackagesStats
     std::vector<BundleActivePackageStats> result;
     BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(result, 4, 0, LARGE_NUM);
     EXPECT_EQ(result.size(), 0);
+    EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(result, 4, LARGE_NUM, LARGE_NUM), 0);
 }
 
 /*
@@ -323,7 +348,13 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_DeathRecipient_001
     | MediumTest | Level0)
 {
     auto deathTest = std::make_shared<BundleActiveClient::BundleActiveClientDeathRecipient>();
-    EXPECT_TRUE(deathTest!=nullptr);
+    deathTest->AddObserver(observer);
+    deathTest->RemoveObserver();
+    deathTest->OnServiceDiedInner();
+
+    deathTest->observer_ = new (std::nothrow) TestAppGroupChangeCallback();
+    deathTest->OnServiceDiedInner();
+    EXPECT_TRUE(deathTest != nullptr);
     deathTest->OnRemoteDied(nullptr);
 }
 }  // namespace DeviceUsageStats

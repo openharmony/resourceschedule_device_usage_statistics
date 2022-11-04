@@ -214,16 +214,16 @@ int32_t BundleActiveUserHistory::SetAppGroup(const string& bundleName, const int
         bundleName.c_str(), newGroup, groupReason, userId);
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userBundleHistory = GetUserHistory(userId, false);
     if (!userBundleHistory) {
-        return -1;
+        return ERR_GET_BUNDLE_USED_HISTORY_FAILED;
     }
     shared_ptr<BundleActivePackageHistory> oneBundleHistory = GetUsageHistoryInUserHistory(userBundleHistory,
         bundleName, bootBasedTimeStamp, false);
     if (!oneBundleHistory) {
-        return -1;
+        return ERR_GET_BUNDLE_USED_HISTORY_FAILED;
     }
     if (oneBundleHistory->currentGroup_ == newGroup && oneBundleHistory->reasonInGroup_ == groupReason) {
         BUNDLE_ACTIVE_LOGI("%{public}s group and reason is same as before, not update", bundleName.c_str());
-        return 1;
+        return ERR_REPEAT_SET_APP_GROUP;
     }
     int32_t oldGroup = oneBundleHistory->currentGroup_;
     oneBundleHistory->currentGroup_ = newGroup;
@@ -242,7 +242,7 @@ int32_t BundleActiveUserHistory::SetAppGroup(const string& bundleName, const int
             bundleActiveCore_.lock()->OnAppGroupChanged(callbackInfo);
         }
     }
-    return 0;
+    return ERR_OK;
 }
 
 void BundleActiveUserHistory::UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t bootBasedTimeStamp,

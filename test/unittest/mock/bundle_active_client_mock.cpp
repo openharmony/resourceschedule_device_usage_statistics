@@ -13,21 +13,14 @@
  * limitations under the License.
  */
 
-#ifndef BUNDLE_ACTIVE_ACCOUNT_HELPER_H
-#define BUNDLE_ACTIVE_ACCOUNT_HELPER_H
-
-#include "errors.h"
-#ifdef OS_ACCOUNT_PART_ENABLED
-#include "os_account_manager.h"
-#endif // OS_ACCOUNT_PART_ENABLED
+#include "bundle_active_client.h"
+#include "bundle_state_inner_errors.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveAccountHelper {
-public:
-    static ErrCode GetUserId(const int32_t uid, int32_t& userId);
-};
+ErrCode BundleActiveClient::GetBundleActiveProxy()
+{
+    return ERR_SYSTEM_SERVICE_OPERATION_FAILED;
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-#endif  // BUNDLE_ACTIVE_ACCOUNT_HELPER_H
-

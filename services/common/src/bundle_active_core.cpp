@@ -241,7 +241,7 @@ void BundleActiveCore::OnBundleUninstalled(const int32_t userId, const std::stri
     BUNDLE_ACTIVE_LOGD("OnBundleUninstalled CALLED");
     std::lock_guard<std::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == -1) {
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
         return;
     }
     auto service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
@@ -269,8 +269,8 @@ void BundleActiveCore::OnStatsChanged(const int32_t userId)
 
 void BundleActiveCore::RestoreAllData()
 {
-    for (auto it = userStatServices_.begin(); it != userStatServices_.end(); ++it) {
-        std::shared_ptr<BundleActiveUserService> service = it->second;
+    for (const auto& it : userStatServices_) {
+        std::shared_ptr<BundleActiveUserService> service = it.second;
         if (service == nullptr) {
             BUNDLE_ACTIVE_LOGI("service in BundleActiveCore::RestoreToDatabaseLocked() is null");
             return;
@@ -278,7 +278,7 @@ void BundleActiveCore::RestoreAllData()
         BUNDLE_ACTIVE_LOGI("userid is %{public}d ", service->userId_);
         service->RestoreStats(true);
         if (bundleGroupController_ != nullptr && bundleGroupController_->bundleUserHistory_ != nullptr) {
-            bundleGroupController_->RestoreToDatabase(it->first);
+            bundleGroupController_->RestoreToDatabase(it.first);
         }
     }
     if (bundleGroupController_ != nullptr) {
@@ -483,7 +483,7 @@ int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, int32_t userId)
         "eventid %{public}d, in lock range", event.bundleName_.c_str(),
         (long long)event.timeStamp_, userId, event.eventId_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
-    if (timeNow == -1) {
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
         return -1;
     }
     ConvertToSystemTimeLocked(event);
@@ -527,15 +527,15 @@ int32_t BundleActiveCore::ReportEventToAllUserId(BundleActiveEvent& event)
 {
     BUNDLE_ACTIVE_LOGD("ReportEventToAllUserId called");
     int64_t timeNow = CheckTimeChangeAndGetWallTime();
-    if (timeNow == -1) {
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
         return -1;
     }
     if (userStatServices_.empty()) {
         return DEFAULT_USER_ID;
     }
-    for (auto it = userStatServices_.begin(); it != userStatServices_.end(); ++it) {
+    for (const auto& it : userStatServices_) {
         ConvertToSystemTimeLocked(event);
-        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(it->first, timeNow,
+        std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(it.first, timeNow,
             debugCore_);
         if (service == nullptr) {
             BUNDLE_ACTIVE_LOGE("get user data service failed!");
