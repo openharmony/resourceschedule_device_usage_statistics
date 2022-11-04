@@ -18,12 +18,8 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-extern bool isGetBundleActiveProxy;
 ErrCode BundleActiveClient::GetBundleActiveProxy()
 {
-    if (!isGetBundleActiveProxy) {
-        return ERR_OK;
-    }
     return ERR_SYSTEM_SERVICE_OPERATION_FAILED;
 }
 }  // namespace DeviceUsageStats

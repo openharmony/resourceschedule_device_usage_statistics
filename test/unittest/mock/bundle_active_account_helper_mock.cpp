@@ -18,12 +18,8 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-extern bool isGetUserId;
 ErrCode BundleActiveAccountHelper::GetUserId(const int32_t uid, int32_t& userId)
 {
-    if (!isGetUserId) {
-        return 0;
-    }
     return -1;
 }
 }  // namespace DeviceUsageStats

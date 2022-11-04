@@ -185,16 +185,16 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_OnUs
     Function | MediumTest | Level0)
 {
     int userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(bundleActiveCore->debugCore_);
-    bundleActiveCore->InitBundleGroupController();
-    auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), false);
-    bundleActiveCore->userStatServices_[userId] = userService;
-    bundleActiveCore->currentUsedUser_ = userId;
-    bundleActiveCore->OnUserRemoved(userId);
-    bundleActiveCore->OnUserSwitched(userId);
-    bundleActiveCore->RestoreAllData();
-    EXPECT_NE(bundleActiveCore, nullptr);
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
+    coreObject->InitBundleGroupController();
+    auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
+    coreObject->userStatServices_[userId] = userService;
+    coreObject->currentUsedUser_ = userId;
+    coreObject->OnUserRemoved(userId);
+    coreObject->OnUserSwitched(userId);
+    coreObject->RestoreAllData();
+    EXPECT_NE(coreObject, nullptr);
 }
 
 /*
@@ -206,13 +206,13 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_OnUs
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RestoreAllData_001,
     Function | MediumTest | Level0)
 {
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(bundleActiveCore->debugCore_);
-    bundleActiveCore->InitBundleGroupController();
-    bundleActiveCore->RestoreAllData();
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
+    coreObject->InitBundleGroupController();
+    coreObject->RestoreAllData();
     BundleActiveEvent event;
-    bundleActiveCore->ReportEventToAllUserId(event);
-    EXPECT_NE(bundleActiveCore, nullptr);
+    coreObject->ReportEventToAllUserId(event);
+    EXPECT_NE(coreObject, nullptr);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

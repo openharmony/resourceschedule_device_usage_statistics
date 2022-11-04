@@ -44,10 +44,6 @@ static int32_t COMMON_USERID = 100;
 static int64_t LARGE_NUM = 20000000000000;
 static int32_t DEFAULT_GROUP = 10;
 static sptr<IAppGroupCallback> observer = nullptr;
-bool isGetBundleActiveProxy = true;
-bool isGetUserId = true;
-bool isGetBundleMgrProxy = true;
-bool isCheckTimeChangeAndGetWallTime = true;
 
 class DeviceUsageStatisticsMockTest : public testing::Test {
 public:
@@ -86,8 +82,8 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
         DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_CLICKED);
     EXPECT_NE(BundleActiveClient::GetInstance().ReportEvent(eventA, DEFAULT_USERID), ERR_OK);
 
-    bool isBundleIdle = false;
-    EXPECT_NE(BundleActiveClient::GetInstance().IsBundleIdle(isBundleIdle, g_defaultBundleName, DEFAULT_USERID), ERR_OK);
+    bool isIdle = false;
+    EXPECT_NE(BundleActiveClient::GetInstance().IsBundleIdle(isIdle, g_defaultBundleName, DEFAULT_USERID), ERR_OK);
 
     std::vector<BundleActivePackageStats> packageStats;
     EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats, 4, 0, LARGE_NUM), ERR_OK);
@@ -287,18 +283,17 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_CheckTimeC
 
     bundleActiveCore->OnBundleUninstalled(COMMON_USERID, g_defaultBundleName);
 
-    isCheckTimeChangeAndGetWallTime = false;
-    EXPECT_NE(bundleActiveCore->QueryNotificationEventStats(0, LARGE_NUM, eventStats, COMMON_USERID), ERR_OK);
-    EXPECT_NE(bundleActiveCore->QueryDeviceEventStats(0, LARGE_NUM, eventStats, COMMON_USERID), ERR_OK);
-    EXPECT_NE(bundleActiveCore->QueryModuleUsageRecords(1000, moduleRecords, COMMON_USERID), ERR_OK);
+    EXPECT_NE(bundleActiveCore->QueryNotificationEventStats(0, LARGE_NUM, eventStats, DEFAULT_USERID), ERR_OK);
+    EXPECT_NE(bundleActiveCore->QueryDeviceEventStats(0, LARGE_NUM, eventStats, DEFAULT_USERID), ERR_OK);
+    EXPECT_NE(bundleActiveCore->QueryModuleUsageRecords(1000, moduleRecords, DEFAULT_USERID), ERR_OK);
 
-    code = bundleActiveCore->QueryBundleEvents(activeEvent, COMMON_USERID, 0, LARGE_NUM, g_defaultBundleName);
+    code = bundleActiveCore->QueryBundleEvents(activeEvent, DEFAULT_USERID, 0, LARGE_NUM, g_defaultBundleName);
     EXPECT_NE(code, ERR_OK);
 
-    code = bundleActiveCore->QueryBundleStatsInfos(packageStats, COMMON_USERID, 4, 0, LARGE_NUM, g_defaultBundleName);
+    code = bundleActiveCore->QueryBundleStatsInfos(packageStats, DEFAULT_USERID, 4, 0, LARGE_NUM, g_defaultBundleName);
     EXPECT_NE(code, ERR_OK);
     
-    bundleActiveCore->OnBundleUninstalled(COMMON_USERID, g_defaultBundleName);
+    bundleActiveCore->OnBundleUninstalled(DEFAULT_USERID, g_defaultBundleName);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

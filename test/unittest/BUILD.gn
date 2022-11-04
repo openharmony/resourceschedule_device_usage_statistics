@@ -52,9 +52,7 @@ ohos_unittest("DeviceUsageStatsTest") {
 ohos_unittest("DeviceUsageStatsServiceTest") {
   module_out_path = module_output_path
 
-  sources = [
-    "device_usage_statistics_service_test.cpp",
-  ]
+  sources = [ "device_usage_statistics_service_test.cpp" ]
 
   configs = [
     ":module_private_config",

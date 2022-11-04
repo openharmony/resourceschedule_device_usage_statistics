@@ -18,12 +18,11 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-extern bool isCheckTimeChangeAndGetWallTime;
-
+static int64_t LARGE_NUM = 20000000000000;
 int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
 {
-    if (!isCheckTimeChangeAndGetWallTime) {
-        return 2000000000000;
+    if (userId == 0) {
+        return LARGE_NUM;
     }
     return ERR_TIME_OPERATION_FAILED;
 }
