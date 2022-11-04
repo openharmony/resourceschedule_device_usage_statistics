@@ -183,9 +183,9 @@ napi_value ParseIsIdleStateParameters(const napi_env &env, const napi_callback_i
 
     // argv[1]: callback
     if (argc == IS_IDLE_STATE_PARAMS) {
-        napi_valuetype valuetype = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-        if (valuetype != napi_function) {
+        napi_valuetype inputValueType = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[1], &inputValueType));
+        if (inputValueType != napi_function) {
             params.errorCode = ERR_CALL_BACK_TYPE;
             return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
         }
@@ -331,7 +331,8 @@ napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
                 napi_create_array(env, &result);
-                BundleStateCommon::GetBundleActiveEventForResult(env, asyncCallbackInfo->BundleActiveState, result);
+                BundleStateCommon::GetBundleActiveEventForResult(
+                    env, asyncCallbackInfo->BundleActiveState, result, true);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
@@ -386,7 +387,8 @@ napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
             if (asyncCallbackInfo != nullptr) {
                 napi_value result = nullptr;
                 napi_create_array(env, &result);
-                BundleStateCommon::GetBundleActiveEventForResult(env, asyncCallbackInfo->BundleActiveState, result);
+                BundleStateCommon::GetBundleActiveEventForResult(
+                    env, asyncCallbackInfo->BundleActiveState, result, true);
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },

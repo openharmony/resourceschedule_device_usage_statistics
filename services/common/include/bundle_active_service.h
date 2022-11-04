@@ -19,6 +19,7 @@
 #include "bundle_mgr_interface.h"
 #include "singleton.h"
 
+#include "app_mgr_interface.h"
 #include "ibundle_active_service.h"
 #include "bundle_active_stub.h"
 #include "bundle_active_core.h"

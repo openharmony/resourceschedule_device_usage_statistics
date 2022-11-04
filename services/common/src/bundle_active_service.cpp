@@ -17,7 +17,6 @@
 #include "power_mgr_client.h"
 #include "unistd.h"
 #include "accesstoken_kit.h"
-#include "app_mgr_interface.h"
 
 #include "bundle_state_inner_errors.h"
 #include "bundle_active_event.h"
@@ -36,7 +35,6 @@ static const std::string PERMITTED_PROCESS_NAME = "foundation";
 static const int32_t MAXNUM_UP_LIMIT = 1000;
 const int32_t EVENTS_PARAM = 5;
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
-static constexpr int32_t MIN_DUMP_PARAM_NUMS = 1;
 const int32_t PACKAGE_USAGE_PARAM = 6;
 const int32_t MODULE_USAGE_PARAM = 4;
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
@@ -325,7 +323,6 @@ ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleAc
 ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
     const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
-    std::vector<BundleActiveEvent> result;
     ErrCode ret = ERR_OK;
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
@@ -339,7 +336,7 @@ ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& b
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
     if (ret == ERR_OK) {
         ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, "");
-        BUNDLE_ACTIVE_LOGI("QueryBundleEvents result is %{public}zu", result.size());
+        BUNDLE_ACTIVE_LOGI("QueryBundleEvents result is %{public}zu", bundleActiveEvents.size());
     }
     return ret;
 }
@@ -578,7 +575,7 @@ ErrCode BundleActiveService::QueryModuleUsageRecords(int32_t maxNum, std::vector
     ErrCode errCode = ERR_OK;
     if (maxNum > MAXNUM_UP_LIMIT || maxNum <= 0) {
         BUNDLE_ACTIVE_LOGE("MaxNum is Invalid!");
-        return errCode;
+        return ERR_FIND_APP_USAGE_RECORDS_FAILED;
     }
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     if (userId == -1) {
@@ -644,7 +641,8 @@ ErrCode BundleActiveService::QueryNotificationEventStats(int64_t beginTime, int6
 
 void BundleActiveService::QueryModuleRecordInfos(BundleActiveModuleRecord& moduleRecord)
 {
-    if (!GetBundleMgrProxy()) {
+    ErrCode errCode = GetBundleMgrProxy();
+    if (errCode != ERR_OK) {
         return;
     }
     ApplicationInfo appInfo;
@@ -701,7 +699,7 @@ int32_t BundleActiveService::Dump(int32_t fd, const std::vector<std::u16string> 
     int32_t ret = ERR_OK;
     if (argsInStr.size() == NO_DUMP_PARAM_NUMS) {
         DumpUsage(result);
-    } else if (argsInStr.size() >= MIN_DUMP_PARAM_NUMS) {
+    } else {
         std::vector<std::string> infos;
         if (argsInStr[0] == "-h") {
             DumpUsage(result);

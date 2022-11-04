@@ -38,6 +38,14 @@ BundleActiveGroupController::BundleActiveGroupController(const bool debug)
     screenTimeLevel_ = {0, 0, debug ? TWO_MINUTE : ONE_HOUR, debug ? FOUR_MINUTE : TWO_HOUR};
     bootTimeLevel_ = {0, debug ? TWO_MINUTE : TWELVE_HOUR, debug ? FOUR_MINUTE : TWENTY_FOUR_HOUR,
         debug ? SIXTEEN_MINUTE : FOURTY_EIGHT_HOUR};
+    eventIdMatchReason_ = {
+        {BundleActiveEvent::ABILITY_FOREGROUND, GROUP_EVENT_REASON_FOREGROUND},
+        {BundleActiveEvent::ABILITY_BACKGROUND, GROUP_EVENT_REASON_BACKGROUND},
+        {BundleActiveEvent::SYSTEM_INTERACTIVE, GROUP_EVENT_REASON_SYSTEM},
+        {BundleActiveEvent::USER_INTERACTIVE, GROUP_EVENT_REASON_USER_INTERACTION},
+        {BundleActiveEvent::NOTIFICATION_SEEN, GROUP_EVENT_REASON_NOTIFY_SEEN},
+        {BundleActiveEvent::LONG_TIME_TASK_STARTTED, GROUP_EVENT_REASON_LONG_TIME_TASK_STARTTED},
+    };
 }
 
 void BundleActiveGroupController::RestoreDurationToDatabase()
@@ -200,26 +208,6 @@ bool BundleActiveGroupController::calculationTimeOut(
         - lastGroupCalculatedTimeStamp > timeoutCalculated_;
 }
 
-uint32_t BundleActiveGroupController::EventToGroupReason(const int32_t eventId)
-{
-    switch (eventId) {
-        case BundleActiveEvent::ABILITY_FOREGROUND:
-            return GROUP_EVENT_REASON_FOREGROUND;
-        case BundleActiveEvent::ABILITY_BACKGROUND:
-            return GROUP_EVENT_REASON_BACKGROUND;
-        case BundleActiveEvent::SYSTEM_INTERACTIVE:
-            return GROUP_EVENT_REASON_SYSTEM;
-        case BundleActiveEvent::USER_INTERACTIVE:
-            return GROUP_EVENT_REASON_USER_INTERACTION;
-        case BundleActiveEvent::NOTIFICATION_SEEN:
-            return GROUP_EVENT_REASON_NOTIFY_SEEN;
-        case BundleActiveEvent::LONG_TIME_TASK_STARTTED:
-            return GROUP_EVENT_REASON_LONG_TIME_TASK_STARTTED;
-        default:
-            return 0;
-    }
-}
-
 void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp,
     const int32_t userId)
 {
@@ -232,19 +220,15 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
         return;
     }
     int32_t eventId = event.eventId_;
-    if (eventId == BundleActiveEvent::ABILITY_FOREGROUND ||
-        eventId == BundleActiveEvent::ABILITY_BACKGROUND ||
-        eventId == BundleActiveEvent::SYSTEM_INTERACTIVE ||
-        eventId == BundleActiveEvent::USER_INTERACTIVE ||
-        eventId == BundleActiveEvent::NOTIFICATION_SEEN ||
-        eventId == BundleActiveEvent::LONG_TIME_TASK_STARTTED) {
+    auto item  = eventIdMatchReason_.find(eventId);
+    if (item != eventIdMatchReason_.end()) {
         std::shared_ptr<BundleActivePackageHistory> bundleUsageHistory = bundleUserHistory_->GetUsageHistoryForBundle(
             event.bundleName_, userId, bootBasedTimeStamp, true);
         if (bundleUsageHistory == nullptr) {
             return;
         }
         int64_t timeUntilNextCheck;
-        uint32_t eventReason = EventToGroupReason(eventId);
+        uint32_t eventReason = item->second;
         switch (eventId) {
             case BundleActiveEvent::NOTIFICATION_SEEN:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_DAILY,

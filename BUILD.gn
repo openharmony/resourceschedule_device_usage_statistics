@@ -36,11 +36,14 @@ ohos_shared_library("usagestatsinner") {
     "interfaces/innerkits/src/app_group_callback_stub.cpp",
     "interfaces/innerkits/src/bundle_active_client.cpp",
     "interfaces/innerkits/src/bundle_active_proxy.cpp",
+    "services/common/src/bundle_active_log.cpp",
     "services/packageusage/src/bundle_active_event.cpp",
+    "services/packageusage/src/bundle_active_event_stats.cpp",
+    "services/packageusage/src/bundle_active_form_record.cpp",
+    "services/packageusage/src/bundle_active_module_record.cpp",
     "services/packageusage/src/bundle_active_package_stats.cpp",
   ]
   public_configs = [ ":usagestatsinner_public_config" ]
-  deps = [ ":usagestatservice" ]
   external_deps = [
     "c_utils:utils",
     "eventhandler:libeventhandler",
@@ -199,7 +202,7 @@ ohos_shared_library("usagestatservice") {
   defines = []
   if (bgtaskmgr_enable) {
     external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
-    defines += [ "RESOURCESCHEDULE_BGTASKMGR_ENABLE" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
   }
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"

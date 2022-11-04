@@ -60,9 +60,9 @@ napi_value ParseQueryAppGroupParameters(const napi_env &env, const napi_callback
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
         if (valuetype == napi_function) {
-            napi_valuetype valuetype = napi_undefined;
-            NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-            if (valuetype != napi_function) {
+            napi_valuetype inputValueType = napi_undefined;
+            NAPI_CALL(env, napi_typeof(env, argv[0], &inputValueType));
+            if (inputValueType != napi_function) {
                 params.errorCode = ERR_CALL_BACK_TYPE;
                 return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
             }
@@ -84,15 +84,13 @@ napi_value ParseQueryAppGroupParameters(const napi_env &env, const napi_callback
             return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "bundleName");
         }
         // argv[1]: callback
-        if (argc == PRIORITY_GROUP_PARAMS) {
-            napi_valuetype valuetype = napi_undefined;
-            NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-            if (valuetype != napi_function) {
-                params.errorCode = ERR_CALL_BACK_TYPE;
-                return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
-            }
-            napi_create_reference(env, argv[1], 1, &params.callback);
+        napi_valuetype inputValueType = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[1], &inputValueType));
+        if (inputValueType != napi_function) {
+            params.errorCode = ERR_CALL_BACK_TYPE;
+            return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
         }
+        napi_create_reference(env, argv[1], 1, &params.callback);
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
@@ -195,9 +193,9 @@ napi_value ParseSetAppGroupParameters(const napi_env &env, const napi_callback_i
     }
     // argv[SECOND_ARG]: callback
     if (argc == APP_USAGE_PARAMS_BUNDLE_GROUP) {
-        napi_valuetype valuetype = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
-        if (valuetype != napi_function) {
+        napi_valuetype inputValueType = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &inputValueType));
+        if (inputValueType != napi_function) {
             params.errorCode = ERR_CALL_BACK_TYPE;
             return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
         }
@@ -259,7 +257,7 @@ napi_value SetAppGroup(napi_env env, napi_callback_info info)
 napi_value GetAppGroupChangeCallback(const napi_env &env, const napi_value &value)
 {
     napi_ref result = nullptr;
-    
+
     registerObserver = new (std::nothrow) AppGroupObserver();
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack callback is null");
@@ -281,7 +279,7 @@ napi_value ParseRegisterAppGroupCallBackParameters(const napi_env &env, const na
         params.errorCode = ERR_PARAMETERS_NUMBER;
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
     }
-        
+
     // arg[0] : callback
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
@@ -298,9 +296,9 @@ napi_value ParseRegisterAppGroupCallBackParameters(const napi_env &env, const na
 
     // argv[1]: asyncCallback
     if (argc == REGISTER_GROUP_CALLBACK_PARAMS) {
-        napi_valuetype valuetype = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, argv[1], &valuetype));
-        if (valuetype != napi_function) {
+        napi_valuetype inputValueType = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[1], &inputValueType));
+        if (inputValueType != napi_function) {
             params.errorCode = ERR_CALL_BACK_TYPE;
             return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
         }
@@ -340,8 +338,8 @@ napi_value RegisterAppGroupCallBack(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
             if (asyncCallbackInfo) {
-                std::lock_guard<std::mutex> lock(g_observerMutex_);
                 if (asyncCallbackInfo->errorCode != ERR_OK) {
+                    std::lock_guard<std::mutex> lock(g_observerMutex_);
                     registerObserver = nullptr;
                 }
                 napi_value result = nullptr;
@@ -372,7 +370,6 @@ napi_value ParseUnRegisterAppGroupCallBackParameters(const napi_env &env, const 
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
     }
 
-    // argv[1]: callback
     if (argc == UN_REGISTER_GROUP_CALLBACK_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
@@ -421,8 +418,8 @@ napi_value UnRegisterAppGroupCallBack(napi_env env, napi_callback_info info)
         [](napi_env env, napi_status status, void *data) {
             AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
             if (asyncCallbackInfo != nullptr) {
-                std::lock_guard<std::mutex> lock(g_observerMutex_);
                 if (asyncCallbackInfo->errorCode == ERR_OK) {
+                    std::lock_guard<std::mutex> lock(g_observerMutex_);
                     registerObserver = nullptr;
                 }
                 napi_value result = nullptr;
