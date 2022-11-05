@@ -13,21 +13,24 @@
  * limitations under the License.
  */
 
-#ifndef BUNDLE_ACTIVE_ACCOUNT_HELPER_H
-#define BUNDLE_ACTIVE_ACCOUNT_HELPER_H
-
-#include "errors.h"
-#ifdef OS_ACCOUNT_PART_ENABLED
-#include "os_account_manager.h"
-#endif // OS_ACCOUNT_PART_ENABLED
+#include "bundle_active_core.h"
+#include "bundle_state_inner_errors.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveAccountHelper {
-public:
-    static ErrCode GetUserId(const int32_t uid, int32_t& userId);
-};
+static int64_t LARGE_NUM = 20000000000000;
+int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
+{
+    if (userId == 0) {
+        return LARGE_NUM;
+    }
+    return ERR_TIME_OPERATION_FAILED;
+}
+
+std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitializeIfNeeded(const int32_t userId,
+    const int64_t timeStamp, const bool debug)
+{
+    return nullptr;
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-#endif  // BUNDLE_ACTIVE_ACCOUNT_HELPER_H
-
