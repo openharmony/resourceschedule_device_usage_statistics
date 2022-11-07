@@ -23,6 +23,7 @@ config("module_private_config") {
     "//foundation/resourceschedule/device_usage_statistics/services/common/include",
     "//foundation/resourceschedule/device_usage_statistics/services/packageusage/include",
     "//foundation/resourceschedule/device_usage_statistics/services/packagegroup/include",
+    "//third_party/jsoncpp/include",
   ]
 }
 
@@ -36,6 +37,7 @@ ohos_unittest("DeviceUsageStatsTest") {
   deps = [
     "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
     "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+    "//third_party/jsoncpp:jsoncpp",
   ]
 
   external_deps = [
@@ -62,6 +64,7 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
   deps = [
     "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
     "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+    "//third_party/jsoncpp:jsoncpp",
   ]
 
   external_deps = [
@@ -99,6 +102,7 @@ ohos_unittest("DeviceUsageStatsMockTest") {
   deps = [
     "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
     "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+    "//third_party/jsoncpp:jsoncpp",
   ]
 
   external_deps = [
