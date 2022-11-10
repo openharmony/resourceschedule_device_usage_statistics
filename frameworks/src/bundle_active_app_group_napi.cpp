@@ -347,8 +347,8 @@ napi_value RegisterAppGroupCallBack(napi_env env, napi_callback_info info)
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
-        static_cast<void*>(asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork)));
+        static_cast<void*>(asyncCallbackInfo),
+        &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();
@@ -427,8 +427,8 @@ napi_value UnRegisterAppGroupCallBack(napi_env env, napi_callback_info info)
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
-        static_cast<void*>(asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork)));
+        static_cast<void*>(asyncCallbackInfo),
+        &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();
