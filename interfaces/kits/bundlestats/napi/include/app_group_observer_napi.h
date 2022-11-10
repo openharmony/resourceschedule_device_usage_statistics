@@ -30,7 +30,7 @@ public:
 
     ~AppGroupObserver();
 
-    virtual void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
+    void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
 
     void SetCallbackInfo(const napi_env &env, const napi_ref &ref);
 

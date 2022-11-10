@@ -45,7 +45,7 @@ napi_module _usageStatisticsModule = {
     .nm_filename = nullptr,
     .nm_register_func = UsageStatisticsInit,
     .nm_modname = "resourcescheduler.usageStatistics",
-    .nm_priv = ((void *)0),
+    .nm_priv = (static_cast<void*>(0)),
     .reserved = {0}
 };
 }  // namespace DeviceUsageStats
