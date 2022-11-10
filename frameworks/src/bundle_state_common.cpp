@@ -245,7 +245,7 @@ void BundleStateCommon::GetBundleStateInfoForResult(napi_env env,
 }
 
 void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
-    const BundleActiveModuleRecord &oneModuleRecord, napi_value moduleObject)
+    const BundleActiveModuleRecord &moduleRecords, napi_value moduleObject)
 {
         napi_value bundleName = nullptr;
         NAPI_CALL_RETURN_VOID(env, napi_create_string_utf8(env, oneModuleRecord.bundleName_.c_str(),

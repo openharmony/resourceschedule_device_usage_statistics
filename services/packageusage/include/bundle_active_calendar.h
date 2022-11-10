@@ -16,7 +16,7 @@
 #ifndef BUNDLE_ACTIVE_CALENDER_H
 #define BUNDLE_ACTIVE_CALENDER_H
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "bundle_active_constant.h"
 

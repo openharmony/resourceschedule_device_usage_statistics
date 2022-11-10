@@ -1122,7 +1122,7 @@ void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
     }
 }
 
-void BundleActiveUsageDatabase::RenewTableTime(int64_t changedTime)
+void BundleActiveUsageDatabase::RenewTableTime(int64_t timeDiffMillis)
 {
     lock_guard<mutex> lock(databaseMutex_);
     for (uint32_t i = 0; i < sortedTableArray_.size(); i++) {

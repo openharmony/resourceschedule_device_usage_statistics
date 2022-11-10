@@ -117,8 +117,8 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
-        (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork));
+        static_cast<void*>(asyncCallbackInfo,
+        &asyncCallbackInfo->asyncWork)));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();
@@ -209,8 +209,8 @@ napi_value QueryAppUsagePriorityGroup(napi_env env, napi_callback_info info)
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
-        (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork));
+        static_cast<void*>(asyncCallbackInfo,
+        &asyncCallbackInfo->asyncWork)));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();
@@ -322,8 +322,8 @@ napi_value QueryCurrentBundleActiveStates(napi_env env, napi_callback_info info)
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
-        (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork));
+        static_cast<void*>(asyncCallbackInfo,
+        &asyncCallbackInfo->asyncWork)));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();
@@ -389,8 +389,8 @@ napi_value QueryBundleActiveStates(napi_env env, napi_callback_info info)
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
-        (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork));
+        static_cast<void*>(asyncCallbackInfo,
+        &asyncCallbackInfo->asyncWork)));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();
@@ -516,8 +516,8 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
-        (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork));
+        static_cast<void*>(asyncCallbackInfo,
+        &asyncCallbackInfo->asyncWork)));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();
@@ -625,8 +625,8 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
                 BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
             }
         },
-        (void *)asyncCallbackInfo,
-        &asyncCallbackInfo->asyncWork));
+        static_cast<void*>(asyncCallbackInfo,
+        &asyncCallbackInfo->asyncWork)));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();

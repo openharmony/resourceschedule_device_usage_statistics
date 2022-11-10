@@ -23,7 +23,7 @@ int32_t BundleActivePowerStateCallbackStub::OnRemoteRequest(uint32_t code, Messa
 {
     std::u16string descriptor = BundleActivePowerStateCallbackStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
-    PowerMgr::PowerState state = (PowerMgr::PowerState)data.ReadInt32();
+    PowerMgr::PowerState state = static_cast<PowerMgr::PowerState>(data.ReadInt32());
     if (descriptor != remoteDescriptor) {
         BUNDLE_ACTIVE_LOGE("BundleActivePowerStateCallbackStub::OnRemoteRequest cannot get power mgr service");
         return -1;
