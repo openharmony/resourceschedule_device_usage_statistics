@@ -56,7 +56,7 @@ class BundleActiveCore : public BundleActiveStatsUpdateListener,
     public std::enable_shared_from_this<BundleActiveCore>  {
 public:
     BundleActiveCore();
-    ~BundleActiveCore();
+    virtual ~BundleActiveCore();
 
     /*
     * function: ReportEvent, used to report ability fourground/background/destroy event.
