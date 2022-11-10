@@ -1131,7 +1131,7 @@ void BundleActiveUsageDatabase::RenewTableTime(int64_t timeDiffMillis)
         }
         vector<int64_t> tableArray = sortedTableArray_.at(i);
         for (uint32_t j = 0; j < tableArray.size(); j++) {
-            int64_t newTime = tableArray.at(j) + changedTime;
+            int64_t newTime = tableArray.at(j) + timeDiffMillis;
             BUNDLE_ACTIVE_LOGI("new table time is %{public}lld", (long long)newTime);
             if (newTime < 0) {
                 DeleteInvalidTable(i, tableArray.at(j));
@@ -1145,7 +1145,7 @@ void BundleActiveUsageDatabase::RenewTableTime(int64_t timeDiffMillis)
     }
     if (eventTableName_ != UNKNOWN_TABLE_NAME) {
         int64_t oldTime = ParseStartTime(eventTableName_);
-        int64_t newTime = oldTime + changedTime;
+        int64_t newTime = oldTime + timeDiffMillis;
         if (newTime < 0) {
             int32_t deletedResult = DeleteInvalidTable(EVENT_DATABASE_INDEX, oldTime);
             if (deletedResult == BUNDLE_ACTIVE_SUCCESS) {
@@ -1160,7 +1160,7 @@ void BundleActiveUsageDatabase::RenewTableTime(int64_t timeDiffMillis)
     }
     if (formRecordsTableName_ != UNKNOWN_TABLE_NAME && moduleRecordsTableName_ != UNKNOWN_TABLE_NAME) {
         int64_t oldTime = ParseStartTime(moduleRecordsTableName_);
-        int64_t newTime = oldTime + changedTime;
+        int64_t newTime = oldTime + timeDiffMillis;
         int32_t renamedResult = RenameTableName(APP_GROUP_DATABASE_INDEX, oldTime, newTime);
         if (renamedResult == BUNDLE_ACTIVE_SUCCESS) {
             moduleRecordsTableName_ = MODULE_RECORD_LOG_TABLE + to_string(newTime);
