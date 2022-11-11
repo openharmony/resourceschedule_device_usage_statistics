@@ -86,7 +86,7 @@ public:
     * parameters: parcel
     * return: result of mashalling, true means successful, flase means failed.
     */
-    virtual bool Marshalling(Parcel &parcel) const override;
+    bool Marshalling(Parcel &parcel) const override;
     /*
     * function: UnMarshalling, Unmashalling record object from parcel.
     * parameters: parcel
