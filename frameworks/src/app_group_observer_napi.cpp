@@ -157,7 +157,7 @@ void AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCal
     callbackReceiveDataWorker->ref = bundleGroupCallbackInfo_.ref;
     delete callBackInfo;
 
-    work->data = (void *)callbackReceiveDataWorker;
+    work->data = static_cast<void*>(callbackReceiveDataWorker);
     int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnAppGroupChanged);
     if (ret != 0) {
         delete callbackReceiveDataWorker;

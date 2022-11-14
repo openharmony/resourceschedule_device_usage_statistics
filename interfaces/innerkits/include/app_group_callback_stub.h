@@ -30,14 +30,14 @@ public:
     * parameters: code, data, reply, option
     * return: errorcode.
     */
-    virtual int OnRemoteRequest(
+    int OnRemoteRequest(
         uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
     /*
     * function: OnAppGroupChanged, bundleGroupChanged callback, handle message from proxy.
     * parameters: AppGroupCallbackInfo
     * return: void.
     */
-    virtual void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
+    void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
 private:
     DISALLOW_COPY_AND_MOVE(AppGroupCallbackStub);
 };

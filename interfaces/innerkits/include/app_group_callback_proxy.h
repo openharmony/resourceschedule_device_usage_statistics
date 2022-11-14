@@ -29,14 +29,14 @@ namespace DeviceUsageStats {
 class BundleActiveGroupCallbackProxy : public IRemoteProxy<IAppGroupCallback> {
 public:
     explicit BundleActiveGroupCallbackProxy(const sptr<IRemoteObject>& impl);
-    virtual ~BundleActiveGroupCallbackProxy() override;
+    ~BundleActiveGroupCallbackProxy() override;
     DISALLOW_COPY_AND_MOVE(BundleActiveGroupCallbackProxy);
     /*
     * function: OnAppGroupChanged, bundleGroupChanged callback, IPC proxy, send message to stub.
     * parameters: AppGroupCallbackInfo
     * return: void.
     */
-    virtual void OnAppGroupChanged(
+    void OnAppGroupChanged(
         const AppGroupCallbackInfo& appGroupCallbackInfo) override;
 
 private:

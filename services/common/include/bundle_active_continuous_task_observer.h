@@ -33,11 +33,11 @@ namespace DeviceUsageStats {
 class BundleActiveContinuousTaskObserver : public OHOS::BackgroundTaskMgr::BackgroundTaskSubscriber {
 public:
     using IBundleMgr = OHOS::AppExecFwk::IBundleMgr;
-    virtual void OnContinuousTaskStart(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>
+    void OnContinuousTaskStart(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>
         &continuousTaskCallbackInfo) override;
-    virtual void OnContinuousTaskStop(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>
+    void OnContinuousTaskStop(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>
         &continuousTaskCallbackInfo) override;
-    virtual void OnRemoteDied(const wptr<IRemoteObject> &object) override;
+    void OnRemoteDied(const wptr<IRemoteObject> &object) override;
     void Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     std::atomic<bool> isRemoteDied_ {false};
 private:
