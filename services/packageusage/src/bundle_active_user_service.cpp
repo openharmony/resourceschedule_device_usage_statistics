@@ -634,4 +634,3 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateMo
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-

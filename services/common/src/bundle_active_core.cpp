@@ -191,7 +191,7 @@ void BundleActiveCore::InitBundleGroupController()
     if (bundleGroupHandler_ == nullptr) {
         return;
     }
-    if (bundleGroupController_ != nullptr && bundleGroupHandler_ != nullptr) {
+    if (bundleGroupController_ != nullptr) {
         bundleGroupHandler_->Init(bundleGroupController_);
         bundleGroupController_->SetHandlerAndCreateUserHistory(bundleGroupHandler_, realTimeShot_, shared_from_this());
         BUNDLE_ACTIVE_LOGI("Init Set group controller and handler done");
