@@ -13,24 +13,21 @@
  * limitations under the License.
  */
 
-#include "bundle_active_core.h"
-#include "bundle_state_inner_errors.h"
+#include "bundle_active_user_history.h"
+#include "bundle_active_package_history.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-static int64_t LARGE_NUM = 20000000000000;
-int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
+using namespace std;
+shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUserHistory::GetUserHistory(
+    const int32_t userId, const bool create)
 {
-    if (userId == 100) {
-        return LARGE_NUM;
+    if (userId == 0) {
+        return nullptr;
     }
-    return ERR_TIME_OPERATION_FAILED;
-}
-
-std::shared_ptr<BundleActiveUserService> BundleActiveCore::GetUserDataAndInitializeIfNeeded(const int32_t userId,
-    const int64_t timeStamp, const bool debug)
-{
-    return nullptr;
+    string bundleName = "default";
+    return make_shared<map<string, shared_ptr<BundleActivePackageHistory>>>(bundleName,
+        make_shared<BundleActivePackageHistory>());
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
