@@ -33,7 +33,6 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DeviceUsageStats {
-// static int64_t LARGE_NUM = 20000000000000;
 class DeviceUsageStatisticsServiceTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -150,7 +149,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
 
 /*
  * @tc.name: DeviceUsageStatisticsServiceTest_AppGroupCallback_001
- * @tc.desc: QueryModuleUsageRecords
+ * @tc.desc: AppGroupCallback
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
@@ -181,7 +180,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppG
 
 /*
  * @tc.name: DeviceUsageStatisticsServiceTest_OnUserRemoved_001
- * @tc.desc: QueryModuleUsageRecords
+ * @tc.desc: OnUserRemoved
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
@@ -261,7 +260,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Judg
     int64_t eventTableTime = 0;
     EXPECT_EQ(database->JudgeQueryCondition(beginTime, endTime, eventTableTime), QUERY_CONDITION_INVALID);
 
-    endTime =10;
+    endTime = 10;
     eventTableTime = 11;
     EXPECT_EQ(database->JudgeQueryCondition(beginTime, endTime, eventTableTime), QUERY_CONDITION_INVALID);
 }

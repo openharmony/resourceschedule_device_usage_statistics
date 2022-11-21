@@ -330,9 +330,9 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_getUserHis
     Function | MediumTest | Level0)
 {
     auto groupController = std::make_shared<BundleActiveGroupController>(false);
-    const int64_t bootFromTimeStamp = LARGE_NUM;
+    const int64_t timeStamp = LARGE_NUM;
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    groupController->bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootFromTimeStamp, bundleActiveCore);
+    groupController->bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(timeStamp, bundleActiveCore);
 
     groupController->OnBundleUninstalled(0, g_defaultBundleName);
 }

@@ -21,7 +21,8 @@ namespace DeviceUsageStats {
 static int64_t LARGE_NUM = 20000000000000;
 int64_t BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
 {
-    if (userId == 100) {
+    int32_t userIdTemp = 100;
+    if (userId == userIdTemp) {
         return LARGE_NUM;
     }
     return ERR_TIME_OPERATION_FAILED;
