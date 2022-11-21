@@ -16,8 +16,6 @@
 #define private public
 #define protected public
 
-#include <string>
-
 #include <gtest/gtest.h>
 #include "system_ability_definition.h"
 
@@ -119,9 +117,11 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleMgrProxy_001,
     Function | MediumTest | Level0)
 {
-    BundleActiveEvent eventA(g_defaultBundleName, g_defaultMoudleName, g_defaultFormName,
-        DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_CLICKED);
-    EXPECT_NE(BundleActiveClient::GetInstance().ReportEvent(eventA, DEFAULT_USERID), ERR_OK);
+    auto service = std::make_shared<BundleActiveService>();
+    std::string bundleName;
+    bool isBundleIdle = false;
+    EXPECT_NE(service->IsBundleIdle(isBundleIdle, bundleName, -1), ERR_OK);
+    EXPECT_NE(service->CheckBundleIsSystemAppAndHasPermission(100, 100000), ERR_OK);
 }
 
 /*
@@ -187,6 +187,23 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryAppGr
     std::string bundleName;
     EXPECT_NE(service->QueryAppGroup(appGroup, bundleName, -1), ERR_OK);
     EXPECT_NE(service->QueryAppGroup(appGroup, bundleName, 100), ERR_OK);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_SetAppGroup_001
+ * @tc.desc: test service SetAppGroup boundary condition
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_SetAppGroup_001,
+    Function | MediumTest | Level0)
+{
+    auto service = std::make_shared<BundleActiveService>();
+
+    int32_t appGroup = 100;
+    std::string bundleName;
+    EXPECT_NE(service->SetAppGroup(bundleName, appGroup, -1), ERR_OK);
+    EXPECT_NE(service->SetAppGroup(bundleName, appGroup, 100), ERR_OK);
 }
 
 /*
@@ -263,37 +280,78 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_CheckTimeC
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
 
+    BundleActiveEvent event;
+    event.bundleName_ = "com.ohos.settings";
+    int32_t userId = 101;
+    EXPECT_NE(bundleActiveCore->ReportEvent(event, userId), ERR_OK);
+
+    EXPECT_NE(bundleActiveCore->ReportEventToAllUserId(event), ERR_OK);
+
     std::vector<BundleActiveEventStats> eventStats;
-    EXPECT_NE(bundleActiveCore->QueryNotificationEventStats(0, LARGE_NUM, eventStats, COMMON_USERID), ERR_OK);
-    EXPECT_NE(bundleActiveCore->QueryDeviceEventStats(0, LARGE_NUM, eventStats, COMMON_USERID), ERR_OK);
+    EXPECT_NE(bundleActiveCore->QueryNotificationEventStats(0, LARGE_NUM, eventStats, DEFAULT_USERID), ERR_OK);
+    EXPECT_NE(bundleActiveCore->QueryDeviceEventStats(0, LARGE_NUM, eventStats, DEFAULT_USERID), ERR_OK);
 
     std::vector<BundleActiveModuleRecord> moduleRecords;
-    EXPECT_NE(bundleActiveCore->QueryModuleUsageRecords(1000, moduleRecords, COMMON_USERID), ERR_OK);
+    EXPECT_NE(bundleActiveCore->QueryModuleUsageRecords(1000, moduleRecords, DEFAULT_USERID), ERR_OK);
 
     std::vector<BundleActiveEvent> activeEvent;
-    ErrCode code = bundleActiveCore->QueryBundleEvents(activeEvent, COMMON_USERID, 0, LARGE_NUM, g_defaultBundleName);
+    ErrCode code = bundleActiveCore->QueryBundleEvents(activeEvent, DEFAULT_USERID, 0, LARGE_NUM, g_defaultBundleName);
     EXPECT_NE(code, ERR_OK);
 
     std::vector<BundleActivePackageStats> packageStats;
-    code = bundleActiveCore->QueryBundleStatsInfos(packageStats, COMMON_USERID, 4, 0, LARGE_NUM, g_defaultBundleName);
-    EXPECT_NE(code, ERR_OK);
-    
-    BundleActiveEvent event;
-    EXPECT_NE(bundleActiveCore->ReportEventToAllUserId(event), ERR_OK);
-
-    bundleActiveCore->OnBundleUninstalled(COMMON_USERID, g_defaultBundleName);
-
-    EXPECT_NE(bundleActiveCore->QueryNotificationEventStats(0, LARGE_NUM, eventStats, DEFAULT_USERID), ERR_OK);
-    EXPECT_NE(bundleActiveCore->QueryDeviceEventStats(0, LARGE_NUM, eventStats, DEFAULT_USERID), ERR_OK);
-    EXPECT_NE(bundleActiveCore->QueryModuleUsageRecords(1000, moduleRecords, DEFAULT_USERID), ERR_OK);
-
-    code = bundleActiveCore->QueryBundleEvents(activeEvent, DEFAULT_USERID, 0, LARGE_NUM, g_defaultBundleName);
-    EXPECT_NE(code, ERR_OK);
-
     code = bundleActiveCore->QueryBundleStatsInfos(packageStats, DEFAULT_USERID, 4, 0, LARGE_NUM, g_defaultBundleName);
     EXPECT_NE(code, ERR_OK);
     
+    BundleActiveEvent eventTemp;
+    EXPECT_NE(bundleActiveCore->ReportEventToAllUserId(eventTemp), ERR_OK);
+
     bundleActiveCore->OnBundleUninstalled(DEFAULT_USERID, g_defaultBundleName);
+
+    EXPECT_NE(bundleActiveCore->QueryNotificationEventStats(0, LARGE_NUM, eventStats, COMMON_USERID), ERR_OK);
+    EXPECT_NE(bundleActiveCore->QueryDeviceEventStats(0, LARGE_NUM, eventStats, COMMON_USERID), ERR_OK);
+    EXPECT_NE(bundleActiveCore->QueryModuleUsageRecords(1000, moduleRecords, COMMON_USERID), ERR_OK);
+
+    code = bundleActiveCore->QueryBundleEvents(activeEvent, COMMON_USERID, 0, LARGE_NUM, g_defaultBundleName);
+    EXPECT_NE(code, ERR_OK);
+
+    code = bundleActiveCore->QueryBundleStatsInfos(packageStats, COMMON_USERID, 4, 0, LARGE_NUM, g_defaultBundleName);
+    EXPECT_NE(code, ERR_OK);
+    
+    bundleActiveCore->OnBundleUninstalled(COMMON_USERID, g_defaultBundleName);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_getUserHistory_001
+ * @tc.desc: test service getUserHistory boundary condition
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_getUserHistory_001,
+    Function | MediumTest | Level0)
+{
+    auto groupController = std::make_shared<BundleActiveGroupController>(false);
+    const int64_t timeStamp = LARGE_NUM;
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    groupController->bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(timeStamp, bundleActiveCore);
+
+    groupController->OnBundleUninstalled(0, g_defaultBundleName);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_calculationTimeOut_001
+ * @tc.desc: test service calculationTimeOut boundary condition
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_calculationTimeOut_001,
+    Function | MediumTest | Level0)
+{
+    auto groupController = std::make_shared<BundleActiveGroupController>(false);
+
+    std::shared_ptr<BundleActivePackageHistory> history = nullptr;
+    groupController->calculationTimeOut(history, LARGE_NUM);
+    history = std::make_shared<BundleActivePackageHistory>();
+    groupController->calculationTimeOut(history, LARGE_NUM);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
