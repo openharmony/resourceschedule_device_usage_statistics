@@ -151,9 +151,7 @@ void BundleActiveUserService::ReportForShutdown(const BundleActiveEvent& event)
     if (event.eventId_ != BundleActiveEvent::SHUTDOWN) {
         return;
     }
-    if (event.eventId_ == BundleActiveEvent::SHUTDOWN) {
-        currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->AddEvent(event);
-    }
+    currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->AddEvent(event);
     if (event.timeStamp_ >= dailyExpiryDate_.GetMilliseconds()) {
         BUNDLE_ACTIVE_LOGI(" BundleActiveUserService::ReportEvent later than daily expire");
         RenewStatsInMemory(event.timeStamp_);

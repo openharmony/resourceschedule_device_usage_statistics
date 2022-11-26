@@ -94,10 +94,17 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetS
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump_001, Function | MediumTest | Level0)
 {
     auto service = std::make_shared<BundleActiveService>();
+    service->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    service->bundleActiveCore_->Init();
     BUNDLE_ACTIVE_LOGI("DeviceUsageStatisticsServiceTest create BundleActiveService!");
 
     std::vector<std::string> dumpOption{"-A", "Events"};
     std::vector<std::string> dumpInfo;
+    service->ShellDump(dumpOption, dumpInfo);
+
+    dumpOption.clear();
+    dumpInfo.clear();
+    dumpOption = {"-A", "Events", "0", "20000000000000", "100"};
     service->ShellDump(dumpOption, dumpInfo);
 
     dumpOption.clear();
@@ -107,7 +114,17 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump
 
     dumpOption.clear();
     dumpInfo.clear();
+    dumpOption = {"-A", "PackageUsage", "1", "0", "20000000000000", "100"};
+    service->ShellDump(dumpOption, dumpInfo);
+
+    dumpOption.clear();
+    dumpInfo.clear();
     dumpOption = {"-A", "ModuleUsage"};
+    service->ShellDump(dumpOption, dumpInfo);
+
+    dumpOption.clear();
+    dumpInfo.clear();
+    dumpOption = {"-A", "ModuleUsage", "1", "100"};
     service->ShellDump(dumpOption, dumpInfo);
 
     std::vector<std::u16string> args;
@@ -200,7 +217,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_OnUs
     coreObject->currentUsedUser_ = userId;
     coreObject->OnUserRemoved(userId);
     coreObject->OnUserSwitched(userId);
-    coreObject->RestoreAllData();
     EXPECT_NE(coreObject, nullptr);
 }
 
@@ -216,7 +232,16 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rest
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
     coreObject->InitBundleGroupController();
+
+    int userId = 100;
+    auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
+    int64_t timeStamp = 20000000000000;
+    userService->Init(timeStamp);
+    coreObject->userStatServices_[userId] = userService;
+    userId = 101;
+    coreObject->userStatServices_[userId] = nullptr;
     coreObject->RestoreAllData();
+
     BundleActiveEvent event;
     coreObject->ReportEventToAllUserId(event);
     EXPECT_NE(coreObject, nullptr);
@@ -240,6 +265,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Obta
     event.eventId_ = BundleActiveEvent::SYSTEM_UNLOCK;
     coreObject->ObtainSystemEventName(event);
 
+    event.eventId_ = BundleActiveEvent::SYSTEM_SLEEP;
+    coreObject->ObtainSystemEventName(event);
+
     event.eventId_ = BundleActiveEvent::SYSTEM_WAKEUP;
     coreObject->ObtainSystemEventName(event);
     EXPECT_NE(coreObject, nullptr);
@@ -258,6 +286,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Judg
     int64_t beginTime = 0;
     int64_t endTime = 0;
     int64_t eventTableTime = 0;
+    database->eventTableName_ = "defaultTableName";
     EXPECT_EQ(database->JudgeQueryCondition(beginTime, endTime, eventTableTime), QUERY_CONDITION_INVALID);
 
     endTime = 10;
@@ -387,8 +416,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Crea
     Function | MediumTest | Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
-    uint32_t databaseType = 0;
-    database->CreateDurationTable(databaseType);
+    int32_t databaseType = DAILY_DATABASE_INDEX;
+    bool forModuleRecords = true;
+    database->InitUsageGroupDatabase(databaseType, forModuleRecords);
     EXPECT_NE(database, nullptr);
 }
 
@@ -508,8 +538,14 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetT
     databaseType = 5;
     createFlag = false;
     database->GetTableIndexSql(databaseType, tableTime, createFlag, indexFlag);
+    indexFlag = BUNDLE_ACTIVE_DB_INDEX_MODULE;
+    database->GetTableIndexSql(databaseType, tableTime, createFlag, indexFlag);
 
     createFlag = true;
+    indexFlag = BUNDLE_ACTIVE_DB_INDEX_NORMAL;
+    database->GetTableIndexSql(databaseType, tableTime, createFlag, indexFlag);
+
+    indexFlag = BUNDLE_ACTIVE_DB_INDEX_MODULE;
     database->GetTableIndexSql(databaseType, tableTime, createFlag, indexFlag);
     EXPECT_NE(database, nullptr);
 }
@@ -549,22 +585,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Remo
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int64_t currentTime = 20000000000000;
     database->RemoveOldData(currentTime);
-    EXPECT_NE(database, nullptr);
-}
-
-/*
- * @tc.name: DeviceUsageStatisticsServiceTest_RenewTableTime_001
- * @tc.desc: RenewTableTime
- * @tc.type: FUNC
- * @tc.require: issuesI5SOZY
- */
-HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RenewTableTime_001,
-    Function | MediumTest | Level0)
-{
-    auto database = std::make_shared<BundleActiveUsageDatabase>();
-    int64_t changedTime = 20000000000000;
-    database->RenewTableTime(changedTime);
-    database->RenewTableTime(changedTime);
     EXPECT_NE(database, nullptr);
 }
 
@@ -686,14 +706,17 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rest
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
+    coreObject->InitBundleGroupController();
+
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
+    int64_t timeStamp = 20000000000000;
+    userService->Init(timeStamp);
     coreObject->userStatServices_[userId] = userService;
-    userId = 101;
     coreObject->RestoreToDatabase(userId);
-    
-    coreObject->Init();
-    coreObject->InitBundleGroupController();
+
+    userId = 101;
     coreObject->RestoreToDatabase(userId);
     EXPECT_NE(coreObject, nullptr);
 }
@@ -734,6 +757,346 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Chec
     coreObject->CheckTimeChangeAndGetWallTime(userId);
     coreObject->OnUserSwitched(userId);
     EXPECT_NE(coreObject, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryAppGroup_001
+ * @tc.desc: QueryAppGroup
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryAppGroup_001,
+    Function | MediumTest | Level0)
+{
+    auto groupController = std::make_shared<BundleActiveGroupController>(false);
+    int32_t appGroup = 10;
+    std::string bundleName = "";
+    int32_t userId = 100;
+    EXPECT_NE(groupController->QueryAppGroup(appGroup, bundleName, userId), ERR_OK);
+
+    groupController->sptrBundleMgr_ = nullptr;
+    bundleName = "defaultBundleName";
+    EXPECT_NE(groupController->QueryAppGroup(appGroup, bundleName, userId), ERR_OK);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ControllerReportEvent_001
+ * @tc.desc: ControllerReportEvent
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ControllerReportEvent_001,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->Init();
+    coreObject->InitBundleGroupController();
+
+    int64_t bootBasedTimeStamp = 20000000000000;
+    BundleActiveEvent event;
+    int32_t userId = 100;
+    coreObject->bundleGroupController_->bundleGroupEnable_ = false;
+    coreObject->bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
+
+    coreObject->bundleGroupController_->bundleGroupEnable_ = true;
+    event.bundleName_ = "com.ohos.camera";
+    coreObject->bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
+
+    event.eventId_ = BundleActiveEvent::NOTIFICATION_SEEN;
+    coreObject->bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
+
+    event.eventId_ = BundleActiveEvent::SYSTEM_INTERACTIVE;
+    coreObject->bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
+    EXPECT_NE(coreObject, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_CheckAndUpdateGroup_001
+ * @tc.desc: CheckAndUpdateGroup
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_CheckAndUpdateGroup_001,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->Init();
+    coreObject->InitBundleGroupController();
+
+    std::string bundleName = "com.ohos.camera";
+    int32_t userId = 100;
+    int64_t bootBasedTimeStamp = 20000000000000;
+    int32_t newGroup = 30;
+    uint32_t reason = GROUP_CONTROL_REASON_TIMEOUT;
+    bool isFlush = false;
+
+    int32_t appGroup = 0;
+    coreObject->bundleGroupController_->QueryAppGroup(appGroup, bundleName, userId);
+
+    coreObject->bundleGroupController_->SetAppGroup(bundleName, userId, newGroup, reason, bootBasedTimeStamp, isFlush);
+    coreObject->bundleGroupController_->CheckAndUpdateGroup(bundleName, userId, bootBasedTimeStamp);
+
+    newGroup = 20;
+    reason = GROUP_CONTROL_REASON_CALCULATED;
+    coreObject->bundleGroupController_->SetAppGroup(bundleName, userId, newGroup, reason, bootBasedTimeStamp, isFlush);
+    coreObject->bundleGroupController_->CheckAndUpdateGroup(bundleName, userId, bootBasedTimeStamp);
+    EXPECT_NE(coreObject, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_PreservePowerStateInfo_001
+ * @tc.desc: PreservePowerStateInfo
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_PreservePowerStateInfo_001,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->Init();
+    coreObject->InitBundleGroupController();
+
+    int32_t eventId = BundleActiveEvent::ABILITY_FOREGROUND;
+    coreObject->PreservePowerStateInfo(eventId);
+    EXPECT_NE(coreObject, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_UpdateModuleData_001
+ * @tc.desc: UpdateModuleData
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_UpdateModuleData_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    auto moduleRecords = std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>();
+    int64_t timeStamp = 20000000000;
+    int32_t userId = 100;
+    database->UpdateModuleData(userId, moduleRecords, timeStamp);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryNotificationEventStats_001
+ * @tc.desc: QueryNotificationEventStats
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryNotificationEventStats_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+
+    int32_t eventId = 2;
+    int64_t beginTime = 0;
+    int64_t endTime = 0;
+    auto notificationEventStats = std::map<std::string, BundleActiveEventStats>();
+    int32_t userId = 100;
+    BUNDLE_ACTIVE_LOGI("database->QueryNotificationEventStats");
+    database->QueryNotificationEventStats(eventId, beginTime, endTime, notificationEventStats, userId);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryDeviceEventStats_001
+ * @tc.desc: QueryDeviceEventStats
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryDeviceEventStats_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+
+    int32_t eventId = 2;
+    int64_t beginTime = 0;
+    int64_t endTime = 0;
+    auto eventStats = std::map<std::string, BundleActiveEventStats>();
+    int32_t userId = 100;
+    BUNDLE_ACTIVE_LOGI("database->QueryDeviceEventStats");
+    database->QueryDeviceEventStats(eventId, beginTime, endTime, eventStats, userId);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryDatabaseEvents_001
+ * @tc.desc: QueryDatabaseEvents
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryDatabaseEvents_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+
+    int64_t beginTime = 0;
+    int64_t endTime = 0;
+    std::string bundleName;
+    int32_t userId = 100;
+    BUNDLE_ACTIVE_LOGI("database->QueryDatabaseEvents");
+    database->QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
+
+    bundleName = "com.ohos.camera";
+    database->QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_UpdateEventData_001
+ * @tc.desc: UpdateEventData
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_UpdateEventData_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+
+    int32_t databaseType = WEEKLY_DATABASE_INDEX;
+    BundleActivePeriodStats stats;
+    database->UpdateEventData(databaseType, stats);
+
+    databaseType = DAILY_DATABASE_INDEX;
+    database->UpdateEventData(databaseType, stats);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_UpdateBundleUsageData_001
+ * @tc.desc: UpdateBundleUsageData
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_UpdateBundleUsageData_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+
+    int32_t databaseType = -1;
+    BundleActivePeriodStats stats;
+    database->UpdateBundleUsageData(databaseType, stats);
+
+    databaseType = EVENT_DATABASE_INDEX;
+    database->UpdateBundleUsageData(databaseType, stats);
+
+    databaseType = DAILY_DATABASE_INDEX;
+    database->UpdateBundleUsageData(databaseType, stats);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_RenewTableTime_001
+ * @tc.desc: RenewTableTime
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RenewTableTime_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+
+    int64_t timeDiffMillis = 0;
+    database->sortedTableArray_[0] = {-1, 0};
+    database->RenewTableTime(timeDiffMillis);
+
+    database->eventTableName_ = "";
+    database->RenewTableTime(timeDiffMillis);
+
+    database->eventTableName_ = "defaultTableName";
+    database->RenewTableTime(timeDiffMillis);
+
+    database->formRecordsTableName_ = "defaultFormRecordsTableName";
+    database->RenewTableTime(timeDiffMillis);
+
+    database->moduleRecordsTableName_ = "defaultModuleRecordsTableName_";
+    database->RenewTableTime(timeDiffMillis);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_SetNewIndexWhenTimeChanged_001
+ * @tc.desc: SetNewIndexWhenTimeChanged
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_SetNewIndexWhenTimeChanged_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+
+    uint32_t databaseType = APP_GROUP_DATABASE_INDEX;
+    int64_t tableOldTime = 0;
+    int64_t tableNewTime = 20000000000000;
+    std::shared_ptr<NativeRdb::RdbStore> rdbStore = nullptr;
+    EXPECT_NE(database->SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore), ERR_OK);
+
+    rdbStore = database->GetBundleActiveRdbStore(databaseType);
+    database->SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ReportContinuousTaskEvent_001
+ * @tc.desc: ReportContinuousTaskEvent
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ReportContinuousTaskEvent_001,
+    Function | MediumTest | Level0)
+{
+    #ifdef BGTASKMGR_ENABLE
+    auto bgtaskObserver = std::make_shared<BundleActiveContinuousTaskObserver>();
+    auto continuousTaskCallbackInfo = std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>();
+    continuousTaskCallbackInfo->creatorUid_ = 20000000;
+    bool isStart = false;
+    bgtaskObserver->ReportContinuousTaskEvent(continuousTaskCallbackInfo, isStart);
+
+    isStart = true;
+    bgtaskObserver->ReportContinuousTaskEvent(continuousTaskCallbackInfo, isStart);
+    EXPECT_NE(bgtaskObserver, nullptr);
+    #endif
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_RemoveFormData_001
+ * @tc.desc: RemoveFormData
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RemoveFormData_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    int32_t userId = 100;
+    std::string bundleName = "defaultBundleName";
+    std::string moduleName = "defaultModuleName";
+    std::string formName = "defaultFormName";
+    database->InitUsageGroupDatabase(0, true);
+    database->RemoveFormData(userId, bundleName, moduleName, formName, 0, 0);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_UpdateFormData_001
+ * @tc.desc: UpdateFormData
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_UpdateFormData_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    int32_t userId = 100;
+    std::string bundleName = "defaultBundleName";
+    std::string moduleName = "defaultModuleName";
+    std::string formName = "defaultFormName";
+    database->InitUsageGroupDatabase(0, true);
+    BundleActiveFormRecord formRecord;
+    auto rdbStore = database->GetBundleActiveRdbStore(0);
+    database->UpdateFormData(userId, bundleName, moduleName, formRecord, rdbStore);
+    EXPECT_NE(database, nullptr);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
