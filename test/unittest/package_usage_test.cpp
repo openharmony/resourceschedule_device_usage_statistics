@@ -29,6 +29,7 @@
 #include "bundle_active_event_stats.h"
 #include "bundle_active_user_service.h"
 #include "bundle_active_core.h"
+#include "bundle_active_stats_combiner.h"
 
 using namespace testing::ext;
 
@@ -273,6 +274,8 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_ReportForShutdown_001, Function | Me
     event.eventId_ = BundleActiveEvent::SHUTDOWN;
     bundleUserService->ReportForShutdown(event);
 
+    event.timeStamp_ = -1;
+    bundleUserService->ReportForShutdown(event);
     EXPECT_NE(bundleUserService, nullptr);
 }
 
@@ -482,6 +485,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_001, Function 
         PackageStats, intervalType, beginTime, endTime, userId, bundleName), ERR_OK);
 
     intervalType = 0;
+    bundleUserService->currentStats_[0] = nullptr;
     bundleUserService->QueryBundleStatsInfos(PackageStats, intervalType, beginTime, endTime, userId, bundleName);
 
     bundleUserService->currentStats_[0] = std::make_shared<BundleActivePeriodStats>();
@@ -590,6 +594,109 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_LoadActiveStats_001, Function | Medi
     bundleUserService->currentStats_[3] = nullptr;
     bundleUserService->LoadActiveStats(timeStamp, forced, timeChanged);
 
+    EXPECT_NE(bundleUserService, nullptr);
+}
+
+/*
+ * @tc.name: PackageUsageTest_IsBundleEvent_001
+ * @tc.desc: IsBundleEvent
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(PackageUsageTest, PackageUsageTest_IsBundleEvent_001, Function | MediumTest | Level0)
+{
+    auto bundleEvent = std::make_shared<BundleActiveEvent>();
+    EXPECT_EQ(bundleEvent->IsBundleEvent(BundleActiveEvent::END_OF_THE_DAY), true);
+    EXPECT_NE(bundleEvent->IsBundleEvent(BundleActiveEvent::SHUTDOWN), true);
+}
+
+/*
+ * @tc.name: PackageUsageTest_combine_001
+ * @tc.desc: combine
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(PackageUsageTest, PackageUsageTest_combine_001, Function | MediumTest | Level0)
+{
+    auto combiner = std::make_shared<BundleActiveStatsCombiner<BundleActivePackageStats>>();
+    auto stats = std::make_shared<BundleActivePeriodStats>();
+    auto packageStat = std::make_shared<BundleActivePackageStats>();
+    stats->bundleStats_.emplace("normal", packageStat);
+    packageStat = nullptr;
+    stats->bundleStats_.emplace("default", packageStat);
+    int64_t beginTime = 0;
+    std::vector<BundleActivePackageStats> accumulatedResult;
+    combiner->combine(stats, accumulatedResult, beginTime);
+
+    auto eventCombiner = std::make_shared<BundleActiveStatsCombiner<BundleActiveEvent>>();
+    std::vector<BundleActiveEvent> activeEventResult;
+    eventCombiner->combine(stats, activeEventResult, beginTime);
+}
+
+/*
+ * @tc.name: PackageUsageTest_ReportEvent_001
+ * @tc.desc: ReportEvent
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(PackageUsageTest, PackageUsageTest_ReportEvent_001, Function | MediumTest | Level0)
+{
+    int32_t userId = 100;
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->Init();
+    bundleActiveCore->InitBundleGroupController();
+    auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
+    int64_t timeStamp = 20000000000;
+    bundleUserService->Init(timeStamp);
+
+    BundleActiveEvent event;
+    event.timeStamp_ = 20000000000000000;
+    bundleUserService->Init(timeStamp);
+    event.eventId_ = BundleActiveEvent::SYSTEM_INTERACTIVE;
+    bundleUserService->ReportEvent(event);
+
+    event.eventId_ = BundleActiveEvent::FLUSH;
+    bundleUserService->ReportEvent(event);
+
+    event.eventId_ = BundleActiveEvent::SCREEN_INTERACTIVE;
+    bundleUserService->ReportEvent(event);
+
+    event.eventId_ = BundleActiveEvent::SCREEN_NON_INTERACTIVE;
+    bundleUserService->ReportEvent(event);
+
+    event.eventId_ = BundleActiveEvent::KEYGUARD_SHOWN;
+    bundleUserService->ReportEvent(event);
+
+    event.eventId_ = BundleActiveEvent::KEYGUARD_HIDDEN;
+    bundleUserService->ReportEvent(event);
+    EXPECT_NE(bundleUserService, nullptr);
+}
+
+/*
+ * @tc.name: PackageUsageTest_RenewStatsInMemory_001
+ * @tc.desc: RenewStatsInMemory
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(PackageUsageTest, PackageUsageTest_RenewStatsInMemory_001, Function | MediumTest | Level0)
+{
+    int32_t userId = 100;
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->Init();
+    bundleActiveCore->InitBundleGroupController();
+    auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
+    int64_t timeStamp = 20000000000;
+    bundleUserService->Init(timeStamp);
+
+    auto packageStat = std::make_shared<BundleActivePackageStats>();
+    bundleUserService->currentStats_[0]->bundleStats_.emplace("normal", packageStat);
+
+    packageStat->abilities_.emplace("normal", 123);
+    packageStat->longTimeTasks_.emplace("normal", 123);
+    bundleUserService->currentStats_[0]->bundleStats_.emplace("normal", packageStat);
+    packageStat = nullptr;
+    bundleUserService->currentStats_[0]->bundleStats_.emplace("default", packageStat);
+    bundleUserService->RenewStatsInMemory(timeStamp);
     EXPECT_NE(bundleUserService, nullptr);
 }
 }  // namespace DeviceUsageStats
