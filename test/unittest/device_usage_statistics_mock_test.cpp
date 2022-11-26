@@ -26,7 +26,8 @@
 #include "app_group_callback_stub.h"
 #include "app_group_callback_info.h"
 #include "iapp_group_callback.h"
-
+#include "bundle_active_constant.h"
+#include "bundle_active_usage_database.h"
 
 using namespace testing::ext;
 
@@ -352,6 +353,97 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_calculatio
     groupController->calculationTimeOut(history, LARGE_NUM);
     history = std::make_shared<BundleActivePackageHistory>();
     groupController->calculationTimeOut(history, LARGE_NUM);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_QueryStatsInfoByStep_001
+ * @tc.desc: test QueryStatsInfoByStep
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryStatsInfoByStep_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+
+    int32_t databaseType = DAILY_DATABASE_INDEX;
+    bool forModuleRecords = true;
+    database->InitUsageGroupDatabase(databaseType, forModuleRecords);
+
+    database->HandleTableInfo(databaseType);
+    int64_t currentTimeMillis = 20000000000000;
+    database->GetOverdueTableCreateTime(databaseType, currentTimeMillis);
+
+    int32_t userId = 100;
+    database->GetBundleHistoryData(userId);
+
+    database->GetDurationData();
+
+    database->GetCurrentUsageData(databaseType, userId);
+
+    int64_t beginTime = 0;
+    int64_t endTime = 20000000000000;
+    database->QueryDatabaseUsageStats(databaseType, beginTime, endTime, userId);
+
+    std::string bundleName = "defaultBundleName";
+    database->QueryDatabaseEvents(beginTime, endTime, userId, bundleName);
+
+    std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>> moduleRecords;
+    database->LoadModuleData(userId, moduleRecords);
+
+    database->LoadFormData(userId, moduleRecords);
+
+    std::map<std::string, BundleActiveEventStats> eventStats;
+    int32_t eventId = 2;
+    database->QueryDeviceEventStats(eventId, beginTime, endTime, eventStats, userId);
+
+    database->QueryNotificationEventStats(eventId, beginTime, endTime, eventStats, userId);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_GetBundleActiveRdbStore_001
+ * @tc.desc: test GetBundleActiveRdbStore
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleActiveRdbStore_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+
+    int32_t databaseType = EVENT_DATABASE_INDEX;
+    database->DeleteExcessiveTableData(databaseType);
+    database->DeleteInvalidTable(databaseType, 0);
+    database->CreateEventLogTable(databaseType, 0);
+    database->CreatePackageLogTable(databaseType, 0);
+    database->CreateModuleRecordTable(databaseType, 0);
+    database->CreateFormRecordTable(databaseType, 0);
+    database->CreateDurationTable(databaseType);
+    database->CreateBundleHistoryTable(databaseType);
+
+    int32_t userId = 100;
+    auto userHistory = std::make_shared<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>();
+    database->PutBundleHistoryData(userId, userHistory);
+
+    int64_t bootBasedDuration = 0;
+    int64_t screenOnDuration = 20000000000;
+    database->PutDurationData(bootBasedDuration, screenOnDuration);
+
+    BundleActivePeriodStats stats;
+    database->FlushPackageInfo(databaseType, stats);
+    database->FlushEventInfo(databaseType, stats);
+    database->RenameTableName(databaseType, 0, 0);
+    std::string bundleName = "defaultBundleName";
+    std::string tableName = "defaultTableName";
+    database->DeleteUninstalledInfo(userId, bundleName, tableName, databaseType);
+
+    auto moduleRecords = std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>();
+    int64_t timeStamp = 20000000000;
+    database->UpdateModuleData(userId, moduleRecords, timeStamp);
+
+    std::string moduleName = "defaultMoudleName";
+    std::string formName = "defaultFormName";
+    database->RemoveFormData(userId, bundleName, moduleName, formName, 0, 0);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
