@@ -303,6 +303,8 @@ HWTEST_F(DeviceUsageStatisticsTest,
     std::vector<BundleActiveEventStats> eventStats;
     int32_t errCode = BundleActiveClient::GetInstance().QueryDeviceEventStats(0, LARGE_NUM, eventStats);
     EXPECT_EQ(errCode, 0);
+    errCode = BundleActiveClient::GetInstance().QueryDeviceEventStats(0, LARGE_NUM, eventStats, COMMON_USERID);
+    EXPECT_EQ(errCode, 0);
 }
 
 /*
@@ -316,6 +318,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryNotificationE
 {
     std::vector<BundleActiveEventStats> eventStats;
     int32_t errCode = BundleActiveClient::GetInstance().QueryNotificationEventStats(0, LARGE_NUM, eventStats);
+    EXPECT_EQ(errCode, 0);
+    errCode = BundleActiveClient::GetInstance().QueryNotificationEventStats(0, LARGE_NUM, eventStats, COMMON_USERID);
     EXPECT_EQ(errCode, 0);
 }
 
