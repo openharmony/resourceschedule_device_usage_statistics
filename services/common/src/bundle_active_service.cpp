@@ -194,7 +194,7 @@ bool BundleActiveService::SubscribeAppState()
         BUNDLE_ACTIVE_LOGE("SubscribeAppState appstateobserver is null, return");
         return false;
     }
-    int32_t err = appManager->RegisterApplicationStateObserver(appStateObserver_.get());
+    int32_t err = appManager->RegisterApplicationStateObserver(appStateObserver_);
     if (err != 0) {
         BUNDLE_ACTIVE_LOGE("RegisterApplicationStateObserver failed. err:%{public}d", err);
         return false;
