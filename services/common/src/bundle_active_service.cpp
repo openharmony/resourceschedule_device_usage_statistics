@@ -170,9 +170,10 @@ void BundleActiveService::InitAppStateSubscriber(const std::shared_ptr<BundleAct
     if (!appStateObserver_) {
         appStateObserver_ = new (std::nothrow)BundleActiveAppStateObserver();
         if (!appStateObserver_) {
+            BUNDLE_ACTIVE_LOGE("malloc app state observer failed");
             return;
         }
-        return;
+        appStateObserver_->Init(reportHandler);
     }
 }
 
