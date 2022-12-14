@@ -167,8 +167,12 @@ OHOS::sptr<OHOS::AppExecFwk::IAppMgr> BundleActiveService::GetAppManagerInstance
 
 void BundleActiveService::InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
 {
-    if (appStateObserver_ == nullptr) {
-        appStateObserver_ = std::make_shared<BundleActiveAppStateObserver>();
+    if (!appStateObserver_) {
+        appStateObserver_ = new (std::nothrow)BundleActiveAppStateObserver();
+        if (!appStateObserver_) {
+            BUNDLE_ACTIVE_LOGE("malloc app state observer failed");
+            return;
+        }
         appStateObserver_->Init(reportHandler);
     }
 }
@@ -190,7 +194,7 @@ bool BundleActiveService::SubscribeAppState()
         BUNDLE_ACTIVE_LOGE("SubscribeAppState appstateobserver is null, return");
         return false;
     }
-    int32_t err = appManager->RegisterApplicationStateObserver(appStateObserver_.get());
+    int32_t err = appManager->RegisterApplicationStateObserver(appStateObserver_);
     if (err != 0) {
         BUNDLE_ACTIVE_LOGE("RegisterApplicationStateObserver failed. err:%{public}d", err);
         return false;
