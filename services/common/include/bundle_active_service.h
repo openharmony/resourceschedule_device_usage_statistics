@@ -211,7 +211,7 @@ protected:
 private:
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;
     std::shared_ptr<BundleActiveReportHandler> reportHandler_;
-    std::shared_ptr<BundleActiveAppStateObserver> appStateObserver_;
+    sptr<BundleActiveAppStateObserver> appStateObserver_;
 #ifdef BGTASKMGR_ENABLE
     std::shared_ptr<BundleActiveContinuousTaskObserver> continuousTaskObserver_;
 #endif
