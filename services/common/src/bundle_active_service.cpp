@@ -167,9 +167,12 @@ OHOS::sptr<OHOS::AppExecFwk::IAppMgr> BundleActiveService::GetAppManagerInstance
 
 void BundleActiveService::InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
 {
-    if (appStateObserver_ == nullptr) {
-        appStateObserver_ = std::make_shared<BundleActiveAppStateObserver>();
-        appStateObserver_->Init(reportHandler);
+    if (!appStateObserver_) {
+        appStateObserver_ = new (std::nothrow)BundleActiveAppStateObserver();
+        if (!appStateObserver_) {
+            return;
+        }
+        return;
     }
 }
 
