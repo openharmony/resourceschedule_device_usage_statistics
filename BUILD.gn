@@ -22,6 +22,7 @@ ohos_sa_profile("device_usage_statistics_sa_profile") {
 config("usagestatsinner_public_config") {
   include_dirs = [
     "interfaces/innerkits/include",
+    "services/common/include",
   ]
 }
 
@@ -31,12 +32,12 @@ ohos_shared_library("usagestatsinner") {
     "interfaces/innerkits/src/app_group_callback_proxy.cpp",
     "interfaces/innerkits/src/app_group_callback_stub.cpp",
     "interfaces/innerkits/src/bundle_active_client.cpp",
-    "interfaces/innerkits/src/bundle_active_proxy.cpp",
     "interfaces/innerkits/src/bundle_active_event.cpp",
     "interfaces/innerkits/src/bundle_active_event_stats.cpp",
     "interfaces/innerkits/src/bundle_active_form_record.cpp",
     "interfaces/innerkits/src/bundle_active_module_record.cpp",
     "interfaces/innerkits/src/bundle_active_package_stats.cpp",
+    "interfaces/innerkits/src/bundle_active_proxy.cpp",
   ]
   public_configs = [ ":usagestatsinner_public_config" ]
   deps = [ ":usagestatutils" ]
@@ -206,12 +207,8 @@ ohos_shared_library("usagestatservice") {
 }
 
 ohos_shared_library("usagestatutils") {
-  sources = [
-    "utils/src/bundle_active_log.cpp",
-  ]
-  include_dirs = [
-    "utils/include",
-  ]
+  sources = [ "utils/src/bundle_active_log.cpp" ]
+  include_dirs = [ "utils/include" ]
 
   external_deps = [
     "c_utils:utils",
