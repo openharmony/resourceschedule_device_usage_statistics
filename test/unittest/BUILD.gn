@@ -23,6 +23,7 @@ config("module_private_config") {
     "//foundation/resourceschedule/device_usage_statistics/services/common/include",
     "//foundation/resourceschedule/device_usage_statistics/services/packageusage/include",
     "//foundation/resourceschedule/device_usage_statistics/services/packagegroup/include",
+    "//foundation/resourceschedule/device_usage_statistics/utils/include",
     "//third_party/jsoncpp/include",
   ]
 }
