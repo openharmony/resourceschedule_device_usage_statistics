@@ -51,15 +51,24 @@
         "//foundation/resourceschedule/device_usage_statistics:device_usage_statistics_sa_profile",
         "//foundation/resourceschedule/device_usage_statistics:device_usage_statistics_service_init",
         "//foundation/resourceschedule/device_usage_statistics:bundlestate",
-        "//foundation/resourceschedule/device_usage_statistics:usagestatistics"
+        "//foundation/resourceschedule/device_usage_statistics:usagestatistics",
+        "//foundation/resourceschedule/device_usage_statistics:usagestatutils"
       ],
       "inner_kits": [
         {
           "header": {
             "header_base": "//foundation/resourceschedule/device_usage_statistics/interfaces/innerkits/include",
             "header_files": [
+              "app_group_callback_info.cpp",
+              "app_group_callback_proxy.cpp",
+              "app_group_callback_stub.cpp",
               "bundle_active_proxy.h",
-              "bundle_active_client.h"
+              "bundle_active_client.h",
+              "bundle_active_event.cpp",
+              "bundle_active_event_stats.cpp",
+              "bundle_active_form_record.cpp",
+              "bundle_active_module_record.cpp",
+              "bundle_active_package_stats.cpp"
             ]
           },
           "name": "//foundation/resourceschedule/device_usage_statistics:usagestatsinner"
