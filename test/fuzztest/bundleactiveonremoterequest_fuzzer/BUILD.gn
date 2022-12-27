@@ -43,6 +43,7 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
 
   public_deps = [
     "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
+    "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
     "//foundation/resourceschedule/device_usage_statistics:usagestatsutils",
   ]
   external_deps = [
@@ -65,12 +66,6 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
     "time_service:time_client",
   ]
 }
-
-# defines = []
-# if (bgtaskmgr_enable) {
-#   external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
-#   defines += [ "BGTASKMGR_ENABLE" ]
-# }
 
 ###############################################################################
 group("fuzztest") {
