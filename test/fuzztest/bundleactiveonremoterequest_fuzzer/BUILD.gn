@@ -42,6 +42,7 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
 
   public_deps = [
     "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
+    "//foundation/resourceschedule/device_usage_statistics:usagestatsutils",
   ]
   external_deps = [
     "ability_base:want",

@@ -37,6 +37,7 @@ ohos_unittest("DeviceUsageStatsTest") {
   deps = [
     "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
     "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+    "//foundation/resourceschedule/device_usage_statistics:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 

@@ -44,7 +44,7 @@ ohos_shared_library("usagestatsinner") {
     "interfaces/innerkits/src/bundle_active_proxy.cpp",
   ]
   public_configs = [ ":usagestatsinner_public_config" ]
-  deps = [ ":usagestatutils" ]
+  deps = [ ":usagestatsutils" ]
   external_deps = [
     "c_utils:utils",
     "eventhandler:libeventhandler",
@@ -84,7 +84,7 @@ ohos_shared_library("bundlestate") {
   deps = [
     ":usagestatservice",
     ":usagestatsinner",
-    ":usagestatutils",
+    ":usagestatsutils",
   ]
 
   external_deps = [
@@ -118,7 +118,7 @@ ohos_shared_library("usagestatistics") {
   deps = [
     ":usagestatservice",
     ":usagestatsinner",
-    ":usagestatutils",
+    ":usagestatsutils",
   ]
 
   external_deps = [
@@ -175,7 +175,7 @@ ohos_shared_library("usagestatservice") {
 
   deps = [
     ":usagestatsinner",
-    ":usagestatutils",
+    ":usagestatsutils",
   ]
 
   external_deps = [
@@ -210,7 +210,7 @@ ohos_shared_library("usagestatservice") {
   subsystem_name = "resourceschedule"
 }
 
-ohos_shared_library("usagestatutils") {
+ohos_shared_library("usagestatsutils") {
   sources = [ "utils/src/bundle_active_log.cpp" ]
   include_dirs = [ "utils/include" ]
 
