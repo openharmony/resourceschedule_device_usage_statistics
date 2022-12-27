@@ -21,8 +21,11 @@ ohos_sa_profile("device_usage_statistics_sa_profile") {
 
 config("usagestatsinner_public_config") {
   include_dirs = [
-    "interfaces/innerkits/include",
     "services/common/include",
+    "services/packageusage/include",
+    "services/packagegroup/include",
+    "interfaces/innerkits/include",
+    "interfaces/kits/bundlestats/napi/include",
   ]
 }
 
