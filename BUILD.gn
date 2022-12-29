@@ -19,13 +19,18 @@ ohos_sa_profile("device_usage_statistics_sa_profile") {
   part_name = "${device_usage_statistics_part_name}"
 }
 
-config("usagestatsinner_public_config") {
+config("usagestats_public_config") {
   include_dirs = [
     "services/common/include",
     "services/packageusage/include",
     "services/packagegroup/include",
     "interfaces/innerkits/include",
     "interfaces/kits/bundlestats/napi/include",
+  ]
+}
+
+config("usagestatsutils_public_config") {
+  include_dirs = [
     "utils/include",
   ]
 }
@@ -43,7 +48,10 @@ ohos_shared_library("usagestatsinner") {
     "interfaces/innerkits/src/bundle_active_package_stats.cpp",
     "interfaces/innerkits/src/bundle_active_proxy.cpp",
   ]
-  public_configs = [ ":usagestatsinner_public_config" ]
+  public_configs = [
+    ":usagestats_public_config",
+    ":usagestatsutils_public_config",
+  ]
   deps = [ ":usagestatsutils" ]
   external_deps = [
     "c_utils:utils",
@@ -93,6 +101,7 @@ ohos_shared_library("bundlestate") {
     "ipc:ipc_single",
     "napi:ace_napi",
   ]
+  configs = [ "//build/config/gcc:symbol_visibility_hidden" ]
   relative_install_dir = "module"
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
@@ -127,6 +136,7 @@ ohos_shared_library("usagestatistics") {
     "ipc:ipc_single",
     "napi:ace_napi",
   ]
+  configs = [ "//build/config/gcc:symbol_visibility_hidden" ]
   relative_install_dir = "module/resourceschedule"
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
@@ -162,16 +172,10 @@ ohos_shared_library("usagestatservice") {
     "services/packageusage/src/bundle_active_stats_combiner.cpp",
     "services/packageusage/src/bundle_active_user_service.cpp",
   ]
-  include_dirs = [
-    ":bundle_active_config",
-    "services/common/include",
-    "services/packageusage/include",
-    "services/packagegroup/include",
-    "interfaces/innerkits/include",
-    "interfaces/kits/bundlestats/napi/include",
-  ]
+  public_configs = [ ":usagestats_public_config" ]
 
   configs = [ "//foundation/ability/ability_runtime/interfaces/inner_api/wantagent:wantagent_innerkits_public_config" ]
+  configs += [ "//build/config/gcc:symbol_visibility_hidden" ]
 
   deps = [
     ":usagestatsinner",
@@ -212,7 +216,7 @@ ohos_shared_library("usagestatservice") {
 
 ohos_shared_library("usagestatsutils") {
   sources = [ "utils/src/bundle_active_log.cpp" ]
-  include_dirs = [ "utils/include" ]
+  public_configs = [ ":usagestatsutils_public_config" ]
 
   external_deps = [
     "c_utils:utils",
