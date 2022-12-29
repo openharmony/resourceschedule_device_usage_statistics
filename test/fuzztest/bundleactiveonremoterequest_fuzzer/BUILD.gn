@@ -14,25 +14,24 @@
 #####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
-import("//foundation/resourceschedule/device_usage_statistics/device_usage_statistics.gni")
 
 ##############################fuzztest##########################################
 module_output_path = "device_usage_statistics/deviceusagestatisticstest"
 
 config("module_private_config") {
   include_dirs = [
-    "${usage_statistics_path}/interfaces/innerkits/include",
-    "${usage_statistics_path}/services/common/include",
-    "${usage_statistics_path}/services/packageusage/include",
-    "${usage_statistics_path}/services/packagegroup/include",
-    "${usage_statistics_path}/interfaces/kits/bundlestats/napi/include",
-    "${usage_statistics_path}/utils/include",
+    "../../../interfaces/innerkits/include",
+    "../../../services/common/include",
+    "../../../services/packageusage/include",
+    "../../../services/packagegroup/include",
+    "../../../interfaces/kits/bundlestats/napi/include",
+    "../../../utils/include",
   ]
 }
 
 ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
   module_out_path = module_output_path
-  fuzz_config_file = "${usage_statistics_path}/test/fuzztest/bundleactiveonremoterequest_fuzzer"
+  fuzz_config_file = "../../../test/fuzztest/bundleactiveonremoterequest_fuzzer"
   configs = [ ":module_private_config" ]
   cflags = [
     "-g",
@@ -43,9 +42,9 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
   sources = [ "bundleactiveonremoterequest_fuzzer.cpp" ]
 
   public_deps = [
-    "${usage_statistics_path}:usagestatservice",
-    "${usage_statistics_path}:usagestatsinner",
-    "${usage_statistics_path}:usagestatsutils",
+    "../../../:usagestatservice",
+    "../../../:usagestatsinner",
+    "../../../:usagestatsutils",
   ]
   external_deps = [
     "ability_base:want",
