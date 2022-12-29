@@ -19,11 +19,11 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "../../../interfaces/innerkits/include",
-    "../../../services/common/include",
-    "../../../services/packageusage/include",
-    "../../../services/packagegroup/include",
-    "../../../utils/include",
+    "../../interfaces/innerkits/include",
+    "../../services/common/include",
+    "../../services/packageusage/include",
+    "../../services/packagegroup/include",
+    "../../utils/include",
     "//third_party/jsoncpp/include",
   ]
 }
@@ -36,9 +36,9 @@ ohos_unittest("DeviceUsageStatsTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "../../../:usagestatservice",
-    "../../../:usagestatsinner",
-    "../../../:usagestatsutils",
+    "../../:usagestatservice",
+    "../../:usagestatsinner",
+    "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
@@ -64,9 +64,9 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
   ]
 
   deps = [
-    "../../../:usagestatservice",
-    "../../../:usagestatsinner",
-    "../../../:usagestatsutils",
+    "../../:usagestatservice",
+    "../../:usagestatsinner",
+    "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
@@ -104,9 +104,9 @@ ohos_unittest("DeviceUsageStatsMockTest") {
   ]
 
   deps = [
-    "../../../:usagestatservice",
-    "../../../:usagestatsinner",
-    "../../../:usagestatsutils",
+    "../../:usagestatservice",
+    "../../:usagestatsinner",
+    "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
@@ -137,9 +137,9 @@ ohos_unittest("DeviceUsagePackageUsageTest") {
   ]
 
   deps = [
-    "../../../:usagestatservice",
-    "../../../:usagestatsinner",
-    "../../../:usagestatsutils",
+    "../../:usagestatservice",
+    "../../:usagestatsinner",
+    "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
