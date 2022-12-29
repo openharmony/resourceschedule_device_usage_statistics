@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("//foundation/resourceschedule/device_usage_statistics/device_usage_statistics.gni")
 
 module_output_path = "device_usage_statistics/deviceusagestatisticstest"
 
@@ -19,11 +20,11 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//foundation/resourceschedule/device_usage_statistics/interfaces/innerkits/include",
-    "//foundation/resourceschedule/device_usage_statistics/services/common/include",
-    "//foundation/resourceschedule/device_usage_statistics/services/packageusage/include",
-    "//foundation/resourceschedule/device_usage_statistics/services/packagegroup/include",
-    "//foundation/resourceschedule/device_usage_statistics/utils/include",
+    "${usage_statistics_path}/interfaces/innerkits/include",
+    "${usage_statistics_path}/services/common/include",
+    "${usage_statistics_path}/services/packageusage/include",
+    "${usage_statistics_path}/services/packagegroup/include",
+    "${usage_statistics_path}/utils/include",
     "//third_party/jsoncpp/include",
   ]
 }
@@ -36,9 +37,9 @@ ohos_unittest("DeviceUsageStatsTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsutils",
+    "${usage_statistics_path}:usagestatservice",
+    "${usage_statistics_path}:usagestatsinner",
+    "${usage_statistics_path}:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
@@ -64,9 +65,9 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
   ]
 
   deps = [
-    "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsutils",
+    "${usage_statistics_path}:usagestatservice",
+    "${usage_statistics_path}:usagestatsinner",
+    "${usage_statistics_path}:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
@@ -104,9 +105,9 @@ ohos_unittest("DeviceUsageStatsMockTest") {
   ]
 
   deps = [
-    "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsutils",
+    "${usage_statistics_path}:usagestatservice",
+    "${usage_statistics_path}:usagestatsinner",
+    "${usage_statistics_path}:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
@@ -137,9 +138,9 @@ ohos_unittest("DeviceUsagePackageUsageTest") {
   ]
 
   deps = [
-    "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsutils",
+    "${usage_statistics_path}:usagestatservice",
+    "${usage_statistics_path}:usagestatsinner",
+    "${usage_statistics_path}:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
