@@ -79,7 +79,6 @@ ohos_shared_library("bundlestate") {
   ]
 
   deps = [
-    ":usagestatservice",
     ":usagestatsinner",
   ]
 
@@ -112,7 +111,6 @@ ohos_shared_library("usagestatistics") {
   ]
 
   deps = [
-    ":usagestatservice",
     ":usagestatsinner",
   ]
 
