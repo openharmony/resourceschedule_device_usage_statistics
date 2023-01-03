@@ -19,7 +19,7 @@ ohos_sa_profile("device_usage_statistics_sa_profile") {
   part_name = "${device_usage_statistics_part_name}"
 }
 
-config("usagestatsinner_public_config") {
+config("usagestats_public_config") {
   include_dirs = [
     "services/common/include",
     "services/packageusage/include",
@@ -29,31 +29,40 @@ config("usagestatsinner_public_config") {
   ]
 }
 
+config("usagestatsutils_public_config") {
+  include_dirs = [ "utils/include" ]
+}
+
 ohos_shared_library("usagestatsinner") {
   sources = [
     "interfaces/innerkits/src/app_group_callback_info.cpp",
     "interfaces/innerkits/src/app_group_callback_proxy.cpp",
     "interfaces/innerkits/src/app_group_callback_stub.cpp",
     "interfaces/innerkits/src/bundle_active_client.cpp",
+    "interfaces/innerkits/src/bundle_active_event.cpp",
+    "interfaces/innerkits/src/bundle_active_event_stats.cpp",
+    "interfaces/innerkits/src/bundle_active_form_record.cpp",
+    "interfaces/innerkits/src/bundle_active_module_record.cpp",
+    "interfaces/innerkits/src/bundle_active_package_stats.cpp",
     "interfaces/innerkits/src/bundle_active_proxy.cpp",
-    "services/common/src/bundle_active_log.cpp",
-    "services/packageusage/src/bundle_active_event.cpp",
-    "services/packageusage/src/bundle_active_event_stats.cpp",
-    "services/packageusage/src/bundle_active_form_record.cpp",
-    "services/packageusage/src/bundle_active_module_record.cpp",
-    "services/packageusage/src/bundle_active_package_stats.cpp",
   ]
-  public_configs = [ ":usagestatsinner_public_config" ]
+  public_configs = [
+    ":usagestats_public_config",
+    ":usagestatsutils_public_config",
+  ]
+  deps = [ ":usagestatsutils" ]
   external_deps = [
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
 
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
+  innerapi_tags = [ "platformsdk" ]
+  version_script = "libusagestatsinner.versionscript"
 }
 
 ohos_prebuilt_etc("device_usage_statistics_service_init") {
@@ -78,12 +87,15 @@ ohos_shared_library("bundlestate") {
     "//base/notification/eventhandler/interfaces/inner_api",
   ]
 
-  deps = [ ":usagestatsinner" ]
+  deps = [
+    ":usagestatsinner",
+    ":usagestatsutils",
+  ]
 
   external_deps = [
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "napi:ace_napi",
   ]
   relative_install_dir = "module"
@@ -108,12 +120,15 @@ ohos_shared_library("usagestatistics") {
     "//base/notification/eventhandler/interfaces/inner_api",
   ]
 
-  deps = [ ":usagestatsinner" ]
+  deps = [
+    ":usagestatsinner",
+    ":usagestatsutils",
+  ]
 
   external_deps = [
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "napi:ace_napi",
   ]
   relative_install_dir = "module/resourceschedule"
@@ -124,15 +139,12 @@ ohos_shared_library("usagestatistics") {
 ohos_shared_library("usagestatservice") {
   cflags_cc = []
   sources = [
-    "interfaces/innerkits/src/app_group_callback_info.cpp",
-    "interfaces/innerkits/src/app_group_callback_proxy.cpp",
     "services/common/src/bundle_active_account_helper.cpp",
     "services/common/src/bundle_active_app_state_obsever.cpp",
     "services/common/src/bundle_active_binary_search.cpp",
     "services/common/src/bundle_active_continuous_task_observer.cpp",
     "services/common/src/bundle_active_core.cpp",
     "services/common/src/bundle_active_debug_mode.cpp",
-    "services/common/src/bundle_active_log.cpp",
     "services/common/src/bundle_active_open_callback.cpp",
     "services/common/src/bundle_active_power_state_callback_proxy.cpp",
     "services/common/src/bundle_active_power_state_callback_service.cpp",
@@ -147,28 +159,21 @@ ohos_shared_library("usagestatservice") {
     "services/packagegroup/src/bundle_active_group_handler.cpp",
     "services/packagegroup/src/bundle_active_user_history.cpp",
     "services/packageusage/src/bundle_active_calendar.cpp",
-    "services/packageusage/src/bundle_active_event.cpp",
     "services/packageusage/src/bundle_active_event_list.cpp",
-    "services/packageusage/src/bundle_active_event_stats.cpp",
     "services/packageusage/src/bundle_active_event_tracker.cpp",
-    "services/packageusage/src/bundle_active_form_record.cpp",
-    "services/packageusage/src/bundle_active_module_record.cpp",
-    "services/packageusage/src/bundle_active_package_stats.cpp",
     "services/packageusage/src/bundle_active_period_stats.cpp",
     "services/packageusage/src/bundle_active_report_handler.cpp",
     "services/packageusage/src/bundle_active_stats_combiner.cpp",
     "services/packageusage/src/bundle_active_user_service.cpp",
   ]
-  include_dirs = [
-    ":bundle_active_config",
-    "services/common/include",
-    "services/packageusage/include",
-    "services/packagegroup/include",
-    "interfaces/innerkits/include",
-    "interfaces/kits/bundlestats/napi/include",
-  ]
+  public_configs = [ ":usagestats_public_config" ]
 
   configs = [ "//foundation/ability/ability_runtime/interfaces/inner_api/wantagent:wantagent_innerkits_public_config" ]
+
+  deps = [
+    ":usagestatsinner",
+    ":usagestatsutils",
+  ]
 
   external_deps = [
     "ability_base:want",
@@ -180,7 +185,7 @@ ohos_shared_library("usagestatservice") {
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "init:libbegetutil",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "power_manager:powermgr_client",
     "relational_store:native_rdb",
     "safwk:system_ability_fwk",
@@ -198,6 +203,18 @@ ohos_shared_library("usagestatservice") {
     external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
     defines += [ "BGTASKMGR_ENABLE" ]
   }
+  part_name = "${device_usage_statistics_part_name}"
+  subsystem_name = "resourceschedule"
+}
+
+ohos_shared_library("usagestatsutils") {
+  sources = [ "utils/src/bundle_active_log.cpp" ]
+  public_configs = [ ":usagestatsutils_public_config" ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
 }

@@ -19,10 +19,11 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//foundation/resourceschedule/device_usage_statistics/interfaces/innerkits/include",
-    "//foundation/resourceschedule/device_usage_statistics/services/common/include",
-    "//foundation/resourceschedule/device_usage_statistics/services/packageusage/include",
-    "//foundation/resourceschedule/device_usage_statistics/services/packagegroup/include",
+    "../../interfaces/innerkits/include",
+    "../../services/common/include",
+    "../../services/packageusage/include",
+    "../../services/packagegroup/include",
+    "../../utils/include",
     "//third_party/jsoncpp/include",
   ]
 }
@@ -35,8 +36,9 @@ ohos_unittest("DeviceUsageStatsTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+    "../../:usagestatservice",
+    "../../:usagestatsinner",
+    "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
@@ -44,7 +46,7 @@ ohos_unittest("DeviceUsageStatsTest") {
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "power_manager:powermgr_client",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
@@ -62,8 +64,9 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
   ]
 
   deps = [
-    "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+    "../../:usagestatservice",
+    "../../:usagestatsinner",
+    "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
@@ -74,7 +77,7 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "power_manager:powermgr_client",
     "relational_store:native_rdb",
     "safwk:system_ability_fwk",
@@ -101,8 +104,9 @@ ohos_unittest("DeviceUsageStatsMockTest") {
   ]
 
   deps = [
-    "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+    "../../:usagestatservice",
+    "../../:usagestatsinner",
+    "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
@@ -113,7 +117,7 @@ ohos_unittest("DeviceUsageStatsMockTest") {
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "power_manager:powermgr_client",
     "relational_store:native_rdb",
     "safwk:system_ability_fwk",
@@ -133,8 +137,9 @@ ohos_unittest("DeviceUsagePackageUsageTest") {
   ]
 
   deps = [
-    "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
-    "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+    "../../:usagestatservice",
+    "../../:usagestatsinner",
+    "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
   ]
 
@@ -146,7 +151,7 @@ ohos_unittest("DeviceUsagePackageUsageTest") {
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "power_manager:powermgr_client",
     "relational_store:native_rdb",
     "safwk:system_ability_fwk",

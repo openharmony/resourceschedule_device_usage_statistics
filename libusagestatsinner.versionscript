@@ -11,23 +11,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//build/ohos.gni")
-
-device_usage_statistics_part_name = "device_usage_statistics"
-
-usage_statistics_path = "//foundation/resourceschedule/device_usage_statistics"
-
-if (!defined(global_parts_info) ||
-    defined(global_parts_info.account_os_account)) {
-  os_account_part_enabled = true
-} else {
-  os_account_part_enabled = false
-}
-
-declare_args() {
-  bgtaskmgr_enable = true
-  if (defined(global_parts_info) &&
-      !defined(global_parts_info.resourceschedule_background_task_mgr)) {
-    bgtaskmgr_enable = false
-  }
-}
+1.0 {
+  global:
+    *AppGroupCallbackInfo*;
+    *AppGroupCallbackStub*;
+    *BundleActiveGroupCallbackProxy*;
+    *BundleActiveClient*;
+    *BundleActiveProxy*;
+    *BundleActiveEvent*;
+    *BundleActiveFormRecord*;
+    *BundleActiveModuleRecord*;
+    *BundleActivePackageStats*;
+  local:
+    *;
+};
