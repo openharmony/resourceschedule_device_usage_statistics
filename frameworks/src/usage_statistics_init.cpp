@@ -103,33 +103,33 @@ napi_value InitAppGroupType(napi_env env, napi_value exports)
     napi_value active_group_never;
     int32_t refCount = 1;
 
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::ALIVE_GROUP),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ALIVE_GROUP),
         &active_group_alive);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::DAILY_GROUP),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::DAILY_GROUP),
         &active_group_daily);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::FIXED_GROUP),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::FIXED_GROUP),
         &active_group_fixed);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::RARE_GROUP),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::RARE_GROUP),
         &active_group_rare);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::LIMITED_GROUP),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::LIMITED_GROUP),
         &active_group_limit);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::AppGroupType::NEVER_GROUP),
+    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::NEVER_GROUP),
         &active_group_never);
 
     napi_property_descriptor desc[] = {
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_ALIVE", active_group_alive),
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_DAILY", active_group_daily),
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_FIXED", active_group_fixed),
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_RARE", active_group_rare),
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_LIMIT", active_group_limit),
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_NEVER", active_group_never),
+        DECLARE_NAPI_STATIC_PROPERTY("ALIVE_GROUP", active_group_alive),
+        DECLARE_NAPI_STATIC_PROPERTY("DAILY_GROUP", active_group_daily),
+        DECLARE_NAPI_STATIC_PROPERTY("FIXED_GROUP", active_group_fixed),
+        DECLARE_NAPI_STATIC_PROPERTY("RARE_GROUP", active_group_rare),
+        DECLARE_NAPI_STATIC_PROPERTY("LIMITED_GROUP", active_group_limit),
+        DECLARE_NAPI_STATIC_PROPERTY("NEVER_GROUP", active_group_never),
     };
 
     napi_value result = nullptr;
-    napi_define_class(env, "AppGroupType", NAPI_AUTO_LENGTH, EnumTypeConstructor,
+    napi_define_class(env, "GroupType", NAPI_AUTO_LENGTH, EnumTypeConstructor,
         nullptr, sizeof(desc) / sizeof(*desc), desc, &result);
     napi_create_reference(env, result, refCount, &typeConstructor_);
-    napi_set_named_property(env, exports, "AppGroupType", result);
+    napi_set_named_property(env, exports, "GroupType", result);
     return exports;
 }
 

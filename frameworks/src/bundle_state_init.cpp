@@ -46,7 +46,6 @@ static napi_value BundleStateInit(napi_env env, napi_value exports)
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
 
     InitIntervalType(env, exports);
-    InitGroupType(env, exports);
     return exports;
 }
 
@@ -83,46 +82,6 @@ napi_value InitIntervalType(napi_env env, napi_value exports)
         nullptr, sizeof(desc) / sizeof(*desc), desc, &result);
     napi_create_reference(env, result, refCount, &typeConstructor_);
     napi_set_named_property(env, exports, "IntervalType", result);
-    return exports;
-}
-
-napi_value InitGroupType(napi_env env, napi_value exports)
-{
-    napi_value active_group_alive;
-    napi_value active_group_daily;
-    napi_value active_group_fixed;
-    napi_value active_group_rare;
-    napi_value active_group_limit;
-    napi_value active_group_never;
-    int32_t refCount = 1;
-
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_ALIVE),
-        &active_group_alive);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_DAILY),
-        &active_group_daily);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_FIXED),
-        &active_group_fixed);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_RARE),
-        &active_group_rare);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_LIMIT),
-        &active_group_limit);
-    napi_create_uint32(env, static_cast<uint32_t>(BundleStateCondition::GroupType::ACTIVE_GROUP_NEVER),
-        &active_group_never);
-
-    napi_property_descriptor desc[] = {
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_ALIVE", active_group_alive),
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_DAILY", active_group_daily),
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_FIXED", active_group_fixed),
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_RARE", active_group_rare),
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_LIMIT", active_group_limit),
-        DECLARE_NAPI_STATIC_PROPERTY("ACTIVE_GROUP_NEVER", active_group_never),
-    };
-
-    napi_value result = nullptr;
-    napi_define_class(env, "GroupType", NAPI_AUTO_LENGTH, EnumTypeConstructor,
-        nullptr, sizeof(desc) / sizeof(*desc), desc, &result);
-    napi_create_reference(env, result, refCount, &typeConstructor_);
-    napi_set_named_property(env, exports, "GroupType", result);
     return exports;
 }
 
