@@ -78,9 +78,7 @@ ohos_shared_library("bundlestate") {
     "//base/notification/eventhandler/interfaces/inner_api",
   ]
 
-  deps = [
-    ":usagestatsinner",
-  ]
+  deps = [ ":usagestatsinner" ]
 
   external_deps = [
     "c_utils:utils",
@@ -110,9 +108,7 @@ ohos_shared_library("usagestatistics") {
     "//base/notification/eventhandler/interfaces/inner_api",
   ]
 
-  deps = [
-    ":usagestatsinner",
-  ]
+  deps = [ ":usagestatsinner" ]
 
   external_deps = [
     "c_utils:utils",
