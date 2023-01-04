@@ -206,7 +206,8 @@ bool BundleActivePackageStats::Marshalling(Parcel &parcel) const
         parcel.WriteInt64(lastTimeUsed_) &&
         parcel.WriteInt64(totalInFrontTime_) &&
         parcel.WriteInt64(lastContiniousTaskUsed_) &&
-        parcel.WriteInt64(totalContiniousTaskUsedTime_)) {
+        parcel.WriteInt64(totalContiniousTaskUsedTime_) &&
+        parcel.WriteInt32(startCount_)) {
         return true;
     }
     return false;
@@ -221,6 +222,7 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePackageStats::UnMarshallin
     result->totalInFrontTime_ = parcel.ReadInt64();
     result->lastContiniousTaskUsed_ = parcel.ReadInt64();
     result->totalContiniousTaskUsedTime_ = parcel.ReadInt64();
+    result->startCount_ = parcel.ReadInt32();
     return result;
 }
 
