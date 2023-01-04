@@ -53,9 +53,15 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
         switch (abilityStateData.abilityState) {
             case static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND):
+                if (!abilityStateData.isFocused) {
+                    return;
+                }
                 tmpHandlerObject.event_.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
                 break;
             case static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND):
+                if (abilityStateData.isFocused) {
+                    return;
+                }
                 tmpHandlerObject.event_.eventId_ = BundleActiveEvent::ABILITY_BACKGROUND;
                 break;
             case static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED):
@@ -65,14 +71,10 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
                 return;
         }
         BUNDLE_ACTIVE_LOGI("OnAbilityStateChangeduser id is %{public}d, bundle name is %{public}s, "
-            "ability name is %{public}s, ability id is %{public}s, event id is %{public}d,"
-            "uid is %{public}d, pid is %{public}d",
+            "ability name is %{public}s, ability id is %{public}s, event id is %{public}d",
             tmpHandlerObject.userId_, tmpHandlerObject.event_.bundleName_.c_str(),
-            tmpHandlerObject.event_.abilityName_.c_str(), abilityId.c_str(), tmpHandlerObject.event_.eventId_,
-            abilityStateData.uid, abilityStateData.pid);
+            tmpHandlerObject.event_.abilityName_.c_str(), abilityId.c_str(), tmpHandlerObject.event_.eventId_);
         if (reportHandler_ != nullptr) {
-            BUNDLE_ACTIVE_LOGI("BundleActiveAppStateObserver::OnAbilityStateChanged handler not null, "
-                "send report event msg");
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
             auto getEvent = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
