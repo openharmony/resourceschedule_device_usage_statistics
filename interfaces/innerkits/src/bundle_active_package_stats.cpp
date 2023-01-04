@@ -233,7 +233,8 @@ std::string BundleActivePackageStats::ToString()
             ", total time in front is " + std::to_string(this->totalInFrontTime_) +
             ", last continuous task used time is " + std::to_string(this->lastContiniousTaskUsed_) +
             ", total continuous task time is " +
-            std::to_string(this->totalContiniousTaskUsedTime_) + "\n";
+            std::to_string(this->totalContiniousTaskUsedTime_) +
+            ", start count is " + std::to_string(this->startCount_) +"\n";
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
