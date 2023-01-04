@@ -56,6 +56,7 @@ enum : int32_t {
 
 enum {
     ERR_PERMISSION_DENIED = 201,
+    ERR_NOT_SYSTEM_APP = 202,
     ERR_PARAM_ERROR = 401,
     ERR_MEMORY_OPERATION_FAILED = 10000001,
     ERR_PARCEL_WRITE_FALIED,
@@ -107,6 +108,7 @@ enum ServiceError {
 
 static std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_PERMISSION_DENIED, "Permission denied."},
+    {ERR_NOT_SYSTEM_APP, "Not system app."},
     {ERR_MEMORY_OPERATION_FAILED, "Memory operation failed. create object failed."},
     {ERR_PARCEL_WRITE_FALIED, "Parcel operation failed. Failed to write the parcel."},
     {ERR_GET_SYSTEM_ABILITY_MANAGER_FAILED, "System service operation failed. Failed to get system ability manager."},
