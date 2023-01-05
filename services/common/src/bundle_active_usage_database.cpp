@@ -801,7 +801,7 @@ void BundleActiveUsageDatabase::FlushPackageInfo(uint32_t databaseType, const Bu
         }
         queryCondition.push_back(to_string(stats.userId_));
         queryCondition.push_back(iter->first);
-        valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_STARTED_COUNT, iter->second->bundleStartedCount_);
+        valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_STARTED_COUNT, iter->second->startCount_);
         int64_t lastTimeUsedAdjusted = iter->second->lastTimeUsed_ == -1 ?
             iter->second->lastTimeUsed_ : iter->second->lastTimeUsed_ - stats.beginTime_;
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, lastTimeUsedAdjusted);
