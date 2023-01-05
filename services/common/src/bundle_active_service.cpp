@@ -22,6 +22,8 @@
 #include "bundle_active_event.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_account_helper.h"
+#include "tokenid_kit.h"
+
 #include "bundle_active_service.h"
 
 namespace OHOS {
@@ -543,6 +545,11 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
     std::string bundleName = "";
     sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
 
+    if (!Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID())) {
+        BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
+        return ERR_NOT_SYSTEM_APP;
+    }
+
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
     if (bundleHasPermission != 0) {
         BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
@@ -567,8 +574,8 @@ ErrCode BundleActiveService::CheckNativePermission(OHOS::Security::AccessToken::
 ErrCode BundleActiveService::CheckSystemAppOrNativePermission(const int32_t uid,
     OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
-    if (CheckBundleIsSystemAppAndHasPermission(uid, tokenId) == ERR_OK) {
-        return ERR_OK;
+    if (AccessToken::AccessTokenKit::GetTokenType(tokenId) == AccessToken::ATokenTypeEnum::TOKEN_HAP) {
+        return CheckBundleIsSystemAppAndHasPermission(uid, tokenId);
     }
     return CheckNativePermission(tokenId);
 }

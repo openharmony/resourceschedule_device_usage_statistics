@@ -302,6 +302,7 @@ declare namespace usageStatistics {
      * @systemapi Hide this for inner system use.
      * @param bundleName, name of the application.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -337,6 +338,7 @@ declare namespace usageStatistics {
      * @param begin Indicates the start time of the query period, in milliseconds.
      * @param end Indicates the end time of the query period, in milliseconds.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -397,6 +399,7 @@ declare namespace usageStatistics {
      * @param begin Indicates the start time of the query period, in milliseconds.
      * @param end Indicates the end time of the query period, in milliseconds.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -420,6 +423,7 @@ declare namespace usageStatistics {
      * @param begin Indicates the start time of the query period, in milliseconds.
      * @param end Indicates the end time of the query period, in milliseconds.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -463,6 +467,7 @@ declare namespace usageStatistics {
      * @systemapi Hide this for inner system use.
      * @param maxNum Indicates max record number in result, max value is 1000, default value is 1000.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -484,6 +489,7 @@ declare namespace usageStatistics {
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
      * @systemapi Hide this for inner system use.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -546,6 +552,7 @@ declare namespace usageStatistics {
      * @param bundleName, name of the application.
      * @param newGroup, the group of the application whose name is bundleName.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -567,6 +574,7 @@ declare namespace usageStatistics {
      * @systemapi Hide this for inner system use.
      * @param Callback<AppGroupCallbackInfo>, callback when application group change,return the AppGroupCallbackInfo.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -587,6 +595,7 @@ declare namespace usageStatistics {
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
      * @systemapi Hide this for inner system use.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -608,6 +617,7 @@ declare namespace usageStatistics {
      * @param begin Indicates the start time of the query period, in milliseconds.
      * @param end Indicates the end time of the query period, in milliseconds.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -631,6 +641,7 @@ declare namespace usageStatistics {
      * @param begin Indicates the start time of the query period, in milliseconds.
      * @param end Indicates the end time of the query period, in milliseconds.
      * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
