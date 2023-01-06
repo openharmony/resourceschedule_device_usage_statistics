@@ -93,6 +93,7 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int3
         }
     if (abilities_.empty() && eventId == BundleActiveEvent::ABILITY_FOREGROUND) {
         beginTimeStamp_ = timeStamp;
+        startCount_ += 1;
     }
     std::map<std::string, int>::iterator it = abilities_.find(abilityId);
     if (it != abilities_.end()) {
