@@ -102,6 +102,11 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int3
             case BundleActiveEvent::ABILITY_FOREGROUND:
                 IncrementTimeUsed(timeStamp);
                 break;
+            case BundleActiveEvent::ABILITY_BACKGROUND:
+                if (eventId == BundleActiveEvent::ABILITY_FOREGROUND) {
+                    startCount_ += 1;
+                }
+                break;
             default:
                 break;
         }
@@ -194,9 +199,6 @@ void BundleActivePackageStats::Update(const std::string& longTimeTaskName, const
             break;
     }
     endTimeStamp_ = timeStamp;
-    if (eventId == BundleActiveEvent::ABILITY_FOREGROUND) {
-        startCount_ += 1;
-    }
 }
 
 bool BundleActivePackageStats::Marshalling(Parcel &parcel) const
