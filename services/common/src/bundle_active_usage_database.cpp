@@ -801,7 +801,7 @@ void BundleActiveUsageDatabase::FlushPackageInfo(uint32_t databaseType, const Bu
         }
         queryCondition.push_back(to_string(stats.userId_));
         queryCondition.push_back(iter->first);
-        valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_STARTED_COUNT, iter->second->bundleStartedCount_);
+        valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_STARTED_COUNT, iter->second->startCount_);
         int64_t lastTimeUsedAdjusted = iter->second->lastTimeUsed_ == -1 ?
             iter->second->lastTimeUsed_ : iter->second->lastTimeUsed_ - stats.beginTime_;
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_LAST_TIME, lastTimeUsedAdjusted);
@@ -860,7 +860,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         bundleActiveResult->GoToRow(i);
         bundleActiveResult->GetInt(USER_ID_COLUMN_INDEX, intervalStats->userId_);
         bundleActiveResult->GetString(BUNDLE_NAME_COLUMN_INDEX, usageStats->bundleName_);
-        bundleActiveResult->GetInt(BUNDLE_STARTED_COUNT_COLUMN_INDEX, usageStats->bundleStartedCount_);
+        bundleActiveResult->GetInt(BUNDLE_STARTED_COUNT_COLUMN_INDEX, usageStats->startCount_);
         bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, relativeLastTimeUsed);
         usageStats->lastTimeUsed_ = relativeLastTimeUsed == -1 ? -1 :
             relativeLastTimeUsed + currentPackageTime;
@@ -874,7 +874,6 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
     }
     intervalStats->bundleStats_ = bundleStats;
     if (databaseType == DAILY_DATABASE_INDEX) {
-        // 加载event信息
         eventBeginTime_ = currentPackageTime;
     }
     int64_t systemTime = GetSystemTimeMs();
@@ -1282,7 +1281,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
         for (int32_t j = 0; j < tableRowNumber; j++) {
             bundleActiveResult->GoToRow(j);
             bundleActiveResult->GetString(BUNDLE_NAME_COLUMN_INDEX, usageStats.bundleName_);
-            bundleActiveResult->GetInt(BUNDLE_STARTED_COUNT_COLUMN_INDEX, usageStats.bundleStartedCount_);
+            bundleActiveResult->GetInt(BUNDLE_STARTED_COUNT_COLUMN_INDEX, usageStats.startCount_);
             bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, usageStats.lastTimeUsed_);
             bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, relativeLastTimeUsed);
             usageStats.lastTimeUsed_ = relativeLastTimeUsed == -1 ? -1 :

@@ -93,6 +93,7 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int3
         }
     if (abilities_.empty() && eventId == BundleActiveEvent::ABILITY_FOREGROUND) {
         beginTimeStamp_ = timeStamp;
+        startCount_ += 1;
     }
     std::map<std::string, int>::iterator it = abilities_.find(abilityId);
     if (it != abilities_.end()) {
@@ -101,6 +102,11 @@ void BundleActivePackageStats::UpdateAbility(const int64_t timeStamp, const int3
         switch (lastEventId) {
             case BundleActiveEvent::ABILITY_FOREGROUND:
                 IncrementTimeUsed(timeStamp);
+                break;
+            case BundleActiveEvent::ABILITY_BACKGROUND:
+                if (eventId == BundleActiveEvent::ABILITY_FOREGROUND) {
+                    startCount_ += 1;
+                }
                 break;
             default:
                 break;
@@ -194,9 +200,6 @@ void BundleActivePackageStats::Update(const std::string& longTimeTaskName, const
             break;
     }
     endTimeStamp_ = timeStamp;
-    if (eventId == BundleActiveEvent::ABILITY_FOREGROUND) {
-        startCount_ += 1;
-    }
 }
 
 bool BundleActivePackageStats::Marshalling(Parcel &parcel) const
@@ -206,7 +209,8 @@ bool BundleActivePackageStats::Marshalling(Parcel &parcel) const
         parcel.WriteInt64(lastTimeUsed_) &&
         parcel.WriteInt64(totalInFrontTime_) &&
         parcel.WriteInt64(lastContiniousTaskUsed_) &&
-        parcel.WriteInt64(totalContiniousTaskUsedTime_)) {
+        parcel.WriteInt64(totalContiniousTaskUsedTime_) &&
+        parcel.WriteInt32(startCount_)) {
         return true;
     }
     return false;
@@ -221,6 +225,7 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePackageStats::UnMarshallin
     result->totalInFrontTime_ = parcel.ReadInt64();
     result->lastContiniousTaskUsed_ = parcel.ReadInt64();
     result->totalContiniousTaskUsedTime_ = parcel.ReadInt64();
+    result->startCount_ = parcel.ReadInt32();
     return result;
 }
 
@@ -231,7 +236,8 @@ std::string BundleActivePackageStats::ToString()
             ", total time in front is " + std::to_string(this->totalInFrontTime_) +
             ", last continuous task used time is " + std::to_string(this->lastContiniousTaskUsed_) +
             ", total continuous task time is " +
-            std::to_string(this->totalContiniousTaskUsedTime_) + "\n";
+            std::to_string(this->totalContiniousTaskUsedTime_) +
+            ", start count is " + std::to_string(this->startCount_) +"\n";
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
