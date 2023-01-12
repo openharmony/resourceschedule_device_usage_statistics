@@ -118,11 +118,13 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleMgrProxy_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
     std::string bundleName;
     bool isBundleIdle = false;
-    EXPECT_NE(service->IsBundleIdle(isBundleIdle, bundleName, -1), ERR_OK);
-    EXPECT_NE(service->CheckBundleIsSystemAppAndHasPermission(100, 100000), ERR_OK);
+    ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(isBundleIdle, bundleName, -1);
+    EXPECT_NE(code, ERR_OK);
+
+    code = DelayedSingleton<BundleActiveService>::GetInstance()->CheckBundleIsSystemAppAndHasPermission(100, 100000);
+    EXPECT_NE(code, ERR_OK);
 }
 
 /*
@@ -134,10 +136,10 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleM
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryDeviceEventStats_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
-
     std::vector<BundleActiveEventStats> eventStats;
-    EXPECT_NE(service->QueryDeviceEventStats(0, LARGE_NUM, eventStats, -1), ERR_OK);
+    ErrCode code =
+        DelayedSingleton<BundleActiveService>::GetInstance()->QueryDeviceEventStats(0, LARGE_NUM, eventStats, -1);
+    EXPECT_NE(code, ERR_OK);
 }
 
 /*
@@ -149,10 +151,10 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryDevic
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryNotificationEventStats_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
-
     std::vector<BundleActiveEventStats> eventStats;
-    EXPECT_NE(service->QueryNotificationEventStats(0, LARGE_NUM, eventStats, -1), ERR_OK);
+    ErrCode code =
+        DelayedSingleton<BundleActiveService>::GetInstance()->QueryNotificationEventStats(0, LARGE_NUM, eventStats, -1);
+    EXPECT_NE(code, ERR_OK);
 }
 
 /*
@@ -164,13 +166,11 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryNotif
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryModuleUsageRecords_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
-
     std::vector<BundleActiveModuleRecord> records;
-    EXPECT_NE(service->QueryModuleUsageRecords(1000, records, -1), ERR_OK);
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->QueryModuleUsageRecords(1000, records, -1), ERR_OK);
 
     BundleActiveModuleRecord bundleActiveModuleRecord;
-    service->QueryModuleRecordInfos(bundleActiveModuleRecord);
+    DelayedSingleton<BundleActiveService>::GetInstance()->QueryModuleRecordInfos(bundleActiveModuleRecord);
 }
 
 /*
@@ -182,12 +182,10 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryModul
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryAppGroup_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
-
     int32_t appGroup;
     std::string bundleName;
-    EXPECT_NE(service->QueryAppGroup(appGroup, bundleName, -1), ERR_OK);
-    EXPECT_NE(service->QueryAppGroup(appGroup, bundleName, 100), ERR_OK);
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->QueryAppGroup(appGroup, bundleName, -1), ERR_OK);
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->QueryAppGroup(appGroup, bundleName, 100), ERR_OK);
 }
 
 /*
@@ -199,12 +197,10 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryAppGr
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_SetAppGroup_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
-
     int32_t appGroup = 100;
     std::string bundleName;
-    EXPECT_NE(service->SetAppGroup(bundleName, appGroup, -1), ERR_OK);
-    EXPECT_NE(service->SetAppGroup(bundleName, appGroup, 100), ERR_OK);
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->SetAppGroup(bundleName, appGroup, -1), ERR_OK);
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->SetAppGroup(bundleName, appGroup, 100), ERR_OK);
 }
 
 /*
@@ -216,12 +212,10 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_SetAppGrou
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_AppGroupCallback_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
-
     sptr<IAppGroupCallback> observer = nullptr;
-    service->bundleActiveCore_ = nullptr;
-    EXPECT_NE(service->RegisterAppGroupCallBack(observer), ERR_OK);
-    EXPECT_NE(service->UnRegisterAppGroupCallBack(observer), ERR_OK);
+    DelayedSingleton<BundleActiveService>::GetInstance()->bundleActiveCore_ = nullptr;
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->RegisterAppGroupCallBack(observer), ERR_OK);
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->UnRegisterAppGroupCallBack(observer), ERR_OK);
 }
 
 /*
@@ -233,11 +227,13 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_AppGroupCa
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleEvents_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
-
     std::vector<BundleActiveEvent> bundleActiveEvents;
-    EXPECT_NE(service->QueryBundleEvents(bundleActiveEvents, 0, LARGE_NUM, -1), ERR_OK);
-    EXPECT_NE(service->QueryCurrentBundleEvents(bundleActiveEvents, 0, LARGE_NUM), ERR_OK);
+    ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
+        ->QueryBundleEvents(bundleActiveEvents, 0, LARGE_NUM, -1);
+    EXPECT_NE(code, ERR_OK);
+    code = DelayedSingleton<BundleActiveService>::GetInstance()
+        ->QueryCurrentBundleEvents(bundleActiveEvents, 0, LARGE_NUM);
+    EXPECT_NE(code, ERR_OK);
 }
 
 /*
@@ -249,10 +245,10 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundl
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleStatsInfoByInterval_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
-
     std::vector<BundleActivePackageStats> packageStats;
-    EXPECT_NE(service->QueryBundleStatsInfoByInterval(packageStats, 0, 0, LARGE_NUM, -1), ERR_OK);
+    ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
+        ->QueryBundleStatsInfoByInterval(packageStats, 0, 0, LARGE_NUM, -1);
+    EXPECT_NE(code, ERR_OK);
 }
 
 /*
@@ -264,10 +260,10 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundl
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleStatsInfos_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
-
     std::vector<BundleActivePackageStats> packageStats;
-    EXPECT_NE(service->QueryBundleStatsInfos(packageStats, 0, 0, LARGE_NUM), ERR_OK);
+    ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
+        ->QueryBundleStatsInfos(packageStats, 0, 0, LARGE_NUM);
+    EXPECT_NE(code, ERR_OK);
 }
 
 /*
