@@ -93,55 +93,53 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetS
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump_001, Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
-    service->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
-    service->bundleActiveCore_->Init();
+    DelayedSingleton<BundleActiveService>::GetInstance()->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    DelayedSingleton<BundleActiveService>::GetInstance()->bundleActiveCore_->Init();
     BUNDLE_ACTIVE_LOGI("DeviceUsageStatisticsServiceTest create BundleActiveService!");
 
     std::vector<std::string> dumpOption{"-A", "Events"};
     std::vector<std::string> dumpInfo;
-    service->ShellDump(dumpOption, dumpInfo);
+    DelayedSingleton<BundleActiveService>::GetInstance()->ShellDump(dumpOption, dumpInfo);
 
     dumpOption.clear();
     dumpInfo.clear();
     dumpOption = {"-A", "Events", "0", "20000000000000", "100"};
-    service->ShellDump(dumpOption, dumpInfo);
+    DelayedSingleton<BundleActiveService>::GetInstance()->ShellDump(dumpOption, dumpInfo);
 
     dumpOption.clear();
     dumpInfo.clear();
     dumpOption = {"-A", "PackageUsage"};
-    service->ShellDump(dumpOption, dumpInfo);
+    DelayedSingleton<BundleActiveService>::GetInstance()->ShellDump(dumpOption, dumpInfo);
 
     dumpOption.clear();
     dumpInfo.clear();
     dumpOption = {"-A", "PackageUsage", "1", "0", "20000000000000", "100"};
-    service->ShellDump(dumpOption, dumpInfo);
+    DelayedSingleton<BundleActiveService>::GetInstance()->ShellDump(dumpOption, dumpInfo);
 
     dumpOption.clear();
     dumpInfo.clear();
     dumpOption = {"-A", "ModuleUsage"};
-    service->ShellDump(dumpOption, dumpInfo);
+    DelayedSingleton<BundleActiveService>::GetInstance()->ShellDump(dumpOption, dumpInfo);
 
     dumpOption.clear();
     dumpInfo.clear();
     dumpOption = {"-A", "ModuleUsage", "1", "100"};
-    service->ShellDump(dumpOption, dumpInfo);
+    DelayedSingleton<BundleActiveService>::GetInstance()->ShellDump(dumpOption, dumpInfo);
 
     std::vector<std::u16string> args;
-    service->Dump(-1, args);
+    DelayedSingleton<BundleActiveService>::GetInstance()->Dump(-1, args);
 
     args.clear();
     args = {to_utf16("-h")};
-    service->Dump(-1, args);
+    DelayedSingleton<BundleActiveService>::GetInstance()->Dump(-1, args);
 
     args.clear();
     args = {to_utf16("-A")};
-    service->Dump(-1, args);
+    DelayedSingleton<BundleActiveService>::GetInstance()->Dump(-1, args);
 
     args.clear();
     args = {to_utf16("-D")};
-    service->Dump(-1, args);
-    EXPECT_TRUE(service!=nullptr);
+    DelayedSingleton<BundleActiveService>::GetInstance()->Dump(-1, args);
 }
 
 /*
@@ -153,15 +151,14 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryModuleUsageRecords_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
     std::vector<BundleActiveModuleRecord> results;
     int32_t maxNum = 0;
-    ErrCode errCode = service->QueryModuleUsageRecords(maxNum, results, 100);
-    EXPECT_NE(errCode, 0);
+    ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()->QueryModuleUsageRecords(maxNum, results, 100);
+    EXPECT_NE(code, 0);
 
     maxNum = 1001;
-    errCode = service->QueryModuleUsageRecords(maxNum, results, 100);
-    EXPECT_NE(errCode, 0);
+    code = DelayedSingleton<BundleActiveService>::GetInstance()->QueryModuleUsageRecords(maxNum, results, 100);
+    EXPECT_NE(code, 0);
 }
 
 /*
@@ -173,26 +170,25 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppGroupCallback_001,
     Function | MediumTest | Level0)
 {
-    auto service = std::make_shared<BundleActiveService>();
     BUNDLE_ACTIVE_LOGI("DeviceUsageStatisticsServiceTest create BundleActiveService!");
     sptr<TestServiceAppGroupChangeCallback> observer = new (std::nothrow) TestServiceAppGroupChangeCallback();
-    service->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
-    EXPECT_EQ(service->RegisterAppGroupCallBack(observer), ERR_OK);
-    EXPECT_NE(service->RegisterAppGroupCallBack(observer), ERR_OK);
-    service->bundleActiveCore_->AddObserverDeathRecipient(observer);
+    DelayedSingleton<BundleActiveService>::GetInstance()->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    EXPECT_EQ(DelayedSingleton<BundleActiveService>::GetInstance()->RegisterAppGroupCallBack(observer), ERR_OK);
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->RegisterAppGroupCallBack(observer), ERR_OK);
+    DelayedSingleton<BundleActiveService>::GetInstance()->bundleActiveCore_->AddObserverDeathRecipient(observer);
 
-    EXPECT_EQ(service->UnRegisterAppGroupCallBack(observer), ERR_OK);
-    EXPECT_NE(service->UnRegisterAppGroupCallBack(observer), ERR_OK);
+    EXPECT_EQ(DelayedSingleton<BundleActiveService>::GetInstance()->UnRegisterAppGroupCallBack(observer), ERR_OK);
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->UnRegisterAppGroupCallBack(observer), ERR_OK);
 
     observer = nullptr;
-    EXPECT_NE(service->RegisterAppGroupCallBack(observer), ERR_OK);
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->RegisterAppGroupCallBack(observer), ERR_OK);
 
-    service->bundleActiveCore_->AddObserverDeathRecipient(observer);
-    service->bundleActiveCore_->RemoveObserverDeathRecipient(observer);
+    DelayedSingleton<BundleActiveService>::GetInstance()->bundleActiveCore_->AddObserverDeathRecipient(observer);
+    DelayedSingleton<BundleActiveService>::GetInstance()->bundleActiveCore_->RemoveObserverDeathRecipient(observer);
 
     wptr<IRemoteObject> remote = nullptr;
-    service->bundleActiveCore_->OnObserverDied(remote);
-    service->bundleActiveCore_->OnObserverDiedInner(remote);
+    DelayedSingleton<BundleActiveService>::GetInstance()->bundleActiveCore_->OnObserverDied(remote);
+    DelayedSingleton<BundleActiveService>::GetInstance()->bundleActiveCore_->OnObserverDiedInner(remote);
 }
 
 /*
