@@ -15,9 +15,11 @@
   global:
     *AppGroupCallbackInfo*;
     *AppGroupCallbackStub*;
+    *IAppGroupCallback*;
     *BundleActiveGroupCallbackProxy*;
     *BundleActiveClient*;
     *BundleActiveProxy*;
+    *IBundleActiveService*;
     *BundleActiveEvent*;
     *BundleActiveFormRecord*;
     *BundleActiveModuleRecord*;

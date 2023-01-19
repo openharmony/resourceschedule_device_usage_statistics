@@ -66,8 +66,10 @@
               "bundle_active_event.h",
               "bundle_active_event_stats.h",
               "bundle_active_form_record.h",
+              "bundle_active_group_map.h",
               "bundle_active_module_record.h",
-              "bundle_active_package_stats.h"
+              "bundle_active_package_stats.h",
+              "bundle_active_proxy.h"
             ]
           },
           "name": "//foundation/resourceschedule/device_usage_statistics:usagestatsinner"
