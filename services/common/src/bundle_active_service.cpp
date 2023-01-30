@@ -496,7 +496,7 @@ ErrCode BundleActiveService::UnRegisterAppGroupCallBack(const sptr<IAppGroupCall
     return ret;
 }
 
-ErrCode BundleActiveService::GetBundleMgrProxy()
+ErrCode __attribute__((weak)) BundleActiveService::GetBundleMgrProxy()
 {
     if (!sptrBundleMgr_) {
         sptr<ISystemAbilityManager> systemAbilityManager =

@@ -406,7 +406,6 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     Function | MediumTest | Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
-
     int32_t databaseType = EVENT_DATABASE_INDEX;
     database->DeleteExcessiveTableData(databaseType);
     database->DeleteInvalidTable(databaseType, 0);
