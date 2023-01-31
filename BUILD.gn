@@ -212,7 +212,7 @@ ohos_shared_library("usagestatservice") {
 
 ohos_static_library("usagestatservice_static") {
   cflags_cc = [ "-DDEVICE_USAGE_UNIT_TEST" ]
-  
+
   sources = [
     "services/common/src/bundle_active_account_helper.cpp",
     "services/common/src/bundle_active_app_state_obsever.cpp",
