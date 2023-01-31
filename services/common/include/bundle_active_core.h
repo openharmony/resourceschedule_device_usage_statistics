@@ -16,6 +16,12 @@
 #ifndef BUNDLE_ACTIVE_CORE_H
 #define BUNDLE_ACTIVE_CORE_H
 
+#ifdef DEVICE_USAGE_UNIT_TEST
+#define WEAK_FUNC __attribute__((weak))
+#else
+#define WEAK_FUNC
+#endif
+
 #include <mutex>
 
 #include "power_mgr_client.h"

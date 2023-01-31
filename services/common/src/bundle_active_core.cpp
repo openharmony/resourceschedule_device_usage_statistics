@@ -216,7 +216,7 @@ void BundleActiveCore::SetHandler(const std::shared_ptr<BundleActiveReportHandle
     handler_ = reportHandler;
 }
 
-std::shared_ptr<BundleActiveUserService> __attribute__((weak)) BundleActiveCore::GetUserDataAndInitializeIfNeeded(
+std::shared_ptr<BundleActiveUserService> WEAK_FUNC BundleActiveCore::GetUserDataAndInitializeIfNeeded(
     const int32_t userId, const int64_t timeStamp, const bool debug)
 {
     BUNDLE_ACTIVE_LOGD("GetUserDataAndInitializeIfNeeded called");
@@ -370,7 +370,7 @@ void BundleActiveCore::OnSystemUpdate(int32_t userId)
 {
 }
 
-int64_t __attribute__((weak)) BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
+int64_t WEAK_FUNC BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId)
 {
     BUNDLE_ACTIVE_LOGD("CheckTimeChangeAndGetWallTime called, userId is %{public}d", userId);
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();

@@ -16,6 +16,12 @@
 #ifndef BUNDLE_ACTIVE_USAGE_DATABASE_H
 #define BUNDLE_ACTIVE_USAGE_DATABASE_H
 
+#ifdef DEVICE_USAGE_UNIT_TEST
+#define WEAK_FUNC __attribute__((weak))
+#else
+#define WEAK_FUNC
+#endif
+
 #include <vector>
 #include <string>
 #include <mutex>

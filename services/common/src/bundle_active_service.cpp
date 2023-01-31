@@ -496,7 +496,7 @@ ErrCode BundleActiveService::UnRegisterAppGroupCallBack(const sptr<IAppGroupCall
     return ret;
 }
 
-ErrCode __attribute__((weak)) BundleActiveService::GetBundleMgrProxy()
+ErrCode WEAK_FUNC BundleActiveService::GetBundleMgrProxy()
 {
     if (!sptrBundleMgr_) {
         sptr<ISystemAbilityManager> systemAbilityManager =
@@ -734,7 +734,6 @@ int32_t BundleActiveService::Dump(int32_t fd, const std::vector<std::u16string> 
 int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     int32_t ret = -1;
-
     if (dumpOption[1] == "Events") {
         std::vector<BundleActiveEvent> eventResult;
         if (static_cast<int32_t>(dumpOption.size()) != EVENTS_PARAM) {
