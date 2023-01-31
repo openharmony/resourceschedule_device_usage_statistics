@@ -243,8 +243,6 @@ ohos_static_library("usagestatservice_static") {
   ]
   public_configs = [ ":usagestats_public_config" ]
 
-  configs = [ "//foundation/ability/ability_runtime/interfaces/inner_api/wantagent:wantagent_innerkits_public_config" ]
-
   deps = [
     ":usagestatsinner",
     ":usagestatsutils",
@@ -253,6 +251,7 @@ ohos_static_library("usagestatservice_static") {
   external_deps = [
     "ability_base:want",
     "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
     "access_token:libtokenid_sdk",
     "bundle_framework:appexecfwk_base",
