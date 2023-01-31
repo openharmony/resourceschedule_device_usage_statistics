@@ -24,14 +24,16 @@ import { AsyncCallback , Callback} from './basic';
  * The system stores the query result in a {@link BundleStatsInfo} instance and
  * then returns it to you.
  *
+ * @namespace usageStatistics
  * @since 9
  */
 declare namespace usageStatistics {
 
     /**
-     * @since 9
+     * @interface BundleStatsInfo
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
     interface BundleStatsInfo {
         /**
@@ -79,9 +81,10 @@ declare namespace usageStatistics {
     }
 
     /**
-     * @since 9
+     * @interface HapFormInfo
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
     interface HapFormInfo {
         /**
@@ -107,9 +110,10 @@ declare namespace usageStatistics {
     }
 
     /**
-     * @since 9
+     * @interface HapModuleInfo
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
     interface HapModuleInfo {
         /**
@@ -167,9 +171,10 @@ declare namespace usageStatistics {
     }
 
     /**
-     * @since 9
+     * @interface DeviceEventStats
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
     interface DeviceEventStats {
         /**
@@ -189,8 +194,9 @@ declare namespace usageStatistics {
     }
 
     /**
-     * @since 9
+     * @interface BundleEvents
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @since 9
      */
      interface BundleEvents {
         /**
@@ -219,9 +225,10 @@ declare namespace usageStatistics {
         eventId?: number;
     }
     /**
-     * @since 9
+     * @interface AppGroupCallbackInfo
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
     interface AppGroupCallbackInfo {
         /*
@@ -248,78 +255,148 @@ declare namespace usageStatistics {
 
     /**
      * Checks whether the application with a specified bundle name is in the idle state.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
-     * @param bundleName Indicates the bundle name of the application to query.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param { string } bundleName - Indicates the bundle name of the application to query.
+     * @param { AsyncCallback<boolean> } callback - the callback of isIdleState.
+     * <p> boolean value is true mean the application is idle in a particular period; false mean otherwise.
+     * The time range of the particular period is defined by the system, which may be hours or days.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @return Returns {@code true} if the application is idle in a particular period;
-     * returns {@code false} otherwise. The time range of the particular period is defined by the system,
-     * which may be hours or days.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function isIdleState(bundleName: string, callback: AsyncCallback<boolean>): void;
+
+    /**
+     * Checks whether the application with a specified bundle name is in the idle state.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param { string } bundleName - Indicates the bundle name of the application to query.
+     * @returns { Promise<boolean> } the promise returned by queryAppGroup.
+     * <p> boolean value is true mean the application is idle in a particular period; false mean otherwise.
+     * The time range of the particular period is defined by the system, which may be hours or days.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function isIdleState(bundleName: string): Promise<boolean>;
 
     /**
      * Queries the app group of the calling application.
-     *
      * <p>The priority defined in a priority group restricts the resource usage of an application,
      * for example, restricting the running of background tasks. </p>
      *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @param { AsyncCallback<number> } callback - the callback of queryAppGroup.
+     * <p> Returns the app group of the calling application.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
      * @throws { BusinessError } 10000005 - Application is not installed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10100002 - Get Application group info failed.
-     * @return Returns the app group of the calling application.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10100002 - Failed to get the application group information.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @since 9
      */
     function queryAppGroup(callback: AsyncCallback<number>): void;
+
+    /**
+     * Queries the app group of the calling application.
+     * <p>The priority defined in a priority group restricts the resource usage of an application,
+     * for example, restricting the running of background tasks. </p>
+     *
+     * @returns { Promise<number> } the promise returned by queryAppGroup.
+     * <p> Returns the app group of the calling application.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000005 - Application is not installed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10100002 - Failed to get the application group information.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @since 9
+     */
     function queryAppGroup(): Promise<number>;
 
     /**
-     * Queries the usage priority group of the calling application.
-     *
+     * Queries the usage priority group by bundleName.
      * <p>The priority defined in a priority group restricts the resource usage of an application,
      * for example, restricting the running of background tasks. </p>
      *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
-     * @param bundleName, name of the application.
+     * @param { string } bundleName - name of the application.
+     * @param { AsyncCallback<number> } callback - the callback of queryAppGroup.
+     * <p> the usage priority group of the calling application.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
      * @throws { BusinessError } 10000005 - Application is not installed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10100002 - Get Application group info failed.
-     * @return Returns the usage priority group of the calling application.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10100002 - Failed to get the application group information.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
      function queryAppGroup(bundleName : string, callback: AsyncCallback<number>): void;
+
+     /**
+     * Queries the usage priority group by bundleName.
+     * <p>The priority defined in a priority group restricts the resource usage of an application,
+     * for example, restricting the running of background tasks. </p>
+     *
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param { string } bundleName - name of the application.
+     * @returns { Promise<number> } the promise returned by queryAppGroup.
+     * <p> the usage priority group of the calling application.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000005 - Application is not installed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10100002 - Failed to get the application group information.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
      function queryAppGroup(bundleName : string): Promise<number>;
 
     /**
-     * @since 9
+     * @interface BundleStatsMap
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
      interface BundleStatsMap {
         [key: string]: BundleStatsInfo;
@@ -327,35 +404,60 @@ declare namespace usageStatistics {
 
     /**
      * Queries usage information about each bundle within a specified period.
-     *
      * <p>This method queries usage information at the {@link #BY_OPTIMIZED} interval by default.</p>
      *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
-     * @param begin Indicates the start time of the query period, in milliseconds.
-     * @param end Indicates the end time of the query period, in milliseconds.
+     * @param {number} begin - Indicates the start time of the query period, in milliseconds.
+     * @param {number} end - Indicates the end time of the query period, in milliseconds.
+     * @param { AsyncCallback<BundleStatsMap> } callback - the callback of queryBundleStatsInfos,
+     * <p> the {@link BundleStatsMap} objects containing the usage information about each bundle.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10000007 - Get system or actual time failed.
-     * @return Returns the {@link BundleStatsMap} objects containing the usage information about each bundle.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function queryBundleStatsInfos(begin: number, end: number, callback: AsyncCallback<BundleStatsMap>): void;
+
+    /**
+     * Queries usage information about each bundle within a specified period.
+     * <p>This method queries usage information at the {@link #BY_OPTIMIZED} interval by default.</p>
+     *
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param {number} begin - Indicates the start time of the query period, in milliseconds.
+     * @param {number} end - Indicates the end time of the query period, in milliseconds.
+     * @returns { Promise<BundleStatsMap> } the promise returned by queryBundleStatsInfos.
+     * <p> the {@link BundleStatsMap} objects containing the usage information about each bundle.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function queryBundleStatsInfos(begin: number, end: number): Promise<BundleStatsMap>;
 
     /**
      * Declares interval type.
-     *
-     * @since 9
+     * 
+     * @enum { number }
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
     export enum IntervalType {
         /**
@@ -386,123 +488,241 @@ declare namespace usageStatistics {
 
     /**
      * Queries usage information about each bundle within a specified period at a specified interval.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * 
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
-     * @param byInterval Indicates the interval at which the usage statistics are queried.
-     * The value can be {@link #BY_OPTIMIZED}, {@link #BY_DAILY},
-     * {@link #BY_WEEKLY}, {@link #BY_MONTHLY}, or {@link #BY_ANNUALLY}.
-     * @param begin Indicates the start time of the query period, in milliseconds.
-     * @param end Indicates the end time of the query period, in milliseconds.
+     * @param { IntervalType } byInterval - Indicates the interval at which the usage statistics are queried.
+     * <p> The value can be {@link #BY_OPTIMIZED}, {@link #BY_DAILY},
+     * {@link #BY_WEEKLY}, {@link #BY_MONTHLY}, or {@link #BY_ANNUALLY}.</p>
+     * @param { number } begin - Indicates the start time of the query period, in milliseconds.
+     * @param { number } end - Indicates the end time of the query period, in milliseconds.
+     * @param { AsyncCallback<Array<BundleStatsInfo>> } callback - the callback of queryBundleStatsInfoByInterval.
+     * <p> the list of {@link BundleStatsInfo} objects containing the usage information about each bundle.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10000007 - Get system or actual time failed.
-     * @return Returns the list of {@link BundleStatsInfo} objects containing the usage information about each bundle.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function queryBundleStatsInfoByInterval(byInterval: IntervalType, begin: number, end: number, callback: AsyncCallback<Array<BundleStatsInfo>>): void;
+    
+    /**
+     * Queries usage information about each bundle within a specified period at a specified interval.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param { IntervalType } byInterval - Indicates the interval at which the usage statistics are queried.
+     * <p> The value can be {@link #BY_OPTIMIZED}, {@link #BY_DAILY},
+     * {@link #BY_WEEKLY}, {@link #BY_MONTHLY}, or {@link #BY_ANNUALLY}.</p>
+     * @param { number } begin - Indicates the start time of the query period, in milliseconds.
+     * @param { number } end - Indicates the end time of the query period, in milliseconds.
+     * @returns { Promise<Array<BundleStatsInfo>> } the promise returned by queryBundleStatsInfoByInterval.
+     * <p> the list of {@link BundleStatsInfo} objects containing the usage information about each bundle.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function queryBundleStatsInfoByInterval(byInterval: IntervalType, begin: number, end: number): Promise<Array<BundleStatsInfo>>;
 
     /**
      * Queries state data of all bundles within a specified period identified by the start and end time.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * 
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
-     * @param begin Indicates the start time of the query period, in milliseconds.
-     * @param end Indicates the end time of the query period, in milliseconds.
+     * @param { number } begin - Indicates the start time of the query period, in milliseconds.
+     * @param { number } end - Indicates the end time of the query period, in milliseconds.
+     * @param { AsyncCallback<Array<BundleEvents>> } callback - the promise returned by queryBundleEvents.
+     * <p> the list of {@link BundleEvents} objects containing the state data of all bundles.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10000007 - Get system or actual time failed.
-     * @return Returns the list of {@link BundleEvents} objects containing the state data of all bundles.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function queryBundleEvents(begin: number, end: number, callback: AsyncCallback<Array<BundleEvents>>): void;
+
+    /**
+     * Queries state data of all bundles within a specified period identified by the start and end time.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param { number } begin - Indicates the start time of the query period, in milliseconds.
+     * @param { number } end - Indicates the end time of the query period, in milliseconds.
+     * @returns { Promise<Array<BundleEvents>> } the promise returned by queryBundleEvents.
+     * <p> the list of {@link BundleEvents} objects containing the state data of all bundles.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function queryBundleEvents(begin: number, end: number): Promise<Array<BundleEvents>>;
 
     /**
      * Queries state data of the current bundle within a specified period.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
-     * @param begin Indicates the start time of the query period, in milliseconds.
-     * @param end Indicates the end time of the query period, in milliseconds.
+     * 
+     * @param { number } begin - Indicates the start time of the query period, in milliseconds.
+     * @param { number } end - Indicates the end time of the query period, in milliseconds.
+     * @param { AsyncCallback<Array<BundleEvents>> } callback - the callback of queryCurrentBundleEvents.
+     * <p> the {@link BundleEvents} object Array containing the state data of the current bundle.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10000007 - Get system or actual time failed.
-     * @return Returns the {@link BundleEvents} object Array containing the state data of the current bundle.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @since 9
      */
     function queryCurrentBundleEvents(begin: number, end: number, callback: AsyncCallback<Array<BundleEvents>>): void;
+
+    /**
+     * Queries state data of the current bundle within a specified period.
+     * 
+     * @param { number } begin - Indicates the start time of the query period, in milliseconds.
+     * @param { number } end - Indicates the end time of the query period, in milliseconds.
+     * @returns { Promise<Array<BundleEvents>> } the promise returned by queryCurrentBundleEvents.
+     * <p> the {@link BundleEvents} object Array containing the state data of the current bundle.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @since 9
+     */
     function queryCurrentBundleEvents(begin: number, end: number): Promise<Array<BundleEvents>>;
 
     /**
-     * Queries recently module usage records.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * Queries recently module usage records with maxNum.
+     * 
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
-     * @param maxNum Indicates max record number in result, max value is 1000, default value is 1000.
+     * @param { number } maxNum - Indicates max record number in result, max value is 1000, default value is 1000.
+     * @param { AsyncCallback<Array<HapModuleInfo>> } callback - the callback of queryModuleUsageRecords.
+     * <p> the {@link HapModuleInfo} object Array containing the usage data of the modules.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10000007 - Get system or actual time failed.
-     * @return Returns the {@link HapModuleInfo} object Array containing the usage data of the modules.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function queryModuleUsageRecords(maxNum: number, callback: AsyncCallback<Array<HapModuleInfo>>): void;
+
+    /**
+     * Queries recently module usage records with maxNum.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param { number } maxNum - Indicates max record number in result, max value is 1000, default value is 1000.
+     * @returns { Promise<Array<HapModuleInfo>> } the promise returned by queryModuleUsageRecords.
+     * <p> the {@link HapModuleInfo} object Array containing the usage data of the modules.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function queryModuleUsageRecords(maxNum: number): Promise<Array<HapModuleInfo>>;
 
     /**
      * Queries recently module usage records.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * 
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
+     * @param { AsyncCallback<Array<HapModuleInfo>> } callback - the callback of queryModuleUsageRecords.
+     * <p> the {@link HapModuleInfo} object Array containing the usage data of the modules.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10000007 - Get system or actual time failed.
-     * @return Returns the {@link HapModuleInfo} object Array containing the usage data of the modules.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function queryModuleUsageRecords(callback: AsyncCallback<Array<HapModuleInfo>>): void;
+
+    /**
+     * Queries recently module usage records.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @returns { Promise<Array<HapModuleInfo>> } the promise returned by queryModuleUsageRecords.
+     * <p> the {@link HapModuleInfo} object Array containing the usage data of the modules.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function queryModuleUsageRecords(): Promise<Array<HapModuleInfo>>;
 
-     /**
+    /**
      * Declares group type.
-     *
-     * @since 9
+     * 
+     * @enum { number }
      * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
      * @systemapi Hide this for inner system use.
+     * @since 9
      */
       export enum GroupType {
         /**
@@ -537,111 +757,224 @@ declare namespace usageStatistics {
     }
 
     /**
-     * Set app group by bundleName and number.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * Set app group by bundleName.
+     * 
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
-     * @param bundleName, name of the application.
-     * @param newGroup, the group of the application whose name is bundleName.
+     * @param { string } bundleName - name of the application.
+     * @param { GroupType } newGroup - the group of the application whose name is bundleName.
+     * @param { AsyncCallback<void> } callback - the callback of setAppGroup.
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10100001 - Application group operation repeated.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10100001 - Repeated operation on the application group.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function setAppGroup(bundleName: string, newGroup: GroupType, callback: AsyncCallback<void>): void;
+
+    /**
+     * Set app group by bundleName.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param { string } bundleName - name of the application.
+     * @param { GroupType } newGroup - the group of the application whose name is bundleName.
+     * @returns { Promise<void> } the promise returned by setAppGroup.
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10100001 - Repeated operation on the application group.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function setAppGroup(bundleName: string, newGroup: GroupType): Promise<void>;
 
     /**
-     * Register callback to service.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * Register appGroup change callback to service.
+     * 
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
-     * @param Callback<AppGroupCallbackInfo>, callback when application group change,return the AppGroupCallbackInfo.
+     * @param { Callback<AppGroupCallbackInfo> } groupCallback -
+     * <p> callback when AppGroupCallbackInfo when the group of app changed.</p>
+     * @param { AsyncCallback<void> } callback - the callback of registerAppGroupCallBack.
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10100001 - Application group operation repeated.
-     * @return Returns AppGroupCallbackInfo when the group of bundle changed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10100001 - Repeated operation on the application group.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function registerAppGroupCallBack(groupCallback: Callback<AppGroupCallbackInfo>, callback: AsyncCallback<void>): void;
+
+    /**
+     * Register appGroup change callback to service.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param { Callback<AppGroupCallbackInfo> } groupCallback -
+     * <p> callback when AppGroupCallbackInfo when the group of app changed.</p>
+     * @returns { Promise<void> } the promise returned by registerAppGroupCallBack.
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10100001 - Repeated operation on the application group.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function registerAppGroupCallBack(groupCallback: Callback<AppGroupCallbackInfo>): Promise<void>;
 
     /**
-     * Unregister callback from service.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * Unregister appGroup change callback from service.
+     * 
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
+     * @param { AsyncCallback<void> } callback - the callback of unregisterAppGroupCallBack. 
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10100001 - Application group operation repeated.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10100001 - Repeated operation on the application group.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function unregisterAppGroupCallBack(callback: AsyncCallback<void>): void;
+
+    /**
+     * Unregister appGroup change callback from service.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @returns { Promise<void> } the promise returned by unregisterAppGroupCallBack. 
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10100001 - Repeated operation on the application group.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.AppGroup
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function unregisterAppGroupCallBack(): Promise<void>;
 
     /** 
      * Queries device event states data within a specified period identified by the start and end time.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * 
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
-     * @param begin Indicates the start time of the query period, in milliseconds.
-     * @param end Indicates the end time of the query period, in milliseconds.
+     * @param { number } begin - Indicates the start time of the query period, in milliseconds.
+     * @param { number } end - Indicates the end time of the query period, in milliseconds.
+     * @param { AsyncCallback<Array<DeviceEventStats>> } callback - the callback of queryDeviceEventStats.
+     * <p> the {@link DeviceEventStats} object Array containing the event states data.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10000007 - Get system or actual time failed.
-     * @return Returns the {@link DeviceEventStats} object Array containing the event states data.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function queryDeviceEventStats(begin: number, end: number, callback: AsyncCallback<Array<DeviceEventStats>>): void;
+
+    /** 
+     * Queries device event states data within a specified period identified by the start and end time.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param { number } begin - Indicates the start time of the query period, in milliseconds.
+     * @param { number } end - Indicates the end time of the query period, in milliseconds.
+     * @returns { Promise<Array<DeviceEventStats>> } the promise returned by queryDeviceEventStats.
+     * <p> the {@link DeviceEventStats} object Array containing the event states data.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function queryDeviceEventStats(begin: number, end: number): Promise<Array<DeviceEventStats>>;
 
     /**
      * Queries app notification number within a specified period identified by the start and end time.
-     *
-     * @since 9
-     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * 
      * @permission ohos.permission.BUNDLE_ACTIVE_INFO
-     * @systemapi Hide this for inner system use.
-     * @param begin Indicates the start time of the query period, in milliseconds.
-     * @param end Indicates the end time of the query period, in milliseconds.
+     * @param { number } begin - Indicates the start time of the query period, in milliseconds.
+     * @param { number } end - Indicates the end time of the query period, in milliseconds.
+     * @param { AsyncCallback<Array<DeviceEventStats>> } callback - the callback of queryNotificationEventStats.
+     * <p> the {@link DeviceEventStats} object Array containing the event states data.</p>
      * @throws { BusinessError } 201 - Parameter error.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
      * @throws { BusinessError } 10000002 - Parcel operation failed.
      * @throws { BusinessError } 10000003 - System service operation failed.
-     * @throws { BusinessError } 10000004 - IPC Communication failed.
-     * @throws { BusinessError } 10000006 - Get application info failed.
-     * @throws { BusinessError } 10000007 - Get system or actual time failed.
-     * @return Returns the {@link NotificationEventStats} object Array containing the event states data.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
      */
     function queryNotificationEventStats(begin: number, end: number, callback: AsyncCallback<Array<DeviceEventStats>>): void;
+
+    /**
+     * Queries app notification number within a specified period identified by the start and end time.
+     * 
+     * @permission ohos.permission.BUNDLE_ACTIVE_INFO
+     * @param { number } begin - Indicates the start time of the query period, in milliseconds.
+     * @param { number } end - Indicates the end time of the query period, in milliseconds.
+     * @returns { Promise<Array<DeviceEventStats>> } the promise returned by queryNotificationEventStats.
+     * <p> the {@link DeviceEventStats} object Array containing the event states data.</p>
+     * @throws { BusinessError } 201 - Parameter error.
+     * @throws { BusinessError } 202 - Not System App.
+     * @throws { BusinessError } 401 - Permission denied.
+     * @throws { BusinessError } 801 - Capability not supported.
+     * @throws { BusinessError } 10000001 - Memory operation failed.
+     * @throws { BusinessError } 10000002 - Parcel operation failed.
+     * @throws { BusinessError } 10000003 - System service operation failed.
+     * @throws { BusinessError } 10000004 - IPC failed.
+     * @throws { BusinessError } 10000006 - Failed to get the application information.
+     * @throws { BusinessError } 10000007 - Failed to get the system time.
+     * @syscap SystemCapability.ResourceSchedule.UsageStatistics.App
+     * @systemapi Hide this for inner system use.
+     * @since 9
+     */
     function queryNotificationEventStats(begin: number, end: number): Promise<Array<DeviceEventStats>>;
 }
 
