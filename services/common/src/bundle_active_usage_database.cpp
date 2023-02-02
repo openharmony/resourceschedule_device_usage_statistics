@@ -201,7 +201,7 @@ int32_t BundleActiveUsageDatabase::NearIndexOnOrBeforeCurrentTime(int64_t curren
     return index - 1;
 }
 
-unique_ptr<NativeRdb::ResultSet> BundleActiveUsageDatabase::QueryStatsInfoByStep(uint32_t databaseType,
+unique_ptr<NativeRdb::ResultSet> WEAK_FUNC BundleActiveUsageDatabase::QueryStatsInfoByStep(uint32_t databaseType,
     const string &sql, const vector<string> &selectionArgs)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
@@ -405,7 +405,7 @@ void BundleActiveUsageDatabase::CheckDatabaseVersion()
     }
 }
 
-shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbStore(uint32_t databaseType)
+shared_ptr<NativeRdb::RdbStore> WEAK_FUNC BundleActiveUsageDatabase::GetBundleActiveRdbStore(uint32_t databaseType)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore;
     string file = databaseFiles_.at(databaseType);

@@ -137,6 +137,8 @@ ohos_shared_library("usagestatistics") {
 }
 
 ohos_shared_library("usagestatservice") {
+  shlib_type = "sa"
+
   cflags_cc = []
   sources = [
     "services/common/src/bundle_active_account_helper.cpp",
@@ -178,6 +180,78 @@ ohos_shared_library("usagestatservice") {
   external_deps = [
     "ability_base:want",
     "ability_runtime:app_manager",
+    "access_token:libaccesstoken_sdk",
+    "access_token:libtokenid_sdk",
+    "bundle_framework:appexecfwk_base",
+    "c_utils:utils",
+    "common_event_service:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
+    "hiviewdfx_hilog_native:libhilog",
+    "init:libbegetutil",
+    "ipc:ipc_single",
+    "power_manager:powermgr_client",
+    "relational_store:native_rdb",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+    "time_service:time_client",
+  ]
+
+  if (os_account_part_enabled) {
+    cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+
+  defines = []
+  if (bgtaskmgr_enable) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
+  }
+  part_name = "${device_usage_statistics_part_name}"
+  subsystem_name = "resourceschedule"
+}
+
+ohos_static_library("usagestatservice_static") {
+  cflags_cc = [ "-DDEVICE_USAGE_UNIT_TEST" ]
+
+  sources = [
+    "services/common/src/bundle_active_account_helper.cpp",
+    "services/common/src/bundle_active_app_state_obsever.cpp",
+    "services/common/src/bundle_active_binary_search.cpp",
+    "services/common/src/bundle_active_continuous_task_observer.cpp",
+    "services/common/src/bundle_active_core.cpp",
+    "services/common/src/bundle_active_debug_mode.cpp",
+    "services/common/src/bundle_active_open_callback.cpp",
+    "services/common/src/bundle_active_power_state_callback_proxy.cpp",
+    "services/common/src/bundle_active_power_state_callback_service.cpp",
+    "services/common/src/bundle_active_power_state_callback_stub.cpp",
+    "services/common/src/bundle_active_service.cpp",
+    "services/common/src/bundle_active_shutdown_callback_proxy.cpp",
+    "services/common/src/bundle_active_shutdown_callback_service.cpp",
+    "services/common/src/bundle_active_shutdown_callback_stub.cpp",
+    "services/common/src/bundle_active_stub.cpp",
+    "services/common/src/bundle_active_usage_database.cpp",
+    "services/packagegroup/src/bundle_active_group_controller.cpp",
+    "services/packagegroup/src/bundle_active_group_handler.cpp",
+    "services/packagegroup/src/bundle_active_user_history.cpp",
+    "services/packageusage/src/bundle_active_calendar.cpp",
+    "services/packageusage/src/bundle_active_event_list.cpp",
+    "services/packageusage/src/bundle_active_event_tracker.cpp",
+    "services/packageusage/src/bundle_active_period_stats.cpp",
+    "services/packageusage/src/bundle_active_report_handler.cpp",
+    "services/packageusage/src/bundle_active_stats_combiner.cpp",
+    "services/packageusage/src/bundle_active_user_service.cpp",
+  ]
+  public_configs = [ ":usagestats_public_config" ]
+
+  deps = [
+    ":usagestatsinner",
+    ":usagestatsutils",
+  ]
+
+  external_deps = [
+    "ability_base:want",
+    "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
     "access_token:libtokenid_sdk",
     "bundle_framework:appexecfwk_base",

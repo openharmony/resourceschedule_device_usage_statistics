@@ -36,7 +36,7 @@ ohos_unittest("DeviceUsageStatsTest") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "../../:usagestatservice",
+    "../../:usagestatservice_static",
     "../../:usagestatsinner",
     "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
@@ -64,7 +64,7 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
   ]
 
   deps = [
-    "../../:usagestatservice",
+    "../../:usagestatservice_static",
     "../../:usagestatsinner",
     "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
@@ -104,7 +104,7 @@ ohos_unittest("DeviceUsageStatsMockTest") {
   ]
 
   deps = [
-    "../../:usagestatservice",
+    "../../:usagestatservice_static",
     "../../:usagestatsinner",
     "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
@@ -137,7 +137,7 @@ ohos_unittest("DeviceUsagePackageUsageTest") {
   ]
 
   deps = [
-    "../../:usagestatservice",
+    "../../:usagestatservice_static",
     "../../:usagestatsinner",
     "../../:usagestatsutils",
     "//third_party/jsoncpp:jsoncpp",
