@@ -23,6 +23,7 @@ config("module_private_config") {
     "//foundation/resourceschedule/device_usage_statistics/services/common/include",
     "//foundation/resourceschedule/device_usage_statistics/services/packageusage/include",
     "//foundation/resourceschedule/device_usage_statistics/services/packagegroup/include",
+    "//third_party/jsoncpp/include",
   ]
 }
 
@@ -76,7 +77,7 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
     "relational_store:native_rdb",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "time_service:time_service",
+    "time_service:time_client",
   ]
 }
 
@@ -100,6 +101,7 @@ ohos_unittest("DeviceUsageStatsMockTest") {
   deps = [
     "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
     "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+    "//third_party/jsoncpp:jsoncpp",
   ]
 
   external_deps = [
@@ -114,7 +116,7 @@ ohos_unittest("DeviceUsageStatsMockTest") {
     "relational_store:native_rdb",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "time_service:time_service",
+    "time_service:time_client",
   ]
 }
 
