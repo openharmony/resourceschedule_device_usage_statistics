@@ -23,6 +23,7 @@
 #include "bundle_active_package_stats.h"
 #include "bundle_active_account_helper.h"
 #include "tokenid_kit.h"
+#include "bundle_mgr_proxy.h"
 
 #include "bundle_active_service.h"
 
@@ -496,7 +497,7 @@ ErrCode BundleActiveService::UnRegisterAppGroupCallBack(const sptr<IAppGroupCall
     return ret;
 }
 
-ErrCode WEAK_FUNC BundleActiveService::GetBundleMgrProxy()
+ErrCode BundleActiveService::GetBundleMgrProxy()
 {
     if (!sptrBundleMgr_) {
         sptr<ISystemAbilityManager> systemAbilityManager =
