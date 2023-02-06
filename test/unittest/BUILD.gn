@@ -94,9 +94,11 @@ ohos_unittest("DeviceUsageStatsMockTest") {
     "mock/bundle_active_account_helper_mock.cpp",
     "mock/bundle_active_client_mock.cpp",
     "mock/bundle_active_core_mock.cpp",
-    "mock/bundle_active_service_mock.cpp",
     "mock/bundle_active_usage_database_mock.cpp",
+    "mock/mock_service_registry.cpp",
   ]
+
+  include_dirs = [ "mock/include" ]
 
   configs = [
     ":module_private_config",

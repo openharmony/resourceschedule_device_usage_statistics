@@ -13,14 +13,20 @@
  * limitations under the License.
  */
 
-#include "bundle_active_service.h"
-#include "bundle_state_inner_errors.h"
+#include "iservice_registry.h"
+
+#include "ipc_skeleton.h"
 
 namespace OHOS {
-namespace DeviceUsageStats {
-ErrCode BundleActiveService::GetBundleMgrProxy()
+SystemAbilityManagerClient& SystemAbilityManagerClient::GetInstance()
 {
-    return ERR_SYSTEM_SERVICE_OPERATION_FAILED;
+    static auto instance = new SystemAbilityManagerClient();
+    return *instance;
 }
-}  // namespace DeviceUsageStats
+
+sptr<ISystemAbilityManager> SystemAbilityManagerClient::GetSystemAbilityManager()
+{
+    std::lock_guard<std::mutex> lock(systemAbilityManagerLock_);
+    return nullptr;
+}
 }  // namespace OHOS
