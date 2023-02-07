@@ -15,6 +15,7 @@
 
 #include "time_service_client.h"
 #include "power_mgr_client.h"
+#include "bundle_mgr_proxy.h"
 #include "unistd.h"
 #include "accesstoken_kit.h"
 

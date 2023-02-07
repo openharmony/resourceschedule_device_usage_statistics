@@ -115,22 +115,22 @@ static std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_SYSTEM_SERVICES_NOT_READY, "System service operation failed. The service is not ready."},
     {ERR_REMOTE_OBJECT_IF_CAST_FAILED, "System service operation failed. The remote object if cast failed."},
     {ERR_SYSTEM_ABILITY_SUPPORT_FAILED, "System service operation failed. System ability support failed."},
-    {ERR_IPC_COMMUNICATION_FAILED, "IPC communication failed. Failed to access the system service."},
+    {ERR_IPC_COMMUNICATION_FAILED, "IPC failed. Failed to access the system service."},
     {ERR_APPLICATION_IS_NOT_INSTALLED, "The application is not installed. Failed to operation the application."},
-    {ERR_FIND_APP_USAGE_RECORDS_FAILED, "Get application info failed. Cannot find app usage records."},
-    {ERR_NO_RECORDS_INFO_BY_INTERVAL,
-        "Get application info failed. According to inetrvalType. no information is recorded in the related table."},
+    {ERR_FIND_APP_USAGE_RECORDS_FAILED, "Failed to get the application information. Cannot find app usage records."},
+    {ERR_NO_RECORDS_INFO_BY_INTERVAL, "Failed to get the application information."
+        "According to inetrvalType. no information is recorded in the related table."},
     {ERR_QUERY_TIME_OUT_OF_RANGE,
-        "Get application info failed. According to beginTime and endTime. no information is recorded"},
+        "Failed to get the application information. According to beginTime and endTime. no information is recorded"},
     {ERR_GET_BUNDLE_USED_HISTORY_FAILED,
-        "Get application info failed. According to userId、bundleName, no information is recorded"},
+        "Failed to get the application information. According to userId、bundleName, no information is recorded"},
     {ERR_TIME_OPERATION_FAILED, "Get system or actual time operation failed."},
-    {ERR_REPEAT_REGISTER_OR_DEREGISTER_GROUP_CALLBACK,
-        "Application group operation failed. Repeat to register or deregister, an interception application group"},
-    {ERR_REPEAT_SET_APP_GROUP,
-        "Application group operation failed. The application group are the the same and do not need te be updated."},
+    {ERR_REPEAT_REGISTER_OR_DEREGISTER_GROUP_CALLBACK, "Repeated operation on the application group."
+        "Repeat to register or deregister, an interception application group"},
+    {ERR_REPEAT_SET_APP_GROUP, "Repeated operation on the application group."
+        "The application group are the the same and do not need te be updated."},
     {ERR_NO_APP_GROUP_INFO_IN_DATABASE,
-        "Get application group info failed. The application group infomation cannot be found."},
+        "Failed to get the application group information. The application group infomation cannot be found."},
 };
 
 static std::map<int32_t, std::string> paramErrCodeMsgMap = {
