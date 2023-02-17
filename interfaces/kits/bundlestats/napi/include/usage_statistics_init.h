@@ -44,7 +44,7 @@ napi_module _usageStatisticsModule = {
     .nm_flags = 0,
     .nm_filename = nullptr,
     .nm_register_func = UsageStatisticsInit,
-    .nm_modname = "resourcescheduler.usageStatistics",
+    .nm_modname = "resourceschedule.usageStatistics",
     .nm_priv = (static_cast<void*>(0)),
     .reserved = {0}
 };
