@@ -71,7 +71,7 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
                 return;
         }
         BUNDLE_ACTIVE_LOGI("OnAbilityStateChangeduser id is %{public}d, bundle name is %{public}s, "
-            "ability name is %{public}s, ability id is %{public}s, event id is %{public}d",,
+            "ability name is %{public}s, ability id is %{public}s, event id is %{public}d",
             tmpHandlerObject.userId_, tmpHandlerObject.event_.bundleName_.c_str(),
             tmpHandlerObject.event_.abilityName_.c_str(), abilityId.c_str(), tmpHandlerObject.event_.eventId_);
         if (reportHandler_ != nullptr) {
