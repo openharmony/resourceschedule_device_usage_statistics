@@ -48,15 +48,15 @@
       "group_type" : {
         "base_group": [],
         "fwk_group": [
-          "//foundation/resourceschedule/device_usage_statistics:usagestatsinner"
+          "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
+          "//foundation/resourceschedule/device_usage_statistics:usagestatsutils"
         ],
         "service_group": [
           "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
           "//foundation/resourceschedule/device_usage_statistics:device_usage_statistics_sa_profile",
           "//foundation/resourceschedule/device_usage_statistics:device_usage_statistics_service_init",
           "//foundation/resourceschedule/device_usage_statistics:bundlestate",
-          "//foundation/resourceschedule/device_usage_statistics:usagestatistics",
-          "//foundation/resourceschedule/device_usage_statistics:usagestatsutils"
+          "//foundation/resourceschedule/device_usage_statistics:usagestatistics"
         ]
       },
       "inner_kits": [
