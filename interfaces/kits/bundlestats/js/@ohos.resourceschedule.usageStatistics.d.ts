@@ -552,7 +552,6 @@ declare namespace usageStatistics {
      * @param { AsyncCallback<Array<BundleEvents>> } callback - the promise returned by queryBundleEvents.
      * <p> the list of {@link BundleEvents} objects containing the state data of all bundles.</p>
      * @throws { BusinessError } 201 - Parameter error.
-     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
