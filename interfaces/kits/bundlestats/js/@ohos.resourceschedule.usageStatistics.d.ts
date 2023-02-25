@@ -263,7 +263,6 @@ declare namespace usageStatistics {
      * <p> boolean value is true mean the application is idle in a particular period; false mean otherwise.
      * The time range of the particular period is defined by the system, which may be hours or days.</p>
      * @throws { BusinessError } 201 - Parameter error.
-     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -286,7 +285,6 @@ declare namespace usageStatistics {
      * <p> boolean value is true mean the application is idle in a particular period; false mean otherwise.
      * The time range of the particular period is defined by the system, which may be hours or days.</p>
      * @throws { BusinessError } 201 - Parameter error.
-     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
