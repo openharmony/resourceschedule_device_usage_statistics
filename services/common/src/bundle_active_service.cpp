@@ -466,7 +466,7 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundl
         std::string localBundleName = "";
         sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
         if (!Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID())) {
-            BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
+            BUNDLE_ACTIVE_LOGE("%{public}s is not system app", localBundleName.c_str());
             return ERR_NOT_SYSTEM_APP;
         }
         bundleName = localBundleName;
