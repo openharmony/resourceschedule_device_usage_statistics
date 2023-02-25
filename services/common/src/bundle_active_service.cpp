@@ -554,11 +554,8 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
         return errCode;
     }
     std::string bundleName = "";
+
     sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
-    if (!sptrBundleMgr_->CheckIsSystemAppByUid(uid)) {
-        BUNDLE_ACTIVE_LOGE("%{public}s is not sys app", bundleName.c_str());
-        return ERR_NOT_SYSTEM_APP;
-    }
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
     if (bundleHasPermission != 0) {
         BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
