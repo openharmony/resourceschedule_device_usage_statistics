@@ -555,6 +555,7 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
     }
     std::string bundleName = "";
     sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
+
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
     if (bundleHasPermission != 0) {
         BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
