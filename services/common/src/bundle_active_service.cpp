@@ -428,6 +428,10 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
         std::string bundleName = "";
         sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
         if (!bundleName.empty()) {
+            if (!Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID())) {
+                BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
+                return ERR_NOT_SYSTEM_APP;
+            }
             BUNDLE_ACTIVE_LOGI("QueryCurrentBundleEvents buindle name is %{public}s",
                 bundleName.c_str());
             ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, bundleName);
