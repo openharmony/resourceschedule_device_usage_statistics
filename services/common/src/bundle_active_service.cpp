@@ -554,7 +554,6 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
         return errCode;
     }
     std::string bundleName = "";
-
     sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
     if (bundleHasPermission != 0) {
