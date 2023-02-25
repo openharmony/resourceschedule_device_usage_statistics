@@ -284,6 +284,10 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
     }
 
     if (callingBundleName == bundleName) {
+        if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
+            BUNDLE_ACTIVE_LOGE("%{public}s is not sys app", bundleName.c_str());
+            return ERR_NOT_SYSTEM_APP;
+        }
         BUNDLE_ACTIVE_LOGI("%{public}s check its own idle state", bundleName.c_str());
         result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
     } else {
@@ -425,6 +429,10 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
         }
         std::string bundleName = "";
         sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
+        if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
+            BUNDLE_ACTIVE_LOGE("%{public}s is not sys app", bundleName.c_str());
+            return ERR_NOT_SYSTEM_APP;
+        }
         if (!bundleName.empty()) {
             BUNDLE_ACTIVE_LOGI("QueryCurrentBundleEvents buindle name is %{public}s",
                 bundleName.c_str());
@@ -455,6 +463,10 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundl
         }
         std::string localBundleName = "";
         sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
+        if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
+            BUNDLE_ACTIVE_LOGE("%{public}s is not sys app", localBundleName.c_str());
+            return ERR_NOT_SYSTEM_APP;
+        }
         bundleName = localBundleName;
         ret = bundleActiveCore_->QueryAppGroup(appGroup, bundleName, userId);
     } else {
