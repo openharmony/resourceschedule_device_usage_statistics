@@ -356,7 +356,6 @@ declare namespace usageStatistics {
      * @param { AsyncCallback<number> } callback - the callback of queryAppGroup.
      * <p> the usage priority group of the calling application.</p>
      * @throws { BusinessError } 201 - Parameter error.
-     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -382,7 +381,6 @@ declare namespace usageStatistics {
      * @returns { Promise<number> } the promise returned by queryAppGroup.
      * <p> the usage priority group of the calling application.</p>
      * @throws { BusinessError } 201 - Parameter error.
-     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -418,7 +416,6 @@ declare namespace usageStatistics {
      * @param { AsyncCallback<BundleStatsMap> } callback - the callback of queryBundleStatsInfos,
      * <p> the {@link BundleStatsMap} objects containing the usage information about each bundle.</p>
      * @throws { BusinessError } 201 - Parameter error.
-     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -505,7 +502,6 @@ declare namespace usageStatistics {
      * @param { AsyncCallback<Array<BundleStatsInfo>> } callback - the callback of queryBundleStatsInfoByInterval.
      * <p> the list of {@link BundleStatsInfo} objects containing the usage information about each bundle.</p>
      * @throws { BusinessError } 201 - Parameter error.
-     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -649,7 +645,6 @@ declare namespace usageStatistics {
      * @param { AsyncCallback<Array<HapModuleInfo>> } callback - the callback of queryModuleUsageRecords.
      * <p> the {@link HapModuleInfo} object Array containing the usage data of the modules.</p>
      * @throws { BusinessError } 201 - Parameter error.
-     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.
@@ -694,7 +689,6 @@ declare namespace usageStatistics {
      * @param { AsyncCallback<Array<HapModuleInfo>> } callback - the callback of queryModuleUsageRecords.
      * <p> the {@link HapModuleInfo} object Array containing the usage data of the modules.</p>
      * @throws { BusinessError } 201 - Parameter error.
-     * @throws { BusinessError } 202 - Not System App.
      * @throws { BusinessError } 401 - Permission denied.
      * @throws { BusinessError } 801 - Capability not supported.
      * @throws { BusinessError } 10000001 - Memory operation failed.

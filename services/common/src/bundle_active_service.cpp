@@ -464,7 +464,7 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundl
         std::string localBundleName = "";
         sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
         if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
-            BUNDLE_ACTIVE_LOGE("%{public}s is not sys app", bundleName.c_str());
+            BUNDLE_ACTIVE_LOGE("%{public}s is not sys app", localBundleName.c_str());
             return ERR_NOT_SYSTEM_APP;
         }
         bundleName = localBundleName;
