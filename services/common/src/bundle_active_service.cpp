@@ -284,6 +284,10 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
     }
 
     if (callingBundleName == bundleName) {
+        if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
+            BUNDLE_ACTIVE_LOGE("%{public}s is not sys app", bundleName.c_str());
+            return ERR_NOT_SYSTEM_APP;
+        }
         BUNDLE_ACTIVE_LOGI("%{public}s check its own idle state", bundleName.c_str());
         result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
     } else {
