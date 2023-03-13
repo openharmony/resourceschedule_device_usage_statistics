@@ -26,6 +26,11 @@
 #include "app_group_callback_stub.h"
 #include "bundle_active_group_map.h"
 #include "app_group_callback_info.h"
+#include "bundle_active_form_record.h"
+#include "bundle_active_event_stats.h"
+#include "bundle_active_module_record.h"
+#include "bundle_active_package_stats.h"
+#include "app_group_callback_proxy.h"
 #include "iapp_group_callback.h"
 
 using namespace testing::ext;
@@ -365,6 +370,174 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_DeathRecipient_001
     deathTest->OnServiceDiedInner();
     EXPECT_TRUE(deathTest != nullptr);
     deathTest->OnRemoteDied(nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_AppGroupCallbackInfo_001
+ * @tc.desc: AppGroupCallbackInfo_001
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_AppGroupCallbackInfo_001, Function | MediumTest | Level0)
+{
+    int32_t oldGroup = 60;
+    int32_t newGroup = 10;
+    uint32_t changeReason = 1;
+    auto appGroupCallbackInfo =
+        std::make_shared<AppGroupCallbackInfo>(COMMON_USERID, oldGroup, newGroup, changeReason, g_defaultBundleName);
+
+    MessageParcel data;
+    EXPECT_TRUE(appGroupCallbackInfo->Marshalling(data));
+    auto appGroupCallback = appGroupCallbackInfo->Unmarshalling(data);
+    EXPECT_TRUE(appGroupCallback != nullptr);
+
+    EXPECT_EQ(appGroupCallback->GetUserId(), COMMON_USERID);
+    EXPECT_EQ(appGroupCallback->GetOldGroup(), oldGroup);
+    EXPECT_EQ(appGroupCallback->GetNewGroup(), newGroup);
+    EXPECT_EQ(appGroupCallback->GetChangeReason(), changeReason);
+    EXPECT_EQ(appGroupCallback->GetBundleName(), g_defaultBundleName);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_BundleActiveEventStat_001
+ * @tc.desc: BundleActiveEventStats_001
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveEventStat_001, Function | MediumTest | Level0)
+{
+    auto bundleActiveEventStats = std::make_shared<BundleActiveEventStats>();
+    bundleActiveEventStats->eventId_ = COMMON_USERID;
+    bundleActiveEventStats->beginTimeStamp_ = 0;
+    bundleActiveEventStats->endTimeStamp_ = LARGE_NUM;
+    bundleActiveEventStats->lastEventTime_ = LARGE_NUM;
+    bundleActiveEventStats->totalTime_ = LARGE_NUM;
+    bundleActiveEventStats->count_ = 1;
+
+    MessageParcel data;
+    EXPECT_TRUE(bundleActiveEventStats->Marshalling(data));
+    auto tempEventStats = bundleActiveEventStats->UnMarshalling(data);
+    EXPECT_TRUE(tempEventStats != nullptr);
+
+    EXPECT_EQ(tempEventStats->GetEventId(), COMMON_USERID);
+    EXPECT_EQ(tempEventStats->GetFirstTimeStamp(), 0);
+    EXPECT_EQ(tempEventStats->GetLastTimeStamp(), LARGE_NUM);
+    EXPECT_EQ(tempEventStats->GetLastEventTime(), LARGE_NUM);
+    EXPECT_EQ(tempEventStats->GetTotalTime(), LARGE_NUM);
+    EXPECT_EQ(tempEventStats->GetCount(), 1);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_FormRecord_001
+ * @tc.desc: BundleActiveFormRecord_001
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_FormRecord_001, Function | MediumTest | Level0)
+{
+    auto bundleActiveFormRecord = std::make_shared<BundleActiveFormRecord>();
+    EXPECT_NE(bundleActiveFormRecord->ToString(), " ");
+
+    MessageParcel data;
+    EXPECT_TRUE(bundleActiveFormRecord->Marshalling(data));
+    EXPECT_TRUE(bundleActiveFormRecord->UnMarshalling(data) != nullptr);
+
+    BundleActiveFormRecord bundleActiveFormRecordA;
+    bundleActiveFormRecordA.count_ = 2;
+    BundleActiveFormRecord bundleActiveFormRecordB;
+    bundleActiveFormRecordB.count_ = 1;
+    EXPECT_TRUE(bundleActiveFormRecord->cmp(bundleActiveFormRecordA, bundleActiveFormRecordB));
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_BundleActiveEvent_001
+ * @tc.desc: BundleActiveEvent_001
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveEvent_001, Function | MediumTest | Level0)
+{
+    BundleActiveEvent bundleActiveEvent;
+    BundleActiveEvent bundleActiveEventA;
+    EXPECT_NE(bundleActiveEvent.ToString(), " ");
+    bundleActiveEvent = bundleActiveEventA;
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_PackageStats_001
+ * @tc.desc: BundleActivePackageStats_001
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_PackageStats_001, Function | MediumTest | Level0)
+{
+    auto bundleActivePackageStats = std::make_shared<BundleActivePackageStats>();
+    bundleActivePackageStats->IncrementBundleLaunchedCount();
+    EXPECT_NE(bundleActivePackageStats->ToString(), " ");
+
+    MessageParcel data;
+    EXPECT_TRUE(bundleActivePackageStats->Marshalling(data));
+    EXPECT_TRUE(bundleActivePackageStats->UnMarshalling(data) != nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_ModuleRecord_001
+ * @tc.desc: BundleActiveModuleRecord_001
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ModuleRecord_001, Function | MediumTest | Level0)
+{
+    auto bundleActiveModuleRecord = std::make_shared<BundleActiveModuleRecord>();
+    EXPECT_NE(bundleActiveModuleRecord->ToString(), " ");
+
+    MessageParcel data;
+    EXPECT_TRUE(bundleActiveModuleRecord->Marshalling(data));
+    EXPECT_TRUE(bundleActiveModuleRecord->UnMarshalling(data) != nullptr);
+
+    BundleActiveModuleRecord bundleActiveModuleRecordA;
+    bundleActiveModuleRecordA.lastModuleUsedTime_ = 2;
+    BundleActiveModuleRecord bundleActiveModuleRecordB;
+    bundleActiveModuleRecordB.lastModuleUsedTime_ = 1;
+    EXPECT_TRUE(bundleActiveModuleRecord->cmp(bundleActiveModuleRecordA, bundleActiveModuleRecordB));
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_AppGroupCallbackProxy_001
+ * @tc.desc: AppGroupCallbackProxy_001
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_AppGroupCallbackProxy_001, Function | MediumTest | Level0)
+{
+    int32_t oldGroup = 60;
+    int32_t newGroup = 10;
+    uint32_t changeReason = 1;
+    AppGroupCallbackInfo appGroupCallbackInfo(COMMON_USERID, oldGroup, newGroup, changeReason, g_defaultBundleName);
+
+    auto appGroupCallbackProxy = std::make_shared<BundleActiveGroupCallbackProxy>(nullptr);
+    appGroupCallbackProxy->OnAppGroupChanged(appGroupCallbackInfo);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_AppGroupCallbackStub_001
+ * @tc.desc: AppGroupCallbackStub_001
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_AppGroupCallbackStub_001, Function | MediumTest | Level0)
+{
+    int32_t oldGroup = 60;
+    int32_t newGroup = 10;
+    uint32_t changeReason = 1;
+    AppGroupCallbackInfo appGroupCallbackInfo(COMMON_USERID, oldGroup, newGroup, changeReason, g_defaultBundleName);
+
+    auto appGroupCallbackStub = std::make_shared<AppGroupCallbackStub>();
+    appGroupCallbackStub->OnAppGroupChanged(appGroupCallbackInfo);
+    MessageParcel data1;
+    MessageParcel reply;
+    MessageOption option;
+    EXPECT_EQ(appGroupCallbackStub->OnRemoteRequest(1, data1, reply, option), -1);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
