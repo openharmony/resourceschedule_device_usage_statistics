@@ -274,7 +274,7 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
         return ret;
     }
     std::string callingBundleName = "";
-    sptrBundleMgr_->GetBundleNameForUid(callingUid, callingBundleName);
+    sptrBundleMgr_->GetNameForUid(callingUid, callingBundleName);
     BUNDLE_ACTIVE_LOGI("UID is %{public}d, bundle name is %{public}s", callingUid, callingBundleName.c_str());
     // get user id
     int32_t result = -1;
@@ -372,7 +372,7 @@ ErrCode BundleActiveService::SetAppGroup(const std::string& bundleName, int32_t 
         return ret;
     }
     std::string localBundleName = "";
-    sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
+    sptrBundleMgr_->GetNameForUid(callingUid, localBundleName);
     if (localBundleName == bundleName) {
         BUNDLE_ACTIVE_LOGI("SetAppGroup can not set its bundleName");
         return ERR_PERMISSION_DENIED;
@@ -403,7 +403,7 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
             return ret;
         }
         std::string bundleName = "";
-        sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
+        sptrBundleMgr_->GetNameForUid(callingUid, bundleName);
         ErrCode isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId);
         if (!bundleName.empty() && isSystemAppAndHasPermission == ERR_OK) {
             int32_t convertedIntervalType = ConvertIntervalType(intervalType);
@@ -430,7 +430,7 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
             return ret;
         }
         std::string bundleName = "";
-        sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
+        sptrBundleMgr_->GetNameForUid(callingUid, bundleName);
         if (!bundleName.empty()) {
             if (!Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID())) {
                 BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
@@ -464,7 +464,7 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundl
             return ret;
         }
         std::string localBundleName = "";
-        sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
+        sptrBundleMgr_->GetNameForUid(callingUid, localBundleName);
         if (!Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID())) {
             BUNDLE_ACTIVE_LOGE("%{public}s is not system app", localBundleName.c_str());
             return ERR_NOT_SYSTEM_APP;
@@ -556,7 +556,7 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
         return errCode;
     }
     std::string bundleName = "";
-    sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
+    sptrBundleMgr_->GetNameForUid(uid, bundleName);
 
     if (!Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID())) {
         BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
