@@ -87,7 +87,7 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
     int32_t userId = -1;
     std::string bundleName = "";
     if (GetBundleMgr()) {
-        bundleMgr_->GetBundleNameForUid(uid, bundleName);
+        bundleMgr_->GetNameForUid(uid, bundleName);
     } else {
         BUNDLE_ACTIVE_LOGE("Get bundle mgr failed!");
         return;
