@@ -101,7 +101,7 @@ void UvQueueWorkOnAppGroupChanged(uv_work_t *work, int status)
     if (!SetBundleGroupChangedData(callbackReceiveDataWorkerData, result)) {
         delete work;
         work = nullptr;
-        napi_open_handle_scope(callbackReceiveDataWorkerData->env, &scope);
+        napi_close_handle_scope(callbackReceiveDataWorkerData->env, scope);
         delete callbackReceiveDataWorkerData;
         callbackReceiveDataWorkerData = nullptr;
         return;
@@ -119,7 +119,8 @@ void UvQueueWorkOnAppGroupChanged(uv_work_t *work, int status)
     results[PARAM_SECOND] = result;
     NAPI_CALL_RETURN_VOID(callbackReceiveDataWorkerData->env, napi_call_function(callbackReceiveDataWorkerData->env,
         undefined, callback, ARGS_TWO, &results[PARAM_FIRST], &resultout));
-    napi_open_handle_scope(callbackReceiveDataWorkerData->env, &scope);
+
+    napi_close_handle_scope(callbackReceiveDataWorkerData->env, scope);
     delete callbackReceiveDataWorkerData;
     callbackReceiveDataWorkerData = nullptr;
     delete work;
