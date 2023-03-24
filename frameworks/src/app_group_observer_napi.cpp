@@ -101,6 +101,7 @@ void UvQueueWorkOnAppGroupChanged(uv_work_t *work, int status)
     if (!SetBundleGroupChangedData(callbackReceiveDataWorkerData, result)) {
         delete work;
         work = nullptr;
+        napi_close_handle_scope(callbackReceiveDataWorkerData->env, scope);
         delete callbackReceiveDataWorkerData;
         callbackReceiveDataWorkerData = nullptr;
         return;
