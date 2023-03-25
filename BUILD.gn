@@ -137,7 +137,9 @@ ohos_shared_library("usagestatistics") {
 }
 
 ohos_shared_library("usagestatservice") {
-  shlib_type = "sa"
+  if (!use_clang_coverage) {
+    shlib_type = "sa"
+  }
 
   cflags_cc = []
   sources = [
