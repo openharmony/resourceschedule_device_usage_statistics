@@ -517,6 +517,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_AppGroupCallbackPr
 
     auto appGroupCallbackProxy = std::make_shared<BundleActiveGroupCallbackProxy>(nullptr);
     appGroupCallbackProxy->OnAppGroupChanged(appGroupCallbackInfo);
+    EXPECT_NE(appGroupCallbackProxy, nullptr);
 }
 
 /*

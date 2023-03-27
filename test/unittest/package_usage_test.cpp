@@ -97,6 +97,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_Update_001, Function | MediumTest | 
 
     eventId = BundleActiveEvent::SYSTEM_LOCK;
     packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+    EXPECT_NE(packageStats, nullptr);
 }
 
 /*
@@ -119,6 +120,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_UpdateLongTimeTask_001, Function | M
 
     eventId = BundleActiveEvent::LONG_TIME_TASK_STARTTED;
     packageStats->UpdateLongTimeTask(longTimeTaskName, timeStamp, eventId);
+    EXPECT_NE(packageStats, nullptr);
 }
 
 /*
@@ -144,6 +146,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_UpdateAbility_001, Function | Medium
 
     eventId = BundleActiveEvent::ABILITY_STOP;
     packageStats->UpdateAbility(timeStamp, eventId, abilityId);
+    EXPECT_NE(packageStats, nullptr);
 }
 
 /*
@@ -163,6 +166,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_Increment_001, Function | MediumTest
     packageStats->lastTimeUsed_ = largeNum;
     packageStats->IncrementTimeUsed(largeNum + 1);
     packageStats->IncrementTimeUsed(largeNum);
+    EXPECT_NE(packageStats, nullptr);
 }
 
 /*
@@ -183,6 +187,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveModuleRecord_001, Functi
     moduleRecord->lastModuleUsedTime_ = timeStamp;
     moduleRecord->UpdateModuleRecord(timeStamp);
     moduleRecord->RemoveOneFormRecord(forName, formDimension, formId);
+    EXPECT_NE(moduleRecord, nullptr);
 }
 
 /*
@@ -216,6 +221,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveEventTracker_001, Functi
     eventTracker->count_ = 1;
     eventTracker->duration_ = 0;
     eventTracker->AddToEventStats(eventStatsList, eventId, beginTime, endTime);
+    EXPECT_NE(eventTracker, nullptr);
 }
 
 /*
@@ -230,6 +236,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveFormRecord_001, Function
     int64_t timeStamp = 20000000000000;
     formRecord->UpdateFormRecord(timeStamp);
     formRecord->UpdateFormRecord(timeStamp);
+    EXPECT_NE(formRecord, nullptr);
 }
 
 /*
@@ -251,6 +258,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveEventStats_001, Function
 
     stat.beginTimeStamp_ = -1;
     eventStats->add(stat);
+    EXPECT_NE(eventStats, nullptr);
 }
 
 /*
@@ -631,6 +639,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_combine_001, Function | MediumTest |
     auto eventCombiner = std::make_shared<BundleActiveStatsCombiner<BundleActiveEvent>>();
     std::vector<BundleActiveEvent> activeEventResult;
     eventCombiner->combine(stats, activeEventResult, beginTime);
+    EXPECT_NE(combiner, nullptr);
 }
 
 /*
