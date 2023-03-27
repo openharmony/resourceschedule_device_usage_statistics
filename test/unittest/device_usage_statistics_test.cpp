@@ -396,6 +396,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_AppGroupCallbackIn
     EXPECT_EQ(appGroupCallback->GetNewGroup(), newGroup);
     EXPECT_EQ(appGroupCallback->GetChangeReason(), changeReason);
     EXPECT_EQ(appGroupCallback->GetBundleName(), g_defaultBundleName);
+    delete appGroupCallback;
 }
 
 /*

@@ -85,6 +85,10 @@ bool AppGroupCallbackInfo::Marshalling(Parcel &parcel) const
 AppGroupCallbackInfo* AppGroupCallbackInfo::Unmarshalling(Parcel &parcel)
 {
     AppGroupCallbackInfo* result = new (std::nothrow) AppGroupCallbackInfo();
+    if (!result) {
+        BUNDLE_ACTIVE_LOGE("new AppGroupCallbackInfo failed!");
+        return result;
+    }
     result->userId_ = parcel.ReadInt32();
     result->oldGroup_ = parcel.ReadInt32();
     result->newGroup_ = parcel.ReadInt32();
