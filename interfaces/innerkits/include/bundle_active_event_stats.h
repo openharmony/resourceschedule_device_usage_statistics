@@ -90,7 +90,7 @@ public:
     * parameters: parcel
     * return: point to a BundleActiveEventStats.
     */
-    std::shared_ptr<BundleActiveEventStats> UnMarshalling(Parcel &parcel);
+    static std::shared_ptr<BundleActiveEventStats> UnMarshalling(Parcel &parcel);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
