@@ -29,9 +29,33 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveBundleMgrHelper : public DelayedSingleton<BundleActiveBundleMgrHelper> {
 public:
+    /**
+     * @brief GetNameForUid by uid.
+     *
+     * @param uid .
+     * @param bundleName .
+     */
     void GetNameForUid(int32_t uid, std::string bundleName);
+
+    /**
+     * @brief GetBundleInfo by bundleName、flag、userId.
+     *
+     * @param bundleName .
+     * @param flag which type is AppExecFwk::ApplicationFlag.
+     * @param bundleInfo.
+     * @param userId which type is AppExecFwk::BundleInfo.
+     */
     bool GetBundleInfo(const std::string &bundleName, const AppExecFwk::BundleFlag flag,
         AppExecFwk::BundleInfo &bundleInfo, int32_t userId);
+
+    /**
+     * @brief GetApplicationInfo, get bundleName by uid.
+     *
+     * @param appName .
+     * @param flag which type is AppExecFwk::ApplicationFlag.
+     * @param userId.
+     * @param appInfo which type is AppExecFwk::ApplicationInfo.
+     */
     bool GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
         const int userId, AppExecFwk::ApplicationInfo &appInfo);
 
