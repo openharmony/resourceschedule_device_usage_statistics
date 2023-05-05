@@ -100,13 +100,6 @@ void TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &a
  */
 void MultiTestIsBundleIdle(void)
 {
-    std::thread::id this_id = std::this_thread::get_id();
-    std::ostringstream oss;
-    oss << this_id;
-    std::string this_id_str = oss.str();
-    long int thread_id = atol(this_id_str.c_str());
-    printf("running thread...: %ld\n", thread_id);
-
     bool result = false;
     int32_t errCode = BundleActiveClient::GetInstance().IsBundleIdle(result, g_defaultBundleName, DEFAULT_USERID);
     EXPECT_EQ(result, false);
