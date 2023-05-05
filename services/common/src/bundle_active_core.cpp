@@ -749,6 +749,7 @@ ErrCode BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTo
 
 void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
+    std::lock_guard<std::mutex> lock(callbackMutex_);
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("observer nullptr.");
         return;
@@ -774,6 +775,7 @@ void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &
 }
 void BundleActiveCore::RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
+    std::lock_guard<std::mutex> lock(callbackMutex_);
     if (!observer) {
         return;
     }
