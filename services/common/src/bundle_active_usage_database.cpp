@@ -415,6 +415,7 @@ shared_ptr<NativeRdb::RdbStore> WEAK_FUNC BundleActiveUsageDatabase::GetBundleAc
         RdbStoreConfig config(currDatabaseFileConfig);
         BundleActiveOpenCallback rdbDataCallBack;
         config.SetJournalMode(NativeRdb::JournalMode::MODE_OFF);
+        config.SetSecurityLevel(NativeRdb::SecurityLevel::S1);
         rdbStore = RdbHelper::GetRdbStore(config, BUNDLE_ACTIVE_RDB_VERSION, rdbDataCallBack, errCode);
         if ((rdbStore == nullptr)) {
             BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
