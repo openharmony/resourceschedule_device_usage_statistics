@@ -35,14 +35,14 @@
         "samgr",
         "c_utils",
         "napi",
-        "startup_l2",
         "ability_base",
         "background_task_mgr",
         "eventhandler",
         "power_manager",
-        "time_native"
+        "time_service",
+        "init"
       ],
-      "third_party": [ "googletest" ]
+      "third_party": []
     },
     "build": {
       "group_type" : {
