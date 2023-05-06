@@ -67,7 +67,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             ErrCode errCode = QueryBundleStatsInfoByInterval(result, intervalType, beginTime, endTime, userId);
             int32_t size = static_cast<int32_t>(result.size());
             if (size > PACKAGE_MAX_SIZE) {
-                errcode = ERR_QUERY_RESULT_TOO_LARGE;
+                errCode = ERR_QUERY_RESULT_TOO_LARGE;
                 reply.WriteInt32(errCode);
                 return -1;
             }
@@ -89,7 +89,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             ErrCode errCode = QueryBundleEvents(result, beginTime, endTime, userId);
             int32_t size = static_cast<int32_t>(result.size());
             if (size > EVENT_MAX_SIZE) {
-                errcode = ERR_QUERY_RESULT_TOO_LARGE;
+                errCode = ERR_QUERY_RESULT_TOO_LARGE;
                 reply.WriteInt32(errCode);
                 return -1;
             }
@@ -118,7 +118,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             ErrCode errCode = QueryBundleStatsInfos(result, intervalType, beginTime, endTime);
             int32_t size = static_cast<int32_t>(result.size());
             if (size > PACKAGE_MAX_SIZE) {
-                errcode = ERR_QUERY_RESULT_TOO_LARGE;
+                errCode = ERR_QUERY_RESULT_TOO_LARGE;
                 reply.WriteInt32(errCode);
                 return -1;
             }
@@ -139,7 +139,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             ErrCode errCode = QueryCurrentBundleEvents(result, beginTime, endTime);
             int32_t size = static_cast<int32_t>(result.size());
             if (size > EVENT_MAX_SIZE) {
-                errcode = ERR_QUERY_RESULT_TOO_LARGE;
+                errCode = ERR_QUERY_RESULT_TOO_LARGE;
                 reply.WriteInt32(errCode);
                 return -1;
             }
@@ -167,7 +167,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             ErrCode errCode = QueryModuleUsageRecords(maxNum, results, userId);
             int32_t size = static_cast<int32_t>(results.size());
             if (size > PACKAGE_MAX_SIZE) {
-                errcode = ERR_QUERY_RESULT_TOO_LARGE;
+                errCode = ERR_QUERY_RESULT_TOO_LARGE;
                 reply.WriteInt32(errCode);
                 return -1;
             }
@@ -207,7 +207,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             ErrCode errCode = QueryDeviceEventStats(beginTime, endTime, result, userId);
             int32_t size = static_cast<int32_t>(result.size());
             if (size > EVENT_MAX_SIZE) {
-                errcode = ERR_QUERY_RESULT_TOO_LARGE;
+                errCode = ERR_QUERY_RESULT_TOO_LARGE;
                 reply.WriteInt32(errCode);
                 return -1;
             }
@@ -228,7 +228,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             ErrCode errCode = QueryNotificationEventStats(beginTime, endTime, result, userId);
             int32_t size = static_cast<int32_t>(result.size());
             if (size > PACKAGE_MAX_SIZE) {
-                errcode = ERR_QUERY_RESULT_TOO_LARGE;
+                errCode = ERR_QUERY_RESULT_TOO_LARGE;
                 reply.WriteInt32(errCode);
                 return -1;
             }
