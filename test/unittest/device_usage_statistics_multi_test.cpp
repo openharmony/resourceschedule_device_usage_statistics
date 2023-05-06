@@ -47,7 +47,6 @@ static int32_t DEFAULT_DIMENSION = 4;
 static int64_t DEFAULT_FORMID = 1;
 static int32_t DEFAULT_USERID = 0;
 static int32_t COMMON_USERID = 100;
-static int32_t DEFAULT_ERRCODE = 0;
 static int64_t LARGE_NUM = 20000000000000;
 static int32_t DEFAULT_GROUP = 10;
 static std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50};
