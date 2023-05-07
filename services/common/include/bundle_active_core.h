@@ -248,7 +248,6 @@ private:
     int64_t realTimeShot_;
     std::mutex mutex_;
     std::mutex callbackMutex_;
-    std::mutex deathRecipientMutex_;
     std::map<int32_t, std::shared_ptr<BundleActiveUserService>> userStatServices_;
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;

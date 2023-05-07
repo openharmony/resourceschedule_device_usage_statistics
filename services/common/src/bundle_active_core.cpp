@@ -749,7 +749,7 @@ ErrCode BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTo
 
 void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::mutex> lock(deathRecipientMutex_);
+    std::lock_guard<std::mutex> lock(callbackMutex_);
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("observer nullptr.");
         return;
@@ -775,7 +775,7 @@ void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &
 }
 void BundleActiveCore::RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::mutex> lock(deathRecipientMutex_);
+    std::lock_guard<std::mutex> lock(callbackMutex_);
     if (!observer) {
         return;
     }
@@ -802,12 +802,12 @@ void BundleActiveCore::OnObserverDied(const wptr<IRemoteObject> &remote)
 
 void BundleActiveCore::OnObserverDiedInner(const wptr<IRemoteObject> &remote)
 {
-    std::lock_guard<std::mutex> lock(deathRecipientMutex_);
     sptr<IRemoteObject> objectProxy = remote.promote();
     if (remote == nullptr || !objectProxy) {
         BUNDLE_ACTIVE_LOGE("get remote object failed");
         return;
     }
+    std::lock_guard<std::mutex> lock(callbackMutex_);
     for (const auto& item : groupChangeObservers_) {
         if (!(item.second)) {
             continue;

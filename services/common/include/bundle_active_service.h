@@ -16,7 +16,6 @@
 #ifndef BUNDLE_ACTIVE_SERVICE_H
 #define BUNDLE_ACTIVE_SERVICE_H
 
-#include "bundle_mgr_interface.h"
 #include "singleton.h"
 
 #include "app_mgr_interface.h"
@@ -215,7 +214,6 @@ private:
 #ifdef BGTASKMGR_ENABLE
     std::shared_ptr<BundleActiveContinuousTaskObserver> continuousTaskObserver_;
 #endif
-    sptr<IBundleMgr> sptrBundleMgr_;
     sptr<BundleActiveShutdownCallbackService> shutdownCallback_;
     sptr<BundleActivePowerStateCallbackService> powerStateCallback_;
     std::shared_ptr<AppExecFwk::EventRunner> runner_;
@@ -224,7 +222,6 @@ private:
     int32_t ConvertIntervalType(const int32_t intervalType);
     void InitNecessaryState();
     void InitService();
-    ErrCode GetBundleMgrProxy();
     ErrCode CheckBundleIsSystemAppAndHasPermission(const int32_t uid,
         OHOS::Security::AccessToken::AccessTokenID tokenId);
     ErrCode CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId);
