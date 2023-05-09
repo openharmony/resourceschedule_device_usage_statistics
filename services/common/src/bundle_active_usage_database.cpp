@@ -407,6 +407,7 @@ void BundleActiveUsageDatabase::CheckDatabaseVersion()
 
 shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbStore(uint32_t databaseType)
 {
+    BUNDLE_ACTIVE_LOGE("1111 GetBundleActiveRdbStore begin");
     shared_ptr<NativeRdb::RdbStore> rdbStore;
     string file = databaseFiles_.at(databaseType);
     if (bundleActiveRdbStoreCache_.find(file) == bundleActiveRdbStoreCache_.end()) {
