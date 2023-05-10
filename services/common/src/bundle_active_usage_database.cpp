@@ -407,7 +407,6 @@ void BundleActiveUsageDatabase::CheckDatabaseVersion()
 
 shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbStore(uint32_t databaseType)
 {
-    BUNDLE_ACTIVE_LOGE("1111 GetBundleActiveRdbStore begin");
     shared_ptr<NativeRdb::RdbStore> rdbStore;
     string file = databaseFiles_.at(databaseType);
     if (bundleActiveRdbStoreCache_.find(file) == bundleActiveRdbStoreCache_.end()) {
@@ -416,9 +415,7 @@ shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbSto
         RdbStoreConfig config(currDatabaseFileConfig);
         BundleActiveOpenCallback rdbDataCallBack;
         config.SetJournalMode(NativeRdb::JournalMode::MODE_OFF);
-        BUNDLE_ACTIVE_LOGE("1111 SetSecurityLevel begin");
         config.SetSecurityLevel(NativeRdb::SecurityLevel::S1);
-        BUNDLE_ACTIVE_LOGE("1111 SetSecurityLevel end");
         rdbStore = RdbHelper::GetRdbStore(config, BUNDLE_ACTIVE_RDB_VERSION, rdbDataCallBack, errCode);
         if ((rdbStore == nullptr)) {
             BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
@@ -426,7 +423,6 @@ shared_ptr<NativeRdb::RdbStore> BundleActiveUsageDatabase::GetBundleActiveRdbSto
         }
         bundleActiveRdbStoreCache_.insert(pair {file, rdbStore});
     } else {
-        BUNDLE_ACTIVE_LOGE("1111 normal path");
         rdbStore = bundleActiveRdbStoreCache_[file];
     }
     if (rdbStore == nullptr) {
