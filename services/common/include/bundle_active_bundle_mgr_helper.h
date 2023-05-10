@@ -35,7 +35,7 @@ public:
      * @param uid .
      * @param bundleName .
      */
-    void GetNameForUid(int32_t uid, std::string bundleName);
+    void GetNameForUid(int32_t uid, std::string& bundleName);
 
     /**
      * @brief GetBundleInfo by bundleName、flag、userId.
