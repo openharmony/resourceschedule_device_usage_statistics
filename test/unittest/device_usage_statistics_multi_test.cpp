@@ -275,7 +275,7 @@ void MultiTestAppGroup(void)
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_AppGroup_001, Function | MediumTest | Level0)
 {
     SET_THREAD_NUM(100);
-    GTEST_RUN_TASK(MultiTestQueryModuleUsageRecords);
+    GTEST_RUN_TASK(MultiTestAppGroup);
 }
 
 /*
