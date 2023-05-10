@@ -34,7 +34,7 @@ BundleActiveBundleMgrHelper::~BundleActiveBundleMgrHelper()
 {
 }
 
-void BundleActiveBundleMgrHelper::GetNameForUid(int32_t uid, std::string bundleName)
+void BundleActiveBundleMgrHelper::GetNameForUid(int32_t uid, std::string& bundleName)
 {
     std::lock_guard<std::mutex> lock(connectionMutex_);
     if (!Connect()) {
