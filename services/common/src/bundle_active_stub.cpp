@@ -72,6 +72,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
                 return -1;
             }
             BUNDLE_ACTIVE_LOGI("OnRemoteRequest result size is %{public}d", size);
+            reply.WriteInt32(errCode);
             reply.WriteInt32(size);
             for (int32_t i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
@@ -93,6 +94,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
                 reply.WriteInt32(errCode);
                 return -1;
             }
+            reply.WriteInt32(errCode);
             reply.WriteInt32(size);
             for (int32_t i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
@@ -123,6 +125,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
                 return -1;
             }
             BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_BUNDLE_STATS_INFOS result size is %{public}d", size);
+            reply.WriteInt32(errCode);
             reply.WriteInt32(size);
             for (int32_t i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
@@ -143,6 +146,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
                 reply.WriteInt32(errCode);
                 return -1;
             }
+            reply.WriteInt32(errCode);
             reply.WriteInt32(size);
             for (int32_t i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
@@ -171,6 +175,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
                 reply.WriteInt32(errCode);
                 return -1;
             }
+            reply.WriteInt32(errCode);
             reply.WriteInt32(size);
             for (int32_t i = 0; i < size; i++) {
                 bool tmp = results[i].Marshalling(reply);
@@ -211,6 +216,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
                 reply.WriteInt32(errCode);
                 return -1;
             }
+            reply.WriteInt32(errCode);
             reply.WriteInt32(size);
             for (int32_t i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
@@ -232,6 +238,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
                 reply.WriteInt32(errCode);
                 return -1;
             }
+            reply.WriteInt32(errCode);
             reply.WriteInt32(size);
             for (int32_t i = 0; i < size; i++) {
                 bool tmp = result[i].Marshalling(reply);
