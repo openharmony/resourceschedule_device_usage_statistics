@@ -248,7 +248,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(BundleActiveClient::GetInstance().mutex_);
     while (BundleActiveClient::GetInstance().GetBundleActiveProxy() != ERR_OK) {
         sleep(SLEEP_TIME);
     }
