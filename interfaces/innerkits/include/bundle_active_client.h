@@ -221,7 +221,7 @@ private:
     sptr<BundleActiveClientDeathRecipient> recipient_;
     std::shared_ptr<AppExecFwk::EventRunner> bundleClientRunner_ {nullptr};
     std::shared_ptr<AppExecFwk::EventHandler> bundleClientHandler_ {nullptr};
-    std::mutex mutex_;
+    std::recursive_mutex mutex_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
