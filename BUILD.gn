@@ -293,6 +293,7 @@ ohos_shared_library("usagestatsutils") {
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
   ]
+  innerapi_tags = [ "platformsdk" ]
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
 }
