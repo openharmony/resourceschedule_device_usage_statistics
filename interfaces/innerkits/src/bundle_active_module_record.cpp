@@ -17,6 +17,9 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+namespace {
+    static const int32_t MAX_FORM_NUM = 1000;
+}
 void BundleActiveModuleRecord::AddOrUpdateOneFormRecord(const std::string formName, const int32_t formDimension,
     const int64_t formId, const int64_t timeStamp)
 {
@@ -107,6 +110,9 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveModuleRecord::UnMarshallin
     result->launchedCount_ = parcel.ReadInt32();
     result->lastModuleUsedTime_ = parcel.ReadInt64();
     uint32_t size = parcel.ReadUint32();
+    if (size > MAX_FORM_NUM) {
+        return nullptr;
+    }
     std::shared_ptr<BundleActiveFormRecord> tmp = std::make_shared<BundleActiveFormRecord>();
     for (uint32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(parcel);
