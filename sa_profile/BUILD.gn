@@ -22,6 +22,6 @@ ohos_prebuilt_etc("device_usage_statistics_service_init") {
 }
 
 ohos_sa_profile("usagestat_sa_profile") {
-  sources = [ "1907.xml" ]
+  sources = [ "1907.json" ]
   part_name = "device_usage_statistics"
 }
