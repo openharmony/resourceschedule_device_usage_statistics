@@ -20,7 +20,6 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-const int32_t MAX_FILES_EVERY_INTERVAL_TYPE[] = {30, 30, 12, 10};
 const int32_t DURATION_TABLE_ROW_NUMBER = 1;
 const int32_t TABLE_ROW_ZERO = 0;
 const int32_t SORTED_TABLE_ARRAY_NUMBER = 4;
