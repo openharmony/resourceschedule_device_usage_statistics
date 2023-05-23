@@ -39,7 +39,9 @@ namespace OHOS {
 namespace DeviceUsageStats {
 using namespace OHOS::NativeRdb;
 using namespace std;
-
+namespace {
+    const int32_t MAX_FILES_EVERY_INTERVAL_TYPE[SORTED_TABLE_ARRAY_NUMBER] = {30, 30, 12, 10};
+}
 BundleActiveUsageDatabase::BundleActiveUsageDatabase()
 {
     currentVersion_ = BUNDLE_ACTIVE_CURRENT_VERSION;
@@ -264,7 +266,7 @@ void BundleActiveUsageDatabase::HandleTableInfo(uint32_t databaseType)
 
 void BundleActiveUsageDatabase::DeleteExcessiveTableData(uint32_t databaseType)
 {
-    if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
+    if (databaseType >= 0 && databaseType < SORTED_TABLE_ARRAY_NUMBER) {
         if (sortedTableArray_.at(databaseType).empty()) {
             BUNDLE_ACTIVE_LOGE("database table not exist");
             return;
