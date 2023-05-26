@@ -56,9 +56,6 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfo(const std::string &appName,
     if (!Connect()) {
         return false;
     }
-    if (!bundleMgr_) {
-        return false;
-    }
     BUNDLE_ACTIVE_LOGD("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
     if (bundleMgr_ != nullptr && bundleMgr_->GetApplicationInfo(appName, flag, userId, appInfo)) {
         return true;
@@ -72,9 +69,6 @@ bool BundleActiveBundleMgrHelper::GetBundleInfo(const std::string &bundleName, c
     std::lock_guard<std::mutex> lock(connectionMutex_);
 
     if (!Connect()) {
-        return false;
-    }
-    if (!bundleMgr_) {
         return false;
     }
     if (bundleMgr_ != nullptr && bundleMgr_->GetBundleInfo(bundleName, flag, bundleInfo, userId)) {

@@ -28,6 +28,7 @@
 #include "iapp_group_callback.h"
 #include "bundle_active_constant.h"
 #include "bundle_active_usage_database.h"
+#include "bundle_active_module_record.h"
 
 using namespace testing::ext;
 
@@ -416,6 +417,11 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     database->CreateDurationTable(databaseType);
     database->CreateBundleHistoryTable(databaseType);
 
+    databaseType = 0;
+    const string sql = "defaultSql";
+    const vector<string> selectionArgs {"selectionArgs"};
+    EXPECT_EQ(database->QueryStatsInfoByStep(databaseType, sql, selectionArgs), nullptr);
+
     int32_t userId = 100;
     auto userHistory = std::make_shared<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>();
     database->PutBundleHistoryData(userId, userHistory);
@@ -439,6 +445,69 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     std::string moduleName = "defaultMoudleName";
     std::string formName = "defaultFormName";
     database->RemoveFormData(userId, bundleName, moduleName, formName, 0, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_IsBundleIdle_001
+ * @tc.desc: IsBundleIdle
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_IsBundleIdle_001,
+    Function | MediumTest | Level0)
+{
+    std::string bundleName = "defaultBundleName";
+    bool isBundleIdle = false;
+    int32_t userId = -1;
+    printf("%d", DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(isBundleIdle, bundleName, userId));
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_QueryBundleStatsInfoByInterval_002
+ * @tc.desc: QueryBundleStatsInfoByInterval
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleStatsInfoByInterval_002,
+    Function | MediumTest | Level0)
+{
+    std::vector<BundleActivePackageStats> PackageStats;
+    int32_t intervalType = 4;
+    int64_t beginTime = 0;
+    int64_t endTime = 20000000000000;
+    int32_t userId = -1;
+    printf("%d", DelayedSingleton<BundleActiveService>::GetInstance()->QueryBundleStatsInfoByInterval(PackageStats, intervalType, beginTime, endTime, userId));
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_QueryAppGroup_002
+ * @tc.desc: QueryAppGroup
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryAppGroup_002,
+    Function | MediumTest | Level0)
+{
+    std::vector<BundleActivePackageStats> PackageStats;
+    int32_t appGroup = 10;
+    std::string bundleName = "defaultBundleName";
+    int32_t userId = -1;
+    printf("%d", DelayedSingleton<BundleActiveService>::GetInstance()->QueryAppGroup(appGroup, bundleName, userId));
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_QueryModuleUsageRecords_002
+ * @tc.desc: QueryModuleUsageRecords
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryModuleUsageRecords_002,
+    Function | MediumTest | Level0)
+{
+    int32_t maxNum = 10;
+    std::vector<BundleActiveModuleRecord> results;
+    int32_t userId = -1;
+    printf("%d", DelayedSingleton<BundleActiveService>::GetInstance()->QueryModuleUsageRecords(maxNum, results, userId));
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
