@@ -15,7 +15,7 @@ import("//build/ohos/sa_profile/sa_profile.gni")
 import("device_usage_statistics.gni")
 
 ohos_sa_profile("device_usage_statistics_sa_profile") {
-  sources = [ "sa_profile/1907.xml" ]
+  sources = [ "sa_profile/1907.json" ]
   part_name = "${device_usage_statistics_part_name}"
 }
 
