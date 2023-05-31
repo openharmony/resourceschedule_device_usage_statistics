@@ -95,7 +95,7 @@ void TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &a
  * @tc.name: DeviceUsageStatisticsMultiTest_IsBundleIdle_001
  * @tc.desc: isbundleidle
  * @tc.type: FUNC
- * @tc.require: SR000GGTO5 AR000GH6PG
+ * @tc.require: issuesI5SOZY
  */
 void MultiTestIsBundleIdle(void)
 {
@@ -116,7 +116,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_IsBundle
  * @tc.name: DeviceUsageStatisticsMultiTest_ReportEvent_001
  * @tc.desc: report a mock event
  * @tc.type: FUNC
- * @tc.require: SR000GGTO7 SR000GU31B AR000GH6PJ AR000GU380
+ * @tc.require: issuesI5SOZY
  */
 void MultiTestReportEvent(void)
 {
@@ -138,7 +138,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_ReportEv
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryBundleEvents_001
  * @tc.desc: QueryBundleEvents
  * @tc.type: FUNC
- * @tc.require: SR000GGTO6 AR000GH6PH
+ * @tc.require: issuesI5SOZY
  */
 void MultiTestQueryBundleEvents(void)
 {
@@ -159,7 +159,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryBun
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryCurrentBundleEvents_001
  * @tc.desc: QueryCurrentBundleEvents
  * @tc.type: FUNC
- * @tc.require: SR000GGTO4 AR000GH6PF
+ * @tc.require: issuesI5SOZY
  */
 void MultiTestQueryCurrentBundleEvents(void)
 {
@@ -179,7 +179,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryCur
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryPackagesStats_001
  * @tc.desc: querypackagestats
  * @tc.type: FUNC
- * @tc.require: SR000GGTO3 AR000GH6PD
+ * @tc.require: issuesI5SOZY
  */
 void MultiTestQueryBundleStatsInfoByInterval(void)
 {
@@ -220,7 +220,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryBun
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryModuleUsageRecords_001
  * @tc.desc: QueryModuleUsageRecords
  * @tc.type: FUNC
- * @tc.require: SR000GU2T1 AR000GU37U
+ * @tc.require: issuesI5SOZY
  */
 void MultiTestQueryModuleUsageRecords(void)
 {
@@ -255,7 +255,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryMod
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryAppGroup_001
  * @tc.desc: QueryAppGroup, no bundleName
  * @tc.type: FUNC
- * @tc.require: SR000H0HAQ AR000H0ROE
+ * @tc.require: issuesI5SOZY
  */
 void MultiTestAppGroup(void)
 {
@@ -282,7 +282,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_AppGroup
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryDeviceEventStats_001
  * @tc.desc: QueryDeviceEventStats
  * @tc.type: FUNC
- * @tc.require: SR000H0H9H AR000H0ROG
+ * @tc.require: issuesI5SOZY
  */
 void MultiTestQueryDeviceEventStats(void)
 {
@@ -304,7 +304,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryDev
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryNotificationEventStats_001
  * @tc.desc: QueryNotificationEventStats
  * @tc.type: FUNC
- * @tc.require: SR000H0H7D AR000H0RR6
+ * @tc.require: issuesI5SOZY
  */
 void MultiTestQueryNotificationEventStats(void)
 {
@@ -326,7 +326,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryNot
  * @tc.name: DeviceUsageStatisticsMultiTest_BundleActiveGroupMap_001
  * @tc.desc: BundleActiveGroupMap
  * @tc.type: FUNC
- * @tc.require: SR000H0G4F AR000H2US8
+ * @tc.require: issuesI5SOZY
  */
 void MultiTestDeviceUsageStatsGroupMap(void)
 {
