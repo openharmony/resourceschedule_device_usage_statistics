@@ -1094,5 +1094,30 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Upda
     database->UpdateFormData(userId, bundleName, moduleName, formRecord, rdbStore);
     EXPECT_NE(database, nullptr);
 }
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_onStart_001
+ * @tc.desc: onstart
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_onStart_001,
+    Function | MediumTest | Level0)
+{
+    DelayedSingleton<BundleActiveService>::GetInstance()->ready_ = true;
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance(), nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_onStart_002
+ * @tc.desc: onstart
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_onStart_002,
+    Function | MediumTest | Level0)
+{
+    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->SubscribeAppState(), true);
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

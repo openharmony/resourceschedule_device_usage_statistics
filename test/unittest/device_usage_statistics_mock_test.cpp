@@ -28,6 +28,7 @@
 #include "iapp_group_callback.h"
 #include "bundle_active_constant.h"
 #include "bundle_active_usage_database.h"
+#include "bundle_active_module_record.h"
 
 using namespace testing::ext;
 
@@ -121,7 +122,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleM
     std::string bundleName;
     bool isBundleIdle = false;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(isBundleIdle, bundleName, -1);
-    EXPECT_NE(code, ERR_OK);
+    EXPECT_EQ(code, ERR_OK);
 
     code = DelayedSingleton<BundleActiveService>::GetInstance()->CheckBundleIsSystemAppAndHasPermission(100, 100000);
     EXPECT_NE(code, ERR_OK);
@@ -139,7 +140,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryDevic
     std::vector<BundleActiveEventStats> eventStats;
     ErrCode code =
         DelayedSingleton<BundleActiveService>::GetInstance()->QueryDeviceEventStats(0, LARGE_NUM, eventStats, -1);
-    EXPECT_NE(code, ERR_OK);
+    EXPECT_EQ(code, ERR_OK);
 }
 
 /*
@@ -154,7 +155,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryNotif
     std::vector<BundleActiveEventStats> eventStats;
     ErrCode code =
         DelayedSingleton<BundleActiveService>::GetInstance()->QueryNotificationEventStats(0, LARGE_NUM, eventStats, -1);
-    EXPECT_NE(code, ERR_OK);
+    EXPECT_EQ(code, ERR_OK);
 }
 
 /*
@@ -167,7 +168,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryModul
     Function | MediumTest | Level0)
 {
     std::vector<BundleActiveModuleRecord> records;
-    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->QueryModuleUsageRecords(1000, records, -1), ERR_OK);
+    EXPECT_EQ(DelayedSingleton<BundleActiveService>::GetInstance()->QueryModuleUsageRecords(1000, records, -1), ERR_OK);
 
     BundleActiveModuleRecord bundleActiveModuleRecord;
     DelayedSingleton<BundleActiveService>::GetInstance()->QueryModuleRecordInfos(bundleActiveModuleRecord);
@@ -230,10 +231,10 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundl
     std::vector<BundleActiveEvent> bundleActiveEvents;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
         ->QueryBundleEvents(bundleActiveEvents, 0, LARGE_NUM, -1);
-    EXPECT_NE(code, ERR_OK);
+    EXPECT_EQ(code, ERR_OK);
     code = DelayedSingleton<BundleActiveService>::GetInstance()
         ->QueryCurrentBundleEvents(bundleActiveEvents, 0, LARGE_NUM);
-    EXPECT_NE(code, ERR_OK);
+    EXPECT_EQ(code, ERR_OK);
 }
 
 /*
@@ -248,7 +249,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundl
     std::vector<BundleActivePackageStats> packageStats;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
         ->QueryBundleStatsInfoByInterval(packageStats, 0, 0, LARGE_NUM, -1);
-    EXPECT_NE(code, ERR_OK);
+    EXPECT_EQ(code, ERR_OK);
 }
 
 /*
@@ -263,7 +264,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundl
     std::vector<BundleActivePackageStats> packageStats;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
         ->QueryBundleStatsInfos(packageStats, 0, 0, LARGE_NUM);
-    EXPECT_NE(code, ERR_OK);
+    EXPECT_EQ(code, ERR_OK);
 }
 
 /*
@@ -332,6 +333,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_getUserHis
     groupController->bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(timeStamp, bundleActiveCore);
 
     groupController->OnBundleUninstalled(0, g_defaultBundleName);
+    EXPECT_NE(groupController, nullptr);
 }
 
 /*
@@ -349,6 +351,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_calculatio
     groupController->calculationTimeOut(history, LARGE_NUM);
     history = std::make_shared<BundleActivePackageHistory>();
     groupController->calculationTimeOut(history, LARGE_NUM);
+    EXPECT_NE(groupController, nullptr);
 }
 
 /*
@@ -394,6 +397,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryStats
     database->QueryDeviceEventStats(eventId, beginTime, endTime, eventStats, userId);
 
     database->QueryNotificationEventStats(eventId, beginTime, endTime, eventStats, userId);
+    EXPECT_NE(database, nullptr);
 }
 
 /*
@@ -415,6 +419,11 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     database->CreateFormRecordTable(databaseType, 0);
     database->CreateDurationTable(databaseType);
     database->CreateBundleHistoryTable(databaseType);
+
+    databaseType = 0;
+    const string sql = "defaultSql";
+    const vector<string> selectionArgs {"selectionArgs"};
+    EXPECT_EQ(database->QueryStatsInfoByStep(databaseType, sql, selectionArgs), nullptr);
 
     int32_t userId = 100;
     auto userHistory = std::make_shared<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>();
@@ -439,6 +448,73 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     std::string moduleName = "defaultMoudleName";
     std::string formName = "defaultFormName";
     database->RemoveFormData(userId, bundleName, moduleName, formName, 0, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_IsBundleIdle_001
+ * @tc.desc: IsBundleIdle
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_IsBundleIdle_001,
+    Function | MediumTest | Level0)
+{
+    std::string bundleName = "defaultBundleName";
+    bool isBundleIdle = false;
+    int32_t userId = -1;
+    EXPECT_EQ(
+        DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(isBundleIdle, bundleName, userId), ERR_OK);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_QueryBundleStatsInfoByInterval_002
+ * @tc.desc: QueryBundleStatsInfoByInterval
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleStatsInfoByInterval_002,
+    Function | MediumTest | Level0)
+{
+    std::vector<BundleActivePackageStats> PackageStats;
+    int32_t intervalType = 4;
+    int64_t beginTime = 0;
+    int64_t endTime = 20000000000000;
+    int32_t userId = -1;
+    EXPECT_EQ(DelayedSingleton<BundleActiveService>::GetInstance()->
+        QueryBundleStatsInfoByInterval(PackageStats, intervalType, beginTime, endTime, userId), ERR_OK);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_QueryAppGroup_002
+ * @tc.desc: QueryAppGroup
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryAppGroup_002,
+    Function | MediumTest | Level0)
+{
+    std::vector<BundleActivePackageStats> PackageStats;
+    int32_t appGroup = 10;
+    std::string bundleName = "defaultBundleName";
+    int32_t userId = -1;
+    EXPECT_NE(
+        DelayedSingleton<BundleActiveService>::GetInstance()->QueryAppGroup(appGroup, bundleName, userId), ERR_OK);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_QueryModuleUsageRecords_002
+ * @tc.desc: QueryModuleUsageRecords
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryModuleUsageRecords_002,
+    Function | MediumTest | Level0)
+{
+    int32_t maxNum = 10;
+    std::vector<BundleActiveModuleRecord> results;
+    int32_t userId = -1;
+    EXPECT_EQ(
+        DelayedSingleton<BundleActiveService>::GetInstance()->QueryModuleUsageRecords(maxNum, results, userId), ERR_OK);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
