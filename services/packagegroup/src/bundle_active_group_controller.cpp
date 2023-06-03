@@ -319,6 +319,7 @@ ErrCode BundleActiveGroupController::SetAppGroup(const std::string& bundleName, 
 
 int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, const int32_t userId)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     if (IsBundleInstalled(bundleName, userId) == false) {
         return -1;
@@ -340,6 +341,7 @@ int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName,
 ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
     const std::string& bundleName, const int32_t userId)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (bundleName.empty()) {
         BUNDLE_ACTIVE_LOGE("bundleName can not get by userId");
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
