@@ -103,7 +103,7 @@ private:
     int32_t CreateBundleHistoryTable(uint32_t databaseType);
     int32_t CreateModuleRecordTable(uint32_t databaseType, int64_t timeStamp);
     int32_t CreateFormRecordTable(uint32_t databaseType, int64_t timeStamp);
-    std::unique_ptr<NativeRdb::ResultSet> QueryStatsInfoByStep(uint32_t databaseType,
+    std::shared_ptr<NativeRdb::ResultSet> QueryStatsInfoByStep(uint32_t databaseType,
         const std::string &sql, const std::vector<std::string> &selectionArgs);
     void DeleteUninstalledInfo(const int32_t userId, const std::string& bundleName, const std::string& tableName,
         uint32_t databaseType);

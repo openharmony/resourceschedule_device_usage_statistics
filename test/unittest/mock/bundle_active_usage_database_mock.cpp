@@ -18,7 +18,7 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 using namespace std;
-unique_ptr<NativeRdb::ResultSet> BundleActiveUsageDatabase::QueryStatsInfoByStep(uint32_t databaseType,
+shared_ptr<NativeRdb::ResultSet> BundleActiveUsageDatabase::QueryStatsInfoByStep(uint32_t databaseType,
     const string &sql, const vector<string> &selectionArgs)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveUsageDatabase::QueryStatsInfoByStep observer has been delete");
