@@ -46,7 +46,7 @@ ErrCode BundleActiveProxy::IsBundleIdle(bool& isBundleIdle, const std::string& b
         return ERR_PARCEL_WRITE_FALIED;
     }
     Remote() -> SendRequest(
-        static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::IS_BUNDLE_IDLE, data, reply), option);
+        static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::IS_BUNDLE_IDLE), data, reply, option);
     isBundleIdle = reply.ReadInt32();
     return reply.ReadInt32();
 }
