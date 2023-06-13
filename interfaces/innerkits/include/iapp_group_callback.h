@@ -36,11 +36,6 @@ public:
         const AppGroupCallbackInfo &appGroupCallbackInfo) = 0;
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"Resourceschedule.IAppGroupCallback");
-
-protected:
-    enum class message {
-        ON_BUNDLE_GROUP_CHANGED = 1
-    };
 };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
