@@ -25,7 +25,7 @@
 #include "bundle_active_module_record.h"
 #include "bundle_active_package_stats.h"
 #include "iapp_group_callback.h"
-
+#include "ibundle_active_service_ipc_interface_code.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -40,7 +40,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         return -1;
     }
     switch (code) {
-        case REPORT_EVENT: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::REPORT_EVENT): {
             int32_t userId = data.ReadInt32();
             std::shared_ptr<BundleActiveEvent> tmpEvent = BundleActiveEvent::UnMarshalling(data);
             if (!tmpEvent) {
@@ -49,7 +49,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             int32_t result = ReportEvent(*tmpEvent, userId);
             return reply.WriteInt32(result);
         }
-        case IS_BUNDLE_IDLE: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::IS_BUNDLE_IDLE): {
             bool isBundleIdle = false;
             std::string bundleName = data.ReadString();
             int32_t userId = data.ReadInt32();
@@ -57,7 +57,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             reply.WriteInt32(isBundleIdle);
             return reply.WriteInt32(errCode);
         }
-        case QUERY_BUNDLE_STATS_INFO_BY_INTERVAL: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_STATS_INFO_BY_INTERVAL): {
             std::vector<BundleActivePackageStats> result;
             int32_t intervalType = data.ReadInt32();
             BUNDLE_ACTIVE_LOGI("OnRemoteRequest intervaltype is %{public}d", intervalType);
@@ -82,7 +82,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             }
             return size == 0;
         }
-        case QUERY_BUNDLE_EVENTS: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_EVENTS): {
             std::vector<BundleActiveEvent> result;
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
@@ -104,14 +104,14 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             }
             return size == 0;
         }
-        case SET_APP_GROUP: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::SET_APP_GROUP): {
             std::string bundleName = data.ReadString();
             int32_t newGroup = data.ReadInt32();
             int32_t userId = data.ReadInt32();
             ErrCode errCode = SetAppGroup(bundleName, newGroup, userId);
             return reply.WriteInt32(errCode);
         }
-        case QUERY_BUNDLE_STATS_INFOS: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_STATS_INFOS): {
             std::vector<BundleActivePackageStats> result;
             int32_t intervalType = data.ReadInt32();
             BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_BUNDLE_STATS_INFOS intervaltype is %{public}d", intervalType);
@@ -135,7 +135,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             }
             return size == 0;
         }
-        case QUERY_CURRENT_BUNDLE_EVENTS: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_CURRENT_BUNDLE_EVENTS): {
             std::vector<BundleActiveEvent> result;
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
@@ -156,7 +156,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             }
             return size == 0;
         }
-        case QUERY_APP_GROUP: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_APP_GROUP): {
             int32_t appGroup = -1;
             std::string bundleName = data.ReadString();
             int32_t userId = data.ReadInt32();
@@ -164,7 +164,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             reply.WriteInt32(appGroup);
             return reply.WriteInt32(errCode);
         }
-        case QUERY_MODULE_USAGE_RECORDS: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_MODULE_USAGE_RECORDS): {
             std::vector<BundleActiveModuleRecord> results;
             int32_t maxNum = data.ReadInt32();
             int32_t userId = data.ReadInt32();
@@ -185,7 +185,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             }
             return size == 0;
         }
-        case REGISTER_APP_GROUP_CALLBACK: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::REGISTER_APP_GROUP_CALLBACK): {
             auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
             if (!observer) {
                 BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer is null, return");
@@ -195,7 +195,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             ErrCode errCode = RegisterAppGroupCallBack(observer);
             return reply.WriteInt32(errCode);
         }
-        case UNREGISTER_APP_GROUP_CALLBACK: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::UNREGISTER_APP_GROUP_CALLBACK): {
             auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
             if (!observer) {
                 BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer is null, return");
@@ -204,7 +204,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             ErrCode errCode = UnRegisterAppGroupCallBack(observer);
             return reply.WriteInt32(errCode);
         }
-        case QUERY_DEVICE_EVENT_STATES: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_DEVICE_EVENT_STATES): {
             std::vector<BundleActiveEventStats> result;
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
@@ -226,7 +226,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
             }
             return size == 0;
         }
-        case QUERY_NOTIFICATION_NUMBER: {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_NOTIFICATION_NUMBER): {
             std::vector<BundleActiveEventStats> result;
             int64_t beginTime = data.ReadInt64();
             int64_t endTime = data.ReadInt64();
@@ -251,6 +251,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
+    return ERR_OK;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
