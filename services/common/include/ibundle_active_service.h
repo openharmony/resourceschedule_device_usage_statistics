@@ -150,22 +150,6 @@ public:
     virtual ErrCode QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) = 0;
 public:
-    enum {
-        REPORT_EVENT = 1,
-        IS_BUNDLE_IDLE = 2,
-        QUERY_BUNDLE_STATS_INFO_BY_INTERVAL = 3,
-        QUERY_BUNDLE_EVENTS = 4,
-        QUERY_BUNDLE_STATS_INFOS = 5,
-        QUERY_CURRENT_BUNDLE_EVENTS = 6,
-        QUERY_APP_GROUP = 7,
-        SET_APP_GROUP = 8,
-        QUERY_MODULE_USAGE_RECORDS = 9,
-        REGISTER_APP_GROUP_CALLBACK = 10,
-        UNREGISTER_APP_GROUP_CALLBACK = 11,
-        QUERY_DEVICE_EVENT_STATES = 12,
-        QUERY_NOTIFICATION_NUMBER = 13
-    };
-public:
     DECLARE_INTERFACE_DESCRIPTOR(u"Resourceschedule.IBundleActiveService");
 };
 }  // namespace DeviceUsageStats

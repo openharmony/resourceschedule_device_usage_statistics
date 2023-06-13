@@ -16,6 +16,7 @@
 #include "message_parcel.h"
 #include "bundle_active_log.h"
 #include "errors.h"
+#include "iapp_group_callback_ipc_interface_code.h"
 #include "message_option.h"
 
 namespace OHOS {
@@ -44,7 +45,7 @@ void BundleActiveGroupCallbackProxy::OnAppGroupChanged(
     MessageParcel reply;
     MessageOption option = {MessageOption::TF_ASYNC};
     int32_t ret = remote->SendRequest(
-        static_cast<uint32_t>(IAppGroupCallback::message::ON_BUNDLE_GROUP_CHANGED), data, reply, option);
+        static_cast<uint32_t>(MessageInterfaceCode::ON_BUNDLE_GROUP_CHANGED), data, reply, option);
     if (ret!= ERR_OK) {
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack SendRequest failed, error code: %{public}d", ret);
     }
