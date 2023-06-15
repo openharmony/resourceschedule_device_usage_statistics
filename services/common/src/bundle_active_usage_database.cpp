@@ -85,7 +85,7 @@ void BundleActiveUsageDatabase::InitUsageGroupDatabase(const int32_t databaseTyp
     string queryDatabaseTableNames = "select * from sqlite_master where type = ?";
     vector<string> queryCondition;
     queryCondition.push_back(DATABASE_FILE_TABLE_NAME);
-    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(databaseType,
+    auto bundleActiveResult = QueryStatsInfoByStep(databaseType,
         queryDatabaseTableNames, queryCondition);
     if (bundleActiveResult == nullptr) {
         BUNDLE_ACTIVE_LOGE("bundleActiveResult is invalid");
@@ -203,7 +203,7 @@ int32_t BundleActiveUsageDatabase::NearIndexOnOrBeforeCurrentTime(int64_t curren
     return index - 1;
 }
 
-unique_ptr<NativeRdb::ResultSet> WEAK_FUNC BundleActiveUsageDatabase::QueryStatsInfoByStep(uint32_t databaseType,
+shared_ptr<NativeRdb::ResultSet> WEAK_FUNC BundleActiveUsageDatabase::QueryStatsInfoByStep(uint32_t databaseType,
     const string &sql, const vector<string> &selectionArgs)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
@@ -211,7 +211,7 @@ unique_ptr<NativeRdb::ResultSet> WEAK_FUNC BundleActiveUsageDatabase::QueryStats
         BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
         return nullptr;
     }
-    unique_ptr<NativeRdb::ResultSet> result;
+    shared_ptr<NativeRdb::ResultSet> result;
     if (selectionArgs.empty()) {
         result = rdbStore->QueryByStep(sql);
     } else {
@@ -225,7 +225,7 @@ void BundleActiveUsageDatabase::HandleTableInfo(uint32_t databaseType)
     string queryDatabaseTableNames = "select * from sqlite_master where type = ?";
     vector<string> queryCondition;
     queryCondition.push_back(DATABASE_FILE_TABLE_NAME);
-    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(databaseType,
+    auto bundleActiveResult = QueryStatsInfoByStep(databaseType,
         queryDatabaseTableNames, queryCondition);
     if (bundleActiveResult == nullptr) {
         BUNDLE_ACTIVE_LOGE("bundleActiveResult is invalid");
@@ -326,7 +326,7 @@ std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTable
     string queryDatabaseTableNames = "select * from sqlite_master where type = ?";
     vector<string> queryCondition;
     queryCondition.push_back(DATABASE_FILE_TABLE_NAME);
-    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(databaseType,
+    auto bundleActiveResult = QueryStatsInfoByStep(databaseType,
         queryDatabaseTableNames, queryCondition);
     if (bundleActiveResult == nullptr) {
         BUNDLE_ACTIVE_LOGE("bundleActiveResult is invalid");
@@ -705,7 +705,7 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
     string queryHistoryDataSql = "select * from " + BUNDLE_HISTORY_LOG_TABLE + " where userId = ?";
     vector<string> queryCondition;
     queryCondition.push_back(to_string(userId));
-    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX,
+    auto bundleActiveResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX,
         queryHistoryDataSql, queryCondition);
     if (bundleActiveResult == nullptr) {
         return nullptr;
@@ -769,7 +769,7 @@ pair<int64_t, int64_t> BundleActiveUsageDatabase::GetDurationData()
         return durationData;
     }
     string queryDurationDataSql = "select * from " + DURATION_LOG_TABLE;
-    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX,
+    auto bundleActiveResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX,
         queryDurationDataSql,
         vector<string> {});
     if (bundleActiveResult == nullptr) {
@@ -848,7 +848,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
     string queryPackageSql = "select * from " + packageTableName + " where userId = ?";
     vector<string> queryCondition;
     queryCondition.push_back(to_string(userId));
-    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
+    auto bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
         queryCondition);
     if (bundleActiveResult == nullptr) {
         return nullptr;
@@ -1271,7 +1271,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
                 queryPackageSql = "select * from " + packageTableName + " where userId = ?";
             }
         }
-        unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
+        auto bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
             queryCondition);
         if (bundleActiveResult == nullptr) {
             return databaseUsageStats;
@@ -1328,7 +1328,7 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
         queryEventSql = "select * from " + eventTableName_ +
             " where timeStamp >= ? and timeStamp <= ? and userId = ? and bundleName = ?";
     }
-    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(EVENT_DATABASE_INDEX,
+    auto bundleActiveResult = QueryStatsInfoByStep(EVENT_DATABASE_INDEX,
         queryEventSql, queryCondition);
     if (bundleActiveResult == nullptr) {
         return databaseEvents;
@@ -1537,7 +1537,7 @@ void BundleActiveUsageDatabase::LoadModuleData(const int32_t userId, std::map<st
     string queryModuleSql = "select * from " + moduleRecordsTableName_ + " where userId = ?";
     vector<string> queryCondition;
     queryCondition.emplace_back(to_string(userId));
-    unique_ptr<NativeRdb::ResultSet> moduleRecordResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX, queryModuleSql,
+    auto moduleRecordResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX, queryModuleSql,
         queryCondition);
     if (!moduleRecordResult) {
         return;
@@ -1567,7 +1567,7 @@ void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std:
     string queryFormSql = "select * from " + formRecordsTableName_ + " where userId = ?";
     vector<string> queryCondition;
     queryCondition.emplace_back(to_string(userId));
-    unique_ptr<NativeRdb::ResultSet> formRecordResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX, queryFormSql,
+    auto formRecordResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX, queryFormSql,
         queryCondition);
     if (!formRecordResult) {
         return;
@@ -1617,7 +1617,7 @@ void BundleActiveUsageDatabase::QueryDeviceEventStats(int32_t eventId, int64_t b
     queryCondition.push_back(to_string(eventId));
     string queryEventSql = "select * from " + eventTableName_ +
             " where timeStamp >= ? and timeStamp <= ? and userId = ? and eventId = ?";
-    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(EVENT_DATABASE_INDEX,
+    auto bundleActiveResult = QueryStatsInfoByStep(EVENT_DATABASE_INDEX,
         queryEventSql, queryCondition);
     if (bundleActiveResult == nullptr) {
         return;
@@ -1676,7 +1676,7 @@ void BundleActiveUsageDatabase::QueryNotificationEventStats(int32_t eventId, int
     queryCondition.push_back(to_string(eventId));
     string queryEventSql = "select * from " + eventTableName_ +
             " where timeStamp >= ? and timeStamp <= ? and userId = ? and eventId = ?";
-    unique_ptr<NativeRdb::ResultSet> bundleActiveResult = QueryStatsInfoByStep(EVENT_DATABASE_INDEX,
+    auto bundleActiveResult = QueryStatsInfoByStep(EVENT_DATABASE_INDEX,
         queryEventSql, queryCondition);
     if (bundleActiveResult == nullptr) {
         return;
