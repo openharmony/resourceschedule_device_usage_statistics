@@ -14,6 +14,7 @@
  */
 
 #include "app_group_callback_stub.h"
+#include "iapp_group_callback_ipc_interface_code.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -27,7 +28,7 @@ int32_t AppGroupCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel& data
         return -1;
     }
     switch (code) {
-        case static_cast<uint32_t>(IAppGroupCallback::message::ON_BUNDLE_GROUP_CHANGED): {
+        case static_cast<uint32_t>(IAppGroupCallBackInterfaceCode::ON_BUNDLE_GROUP_CHANGED): {
             std::shared_ptr<AppGroupCallbackInfo> groupInfo(
                 data.ReadParcelable<AppGroupCallbackInfo>());
             if (!groupInfo) {
@@ -41,7 +42,7 @@ int32_t AppGroupCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel& data
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
-    return 0;
+    return ERR_OK;
 }
 
 void AppGroupCallbackStub::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)

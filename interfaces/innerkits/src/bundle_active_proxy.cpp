@@ -14,6 +14,7 @@
  */
 
 #include "bundle_active_proxy.h"
+#include "ibundle_active_service_ipc_interface_code.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -27,7 +28,8 @@ ErrCode BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int32_t u
     }
     data.WriteInt32(userId);
     event.Marshalling(data);
-    Remote() -> SendRequest(REPORT_EVENT, data, reply, option);
+    Remote() -> SendRequest(
+        static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::REPORT_EVENT), data, reply, option);
 
     int32_t result = reply.ReadInt32();
     return result;
@@ -43,7 +45,8 @@ ErrCode BundleActiveProxy::IsBundleIdle(bool& isBundleIdle, const std::string& b
         !data.WriteInt32(userId)) {
         return ERR_PARCEL_WRITE_FALIED;
     }
-    Remote() -> SendRequest(IS_BUNDLE_IDLE, data, reply, option);
+    Remote() -> SendRequest(
+        static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::IS_BUNDLE_IDLE), data, reply, option);
     isBundleIdle = reply.ReadInt32();
     return reply.ReadInt32();
 }
@@ -61,7 +64,8 @@ ErrCode BundleActiveProxy::QueryBundleStatsInfoByInterval(std::vector<BundleActi
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
     data.WriteInt32(userId);
-    Remote() -> SendRequest(QUERY_BUNDLE_STATS_INFO_BY_INTERVAL, data, reply, option);
+    Remote() -> SendRequest(static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_STATS_INFO_BY_INTERVAL), data, reply, option);
     ErrCode errCode = reply.ReadInt32();
     if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
         return errCode;
@@ -98,7 +102,8 @@ ErrCode BundleActiveProxy::QueryBundleEvents(std::vector<BundleActiveEvent>& bun
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
     data.WriteInt32(userId);
-    Remote() -> SendRequest(QUERY_BUNDLE_EVENTS, data, reply, option);
+    Remote() -> SendRequest(static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_EVENTS), data, reply, option);
     ErrCode errCode = reply.ReadInt32();
     if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
         return errCode;
@@ -130,7 +135,8 @@ ErrCode BundleActiveProxy::SetAppGroup(const std::string& bundleName, int32_t ne
     data.WriteInt32(newGroup);
     data.WriteInt32(userId);
 
-    Remote() -> SendRequest(SET_APP_GROUP, data, reply, option);
+    Remote() -> SendRequest(static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::SET_APP_GROUP), data, reply, option);
     return reply.ReadInt32();
 }
 
@@ -146,7 +152,8 @@ ErrCode BundleActiveProxy::QueryBundleStatsInfos(std::vector<BundleActivePackage
     data.WriteInt32(intervalType);
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
-    Remote() -> SendRequest(QUERY_BUNDLE_STATS_INFOS, data, reply, option);
+    Remote() -> SendRequest(static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_STATS_INFOS), data, reply, option);
     ErrCode errCode = reply.ReadInt32();
     if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
         return errCode;
@@ -184,7 +191,8 @@ ErrCode BundleActiveProxy::QueryCurrentBundleEvents(std::vector<BundleActiveEven
     }
     data.WriteInt64(beginTime);
     data.WriteInt64(endTime);
-    Remote() -> SendRequest(QUERY_CURRENT_BUNDLE_EVENTS, data, reply, option);
+    Remote() -> SendRequest(static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::QUERY_CURRENT_BUNDLE_EVENTS), data, reply, option);
     ErrCode errCode = reply.ReadInt32();
     if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
         return errCode;
@@ -218,7 +226,8 @@ ErrCode BundleActiveProxy::QueryAppGroup(int32_t& appGroup, std::string& bundleN
 
     data.WriteString(bundleName);
     data.WriteInt32(userId);
-    Remote() -> SendRequest(QUERY_APP_GROUP, data, reply, option);
+    Remote() -> SendRequest(static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::QUERY_APP_GROUP), data, reply, option);
     appGroup = reply.ReadInt32();
     return reply.ReadInt32();
 }
@@ -234,7 +243,8 @@ ErrCode BundleActiveProxy::QueryModuleUsageRecords(int32_t maxNum, std::vector<B
     }
     data.WriteInt32(maxNum);
     data.WriteInt32(userId);
-    Remote() -> SendRequest(QUERY_MODULE_USAGE_RECORDS, data, reply, option);
+    Remote() -> SendRequest(static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::QUERY_MODULE_USAGE_RECORDS), data, reply, option);
     ErrCode errCode = reply.ReadInt32();
     if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
         return errCode;
@@ -279,7 +289,8 @@ ErrCode BundleActiveProxy::RegisterAppGroupCallBack(const sptr<IAppGroupCallback
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer write failed.");
         return ERR_PARCEL_WRITE_FALIED;
     }
-    int32_t ret = Remote()->SendRequest(REGISTER_APP_GROUP_CALLBACK, data, reply, option);
+    int32_t ret = Remote()->SendRequest(static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::REGISTER_APP_GROUP_CALLBACK), data, reply, option);
     if (ret!= ERR_OK) {
         BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack SendRequest failed, error code: %{public}d", ret);
     }
@@ -302,14 +313,16 @@ ErrCode BundleActiveProxy::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallba
         BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer write failed.");
         return ERR_PARCEL_WRITE_FALIED;
     }
-    Remote()->SendRequest(UNREGISTER_APP_GROUP_CALLBACK, data, reply, option);
+    Remote()->SendRequest(static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::UNREGISTER_APP_GROUP_CALLBACK), data, reply, option);
     return reply.ReadInt32();
 }
 
 ErrCode BundleActiveProxy::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    ErrCode errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_DEVICE_EVENT_STATES);
+    ErrCode errCode = IPCCommunication(beginTime, endTime, eventStats, userId, static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::QUERY_DEVICE_EVENT_STATES));
     for (const auto& singleEvent : eventStats) {
         BUNDLE_ACTIVE_LOGD("QueryDeviceEventStats name is %{public}s, eventId is %{public}d, count is %{public}d",
             singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);
@@ -320,7 +333,8 @@ ErrCode BundleActiveProxy::QueryDeviceEventStats(int64_t beginTime, int64_t endT
 ErrCode BundleActiveProxy::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    ErrCode errCode = IPCCommunication(beginTime, endTime, eventStats, userId, QUERY_NOTIFICATION_NUMBER);
+    ErrCode errCode = IPCCommunication(beginTime, endTime, eventStats, userId, static_cast<uint32_t>(
+        IBundleActiveServiceInterfaceCode::QUERY_NOTIFICATION_NUMBER));
     for (const auto& singleEvent : eventStats) {
         BUNDLE_ACTIVE_LOGD("QueryNotificationEventStats name is %{public}s, eventId is %{public}d, count is %{public}d",
             singleEvent.name_.c_str(), singleEvent.eventId_, singleEvent.count_);

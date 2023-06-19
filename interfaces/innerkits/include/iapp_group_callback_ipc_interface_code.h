@@ -13,30 +13,11 @@
  * limitations under the License.
  */
 
-#ifndef IAPP_GROUP_CALLBACK_H
-#define IAPP_GROUP_CALLBACK_H
-
-#include <ipc_types.h>
-#include <iremote_broker.h>
-
-#include "bundle_active_log.h"
-#include "app_group_callback_info.h"
-
+ /* SAID: 1907 */
 namespace OHOS {
 namespace DeviceUsageStats {
-class IAppGroupCallback : public IRemoteBroker {
-public:
-
-    /**
-     * @brief Called back when a app priority group change.
-     *
-     * @param appGroupCallbackInfo app group info.
-     */
-    virtual void OnAppGroupChanged(
-        const AppGroupCallbackInfo &appGroupCallbackInfo) = 0;
-public:
-    DECLARE_INTERFACE_DESCRIPTOR(u"Resourceschedule.IAppGroupCallback");
-};
+    enum class IAppGroupCallBackInterfaceCode {
+        ON_BUNDLE_GROUP_CHANGED = 1
+    };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // IAPP_GROUP_CALLBACK_H
