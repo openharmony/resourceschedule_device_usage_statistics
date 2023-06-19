@@ -16,7 +16,7 @@
  /* SAID: 1907 */
 namespace OHOS {
 namespace DeviceUsageStats {
-    enum class MessageInterfaceCode {
+    enum class IAppGroupCallBackInterfaceCode {
         ON_BUNDLE_GROUP_CHANGED = 1
     };
 }  // namespace BackgroundTaskMgr

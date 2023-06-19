@@ -28,7 +28,7 @@ int32_t AppGroupCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel& data
         return -1;
     }
     switch (code) {
-        case static_cast<uint32_t>(MessageInterfaceCode::ON_BUNDLE_GROUP_CHANGED): {
+        case static_cast<uint32_t>(IAppGroupCallBackInterfaceCode::ON_BUNDLE_GROUP_CHANGED): {
             std::shared_ptr<AppGroupCallbackInfo> groupInfo(
                 data.ReadParcelable<AppGroupCallbackInfo>());
             if (!groupInfo) {
