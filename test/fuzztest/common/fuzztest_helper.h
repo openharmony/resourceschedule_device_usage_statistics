@@ -21,14 +21,14 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class FuzztestHelper : public DelayedSingeleton<FuzztestHelper> {
+class FuzztestHelper : public DelayedSingleton<FuzztestHelper> {
     DECLARE_DELAYED_SINGLETON(FuzztestHelper);
 public:
     void NativeTokenGet();
 
 private:
     bool isPermissionSet_ = false;
-}
+};
 } // namesoace DeviceUsageStats
 } // namespace OHOS
 #endif // BUNLDE_ACTIVE_COMMON_FUZZER_H

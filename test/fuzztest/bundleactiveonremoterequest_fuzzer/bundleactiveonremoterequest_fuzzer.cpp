@@ -49,7 +49,7 @@ namespace DeviceUsageStats {
         datas.WriteBuffer(data, size);
         datas.RewindRead(0);
         MessageParcel reply;
-        MessageParcel option;
+        MessageOption option;
         if (!isInited) {
             DelayedSingleton<BundleActiveService>::GetInstance()->InitNecessaryState();
             isInited = true;
