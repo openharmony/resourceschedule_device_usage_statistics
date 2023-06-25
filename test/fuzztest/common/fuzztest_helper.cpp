@@ -33,7 +33,7 @@ void FuzztestHelper::NativeTokenGet()
     uint64_t tokenId;
     static const char *perms[] = {
         "ohos.permission.BUNDLE_ACTIVE_INFO",
-    }
+    };
 
     NativeTokenInfoParams infoInstance = {
         .dcapsNum = 0,
@@ -43,7 +43,7 @@ void FuzztestHelper::NativeTokenGet()
         .perms = perms,
         .acls = nullptr,
         .aplStr = "system_basic",
-    }
+    };
 
     infoInstance.processName = "BundleActiveOnRemoteRequestFuzzTest";
     tokenId = GetAccessTokenId(&infoInstance);
