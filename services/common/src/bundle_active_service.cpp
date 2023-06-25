@@ -15,6 +15,7 @@
 
 #include "time_service_client.h"
 #include "power_mgr_client.h"
+#include "shutdown/shutdown_client.h"
 #include "unistd.h"
 #include "accesstoken_kit.h"
 
@@ -23,6 +24,7 @@
 #include "bundle_active_package_stats.h"
 #include "bundle_active_account_helper.h"
 #include "bundle_active_bundle_mgr_helper.h"
+#include "bundle_active_shutdown_callback_service.h"
 #include "tokenid_kit.h"
 
 #include "bundle_active_service.h"
@@ -144,8 +146,9 @@ void BundleActiveService::InitService()
     shutdownCallback_ = new (std::nothrow) BundleActiveShutdownCallbackService(bundleActiveCore_);
     powerStateCallback_ = new (std::nothrow) BundleActivePowerStateCallbackService(bundleActiveCore_);
     auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
+    auto& shutdownClient = OHOS::PowerMgr::ShutdownClient::GetInstance();
     if (shutdownCallback_) {
-        powerManagerClient.RegisterShutdownCallback(shutdownCallback_);
+        shutdownClient.RegisterShutdownCallback(shutdownCallback_);
     }
     if (powerStateCallback_) {
         powerManagerClient.RegisterPowerStateCallback(powerStateCallback_);
@@ -225,8 +228,9 @@ bool BundleActiveService::SubscribeContinuousTask()
 void BundleActiveService::OnStop()
 {
     if (shutdownCallback_ != nullptr) {
+        auto& shutdownClient = OHOS::PowerMgr::ShutdownClient::GetInstance();
         auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
-        powerManagerClient.UnRegisterShutdownCallback(shutdownCallback_);
+        shutdownClient.UnRegisterShutdownCallback(shutdownCallback_);
         powerManagerClient.UnRegisterPowerStateCallback(powerStateCallback_);
         return;
     }

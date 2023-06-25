@@ -16,16 +16,16 @@
 #ifndef BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_SERVICE_H
 #define BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_SERVICE_H
 
-#include "bundle_active_shutdown_callback_stub.h"
+#include "shutdown/async_shutdown_callback_stub.h"
 #include "bundle_active_core.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveShutdownCallbackService : public BundleActiveShutdownCallbackStub {
+class BundleActiveShutdownCallbackService : public PowerMgr::AsyncShutdownCallbackStub {
 public:
     BundleActiveShutdownCallbackService(std::shared_ptr<BundleActiveCore> bundleActiveCore);
     virtual ~BundleActiveShutdownCallbackService() {}
-    void ShutdownCallback() override;
+    void OnAsyncShutdown() override;
 private:
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;
 };

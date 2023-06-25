@@ -25,7 +25,7 @@ BundleActiveShutdownCallbackService::BundleActiveShutdownCallbackService(
     }
 }
 
-void BundleActiveShutdownCallbackService::ShutdownCallback()
+void BundleActiveShutdownCallbackService::OnAsyncShutdown()
 {
     bundleActiveCore_->ShutDown();
 }

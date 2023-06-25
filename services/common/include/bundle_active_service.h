@@ -23,7 +23,7 @@
 #include "bundle_active_stub.h"
 #include "bundle_active_core.h"
 #include "bundle_active_report_handler.h"
-#include "bundle_active_shutdown_callback_service.h"
+#include "shutdown/async_shutdown_callback_stub.h"
 #include "bundle_active_power_state_callback_service.h"
 #include "bundle_active_app_state_observer.h"
 #include "bundle_active_continuous_task_observer.h"
@@ -214,7 +214,7 @@ private:
 #ifdef BGTASKMGR_ENABLE
     std::shared_ptr<BundleActiveContinuousTaskObserver> continuousTaskObserver_;
 #endif
-    sptr<BundleActiveShutdownCallbackService> shutdownCallback_;
+    sptr<PowerMgr::IAsyncShutdownCallback> shutdownCallback_;
     sptr<BundleActivePowerStateCallbackService> powerStateCallback_;
     std::shared_ptr<AppExecFwk::EventRunner> runner_;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
