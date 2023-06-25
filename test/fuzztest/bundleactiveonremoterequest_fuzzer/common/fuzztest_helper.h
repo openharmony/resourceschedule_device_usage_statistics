@@ -13,11 +13,22 @@
  * limitations under the License.
  */
 
-#ifndef TEST_FUZZTEST_BUNDLEACTIVEONREMOTEREQUEST_FUZZER_H
-#define TEST_FUZZTEST_BUNDLEACTIVEONREMOTEREQUEST_FUZZER_H
+#ifndef BUNLDE_ACTIVE_COMMON_FUZZER_H
+#define BUNLDE_ACTIVE_COMMON_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "bundleactiveonremoterequest_fuzzer"
+#include <securec.h>
+#include "singleton.h"
 
-#include "fuzztest_helper.h"
+namespace OHOS {
+namespace DeviceUsageStats {
+class FuzztestHelper : public DelayedSingeleton<FuzztestHelper> {
+    DECLARE_DELAYED_SINGLETON(FuzztestHelper);
+public:
+    void NativeTokenGet();
 
+private:
+    bool isPermissionSet_ = false;
+}
+}
+}
 #endif

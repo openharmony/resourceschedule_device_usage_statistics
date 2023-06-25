@@ -21,69 +21,41 @@
 #define private public
 #include "system_ability_definition.h"
 #include "iservice_registry.h"
-#include "bundle_active_stub.h"
+#include "bundle_active_service.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-    constexpr int32_t MIN_LEN = 4;
-    constexpr int32_t MAX_CODE_TEST = 15; // current max code is 9
-    static bool isInited = false;
-    std::mutex mutexLock;
-    sptr<IRemoteObject> remoteObject;
+    constexpr int32_t U32_AT_SIZE = 4;
+    constexpr int32_t NAX_CODE = 14; // current max code is 14
+    constexpr uint8_t TWENTYFOUR = 24;
+    constexpr uint8_t SIXTEEN = 16;
+    constexpr uint8_t EIGHT = 8;
+    constexpr uint8_t TWO = 2;
+    constexpr uint8_t THREE = 3;
+    const std::u16string BUNDLE_ACTIVE_TOKEN = u"Resourceschedule.IBundleActiveService";
+    bool isInited = false;
 
-    bool DoInit()
+    uint32_t GetU32Data(const char* ptr)
     {
-        std::lock_guard<std::mutex> lock(mutexLock);
-        if (remoteObject != nullptr) {
-            return true;
-        }
-        sptr<ISystemAbilityManager> SystemAbilityManager =
-            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (SystemAbilityManager == nullptr) {
-            return false;
-        }
-        remoteObject = SystemAbilityManager->GetSystemAbility(DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID);
-        if (remoteObject == nullptr) {
-            return false;
-        }
-        return true;
+        return (ptr[0] << TWELVEHOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
     }
 
-    int32_t OnRemoteRequest(uint32_t code, MessageParcel& data)
+    bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
+        DelayedSingleton<FuzzTestHelper>::GetInstance()->NativeTokenGet();
+        uint32_t code = GetU32Data(data);
+        MessageParcel datas;
+        datas.WriteInterfaceToken(BUNDLE_ACTIVE_TOKEN);
+        datas.WriteBuffer(data, size);
+        datas.RewinRead(0);
         MessageParcel reply;
-        MessageOption option;
-        int32_t ret = remoteObject->SendRequest(code, data, reply, option);
-        return ret;
-    }
-
-    void IpcBundleActiveStubFuzzTest(const uint8_t* data, size_t size)
-    {
-        if (size <= MIN_LEN) {
-            return;
-        }
-
-        MessageParcel dataMessageParcel;
-        if (!dataMessageParcel.WriteInterfaceToken(BundleActiveStub::GetDescriptor())) {
-            return;
-        }
-
-        uint32_t code = *(reinterpret_cast<const uint32_t*>(data));
-        if (code > MAX_CODE_TEST) {
-            return;
-        }
-
-        size -= sizeof(uint32_t);
-
-        dataMessageParcel.WriteBuffer(data + sizeof(uint32_t), size);
-        dataMessageParcel.RewindRead(0);
-
+        MessageParcel option;
         if (!isInited) {
-            isInited = DoInit();
+            DelayedSingleton<BundleActiveService>::GetInstance()->InitNecessaryState();
+            isInited = true;
         }
-        if (isInited) {
-            OnRemoteRequest(code, dataMessageParcel);
-        }
+        DelayedSingleton<BundleActiveService>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
+        return true;
     }
 } // namespace DeviceUsageStats
 } // namespace OHOS
@@ -92,7 +64,28 @@ namespace DeviceUsageStats {
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DeviceUsageStats::IpcBundleActiveStubFuzzTest(data, size);
+    if (data == nullptr) {
+        return 0;
+    }
+
+    if (size < OHOS::DeviceUsageStats::U32_AT_SIZE) {
+        return 0;
+    }
+    char* ch = (char *)malloc(size + 1);
+    if (ch == nullptr) {
+        return 0;
+    }
+
+    (void)memset_s(ch, size + 1, 0x00, size + 1);
+    if (memcpy_s(ch, size, data, size) != EOK) {
+        free(ch);
+        ch = nullptr;
+        return 0;
+    }
+
+    OHOS::DeviceUsageStats::DoSomethingInterestingWithMyAPI(ch, size);
+    free(ch);
+    ch = nullptr;
     return 0;
 }
 
