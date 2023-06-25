@@ -42,12 +42,12 @@ void FuzztestHelper::NativeTokenGet()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .aplstr = "system_basic",
+        .aplStr = "system_basic",
     }
 
     infoInstance.processName = "BundleActiveOnRemoteRequestFuzzTest";
     tokenId = GetAccessTokenId(&infoInstance);
-    SetSelfTokenId(tokenId);
+    SetSelfTokenID(tokenId);
     OHOS::Security::AccessToken::AccessTokenKit::ReloadNativeTokenInfo();
     isPermissionSet_ = true;
 }
