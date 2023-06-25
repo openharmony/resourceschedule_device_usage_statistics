@@ -42,9 +42,9 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [
-    "bundleactiveonremoterequest_fuzzer.cpp",
     "../common/fuzztest_helper.cpp",
-    ]
+    "bundleactiveonremoterequest_fuzzer.cpp",
+  ]
 
   public_deps = [
     "${usage_statistics_path}:usagestatservice_static",
