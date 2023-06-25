@@ -25,8 +25,8 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-    constexpr int32_t U32_AT_SIZE = 4;
-    constexpr int32_t NAX_CODE = 14; // current max code is 14
+    constexpr uint32_t U32_AT_SIZE = 4;
+    constexpr uint32_t MAX_CODE = 14; // current max code is 14
     constexpr uint8_t TWENTYFOUR = 24;
     constexpr uint8_t SIXTEEN = 16;
     constexpr uint8_t EIGHT = 8;
@@ -37,17 +37,17 @@ namespace DeviceUsageStats {
 
     uint32_t GetU32Data(const char* ptr)
     {
-        return (ptr[0] << TWELVEHOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
+        return (ptr[0] << TWENTYFOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
     }
 
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
-        DelayedSingleton<FuzzTestHelper>::GetInstance()->NativeTokenGet();
+        DelayedSingleton<FuzztestHelper>::GetInstance()->NativeTokenGet();
         uint32_t code = GetU32Data(data);
         MessageParcel datas;
         datas.WriteInterfaceToken(BUNDLE_ACTIVE_TOKEN);
         datas.WriteBuffer(data, size);
-        datas.RewinRead(0);
+        datas.RewindRead(0);
         MessageParcel reply;
         MessageParcel option;
         if (!isInited) {
