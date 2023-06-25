@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,22 @@
  * limitations under the License.
  */
 
-#ifndef TEST_FUZZTEST_BUNDLEACTIVEONREMOTEREQUEST_FUZZER_H
-#define TEST_FUZZTEST_BUNDLEACTIVEONREMOTEREQUEST_FUZZER_H
+#ifndef BUNLDE_ACTIVE_COMMON_FUZZER_H
+#define BUNLDE_ACTIVE_COMMON_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "bundleactiveonremoterequest_fuzzer"
+#include <securec.h>
+#include "singleton.h"
 
-#include "fuzztest_helper.h"
+namespace OHOS {
+namespace DeviceUsageStats {
+class FuzztestHelper : public DelayedSingleton<FuzztestHelper> {
+    DECLARE_DELAYED_SINGLETON(FuzztestHelper);
+public:
+    void NativeTokenGet();
 
-#endif
+private:
+    bool isPermissionSet_ = false;
+};
+} // namesoace DeviceUsageStats
+} // namespace OHOS
+#endif // BUNLDE_ACTIVE_COMMON_FUZZER_H

@@ -27,6 +27,7 @@ config("module_private_config") {
     "${usage_statistics_path}/services/packagegroup/include",
     "${usage_statistics_path}/interfaces/kits/bundlestats/napi/include",
     "${usage_statistics_path}/utils/include",
+    "../common",
   ]
 }
 
@@ -40,10 +41,13 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "bundleactiveonremoterequest_fuzzer.cpp" ]
+  sources = [
+    "../common/fuzztest_helper.cpp",
+    "bundleactiveonremoterequest_fuzzer.cpp",
+  ]
 
   public_deps = [
-    "${usage_statistics_path}:usagestatservice",
+    "${usage_statistics_path}:usagestatservice_static",
     "${usage_statistics_path}:usagestatsinner",
     "${usage_statistics_path}:usagestatsutils",
   ]
@@ -52,6 +56,9 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
+    "access_token:libnativetoken",
+    "access_token:libtoken_setproc",
+    "access_token:libtokenid_sdk",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
