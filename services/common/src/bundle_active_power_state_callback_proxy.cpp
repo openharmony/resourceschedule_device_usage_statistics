@@ -14,6 +14,7 @@
  */
 
 #include "bundle_active_power_state_callback_proxy.h"
+#include "power_state_callback_ipc_interface_code.h"
 #include "power_state_machine_info.h"
 
 namespace OHOS {
@@ -31,7 +32,9 @@ void BundleActivePowerStateCallbackProxy::OnPowerStateChanged(PowerMgr::PowerSta
     if (!data.WriteInterfaceToken(BundleActivePowerStateCallbackProxy::GetDescriptor())) {
         return;
     }
-    int32_t ret = remote->SendRequest(IPowerStateCallback::POWER_STATE_CHANGED, data, reply, option);
+    int32_t ret = remote->SendRequest(
+        static_cast<int32_t>(PowerMgr::PowerStateCallbackInterfaceCode::POWER_STATE_CHANGED),
+        data, reply, option);
     if (ret != ERR_OK) {
         BUNDLE_ACTIVE_LOGE("BundleActivePowerStateCallbackProxy::PowerStateCallback failed!");
     }

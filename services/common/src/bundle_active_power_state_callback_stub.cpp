@@ -15,6 +15,7 @@
 
 #include "bundle_active_power_state_callback_stub.h"
 #include "bundle_active_event.h"
+#include "power_state_callback_ipc_interface_code.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -29,7 +30,7 @@ int32_t BundleActivePowerStateCallbackStub::OnRemoteRequest(uint32_t code, Messa
         return -1;
     }
     switch (code) {
-        case IPowerStateCallback::POWER_STATE_CHANGED: {
+        case static_cast<int32_t>(PowerMgr::PowerStateCallbackInterfaceCode::POWER_STATE_CHANGED): {
             PowerStateStub(state);
             return ERR_OK;
         }
