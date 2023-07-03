@@ -420,6 +420,11 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveEventS
     auto tempEventStats = bundleActiveEventStats->UnMarshalling(data);
     EXPECT_TRUE(tempEventStats != nullptr);
 
+    auto bundleActiveEvent = std::make_shared<BundleActiveEvent>();
+    EXPECT_TRUE(bundleActiveEvent->Marshalling(data));
+    auto tempEvent = bundleActiveEvent->UnMarshalling(data);
+    EXPECT_TRUE(tempEvent != nullptr);
+
     EXPECT_EQ(tempEventStats->GetEventId(), COMMON_USERID);
     EXPECT_EQ(tempEventStats->GetFirstTimeStamp(), 0);
     EXPECT_EQ(tempEventStats->GetLastTimeStamp(), LARGE_NUM);
