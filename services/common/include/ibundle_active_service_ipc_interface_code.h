@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef BUNDLE_ACTIVE_ISERVICE_IPC_INTERFACE_CODE_H
-#define BUNDLE_ACTIVE_ISERVICE_IPC_INTERFACE_CODE_H
+#ifndef BUNDLE_ACTIVE_SERVICE_IPC_INTERFACE_CODE_H
+#define BUNDLE_ACTIVE_SERVICE_IPC_INTERFACE_CODE_H
 
  /* SAID: 1907 */
 namespace OHOS {
@@ -36,4 +36,4 @@ namespace DeviceUsageStats {
     };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
-#endif  // BUNDLE_ACTIVE_ISERVICE_IPC_INTERFACE_CODE_H
+#endif  // BUNDLE_ACTIVE_SERVICE_IPC_INTERFACE_CODE_H
