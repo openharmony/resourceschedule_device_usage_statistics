@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#ifndef IAPP_GROUP_CALLBACK_IPC_INTERFACE_CODE_H
+#define IAPP_GROUP_CALLBACK_IPC_INTERFACE_CODE_H
+
  /* SAID: 1907 */
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -21,3 +24,4 @@ namespace DeviceUsageStats {
     };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS
+#endif  // IAPP_GROUP_CALLBACK_IPC_INTERFACE_CODE_H
