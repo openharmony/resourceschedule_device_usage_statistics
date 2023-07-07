@@ -46,11 +46,7 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
     "bundleactiveonremoterequest_fuzzer.cpp",
   ]
 
-  public_deps = [
-    "${usage_statistics_path}:usagestatservice_static",
-    "${usage_statistics_path}:usagestatsinner",
-    "${usage_statistics_path}:usagestatsutils",
-  ]
+  public_deps = [ "${usage_statistics_path}:usagestatservice_static" ]
   external_deps = [
     "ability_base:want",
     "ability_runtime:app_manager",
@@ -73,6 +69,15 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
     "samgr:samgr_proxy",
     "time_service:time_client",
   ]
+
+  if (bgtaskmgr_enable) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines = [ "BGTASKMGR_ENABLE" ]
+  }
+  if (os_account_part_enabled) {
+    cflags_cc = [ "-DOS_ACCOUNT_PART_ENABLED" ]
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
 }
 
 ###############################################################################
