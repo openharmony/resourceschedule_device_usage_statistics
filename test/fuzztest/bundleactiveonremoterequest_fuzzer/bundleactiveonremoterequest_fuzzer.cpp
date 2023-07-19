@@ -51,7 +51,7 @@ namespace DeviceUsageStats {
         MessageParcel reply;
         MessageOption option;
         if (!isInited) {
-            DelayedSingleton<BundleActiveService>::GetInstance()->InitNecessaryState();
+            DelayedSingleton<BundleActiveService>::GetInstance()->InitService();
             isInited = true;
         }
         DelayedSingleton<BundleActiveService>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
