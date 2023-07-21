@@ -32,7 +32,7 @@ namespace DeviceUsageStats {
     constexpr uint8_t EIGHT = 8;
     constexpr uint8_t TWO = 2;
     constexpr uint8_t THREE = 3;
-    bool isInited = false;
+    bool g_isInited = false;
 
     uint32_t GetU32Data(const char* ptr)
     {
@@ -42,9 +42,9 @@ namespace DeviceUsageStats {
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
         DelayedSingleton<FuzztestHelper>::GetInstance()->NativeTokenGet();
-        if (!isInited) {
+        if (!g_isInited) {
             DelayedSingleton<BundleActiveService>::GetInstance()->InitService();
-            isInited = true;
+            g_isInited = true;
         }
         sptr<IAppGroupCallback> appGroupCallback = nullptr;
         DelayedSingleton<BundleActiveService>::GetInstance()->RegisterAppGroupCallBack(appGroupCallback);
