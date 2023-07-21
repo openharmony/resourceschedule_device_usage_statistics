@@ -52,7 +52,7 @@ namespace DeviceUsageStats {
         bool result = false;
         int32_t userId = static_cast<int32_t>(GetU32Data(data));
         std::string inputBundlName(data);
-        DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(result,inputBundlName, userId);
+        DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(result, inputBundlName, userId);
         return true;
     }
 } // namespace DeviceUsageStats
