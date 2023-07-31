@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "bundleactiveonremoterequest_fuzzer.h"
+#include "bundleactiveobserver_fuzzer.h"
 
 #include "accesstoken_kit.h"
 #include "app_mgr_interface.h"
@@ -22,18 +22,17 @@
 #include "system_ability_definition.h"
 #include "iservice_registry.h"
 #include "bundle_active_service.h"
+#include "iapp_group_callback.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
     constexpr uint32_t U32_AT_SIZE = 4;
-    constexpr uint32_t MAX_CODE = 14; // current max code is 14
     constexpr uint8_t TWENTYFOUR = 24;
     constexpr uint8_t SIXTEEN = 16;
     constexpr uint8_t EIGHT = 8;
     constexpr uint8_t TWO = 2;
     constexpr uint8_t THREE = 3;
-    const std::u16string BUNDLE_ACTIVE_TOKEN = u"Resourceschedule.IBundleActiveService";
-    bool isInited = false;
+    bool g_isInited = false;
 
     uint32_t GetU32Data(const char* ptr)
     {
@@ -43,18 +42,17 @@ namespace DeviceUsageStats {
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
         DelayedSingleton<FuzztestHelper>::GetInstance()->NativeTokenGet();
-        uint32_t code = GetU32Data(data);
-        MessageParcel datas;
-        datas.WriteInterfaceToken(BUNDLE_ACTIVE_TOKEN);
-        datas.WriteBuffer(data, size);
-        datas.RewindRead(0);
-        MessageParcel reply;
-        MessageOption option;
-        if (!isInited) {
+        if (!g_isInited) {
             DelayedSingleton<BundleActiveService>::GetInstance()->InitService();
-            isInited = true;
+            g_isInited = true;
         }
-        DelayedSingleton<BundleActiveService>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
+        sptr<IAppGroupCallback> appGroupCallback = nullptr;
+        DelayedSingleton<BundleActiveService>::GetInstance()->RegisterAppGroupCallBack(appGroupCallback);
+        DelayedSingleton<BundleActiveService>::GetInstance()->UnRegisterAppGroupCallBack(appGroupCallback);
+        bool result = false;
+        int32_t userId = static_cast<int32_t>(GetU32Data(data));
+        std::string inputBundlName(data);
+        DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(result, inputBundlName, userId);
         return true;
     }
 } // namespace DeviceUsageStats
