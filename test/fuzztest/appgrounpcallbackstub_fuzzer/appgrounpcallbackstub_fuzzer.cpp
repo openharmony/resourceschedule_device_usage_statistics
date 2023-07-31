@@ -48,7 +48,7 @@ namespace DeviceUsageStats {
         datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        DelayedSingleton<AppGrounpCallbackStub>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
+        DelayedSingleton<AppGroupCallbackStub>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
         return true;
     }
 } // namespace DeviceUsageStats
