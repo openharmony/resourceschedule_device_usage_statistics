@@ -26,6 +26,7 @@
 namespace OHOS {
 namespace DeviceUsageStats {
     napi_value QueryAppGroup(napi_env env, napi_callback_info info);
+    napi_value QueryAppGroupSync(napi_env env, napi_callback_info info);
     napi_value SetAppGroup(napi_env env, napi_callback_info info);
     napi_value RegisterAppGroupCallBack(napi_env env, napi_callback_info info);
     napi_value UnRegisterAppGroupCallBack(napi_env env, napi_callback_info info);

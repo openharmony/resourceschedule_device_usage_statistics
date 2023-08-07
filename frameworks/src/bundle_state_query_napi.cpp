@@ -241,6 +241,55 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
     }
 }
 
+napi_value ParseIsIdleStateSyncParameters(const napi_env &env, const napi_callback_info &info,
+    IsIdleStateParamsInfo &params)
+{
+    size_t argc = IS_IDLE_STATE_PARAMS;
+    napi_value argv[IS_IDLE_STATE_PARAMS] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    NAPI_ASSERT(env, argc == IS_IDLE_STATE_MIN_PARAMS, "Invalid number of parameters");
+    if ((argc != IS_IDLE_STATE_MIN_PARAMS)) {
+        params.errorCode = ERR_PARAMETERS_NUMBER;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
+    }
+
+    // argv[0] : bundleName
+    std::string result = "";
+    napi_valuetype valuetype;
+    NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
+    if ((valuetype != napi_string) && (params.errorCode == ERR_OK)) {
+        BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
+        params.errorCode = ERR_BUNDLE_NAME_TYPE;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
+    }
+
+    params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
+    if (params.bundleName.empty()) {
+        BUNDLE_ACTIVE_LOGE("ParseIsIdleStateParameters failed, bundleName is empty.");
+        params.errorCode = ERR_PARAMETERS_EMPTY;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "bundleName");
+    }
+    return BundleStateCommon::NapiGetNull(env);
+}
+
+napi_value IsIdleStateSync(napi_env env, napi_callback_info info)
+{
+    IsIdleStateParamsInfo params;
+    ParseIsIdleStateSyncParameters(env, info, params);
+    if (params.errorCode != ERR_OK) {
+        return BundleStateCommon::NapiGetNull(env);
+    }
+    bool isIdleState = false;
+    ErrCode errorCode = BundleActiveClient::GetInstance().IsBundleIdle(
+        isIdleState, params.bundleName);
+    if (errorCode == ERR_OK) {
+        napi_value napiValue = nullptr;
+        NAPI_CALL(env, napi_get_boolean(env, isIdleState, &napiValue));
+        return napiValue;
+    }
+    return BundleStateCommon::NapiGetNull(env);
+}
+
 napi_value ParseQueryCurrentBundleEventsParameters(const napi_env &env, const napi_callback_info &info,
     StatesParamsInfo &params, AsyncCallbackInfoStates*& asyncCallbackInfo)
 {
