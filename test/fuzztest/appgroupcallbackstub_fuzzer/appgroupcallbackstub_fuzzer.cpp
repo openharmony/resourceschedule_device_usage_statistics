@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "appgrounpcallbackstub_fuzzer.h"
+#include "appgroupcallbackstub_fuzzer.h"
 
 #include "accesstoken_kit.h"
 #include "app_mgr_interface.h"
@@ -32,7 +32,7 @@ namespace DeviceUsageStats {
     constexpr uint8_t EIGHT = 8;
     constexpr uint8_t TWO = 2;
     constexpr uint8_t THREE = 3;
-    const std::u16string APP_GOUNP_ACTIVE_TOKEN = u"Resourceschedule.IAppGrounpCallback";
+    const std::u16string APP_GOUNP_ACTIVE_TOKEN = u"Resourceschedule.IAppGroupCallback";
     uint32_t GetU32Data(const char* ptr)
     {
         return (ptr[0] << TWENTYFOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
