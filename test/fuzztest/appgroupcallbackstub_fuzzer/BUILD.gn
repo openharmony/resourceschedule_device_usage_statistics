@@ -31,10 +31,10 @@ config("module_private_config") {
   ]
 }
 
-ohos_fuzztest("AppGrounpOnRemoteRequestFuzzTest") {
+ohos_fuzztest("AppgroupcallbackstubFuzzTest") {
   module_out_path = module_output_path
   fuzz_config_file =
-      "${usage_statistics_path}/test/fuzztest/appgrounpcallbackstub_fuzzer"
+      "${usage_statistics_path}/test/fuzztest/appgroupcallbackstub_fuzzer"
   configs = [ ":module_private_config" ]
   cflags = [
     "-g",
@@ -44,7 +44,7 @@ ohos_fuzztest("AppGrounpOnRemoteRequestFuzzTest") {
   ]
   sources = [
     "../common/fuzztest_helper.cpp",
-    "appgrounpcallbackstub_fuzzer.cpp",
+    "appgroupcallbackstub_fuzzer.cpp",
   ]
 
   public_deps = [ "${usage_statistics_path}:usagestatservice_static" ]
@@ -87,7 +87,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":AppGrounpOnRemoteRequestFuzzTest",
+    ":AppgroupcallbackstubFuzzTest",
   ]
 }
 ###############################################################################

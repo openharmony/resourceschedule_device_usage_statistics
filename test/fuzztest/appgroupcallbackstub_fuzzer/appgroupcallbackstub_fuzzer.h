@@ -16,7 +16,7 @@
 #ifndef TEST_FUZZTEST_APPGOUNPCALLBACKSTUB_FUZZER_H
 #define TEST_FUZZTEST_APPGOUNPCALLBACKSTUB_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "appgrounpcallbackstub_fuzzer"
+#define FUZZ_PROJECT_NAME "appgroupcallbackstub_fuzzer"
 
 #include "fuzztest_helper.h"
 
