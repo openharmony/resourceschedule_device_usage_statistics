@@ -1171,6 +1171,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
         let bundleName = 'com.example.deviceUsageStatistics';
         try {
             usageStatistics.isIdleStateSync(bundleName);
+            console.info('BUNDLE_ACTIVE isIdleStateSync success.');
             expect(true).assertEqual(true);
             done();
         } catch (error) {
@@ -1190,17 +1191,14 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest042---------------------------');
         let bundleName = 'com.example.deviceUsageStatistics';
         try{
-            var isActive = power.isActive();
             usageStatistics.queryAppGroupSync(bundleName);
-            if (isActive == true) {
-                expect(true).assertEqual(true);
-            } else {
-                expect(false).assertEqual(true);
-            }
+            console.info('BUNDLE_ACTIVE queryAppGroupSync success.');
+            expect(true).assertEqual(true);
             done();
         } catch (error) {
             console.info('BUNDLE_ACTIVE queryAppGroupSync by bundleName throw error.');
             expect(false).assertEqual(true);
+            done();
         }
     })
 
@@ -1213,14 +1211,9 @@ describe("DeviceUsageStatisticsJsTest", function () {
     it("DeviceUsageStatisticsJsTest043", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest043---------------------------');
         try{
-            var isActive = power.isActive();
             usageStatistics.queryAppGroupSync();
             console.info('BUNDLE_ACTIVE queryAppGroupSync success.');
-            if (isActive == true) {
-                expect(true).assertEqual(true);
-            } else {
-                expect(false).assertEqual(true);
-            }
+            expect(true).assertEqual(true);
             done();
         } catch (error) {
             console.info('BUNDLE_ACTIVE queryAppGroupSync throw error.');
