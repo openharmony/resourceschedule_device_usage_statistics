@@ -35,6 +35,7 @@ const uint32_t REGISTER_GROUP_CALLBACK_PARAMS = 2;
 const uint32_t PRIORITY_GROUP_MIN_PARAMS = 0;
 const uint32_t PRIORITY_GROUP_MIDDLE_PARAMS = 1;
 const uint32_t PRIORITY_GROUP_PARAMS = 2;
+const int32_t PRIORITY_GROUP_DEFAULT = -1;
 const uint32_t APP_USAGE_MIN_PARAMS_BUNDLE_GROUP = 2;
 const uint32_t APP_USAGE_PARAMS_BUNDLE_GROUP = 3;
 const uint32_t SECOND_ARG = 2;
@@ -143,6 +144,46 @@ napi_value QueryAppGroup(napi_env env, napi_callback_info info)
         callbackPtr.release();
         return promise;
     }
+}
+
+napi_value ParseQueryAppGroupSyncParameters(const napi_env &env, const napi_callback_info &info,
+    QueryAppGroupParamsInfo &params)
+{
+    size_t argc = PRIORITY_GROUP_PARAMS;
+    napi_value argv[PRIORITY_GROUP_PARAMS] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if ((argc != PRIORITY_GROUP_MIN_PARAMS) && (argc != PRIORITY_GROUP_MIDDLE_PARAMS)) {
+        params.errorCode = ERR_PARAMETERS_NUMBER;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
+    }
+    std::string result = "";
+    params.bundleName = "";
+    if (argc == PRIORITY_GROUP_MIDDLE_PARAMS) {
+        // argv[0] : bundleName
+        params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
+        if (params.bundleName.empty()) {
+            BUNDLE_ACTIVE_LOGE("ParseQueryAppGroupParameters failed, bundleName is empty.");
+            params.errorCode = ERR_PARAMETERS_EMPTY;
+            return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "bundleName");
+        }
+    }
+    return BundleStateCommon::NapiGetNull(env);
+}
+
+napi_value QueryAppGroupSync(napi_env env, napi_callback_info info)
+{
+    BUNDLE_ACTIVE_LOGI("QueryAppGroup");
+    QueryAppGroupParamsInfo params;
+    ParseQueryAppGroupSyncParameters(env, info, params);
+    int32_t priorityGroup = PRIORITY_GROUP_DEFAULT;
+    ErrCode errorCode = BundleActiveClient::GetInstance().QueryAppGroup(
+        priorityGroup, params.bundleName);
+    if (errorCode == ERR_OK) {
+        napi_value napiValue = nullptr;
+        NAPI_CALL(env, napi_create_int32(env, priorityGroup, &napiValue));
+        return napiValue;
+    }
+    return BundleStateCommon::GetErrorValue(env, errorCode);
 }
 
 napi_value ParseSetAppGroupParameters(const napi_env &env, const napi_callback_info &info,

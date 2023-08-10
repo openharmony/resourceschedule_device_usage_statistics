@@ -1159,5 +1159,67 @@ describe("DeviceUsageStatisticsJsTest", function () {
             done();
         }
     })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest041
+     * @tc.desc: test isIdleStateSync.
+     * @tc.type: FUNC
+     * @tc.require: SR000GGTN7 AR000GH89H AR000GH89I AR000GH899
+     */
+    it("DeviceUsageStatisticsJsTest041", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest041---------------------------');
+        let bundleName = 'com.example.deviceUsageStatistics';
+        try {
+            usageStatistics.isIdleStateSync(bundleName);
+            console.info('BUNDLE_ACTIVE isIdleStateSync success.');
+            expect(true).assertEqual(true);
+            done();
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE isIdleStateSync by bundleName throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest042
+     * @tc.desc: test queryAppGroupSync.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest042", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest042---------------------------');
+        let bundleName = 'com.example.deviceUsageStatistics';
+        try{
+            usageStatistics.queryAppGroupSync(bundleName);
+            console.info('BUNDLE_ACTIVE queryAppGroupSync success.');
+            expect(true).assertEqual(true);
+            done();
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryAppGroupSync by bundleName throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
+
+    /*
+     * @tc.name: DeviceUsageStatisticsJsTest043
+     * @tc.desc: test queryAppGroupSync.
+     * @tc.type: FUNC
+     * @tc.require: issueI5V2T4
+     */
+    it("DeviceUsageStatisticsJsTest043", 0, async function (done) {
+        console.info('----------------------DeviceUsageStatisticsJsTest043---------------------------');
+        try{
+            usageStatistics.queryAppGroupSync();
+            console.info('BUNDLE_ACTIVE queryAppGroupSync success.');
+            expect(true).assertEqual(true);
+            done();
+        } catch (error) {
+            console.info('BUNDLE_ACTIVE queryAppGroupSync throw error.');
+            expect(false).assertEqual(true);
+            done();
+        }
+    })
 })
 

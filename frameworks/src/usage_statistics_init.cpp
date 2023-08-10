@@ -38,6 +38,8 @@ static napi_value UsageStatisticsInit(napi_env env, napi_value exports)
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_FUNCTION("isIdleState", IsIdleState),
         DECLARE_NAPI_FUNCTION("queryAppGroup", QueryAppGroup),
+        DECLARE_NAPI_FUNCTION("isIdleStateSync", IsIdleStateSync),
+        DECLARE_NAPI_FUNCTION("queryAppGroupSync", QueryAppGroupSync),
         DECLARE_NAPI_FUNCTION("queryCurrentBundleEvents", QueryCurrentBundleEvents),
         DECLARE_NAPI_FUNCTION("queryBundleEvents", QueryBundleEvents),
         DECLARE_NAPI_FUNCTION("queryBundleStatsInfoByInterval", QueryBundleStatsInfoByInterval),
