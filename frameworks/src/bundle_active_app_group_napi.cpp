@@ -175,9 +175,6 @@ napi_value QueryAppGroupSync(napi_env env, napi_callback_info info)
     BUNDLE_ACTIVE_LOGI("QueryAppGroup");
     QueryAppGroupParamsInfo params;
     ParseQueryAppGroupSyncParameters(env, info, params);
-    if (params.errorCode != ERR_OK) {
-        return BundleStateCommon::NapiGetNull(env);
-    }
     int32_t priorityGroup = PRIORITY_GROUP_DEFAULT;
     ErrCode errorCode = BundleActiveClient::GetInstance().QueryAppGroup(
         priorityGroup, params.bundleName);
@@ -186,7 +183,7 @@ napi_value QueryAppGroupSync(napi_env env, napi_callback_info info)
         NAPI_CALL(env, napi_create_int32(env, priorityGroup, &napiValue));
         return napiValue;
     }
-    return BundleStateCommon::NapiGetNull(env);
+    return BundleStateCommon::GetErrorValue(env, errorCode);
 }
 
 napi_value ParseSetAppGroupParameters(const napi_env &env, const napi_callback_info &info,

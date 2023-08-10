@@ -260,14 +260,14 @@ napi_value ParseIsIdleStateSyncParameters(const napi_env &env, const napi_callba
     if ((valuetype != napi_string) && (params.errorCode == ERR_OK)) {
         BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
         params.errorCode = ERR_BUNDLE_NAME_TYPE;
-        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
+        return BundleStateCommon::HandleParamErr(env, ERR_BUNDLE_NAME_TYPE, "");
     }
 
     params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[0], result);
     if (params.bundleName.empty()) {
         BUNDLE_ACTIVE_LOGE("ParseIsIdleStateParameters failed, bundleName is empty.");
         params.errorCode = ERR_PARAMETERS_EMPTY;
-        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "bundleName");
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "bundleName");
     }
     return BundleStateCommon::NapiGetNull(env);
 }
@@ -276,9 +276,6 @@ napi_value IsIdleStateSync(napi_env env, napi_callback_info info)
 {
     IsIdleStateParamsInfo params;
     ParseIsIdleStateSyncParameters(env, info, params);
-    if (params.errorCode != ERR_OK) {
-        return BundleStateCommon::NapiGetNull(env);
-    }
     bool isIdleState = false;
     ErrCode errorCode = BundleActiveClient::GetInstance().IsBundleIdle(
         isIdleState, params.bundleName);
@@ -287,7 +284,7 @@ napi_value IsIdleStateSync(napi_env env, napi_callback_info info)
         NAPI_CALL(env, napi_get_boolean(env, isIdleState, &napiValue));
         return napiValue;
     }
-    return BundleStateCommon::NapiGetNull(env);
+    return BundleStateCommon::GetErrorValue(env, errorCode);
 }
 
 napi_value ParseQueryCurrentBundleEventsParameters(const napi_env &env, const napi_callback_info &info,
