@@ -100,7 +100,7 @@ private:
         int64_t endTime, std::map<std::string, BundleActiveEventStats>& notificationEventStats);
     void FlushDataInMem(std::set<std::string> &continueBundles,
         std::map<std::string, std::map<std::string, int>> &continueAbilities,
-        std::map<std::string, std::map<std::string, int>> &continueServices)
+        std::map<std::string, std::map<std::string, int>> &continueServices);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

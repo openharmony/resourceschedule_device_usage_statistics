@@ -838,7 +838,8 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         return nullptr;
     }
     int64_t currentPackageTime = sortedTableArray_.at(databaseType).at(tableNumber - 1);
-    shared_ptr<BundleActivePeriodStats> intervalStats = make_shared<BundleActivePeriodStats>(userId, currentPackageTime);
+    shared_ptr<BundleActivePeriodStats> intervalStats =
+        make_shared<BundleActivePeriodStats>(userId, currentPackageTime);
     string packageTableName = PACKAGE_LOG_TABLE + to_string(currentPackageTime);
     string queryPackageSql = "select * from " + packageTableName + " where userId = ?";
     vector<string> queryCondition;

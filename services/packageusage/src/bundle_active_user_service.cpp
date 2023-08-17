@@ -284,11 +284,14 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
     std::set<std::string> continueBundles;
     std::map<std::string, std::map<std::string, int>> continueAbilities;
     std::map<std::string, std::map<std::string, int>> continueServices;
-    FlushDataInMem(continueBundles, continueAbilities, continueServices);// update stat in memory.
+    // update stat in memory.
+    FlushDataInMem(continueBundles, continueAbilities, continueServices);
     RestoreStats(true);
     database_.RemoveOldData(timeStamp);
-    LoadActiveStats(timeStamp, false, false); // create new stats
-    for (std::string continueBundleName : continueBundles) { // update timestamps of events in memory
+    // create new stats
+    LoadActiveStats(timeStamp, false, false);
+    // update timestamps of events in memory
+    for (std::string continueBundleName : continueBundles) {
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
             itInterval != currentStats_.end(); ++itInterval) {
