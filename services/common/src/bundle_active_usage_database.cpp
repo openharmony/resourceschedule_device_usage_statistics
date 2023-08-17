@@ -1007,18 +1007,18 @@ int32_t BundleActiveUsageDatabase::RenameTableName(uint32_t databaseType, int64_
         return BUNDLE_ACTIVE_FAIL;
     }
     if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
-        if (ExecuteRenameTableName(PACKAGE_LOG_TABLE, tableOldTime, tableNewTime) != ERR_OK) {
+        if (ExecuteRenameTableName(PACKAGE_LOG_TABLE, tableOldTime, tableNewTime, rdbStore) != ERR_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == EVENT_DATABASE_INDEX) {
-        if (ExecuteRenameTableName(EVENT_LOG_TABLE, tableOldTime, tableNewTime) != ERR_OK) {
+        if (ExecuteRenameTableName(EVENT_LOG_TABLE, tableOldTime, tableNewTime, rdbStore) != ERR_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == APP_GROUP_DATABASE_INDEX) {
-        if (ExecuteRenameTableName(MODULE_RECORD_LOG_TABLE, tableOldTime, tableNewTime) != ERR_OK) {
+        if (ExecuteRenameTableName(MODULE_RECORD_LOG_TABLE, tableOldTime, tableNewTime, rdbStore) != ERR_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
-        if (ExecuteRenameTableName(FORM_RECORD_LOG_TABLE, tableOldTime, tableNewTime) != ERR_OK) {
+        if (ExecuteRenameTableName(FORM_RECORD_LOG_TABLE, tableOldTime, tableNewTime, rdbStore) != ERR_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
     }
