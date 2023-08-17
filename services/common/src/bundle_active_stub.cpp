@@ -86,7 +86,7 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
     return ERR_OK;
 }
 
-ErrCode BundleActiveStub::HandleReportEvent(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option)
+ErrCode BundleActiveStub::HandleReportEvent(MessageParcel& data, MessageParcel& reply)
 {
     int32_t userId = data.ReadInt32();
     std::shared_ptr<BundleActiveEvent> tmpEvent = BundleActiveEvent::UnMarshalling(data);
