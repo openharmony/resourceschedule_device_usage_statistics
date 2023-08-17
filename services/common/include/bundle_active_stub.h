@@ -34,6 +34,22 @@ public:
     */
     int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
         MessageOption &option) override;
+private:
+    static const std::map<uint32_t,
+        std::function<ErrCode(BundleActiveStub *, MessageParcel &, MessageParcel &)>> interfaces_;
+    ErrCode HandleReportEvent(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option);
+    ErrCode HandleIsBundleIdle(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleQueryBundleStatsInfoByInterval(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleQueryBundleEvents(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleQueryBundleStatsInfos(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleSetAppGroup(MessageParcel &data, MessageParcel &reply);
+    ErrCode HandleQueryCurrentBundleEvents(MessageParcel &data, MessageParcel &reply);
+    ErrCode HandleQueryModuleUsageRecords(MessageParcel &data, MessageParcel &reply);
+    ErrCode HandleQueryAppGroup(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleRegisterAppGroupCallBack(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleUnRegisterAppGroupCallBack(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleQueryDeviceEventStats(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleQueryNotificationEventStats(MessageParcel& data, MessageParcel& reply);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

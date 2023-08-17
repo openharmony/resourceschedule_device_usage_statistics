@@ -50,6 +50,13 @@ public:
     * function: BundleActivePeriodStats,default constructor.
     */
     BundleActivePeriodStats();
+
+    /*
+    * function: constructor, provided userId, beginTime.
+    * parameters: userid, beginTime.
+    */
+    BundleActivePeriodStats(int32_t userId, int64_t beginTime);
+
     /*
     * function: GetOrCreateUsageStats, get or create bundle usage statistics object of a bundle.
     * parameters: bundleName

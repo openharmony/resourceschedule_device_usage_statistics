@@ -29,6 +29,17 @@ BundleActivePeriodStats::BundleActivePeriodStats()
     packetNamesCache_.clear();
 }
 
+BundleActivePeriodStats::BundleActivePeriodStats(int32_t userId, int64_t beginTime)
+{
+    userId_ = userId;
+    beginTime_ = beginTime;
+    endTime_ = 0;
+    lastTimeSaved_ = 0;
+    bundleStats_.clear();
+    events_.events_.clear();
+    packetNamesCache_.clear();
+}
+
 std::shared_ptr<BundleActivePackageStats> BundleActivePeriodStats::GetOrCreateUsageStats(
     const std::string& bundleName)
 {

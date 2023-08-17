@@ -33,6 +33,7 @@ namespace {
     constexpr int32_t EVENT_MAX_SIZE = 100000;
     constexpr int32_t PACKAGE_MAX_SIZE = 1000;
 }
+
 int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
     MessageOption &option)
 {
@@ -41,217 +42,281 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
     }
     switch (code) {
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::REPORT_EVENT): {
-            int32_t userId = data.ReadInt32();
-            std::shared_ptr<BundleActiveEvent> tmpEvent = BundleActiveEvent::UnMarshalling(data);
-            if (!tmpEvent) {
-                return -1;
-            }
-            int32_t result = ReportEvent(*tmpEvent, userId);
-            return reply.WriteInt32(result);
+            return HandleReportEvent(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::IS_BUNDLE_IDLE): {
-            bool isBundleIdle = false;
-            std::string bundleName = data.ReadString();
-            int32_t userId = data.ReadInt32();
-            ErrCode errCode = IsBundleIdle(isBundleIdle, bundleName, userId);
-            reply.WriteInt32(isBundleIdle);
-            return reply.WriteInt32(errCode);
+            return HandleIsBundleIdle(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_STATS_INFO_BY_INTERVAL): {
-            std::vector<BundleActivePackageStats> result;
-            int32_t intervalType = data.ReadInt32();
-            BUNDLE_ACTIVE_LOGI("OnRemoteRequest intervaltype is %{public}d", intervalType);
-            int64_t beginTime = data.ReadInt64();
-            int64_t endTime = data.ReadInt64();
-            int32_t userId = data.ReadInt32();
-            ErrCode errCode = QueryBundleStatsInfoByInterval(result, intervalType, beginTime, endTime, userId);
-            int32_t size = static_cast<int32_t>(result.size());
-            if (size > PACKAGE_MAX_SIZE) {
-                errCode = ERR_QUERY_RESULT_TOO_LARGE;
-                reply.WriteInt32(errCode);
-                return -1;
-            }
-            BUNDLE_ACTIVE_LOGI("OnRemoteRequest result size is %{public}d", size);
-            reply.WriteInt32(errCode);
-            reply.WriteInt32(size);
-            for (int32_t i = 0; i < size; i++) {
-                bool tmp = result[i].Marshalling(reply);
-                if (tmp == false) {
-                    return 1;
-                }
-            }
-            return size == 0;
+            return HandleQueryBundleStatsInfoByInterval(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_EVENTS): {
-            std::vector<BundleActiveEvent> result;
-            int64_t beginTime = data.ReadInt64();
-            int64_t endTime = data.ReadInt64();
-            int32_t userId = data.ReadInt32();
-            ErrCode errCode = QueryBundleEvents(result, beginTime, endTime, userId);
-            int32_t size = static_cast<int32_t>(result.size());
-            if (size > EVENT_MAX_SIZE) {
-                errCode = ERR_QUERY_RESULT_TOO_LARGE;
-                reply.WriteInt32(errCode);
-                return -1;
-            }
-            reply.WriteInt32(errCode);
-            reply.WriteInt32(size);
-            for (int32_t i = 0; i < size; i++) {
-                bool tmp = result[i].Marshalling(reply);
-                if (tmp == false) {
-                    return 1;
-                }
-            }
-            return size == 0;
+            return HandleQueryBundleEvents(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::SET_APP_GROUP): {
-            std::string bundleName = data.ReadString();
-            int32_t newGroup = data.ReadInt32();
-            int32_t userId = data.ReadInt32();
-            ErrCode errCode = SetAppGroup(bundleName, newGroup, userId);
-            return reply.WriteInt32(errCode);
+            return HandleSetAppGroup(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_STATS_INFOS): {
-            std::vector<BundleActivePackageStats> result;
-            int32_t intervalType = data.ReadInt32();
-            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_BUNDLE_STATS_INFOS intervaltype is %{public}d", intervalType);
-            int64_t beginTime = data.ReadInt64();
-            int64_t endTime = data.ReadInt64();
-            ErrCode errCode = QueryBundleStatsInfos(result, intervalType, beginTime, endTime);
-            int32_t size = static_cast<int32_t>(result.size());
-            if (size > PACKAGE_MAX_SIZE) {
-                errCode = ERR_QUERY_RESULT_TOO_LARGE;
-                reply.WriteInt32(errCode);
-                return -1;
-            }
-            BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_BUNDLE_STATS_INFOS result size is %{public}d", size);
-            reply.WriteInt32(errCode);
-            reply.WriteInt32(size);
-            for (int32_t i = 0; i < size; i++) {
-                bool tmp = result[i].Marshalling(reply);
-                if (tmp == false) {
-                    return 1;
-                }
-            }
-            return size == 0;
+            return HandleQueryBundleStatsInfos(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_CURRENT_BUNDLE_EVENTS): {
-            std::vector<BundleActiveEvent> result;
-            int64_t beginTime = data.ReadInt64();
-            int64_t endTime = data.ReadInt64();
-            ErrCode errCode = QueryCurrentBundleEvents(result, beginTime, endTime);
-            int32_t size = static_cast<int32_t>(result.size());
-            if (size > EVENT_MAX_SIZE) {
-                errCode = ERR_QUERY_RESULT_TOO_LARGE;
-                reply.WriteInt32(errCode);
-                return -1;
-            }
-            reply.WriteInt32(errCode);
-            reply.WriteInt32(size);
-            for (int32_t i = 0; i < size; i++) {
-                bool tmp = result[i].Marshalling(reply);
-                if (tmp == false) {
-                    return 1;
-                }
-            }
-            return size == 0;
+            return HandleQueryCurrentBundleEvents(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_APP_GROUP): {
-            int32_t appGroup = -1;
-            std::string bundleName = data.ReadString();
-            int32_t userId = data.ReadInt32();
-            ErrCode errCode = QueryAppGroup(appGroup, bundleName, userId);
-            reply.WriteInt32(appGroup);
-            return reply.WriteInt32(errCode);
+            return HandleQueryAppGroup(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_MODULE_USAGE_RECORDS): {
-            std::vector<BundleActiveModuleRecord> results;
-            int32_t maxNum = data.ReadInt32();
-            int32_t userId = data.ReadInt32();
-            ErrCode errCode = QueryModuleUsageRecords(maxNum, results, userId);
-            int32_t size = static_cast<int32_t>(results.size());
-            if (size > PACKAGE_MAX_SIZE) {
-                errCode = ERR_QUERY_RESULT_TOO_LARGE;
-                reply.WriteInt32(errCode);
-                return -1;
-            }
-            reply.WriteInt32(errCode);
-            reply.WriteInt32(size);
-            for (int32_t i = 0; i < size; i++) {
-                bool tmp = results[i].Marshalling(reply);
-                if (tmp == false) {
-                    return 1;
-                }
-            }
-            return size == 0;
+            return HandleQueryModuleUsageRecords(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::REGISTER_APP_GROUP_CALLBACK): {
-            auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
-            if (!observer) {
-                BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer is null, return");
-                return false;
-            }
-            BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack observer is ok");
-            ErrCode errCode = RegisterAppGroupCallBack(observer);
-            return reply.WriteInt32(errCode);
+            return HandleRegisterAppGroupCallBack(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::UNREGISTER_APP_GROUP_CALLBACK): {
-            auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
-            if (!observer) {
-                BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer is null, return");
-                return false;
-            }
-            ErrCode errCode = UnRegisterAppGroupCallBack(observer);
-            return reply.WriteInt32(errCode);
+            return HandleUnRegisterAppGroupCallBack(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_DEVICE_EVENT_STATES): {
-            std::vector<BundleActiveEventStats> result;
-            int64_t beginTime = data.ReadInt64();
-            int64_t endTime = data.ReadInt64();
-            int32_t userId = data.ReadInt32();
-            ErrCode errCode = QueryDeviceEventStats(beginTime, endTime, result, userId);
-            int32_t size = static_cast<int32_t>(result.size());
-            if (size > EVENT_MAX_SIZE) {
-                errCode = ERR_QUERY_RESULT_TOO_LARGE;
-                reply.WriteInt32(errCode);
-                return -1;
-            }
-            reply.WriteInt32(errCode);
-            reply.WriteInt32(size);
-            for (int32_t i = 0; i < size; i++) {
-                bool tmp = result[i].Marshalling(reply);
-                if (!tmp) {
-                    return 1;
-                }
-            }
-            return size == 0;
+            return HandleQueryDeviceEventStats(data, reply);
         }
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_NOTIFICATION_NUMBER): {
-            std::vector<BundleActiveEventStats> result;
-            int64_t beginTime = data.ReadInt64();
-            int64_t endTime = data.ReadInt64();
-            int32_t userId = data.ReadInt32();
-            ErrCode errCode = QueryNotificationEventStats(beginTime, endTime, result, userId);
-            int32_t size = static_cast<int32_t>(result.size());
-            if (size > PACKAGE_MAX_SIZE) {
-                errCode = ERR_QUERY_RESULT_TOO_LARGE;
-                reply.WriteInt32(errCode);
-                return -1;
-            }
-            reply.WriteInt32(errCode);
-            reply.WriteInt32(size);
-            for (int32_t i = 0; i < size; i++) {
-                bool tmp = result[i].Marshalling(reply);
-                if (!tmp) {
-                    return 1;
-                }
-            }
-            return size == 0;
+            return HandleQueryNotificationEventStats(data, reply);
         }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
     return ERR_OK;
+}
+
+ErrCode BundleActiveStub::HandleReportEvent(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option)
+{
+    int32_t userId = data.ReadInt32();
+    std::shared_ptr<BundleActiveEvent> tmpEvent = BundleActiveEvent::UnMarshalling(data);
+    if (!tmpEvent) {
+        return -1;
+    }
+    int32_t result = ReportEvent(*tmpEvent, userId);
+    return reply.WriteInt32(result);
+}
+
+ErrCode BundleActiveStub::HandleIsBundleIdle(MessageParcel& data, MessageParcel& reply)
+{
+    bool isBundleIdle = false;
+    std::string bundleName = data.ReadString();
+    int32_t userId = data.ReadInt32();
+    ErrCode errCode = IsBundleIdle(isBundleIdle, bundleName, userId);
+    reply.WriteInt32(isBundleIdle);
+    return reply.WriteInt32(errCode);
+}
+
+ErrCode BundleActiveStub::HandleQueryBundleStatsInfoByInterval(MessageParcel& data, MessageParcel& reply)
+{
+    std::vector<BundleActivePackageStats> result;
+    int32_t intervalType = data.ReadInt32();
+    BUNDLE_ACTIVE_LOGI("OnRemoteRequest intervaltype is %{public}d", intervalType);
+    int64_t beginTime = data.ReadInt64();
+    int64_t endTime = data.ReadInt64();
+    int32_t userId = data.ReadInt32();
+    ErrCode errCode = QueryBundleStatsInfoByInterval(result, intervalType, beginTime, endTime, userId);
+    int32_t size = static_cast<int32_t>(result.size());
+    if (size > PACKAGE_MAX_SIZE) {
+        errCode = ERR_QUERY_RESULT_TOO_LARGE;
+        reply.WriteInt32(errCode);
+        return -1;
+    }
+    BUNDLE_ACTIVE_LOGI("OnRemoteRequest result size is %{public}d", size);
+    reply.WriteInt32(errCode);
+    reply.WriteInt32(size);
+    for (int32_t i = 0; i < size; i++) {
+        bool tmp = result[i].Marshalling(reply);
+        if (tmp == false) {
+            return 1;
+        }
+    }
+    return size == 0;
+}
+
+ErrCode BundleActiveStub::HandleQueryBundleEvents(MessageParcel& data, MessageParcel& reply)
+{
+    std::vector<BundleActiveEvent> result;
+    int64_t beginTime = data.ReadInt64();
+    int64_t endTime = data.ReadInt64();
+    int32_t userId = data.ReadInt32();
+    ErrCode errCode = QueryBundleEvents(result, beginTime, endTime, userId);
+    int32_t size = static_cast<int32_t>(result.size());
+    if (size > EVENT_MAX_SIZE) {
+        errCode = ERR_QUERY_RESULT_TOO_LARGE;
+        reply.WriteInt32(errCode);
+        return -1;
+    }
+    reply.WriteInt32(errCode);
+    reply.WriteInt32(size);
+    for (int32_t i = 0; i < size; i++) {
+        bool tmp = result[i].Marshalling(reply);
+        if (tmp == false) {
+            return 1;
+        }
+    }
+    return size == 0;
+}
+
+ErrCode BundleActiveStub::HandleQueryBundleStatsInfos(MessageParcel& data, MessageParcel& reply)
+{
+    std::vector<BundleActivePackageStats> result;
+    int32_t intervalType = data.ReadInt32();
+    BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_BUNDLE_STATS_INFOS intervaltype is %{public}d", intervalType);
+    int64_t beginTime = data.ReadInt64();
+    int64_t endTime = data.ReadInt64();
+    ErrCode errCode = QueryBundleStatsInfos(result, intervalType, beginTime, endTime);
+    int32_t size = static_cast<int32_t>(result.size());
+    if (size > PACKAGE_MAX_SIZE) {
+        errCode = ERR_QUERY_RESULT_TOO_LARGE;
+        reply.WriteInt32(errCode);
+        return -1;
+    }
+    BUNDLE_ACTIVE_LOGI("OnRemoteRequest QUERY_BUNDLE_STATS_INFOS result size is %{public}d", size);
+    reply.WriteInt32(errCode);
+    reply.WriteInt32(size);
+    for (int32_t i = 0; i < size; i++) {
+        bool tmp = result[i].Marshalling(reply);
+        if (tmp == false) {
+            return 1;
+        }
+    }
+    return size == 0;
+}
+ErrCode BundleActiveStub::HandleSetAppGroup(MessageParcel &data, MessageParcel &reply)
+{
+    std::string bundleName = data.ReadString();
+    int32_t newGroup = data.ReadInt32();
+    int32_t userId = data.ReadInt32();
+    ErrCode errCode = SetAppGroup(bundleName, newGroup, userId);
+    return reply.WriteInt32(errCode);
+}
+
+ErrCode BundleActiveStub::HandleQueryCurrentBundleEvents(MessageParcel &data, MessageParcel &reply)
+{
+    std::vector<BundleActiveEvent> result;
+    int64_t beginTime = data.ReadInt64();
+    int64_t endTime = data.ReadInt64();
+    ErrCode errCode = QueryCurrentBundleEvents(result, beginTime, endTime);
+    int32_t size = static_cast<int32_t>(result.size());
+    if (size > EVENT_MAX_SIZE) {
+        errCode = ERR_QUERY_RESULT_TOO_LARGE;
+        reply.WriteInt32(errCode);
+        return -1;
+    }
+    reply.WriteInt32(errCode);
+    reply.WriteInt32(size);
+    for (int32_t i = 0; i < size; i++) {
+        bool tmp = result[i].Marshalling(reply);
+        if (tmp == false) {
+            return 1;
+        }
+    }
+    return size == 0;
+}
+
+ErrCode BundleActiveStub::HandleQueryModuleUsageRecords(MessageParcel &data, MessageParcel &reply)
+{
+    std::vector<BundleActiveModuleRecord> results;
+    int32_t maxNum = data.ReadInt32();
+    int32_t userId = data.ReadInt32();
+    ErrCode errCode = QueryModuleUsageRecords(maxNum, results, userId);
+    int32_t size = static_cast<int32_t>(results.size());
+    if (size > PACKAGE_MAX_SIZE) {
+        errCode = ERR_QUERY_RESULT_TOO_LARGE;
+        reply.WriteInt32(errCode);
+        return -1;
+    }
+    reply.WriteInt32(errCode);
+    reply.WriteInt32(size);
+    for (int32_t i = 0; i < size; i++) {
+        bool tmp = results[i].Marshalling(reply);
+        if (tmp == false) {
+            return 1;
+        }
+    }
+    return size == 0;
+}
+
+ErrCode BundleActiveStub::HandleQueryAppGroup(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t appGroup = -1;
+    std::string bundleName = data.ReadString();
+    int32_t userId = data.ReadInt32();
+    ErrCode errCode = QueryAppGroup(appGroup, bundleName, userId);
+    reply.WriteInt32(appGroup);
+    return reply.WriteInt32(errCode);
+}
+
+ErrCode BundleActiveStub::HandleRegisterAppGroupCallBack(MessageParcel& data, MessageParcel& reply)
+{
+    auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
+    if (!observer) {
+        BUNDLE_ACTIVE_LOGE("RegisterAppGroupCallBack observer is null, return");
+        return false;
+    }
+    BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack observer is ok");
+    ErrCode errCode = RegisterAppGroupCallBack(observer);
+    return reply.WriteInt32(errCode);
+}
+
+ErrCode BundleActiveStub::HandleUnRegisterAppGroupCallBack(MessageParcel& data, MessageParcel& reply)
+{
+    auto observer = iface_cast<IAppGroupCallback>(data.ReadRemoteObject());
+    if (!observer) {
+        BUNDLE_ACTIVE_LOGE("UnRegisterAppGroupCallBack observer is null, return");
+        return false;
+    }
+    ErrCode errCode = UnRegisterAppGroupCallBack(observer);
+    return reply.WriteInt32(errCode);
+}
+
+ErrCode BundleActiveStub::HandleQueryDeviceEventStats(MessageParcel& data, MessageParcel& reply)
+{
+    std::vector<BundleActiveEventStats> result;
+    int64_t beginTime = data.ReadInt64();
+    int64_t endTime = data.ReadInt64();
+    int32_t userId = data.ReadInt32();
+    ErrCode errCode = QueryDeviceEventStats(beginTime, endTime, result, userId);
+    int32_t size = static_cast<int32_t>(result.size());
+    if (size > EVENT_MAX_SIZE) {
+        errCode = ERR_QUERY_RESULT_TOO_LARGE;
+        reply.WriteInt32(errCode);
+        return -1;
+    }
+    reply.WriteInt32(errCode);
+    reply.WriteInt32(size);
+    for (int32_t i = 0; i < size; i++) {
+        bool tmp = result[i].Marshalling(reply);
+        if (!tmp) {
+            return 1;
+        }
+    }
+    return size == 0;
+}
+
+ErrCode BundleActiveStub::HandleQueryNotificationEventStats(MessageParcel& data, MessageParcel& reply)
+{
+    std::vector<BundleActiveEventStats> result;
+    int64_t beginTime = data.ReadInt64();
+    int64_t endTime = data.ReadInt64();
+    int32_t userId = data.ReadInt32();
+    ErrCode errCode = QueryNotificationEventStats(beginTime, endTime, result, userId);
+    int32_t size = static_cast<int32_t>(result.size());
+    if (size > PACKAGE_MAX_SIZE) {
+        errCode = ERR_QUERY_RESULT_TOO_LARGE;
+        reply.WriteInt32(errCode);
+        return -1;
+    }
+    reply.WriteInt32(errCode);
+    reply.WriteInt32(size);
+    for (int32_t i = 0; i < size; i++) {
+        bool tmp = result[i].Marshalling(reply);
+        if (!tmp) {
+            return 1;
+        }
+    }
+    return size == 0;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

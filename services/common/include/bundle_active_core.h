@@ -54,6 +54,13 @@ public:
     BundleActiveReportHandlerObject(const int32_t userId, const std::string bundleName);
     BundleActiveReportHandlerObject(const BundleActiveReportHandlerObject& orig);
     ~BundleActiveReportHandlerObject() {}
+
+    std::string ToString()
+    {
+        std::string result;
+        result += "userid is " + std::to_string(userId_) + ", " + event_.ToString();
+        return result;
+    }
 };
 
 class BundleActiveReportHandler;

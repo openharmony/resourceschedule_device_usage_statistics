@@ -26,6 +26,7 @@ namespace DeviceUsageStats {
 class BundleActiveAccountHelper {
 public:
     static ErrCode GetUserId(const int32_t uid, int32_t& userId);
+    static void GetActiveUserId(std::vector<int32_t> &activatedOsAccountIds);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
