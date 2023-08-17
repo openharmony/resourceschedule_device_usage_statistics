@@ -35,9 +35,7 @@ public:
     int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply,
         MessageOption &option) override;
 private:
-    static const std::map<uint32_t,
-        std::function<ErrCode(BundleActiveStub *, MessageParcel &, MessageParcel &)>> interfaces_;
-    ErrCode HandleReportEvent(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option);
+    ErrCode HandleReportEvent(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleIsBundleIdle(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleQueryBundleStatsInfoByInterval(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleQueryBundleEvents(MessageParcel& data, MessageParcel& reply);
