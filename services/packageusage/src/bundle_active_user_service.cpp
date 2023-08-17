@@ -249,12 +249,10 @@ void BundleActiveUserService::LoadModuleAndFormStats()
     database_.LoadFormData(userId_, moduleRecords_);
 }
 
-
-void BundleActiveUserService::FlushDataInMem()
+void BundleActiveUserService::FlushDataInMem(std::set<std::string> &continueBundles,
+    std::map<std::string, std::map<std::string, int>> &continueAbilities,
+    std::map<std::string, std::map<std::string, int>> &continueServices)
 {
-    std::set<std::string> continueBundles;
-    std::map<std::string, std::map<std::string, int>> continueAbilities;
-    std::map<std::string, std::map<std::string, int>> continueServices;
     for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator it = currentStats_.begin();
         it != currentStats_.end(); ++it) {
         if (*it == nullptr) {
@@ -283,7 +281,10 @@ void BundleActiveUserService::FlushDataInMem()
 
 void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
 {
-    FlushDataInMem();// update stat in memory.
+    std::set<std::string> continueBundles;
+    std::map<std::string, std::map<std::string, int>> continueAbilities;
+    std::map<std::string, std::map<std::string, int>> continueServices;
+    FlushDataInMem(continueBundles, continueAbilities, continueServices);// update stat in memory.
     RestoreStats(true);
     database_.RemoveOldData(timeStamp);
     LoadActiveStats(timeStamp, false, false); // create new stats

@@ -98,7 +98,9 @@ private:
         int64_t endTime, std::map<std::string, BundleActiveEventStats>& systemEventStats);
     void GetCachedNotificationEvents(std::shared_ptr<BundleActivePeriodStats> currentStats, int64_t beginTime,
         int64_t endTime, std::map<std::string, BundleActiveEventStats>& notificationEventStats);
-    void FlushDataInMem();
+    void FlushDataInMem(std::set<std::string> &continueBundles,
+        std::map<std::string, std::map<std::string, int>> &continueAbilities,
+        std::map<std::string, std::map<std::string, int>> &continueServices)
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
