@@ -16,6 +16,8 @@
 #ifndef BUNDLE_ACTIVE_ACCOUNT_HELPER_H
 #define BUNDLE_ACTIVE_ACCOUNT_HELPER_H
 
+#include <vector>
+
 #include "errors.h"
 #ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
