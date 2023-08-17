@@ -23,5 +23,11 @@ ErrCode BundleActiveAccountHelper::GetUserId(const int32_t uid, int32_t& userId)
     userId = -1;
     return ERR_OK;
 }
+
+ErrCode BundleActiveAccountHelper::GetActiveUserId(std::vector<int32_t> &activatedOsAccountIds)
+{
+    std::vector<int32_t> result;
+    return result;
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
