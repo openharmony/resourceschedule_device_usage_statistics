@@ -14,9 +14,7 @@
  */
 
 #include "time_service_client.h"
-#ifdef OS_ACCOUNT_PART_ENABLED
-#include "os_account_manager.h"
-#endif // OS_ACCOUNT_PART_ENABLED
+#include "bundle_active_account_helper.h"
 #include "bundle_active_group_handler.h"
 
 namespace OHOS {
@@ -70,18 +68,7 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
         }
         case MSG_ONE_TIME_CHECK_BUNDLE_STATE: {
             std::vector<int32_t> activatedOsAccountIds;
-#ifdef OS_ACCOUNT_PART_ENABLED
-            if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
-                BUNDLE_ACTIVE_LOGI("query activated account failed");
-                return;
-            }
-            if (activatedOsAccountIds.size() == 0) {
-                return;
-            }
-#else // OS_ACCOUNT_PART_ENABLED
-            activatedOsAccountIds.push_back(DEFAULT_OS_ACCOUNT_ID);
-            BUNDLE_ACTIVE_LOGI("os account part not enabled, use default id.");
-#endif // OS_ACCOUNT_PART_ENABLED
+            BundleActiveAccountHelper::GetActiveUserId(activatedOsAccountIds);
             for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
                 bundleActiveGroupController_->CheckEachBundleState(activatedOsAccountIds[i]);
                 bundleActiveGroupController_->RestoreToDatabase(activatedOsAccountIds[i]);

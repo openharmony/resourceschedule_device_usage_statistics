@@ -115,6 +115,8 @@ private:
         std::shared_ptr<NativeRdb::RdbStore> rdbStore);
     int32_t JudgeQueryCondition(const int64_t beginTime, const int64_t endTime, const int64_t eventTableTime);
     std::string GetSystemEventName(const int32_t userId);
+    int32_t ExecuteRenameTableName(std::string tablePrefix, int64_t tableOldTime, int64_t tableNewTime,
+        std::shared_ptr<NativeRdb::RdbStore> rdbStore);
 
 private:
     std::vector<std::string> databaseFiles_;

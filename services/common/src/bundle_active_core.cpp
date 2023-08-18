@@ -70,14 +70,12 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
 {
     std::lock_guard<std::mutex> lock(mutex_);
     std::string action = data.GetWant().GetAction();
-    BUNDLE_ACTIVE_LOGD("OnReceiveEvent action is %{public}s", action.c_str());
     if (action == CommonEventSupport::COMMON_EVENT_SCREEN_OFF ||
         action == CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
         if (!activeGroupController_.expired()) {
             sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
             bool isScreenOn = activeGroupController_.lock()->IsScreenOn();
-            BUNDLE_ACTIVE_LOGI("OnReceiveEvent Screen state changed "
-                "received, screen state change to %{public}d", isScreenOn);
+            BUNDLE_ACTIVE_LOGI("screen state change to %{public}d", isScreenOn);
             activeGroupController_.lock()->OnScreenChanged(isScreenOn, timer->GetBootTimeMs());
         }
     } else if (action == CommonEventSupport::COMMON_EVENT_USER_REMOVED) {

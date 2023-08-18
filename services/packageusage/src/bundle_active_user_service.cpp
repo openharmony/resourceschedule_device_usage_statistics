@@ -249,12 +249,11 @@ void BundleActiveUserService::LoadModuleAndFormStats()
     database_.LoadFormData(userId_, moduleRecords_);
 }
 
-void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
+void BundleActiveUserService::FlushDataInMem(std::set<std::string> &continueBundles,
+    std::map<std::string, std::map<std::string, int>> &continueAbilities,
+    std::map<std::string, std::map<std::string, int>> &continueServices)
 {
-    std::set<std::string> continueBundles;
-    std::map<std::string, std::map<std::string, int>> continueAbilities;
-    std::map<std::string, std::map<std::string, int>> continueServices;
-    for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator it = currentStats_.begin(); // 更新使用时长
+    for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator it = currentStats_.begin();
         it != currentStats_.end(); ++it) {
         if (*it == nullptr) {
             continue;
@@ -278,10 +277,21 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
         }
         (*it)->CommitTime(dailyExpiryDate_.GetMilliseconds() - 1);
     }
+}
+
+void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
+{
+    std::set<std::string> continueBundles;
+    std::map<std::string, std::map<std::string, int>> continueAbilities;
+    std::map<std::string, std::map<std::string, int>> continueServices;
+    // update stat in memory.
+    FlushDataInMem(continueBundles, continueAbilities, continueServices);
     RestoreStats(true);
     database_.RemoveOldData(timeStamp);
-    LoadActiveStats(timeStamp, false, false); // 新建intervalstat或加载当前数据库数据
-    for (std::string continueBundleName : continueBundles) { // 更新所有事件的时间戳到新的begintime
+    // create new stats
+    LoadActiveStats(timeStamp, false, false);
+    // update timestamps of events in memory
+    for (std::string continueBundleName : continueBundles) {
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
             itInterval != currentStats_.end(); ++itInterval) {

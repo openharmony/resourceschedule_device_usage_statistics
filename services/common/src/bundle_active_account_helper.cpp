@@ -30,6 +30,21 @@ ErrCode BundleActiveAccountHelper::GetUserId(const int32_t uid, int32_t& userId)
 #endif // OS_ACCOUNT_PART_ENABLED
     return ret;
 }
+
+
+void BundleActiveAccountHelper::GetActiveUserId(std::vector<int32_t> &activatedOsAccountIds)
+{
+#ifdef OS_ACCOUNT_PART_ENABLED
+    if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
+        return;
+    }
+    if (activatedOsAccountIds.size() == 0) {
+        return;
+    }
+#else // OS_ACCOUNT_PART_ENABLED
+    activatedOsAccountIds.push_back(DEFAULT_OS_ACCOUNT_ID);
+#endif // OS_ACCOUNT_PART_ENABLED
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 

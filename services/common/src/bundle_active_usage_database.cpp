@@ -645,7 +645,6 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
 {
     lock_guard<mutex> lock(databaseMutex_);
     if (userHistory == nullptr) {
-        BUNDLE_ACTIVE_LOGE("userHistory is nullptr");
         return;
     }
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
@@ -691,8 +690,7 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
         iter->second->isChanged_ = false;
         updatedcount++;
     }
-    BUNDLE_ACTIVE_LOGI("PutBundleHistoryData, update %{public}d bundles, keep %{public}d bundles group",
-        updatedcount, unupdatedcount);
+    BUNDLE_ACTIVE_LOGI("update %{public}d bundles, keep %{public}d bundles group", updatedcount, unupdatedcount);
 }
 
 shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsageDatabase::GetBundleHistoryData(
@@ -832,7 +830,6 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
 {
     lock_guard<mutex> lock(databaseMutex_);
     if (databaseType < 0 || databaseType >= static_cast<int32_t>(sortedTableArray_.size())) {
-        BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
         return nullptr;
     }
 
@@ -840,10 +837,9 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
     if (tableNumber == TABLE_NOT_EXIST) {
         return nullptr;
     }
-    shared_ptr<BundleActivePeriodStats> intervalStats = make_shared<BundleActivePeriodStats>();
-    intervalStats->userId_ = userId;
     int64_t currentPackageTime = sortedTableArray_.at(databaseType).at(tableNumber - 1);
-    intervalStats->beginTime_ = currentPackageTime;
+    shared_ptr<BundleActivePeriodStats> intervalStats =
+        make_shared<BundleActivePeriodStats>(userId, currentPackageTime);
     string packageTableName = PACKAGE_LOG_TABLE + to_string(currentPackageTime);
     string queryPackageSql = "select * from " + packageTableName + " where userId = ?";
     vector<string> queryCondition;
@@ -1012,51 +1008,44 @@ int32_t BundleActiveUsageDatabase::RenameTableName(uint32_t databaseType, int64_
         return BUNDLE_ACTIVE_FAIL;
     }
     if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
-        string oldPackageTableName = PACKAGE_LOG_TABLE + to_string(tableOldTime);
-        string newPackageTableName = PACKAGE_LOG_TABLE + to_string(tableNewTime);
-        string renamePackageTableNameSql = "alter table " + oldPackageTableName + " rename to " +
-            newPackageTableName;
-        int32_t renamePackageTableName = rdbStore->ExecuteSql(renamePackageTableNameSql);
-        if (renamePackageTableName != NativeRdb::E_OK) {
-            return BUNDLE_ACTIVE_FAIL;
-        }
-        int32_t setResult = SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
-        if (setResult != BUNDLE_ACTIVE_SUCCESS) {
+        if (ExecuteRenameTableName(PACKAGE_LOG_TABLE, tableOldTime, tableNewTime, rdbStore) != ERR_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == EVENT_DATABASE_INDEX) {
-        string oldEventTableName = EVENT_LOG_TABLE + to_string(tableOldTime);
-        string newEventTableName = EVENT_LOG_TABLE + to_string(tableNewTime);
-        string renameEventTableNameSql = "alter table " + oldEventTableName + " rename to " + newEventTableName;
-        int32_t renameEventTableName = rdbStore->ExecuteSql(renameEventTableNameSql);
-        if (renameEventTableName != NativeRdb::E_OK) {
-            return BUNDLE_ACTIVE_FAIL;
-        }
-        int32_t setResult = SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
-        if (setResult != BUNDLE_ACTIVE_SUCCESS) {
+        if (ExecuteRenameTableName(EVENT_LOG_TABLE, tableOldTime, tableNewTime, rdbStore) != ERR_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
     } else if (databaseType == APP_GROUP_DATABASE_INDEX) {
-        string oldModuleTableName = MODULE_RECORD_LOG_TABLE + to_string(tableOldTime);
-        string newModuleTableName = MODULE_RECORD_LOG_TABLE + to_string(tableNewTime);
-        string renameModuleTableNameSql = "alter table " + oldModuleTableName + " rename to " + newModuleTableName;
-        int32_t renameModuleTableName = rdbStore->ExecuteSql(renameModuleTableNameSql);
-        if (renameModuleTableName != NativeRdb::E_OK) {
+        if (ExecuteRenameTableName(MODULE_RECORD_LOG_TABLE, tableOldTime, tableNewTime, rdbStore) != ERR_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
-        string oldFormTableName = FORM_RECORD_LOG_TABLE + to_string(tableOldTime);
-        string newFormTableName = FORM_RECORD_LOG_TABLE + to_string(tableNewTime);
-        string renameFormTableNameSql = "alter table " + oldFormTableName + " rename to " + newFormTableName;
-        int32_t renameFormTableName = rdbStore->ExecuteSql(renameFormTableNameSql);
-        if (renameFormTableName != NativeRdb::E_OK) {
-            return BUNDLE_ACTIVE_FAIL;
-        }
-        int32_t setResult = SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
-        if (setResult != BUNDLE_ACTIVE_SUCCESS) {
+        if (ExecuteRenameTableName(FORM_RECORD_LOG_TABLE, tableOldTime, tableNewTime, rdbStore) != ERR_OK) {
             return BUNDLE_ACTIVE_FAIL;
         }
     }
+    int32_t setResult = SetNewIndexWhenTimeChanged(databaseType, tableOldTime, tableNewTime, rdbStore);
+    if (setResult != BUNDLE_ACTIVE_SUCCESS) {
+        return BUNDLE_ACTIVE_FAIL;
+    }
     return BUNDLE_ACTIVE_SUCCESS;
+}
+
+int32_t BundleActiveUsageDatabase::ExecuteRenameTableName(std::string tablePrefix, int64_t tableOldTime,
+    int64_t tableNewTime, std::shared_ptr<NativeRdb::RdbStore> rdbStore)
+{
+    if (!rdbStore) {
+        BUNDLE_ACTIVE_LOGE("rdbstore is nullptr");
+        return BUNDLE_ACTIVE_FAIL;
+    }
+    string oldTableName = tablePrefix + to_string(tableOldTime);
+    string newTableName = tablePrefix + to_string(tableNewTime);
+    string renameTableNameSql = "alter table " + oldTableName + " rename to " + newTableName;
+    int32_t renameTableName = rdbStore->ExecuteSql(renameTableNameSql);
+    if (renameTableName != NativeRdb::E_OK) {
+        BUNDLE_ACTIVE_LOGE("Rename table failed");
+        return BUNDLE_ACTIVE_FAIL;
+    }
+    return ERR_OK;
 }
 
 int32_t BundleActiveUsageDatabase::GetOptimalIntervalType(int64_t beginTime, int64_t endTime)
