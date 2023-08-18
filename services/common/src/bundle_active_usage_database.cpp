@@ -1210,11 +1210,11 @@ bool BundleActiveUsageDatabase::GetDbIndex(const int64_t beginTime, const int64_
             (long long)endTime, (long long)beginTime);
         return false;
     }
-    int32_t startIndex = NearIndexOnOrBeforeCurrentTime(beginTime, sortedTableArray_.at(databaseType));
+    startIndex = NearIndexOnOrBeforeCurrentTime(beginTime, sortedTableArray_.at(databaseType));
     if (startIndex < 0) {
         startIndex = 0;
     }
-    int32_t endIndex = NearIndexOnOrBeforeCurrentTime(endTime, sortedTableArray_.at(databaseType));
+    endIndex = NearIndexOnOrBeforeCurrentTime(endTime, sortedTableArray_.at(databaseType));
     if (endIndex < 0) {
         return false;
     }
