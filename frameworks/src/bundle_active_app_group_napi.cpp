@@ -97,40 +97,6 @@ napi_value ParseQueryAppGroupParameters(const napi_env &env, const napi_callback
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value QueryAppGroup(napi_env env, napi_callback_info info)
-{
-    BUNDLE_ACTIVE_LOGI("QueryAppGroup");
-    QueryAppGroupParamsInfo params;
-    AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = nullptr;
-    ParseQueryAppGroupParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
-        return BundleStateCommon::NapiGetNull(env);
-    }
-    std::unique_ptr<AsyncQueryAppGroupCallbackInfo> callbackPtr {asyncCallbackInfo};
-    callbackPtr->bundleName = params.bundleName;
-    BUNDLE_ACTIVE_LOGD("QueryAppGroup callbackPtr->bundleName: %{public}s",
-        callbackPtr->bundleName.c_str());
-    napi_value promise = nullptr;
-    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "QueryAppGroup", NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL(env, napi_create_async_work(env,
-        nullptr,
-        resourceName,
-        QueryAppGroupAsync,
-        QueryAppGroupAsyncCB,
-        static_cast<void*>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    if (callbackPtr->isCallback) {
-        callbackPtr.release();
-        return BundleStateCommon::NapiGetNull(env);
-    } else {
-        callbackPtr.release();
-        return promise;
-    }
-}
-
 void QueryAppGroupAsync(napi_env env, void *data)
 {
     AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = (AsyncQueryAppGroupCallbackInfo *)data;
@@ -149,6 +115,35 @@ void QueryAppGroupAsyncCB(napi_env env, napi_status status, void *data)
         napi_value result = nullptr;
         napi_create_int32(env, asyncCallbackInfo->priorityGroup, &result);
         BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
+    }
+}
+
+napi_value QueryAppGroup(napi_env env, napi_callback_info info)
+{
+    BUNDLE_ACTIVE_LOGI("QueryAppGroup");
+    QueryAppGroupParamsInfo params;
+    AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = nullptr;
+    ParseQueryAppGroupParameters(env, info, params, asyncCallbackInfo);
+    if (params.errorCode != ERR_OK) {
+        return BundleStateCommon::NapiGetNull(env);
+    }
+    std::unique_ptr<AsyncQueryAppGroupCallbackInfo> callbackPtr {asyncCallbackInfo};
+    callbackPtr->bundleName = params.bundleName;
+    BUNDLE_ACTIVE_LOGD("QueryAppGroup callbackPtr->bundleName: %{public}s",
+        callbackPtr->bundleName.c_str());
+    napi_value promise = nullptr;
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, "QueryAppGroup", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, QueryAppGroupAsync, QueryAppGroupAsyncCB,
+        static_cast<void*>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
+        return BundleStateCommon::NapiGetNull(env);
+    } else {
+        callbackPtr.release();
+        return promise;
     }
 }
 
@@ -252,40 +247,6 @@ napi_value ParseSetAppGroupParameters(const napi_env &env, const napi_callback_i
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value SetAppGroup(napi_env env, napi_callback_info info)
-{
-    ParamsBundleGroupInfo params;
-    AsyncCallbackInfoSetAppGroup *asyncCallbackInfo = nullptr;
-    ParseSetAppGroupParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
-        return BundleStateCommon::NapiGetNull(env);
-    }
-    std::unique_ptr<AsyncCallbackInfoSetAppGroup> callbackPtr {asyncCallbackInfo};
-    callbackPtr->newGroup = params.newGroup;
-    callbackPtr->bundleName = params.bundleName;
-    BUNDLE_ACTIVE_LOGD("SetAppGroup, bundleName is %{public}s, newGroup is %{public}d",
-        callbackPtr->bundleName.c_str(), callbackPtr->newGroup);
-    napi_value promise = nullptr;
-    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "SetAppGroup", NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL(env, napi_create_async_work(env,
-        nullptr,
-        resourceName,
-        SetAppGroupAsync,
-        SetAppGroupAsyncCB,
-        static_cast<void*>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    if (callbackPtr->isCallback) {
-        callbackPtr.release();
-        return BundleStateCommon::NapiGetNull(env);
-    } else {
-        callbackPtr.release();
-        return promise;
-    }
-}
-
 void SetAppGroupAsync(napi_env env, void *data)
 {
     AsyncCallbackInfoSetAppGroup *asyncCallbackInfo = (AsyncCallbackInfoSetAppGroup *)data;
@@ -304,6 +265,35 @@ void SetAppGroupAsyncCB(napi_env env, napi_status status, void *data)
         napi_value result = nullptr;
         napi_get_null(env, &result);
         BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
+    }
+}
+
+napi_value SetAppGroup(napi_env env, napi_callback_info info)
+{
+    ParamsBundleGroupInfo params;
+    AsyncCallbackInfoSetAppGroup *asyncCallbackInfo = nullptr;
+    ParseSetAppGroupParameters(env, info, params, asyncCallbackInfo);
+    if (params.errorCode != ERR_OK) {
+        return BundleStateCommon::NapiGetNull(env);
+    }
+    std::unique_ptr<AsyncCallbackInfoSetAppGroup> callbackPtr {asyncCallbackInfo};
+    callbackPtr->newGroup = params.newGroup;
+    callbackPtr->bundleName = params.bundleName;
+    BUNDLE_ACTIVE_LOGD("SetAppGroup, bundleName is %{public}s, newGroup is %{public}d",
+        callbackPtr->bundleName.c_str(), callbackPtr->newGroup);
+    napi_value promise = nullptr;
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, "SetAppGroup", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, SetAppGroupAsync, SetAppGroupAsyncCB,
+        static_cast<void*>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
+        return BundleStateCommon::NapiGetNull(env);
+    } else {
+        callbackPtr.release();
+        return promise;
     }
 }
 
@@ -361,38 +351,6 @@ napi_value ParseRegisterAppGroupCallBackParameters(const napi_env &env, const na
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value RegisterAppGroupCallBack(napi_env env, napi_callback_info info)
-{
-    RegisterCallbackInfo params;
-    AsyncRegisterCallbackInfo *asyncCallbackInfo = nullptr;
-    ParseRegisterAppGroupCallBackParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
-        // return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
-        return BundleStateCommon::NapiGetNull(env);
-    }
-    std::unique_ptr<AsyncRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
-    callbackPtr->observer = registerObserver;
-    napi_value promise = nullptr;
-    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "RegisterAppGroupCallBack", NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL(env, napi_create_async_work(env,
-        nullptr,
-        resourceName,
-        RegisterAppGroupCallBackAsync,
-        RegisterAppGroupCallBackAsyncCB,
-        static_cast<void*>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    if (callbackPtr->isCallback) {
-        callbackPtr.release();
-        return BundleStateCommon::NapiGetNull(env);
-    } else {
-        callbackPtr.release();
-        return promise;
-    }
-}
-
 void RegisterAppGroupCallBackAsync(napi_env env, void *data)
 {
     AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
@@ -415,6 +373,33 @@ void RegisterAppGroupCallBackAsyncCB(napi_env env, napi_status status, void *dat
         napi_value result = nullptr;
         napi_get_null(env, &result);
         BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
+    }
+}
+
+napi_value RegisterAppGroupCallBack(napi_env env, napi_callback_info info)
+{
+    RegisterCallbackInfo params;
+    AsyncRegisterCallbackInfo *asyncCallbackInfo = nullptr;
+    ParseRegisterAppGroupCallBackParameters(env, info, params, asyncCallbackInfo);
+    if (params.errorCode != ERR_OK) {
+        // return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
+        return BundleStateCommon::NapiGetNull(env);
+    }
+    std::unique_ptr<AsyncRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
+    callbackPtr->observer = registerObserver;
+    napi_value promise = nullptr;
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, "RegisterAppGroupCallBack", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, RegisterAppGroupCallBackAsync,
+        RegisterAppGroupCallBackAsyncCB, static_cast<void*>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
+        return BundleStateCommon::NapiGetNull(env);
+    } else {
+        callbackPtr.release();
+        return promise;
     }
 }
 
@@ -448,37 +433,6 @@ napi_value ParseUnRegisterAppGroupCallBackParameters(const napi_env &env, const 
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value UnRegisterAppGroupCallBack(napi_env env, napi_callback_info info)
-{
-    UnRegisterCallbackInfo params;
-    AsyncUnRegisterCallbackInfo *asyncCallbackInfo = nullptr;
-    ParseUnRegisterAppGroupCallBackParameters(env, info, params, asyncCallbackInfo);
-    if (params.errorCode != ERR_OK) {
-        return BundleStateCommon::NapiGetNull(env);
-    }
-    std::unique_ptr<AsyncUnRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
-    callbackPtr->observer = registerObserver;
-    napi_value promise = nullptr;
-    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_latin1(env, "UnRegisterAppGroupCallBack", NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL(env, napi_create_async_work(env,
-        nullptr,
-        resourceName,
-        UnRegisterAppGroupCallBackAsync,
-        UnRegisterAppGroupCallBackAsyncCB,
-        static_cast<void*>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
-    if (callbackPtr->isCallback) {
-        callbackPtr.release();
-        return BundleStateCommon::NapiGetNull(env);
-    } else {
-        callbackPtr.release();
-        return promise;
-    }
-}
-
 void UnRegisterAppGroupCallBackAsync(napi_env env, void *data)
 {
     AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
@@ -501,6 +455,32 @@ void UnRegisterAppGroupCallBackAsyncCB(napi_env env, napi_status status, void *d
         napi_value result = nullptr;
         napi_get_null(env, &result);
         BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
+    }
+}
+
+napi_value UnRegisterAppGroupCallBack(napi_env env, napi_callback_info info)
+{
+    UnRegisterCallbackInfo params;
+    AsyncUnRegisterCallbackInfo *asyncCallbackInfo = nullptr;
+    ParseUnRegisterAppGroupCallBackParameters(env, info, params, asyncCallbackInfo);
+    if (params.errorCode != ERR_OK) {
+        return BundleStateCommon::NapiGetNull(env);
+    }
+    std::unique_ptr<AsyncUnRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
+    callbackPtr->observer = registerObserver;
+    napi_value promise = nullptr;
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, "UnRegisterAppGroupCallBack", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, UnRegisterAppGroupCallBackAsync,
+        UnRegisterAppGroupCallBackAsyncCB, static_cast<void*>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
+        return BundleStateCommon::NapiGetNull(env);
+    } else {
+        callbackPtr.release();
+        return promise;
     }
 }
 }  // namespace DeviceUsageStats
