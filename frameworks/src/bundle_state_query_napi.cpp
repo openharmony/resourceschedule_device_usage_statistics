@@ -453,7 +453,7 @@ napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value GetBundleStatsInfoByIntervalCallBack(const napi_env &env, napi_value* argv, ModuleRecordParamsInfo &params)
+napi_value GetBundleStatsInfoByIntervalCallBack(const napi_env &env, napi_value* argv, AppUsageParamsByIntervalInfo &params)
 {
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[THIRD_ARG], &valuetype));
@@ -593,7 +593,7 @@ napi_value ParseQueryBundleStatsInfos(const napi_env &env, const napi_callback_i
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
     }
     // argv[1] : endTime
-    if (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr)) {
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos failed, endTime type is invalid.");
         params.errorCode = ERR_END_TIME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_TYPE, "");

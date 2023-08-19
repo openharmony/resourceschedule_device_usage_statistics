@@ -248,7 +248,7 @@ napi_value ParseSetAppGroupParameters(const napi_env &env, const napi_callback_i
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
     }
     // argv[0] : bundleName
-    GetSetAppGroupBundleName(env, argv, ZERO_ARG, params);
+    GetSetAppGroupBundleName(env, argv, params);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::NapiGetNull(env);
     }

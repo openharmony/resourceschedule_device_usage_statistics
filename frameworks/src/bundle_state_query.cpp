@@ -97,7 +97,7 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
 {
     IsIdleStateParamsInfo params;
     ParseIsIdleStateParameters(env, info, params);
-    if (params.errorCode != ERR_OK) { {
+    if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     napi_value promise = nullptr;
@@ -411,7 +411,6 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
     NAPI_ASSERT(env, argc == APP_USAGE_MIN_PARAMS_BY_INTERVAL || argc == APP_USAGE_PARAMS_BY_INTERVAL,
         "Invalid number of parameters");
-
     // argv[0] : intervalType
     if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.intervalType) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, intervalType is invalid.");
@@ -422,7 +421,6 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, intervalType number is invalid.");
         params.errorCode = ERR_USAGE_STATS_INTERVAL_NUMBER;
     }
-
     // argv[1] : beginTime
     if ((params.errorCode == ERR_OK)
         && (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.beginTime) == nullptr)) {
@@ -434,7 +432,6 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval failed, beginTime value is invalid.");
         params.errorCode = ERR_USAGE_STATS_BEGIN_TIME_INVALID;
     }
-
     // argv[SECOND_ARG] : endTime
     if ((params.errorCode == ERR_OK)
         && (BundleStateCommon::GetInt64NumberValue(env, argv[SECOND_ARG], params.endTime) == nullptr)) {
@@ -451,7 +448,6 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
             (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
-
     // argv[THIRD_ARG]: callback
     if (argc == APP_USAGE_PARAMS_BY_INTERVAL) {
         napi_valuetype valuetype = napi_undefined;
@@ -642,4 +638,3 @@ napi_value QueryBundleStateInfos(napi_env env, napi_callback_info info)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-
