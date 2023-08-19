@@ -486,7 +486,7 @@ napi_value QueryBundleStateInfoByInterval(napi_env env, napi_callback_info info)
 {
     AppUsageParamsByIntervalInfo params;
     ParseAppUsageParametersByInterval(env, info, params);
-    if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
+    if (params.errorCode != ERR_OK) {
         return BundleStateCommon::JSParaError(env, params.callback, params.errorCode);
     }
     napi_value promise = nullptr;

@@ -70,13 +70,12 @@ napi_value ParseQueryModuleUsageRecords(const napi_env &env, const napi_callback
     }
     if (argc == MODULE_RECORDS_MIN_PARAMS) {
         params.maxNum = MAXNUM_UP_LIMIT;
-    }
-    if (argc == MODULE_RECORDS_MIDDLE_PARAMS) {
+    } else if (argc == MODULE_RECORDS_MIDDLE_PARAMS) {
         if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.maxNum) == nullptr) {
             BUNDLE_ACTIVE_LOGI("get module info has only one callback param");
             GetCallBackParameters(env, argv, ZERO_ARG, params);
             if (params.errorCode != ERR_OK) {
-               return BundleStateCommon::NapiGetNull(env); 
+                return BundleStateCommon::NapiGetNull(env); 
             }
             params.maxNum = MAXNUM_UP_LIMIT;
         } else if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
@@ -84,8 +83,7 @@ napi_value ParseQueryModuleUsageRecords(const napi_env &env, const napi_callback
             params.errorCode = ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
             return BundleStateCommon::HandleParamErr(env, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND, "");
         }
-    }
-    if (argc == MODULE_RECORDS_PARAMS) {
+    } else if (argc == MODULE_RECORDS_PARAMS) {
         // argv[0] : maxNum
         if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.maxNum) == nullptr) {
             BUNDLE_ACTIVE_LOGE("ParseQueryModuleUsageRecords failed, maxNum type is invalid.");
@@ -100,7 +98,7 @@ napi_value ParseQueryModuleUsageRecords(const napi_env &env, const napi_callback
         // argv[1] : callback
         GetCallBackParameters(env, argv, FIRST_ARG, params);
         if (params.errorCode != ERR_OK) {
-            return BundleStateCommon::NapiGetNull(env); 
+            return BundleStateCommon::NapiGetNull(env);
         }
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
@@ -453,7 +451,8 @@ napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
     }
 }
 
-napi_value GetBundleStatsInfoByIntervalCallBack(const napi_env &env, napi_value* argv, AppUsageParamsByIntervalInfo &params)
+napi_value GetBundleStatsInfoByIntervalCallBack(const napi_env &env, napi_value* argv,
+    AppUsageParamsByIntervalInfo &params)
 {
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[THIRD_ARG], &valuetype));
