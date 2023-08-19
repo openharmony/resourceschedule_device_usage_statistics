@@ -39,24 +39,23 @@ const int32_t PRIORITY_GROUP_DEFAULT = -1;
 const uint32_t APP_USAGE_MIN_PARAMS_BUNDLE_GROUP = 2;
 const uint32_t APP_USAGE_PARAMS_BUNDLE_GROUP = 3;
 const uint32_t ZERO_ARG = 0;
-const uint32_t FIRST_ARG = 1;
 const uint32_t SECOND_ARG = 2;
 const std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50, 60};
 
 static sptr<AppGroupObserver> registerObserver = nullptr;
 std::mutex g_observerMutex_;
 
-napi_value GetBundleNameParameters(const napi_env &env, napi_value* argv, int32_t index, ParamsBundleGroupInfo &params)
+napi_value GetQueryAppGroupBundleName(const napi_env &env, napi_value* argv, QueryAppGroupParamsInfo &params)
 {
     napi_valuetype valuetype;
-    NAPI_CALL(env, napi_typeof(env, argv[index], &valuetype));
+    NAPI_CALL(env, napi_typeof(env, argv[ZERO_ARG], &valuetype));
     if (valuetype != napi_string) {
         BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
         params.errorCode = ERR_BUNDLE_NAME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_BUNDLE_NAME_TYPE, "");
     }
     std::string result = "";
-    params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[index], result);
+    params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[ZERO_ARG], result);
     if (params.bundleName.empty()) {
         BUNDLE_ACTIVE_LOGE("ParseSetAppGroupParameters failed, bundleName is empty.");
         params.errorCode = ERR_PARAMETERS_EMPTY;
@@ -83,14 +82,14 @@ napi_value ParseQueryAppGroupParameters(const napi_env &env, const napi_callback
         if (valuetype == napi_function) {
             napi_create_reference(env, argv[0], 1, &params.callback);
         } else {
-            GetBundleNameParameters(env, argv, ZERO_ARG, params);
+            GetQueryAppGroupBundleName(env, argv, params);
             if (params.errorCode != ERR_OK) {
                 return BundleStateCommon::NapiGetNull(env);
             }
         }
     } else if (argc == PRIORITY_GROUP_PARAMS) {
         // argv[0] : bundleName
-        GetBundleNameParameters(env, argv, ZERO_ARG, params);
+        GetQueryAppGroupBundleName(env, argv, params);
         if (params.errorCode != ERR_OK) {
             return BundleStateCommon::NapiGetNull(env);
         }
@@ -219,6 +218,25 @@ napi_value GetAppGroupParameters(const napi_env &env, napi_value* argv, ParamsBu
     return BundleStateCommon::NapiGetNull(env);
 }
 
+napi_value GetSetAppGroupBundleName(const napi_env &env, napi_value* argv, ParamsBundleGroupInfo &params)
+{
+    napi_valuetype valuetype;
+    NAPI_CALL(env, napi_typeof(env, argv[ZERO_ARG], &valuetype));
+    if (valuetype != napi_string) {
+        BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
+        params.errorCode = ERR_BUNDLE_NAME_TYPE;
+        return BundleStateCommon::HandleParamErr(env, ERR_BUNDLE_NAME_TYPE, "");
+    }
+    std::string result = "";
+    params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[ZERO_ARG], result);
+    if (params.bundleName.empty()) {
+        BUNDLE_ACTIVE_LOGE("ParseSetAppGroupParameters failed, bundleName is empty.");
+        params.errorCode = ERR_PARAMETERS_EMPTY;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "bundleName");
+    }
+    return BundleStateCommon::NapiGetNull(env);
+}
+
 napi_value ParseSetAppGroupParameters(const napi_env &env, const napi_callback_info &info,
     ParamsBundleGroupInfo &params, AsyncCallbackInfoSetAppGroup* &asyncCallbackInfo)
 {
@@ -230,7 +248,7 @@ napi_value ParseSetAppGroupParameters(const napi_env &env, const napi_callback_i
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
     }
     // argv[0] : bundleName
-    GetBundleNameParameters(env, argv, ZERO_ARG, params);
+    GetSetAppGroupBundleName(env, argv, ZERO_ARG, params);
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::NapiGetNull(env);
     }

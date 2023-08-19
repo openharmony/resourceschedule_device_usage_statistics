@@ -144,13 +144,8 @@ napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info)
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
     NAPI_CALL(env, napi_create_string_latin1(env, "QueryModuleUsageRecords", NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL(env, napi_create_async_work(env,
-        nullptr,
-        resourceName,
-        QueryModuleUsageRecordsAsync,
-        QueryModuleUsageRecordsAsyncCB,
-        static_cast<void*>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, QueryModuleUsageRecordsAsync,
+        QueryModuleUsageRecordsAsyncCB, static_cast<void*>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();
@@ -178,7 +173,7 @@ napi_value ParseIsIdleStateParameters(const napi_env &env, const napi_callback_i
     std::string result = "";
     napi_valuetype valuetype;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-    if ((valuetype != napi_string) && (params.errorCode == ERR_OK)) {
+    if (valuetype != napi_string) {
         BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
         params.errorCode = ERR_BUNDLE_NAME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
@@ -240,13 +235,8 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
     napi_value resourceName = nullptr;
     NAPI_CALL(env, napi_create_string_latin1(env, "IsIdleState", NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL(env, napi_create_async_work(env,
-        nullptr,
-        resourceName,
-        IsBundleIdleAsync,
-        IsBundleIdleAsyncCB,
-        static_cast<void*>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, IsBundleIdleAsync, IsBundleIdleAsyncCB,
+        static_cast<void*>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();
@@ -273,7 +263,7 @@ napi_value ParseIsIdleStateSyncParameters(const napi_env &env, const napi_callba
     std::string result = "";
     napi_valuetype valuetype;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-    if ((valuetype != napi_string) && (params.errorCode == ERR_OK)) {
+    if (valuetype != napi_string) {
         BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
         params.errorCode = ERR_BUNDLE_NAME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_BUNDLE_NAME_TYPE, "");
@@ -313,34 +303,29 @@ napi_value ParseQueryCurrentBundleEventsParameters(const napi_env &env, const na
         params.errorCode = ERR_PARAMETERS_NUMBER;
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
     }
-
     // argv[0] : beginTime
     if (BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, beginTime type is invalid.");
         params.errorCode = ERR_BEGIN_TIME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_TYPE, "");
     }
-    if ((params.errorCode == ERR_OK)
-        && (params.beginTime < TIME_NUMBER_MIN)) {
+    if (params.beginTime < TIME_NUMBER_MIN) {
         BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, beginTime value is invalid.");
         params.errorCode = ERR_BEGIN_TIME_LESS_THEN_ZERO;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
     }
-
     // argv[1] : endTime
-    if ((params.errorCode == ERR_OK)
-        && (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr)) {
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, endTime type is invalid.");
         params.errorCode = ERR_END_TIME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_TYPE, "");
     }
-    if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
+    if (params.endTime <= params.beginTime) {
         BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
             (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
         return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_LESS_THEN_BEGIN_TIME, "");
     }
-
     // argv[SECOND_ARG]: callback
     if (argc == STATES_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
@@ -399,13 +384,8 @@ napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info)
 
     napi_value resourceName = nullptr;
     NAPI_CALL(env, napi_create_string_latin1(env, "QueryCurrentBundleEvents", NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL(env, napi_create_async_work(env,
-        nullptr,
-        resourceName,
-        QueryCurrentBundleEventsAsync,
-        QueryCurrentBundleEventsAsyncCB,
-        static_cast<void*>(asyncCallbackInfo),
-        &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, QueryCurrentBundleEventsAsync,
+        QueryCurrentBundleEventsAsyncCB, static_cast<void*>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
     NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
     if (callbackPtr->isCallback) {
         callbackPtr.release();
@@ -473,6 +453,18 @@ napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
     }
 }
 
+napi_value GetBundleStatsInfoByIntervalCallBack(const napi_env &env, napi_value* argv, ModuleRecordParamsInfo &params)
+{
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, argv[THIRD_ARG], &valuetype));
+    if (valuetype != napi_function) {
+        params.errorCode = ERR_CALL_BACK_TYPE;
+        return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
+    }
+    napi_create_reference(env, argv[THIRD_ARG], 1, &params.callback);
+    return BundleStateCommon::NapiGetNull(env);
+}
+
 napi_value ParseQueryBundleStatsInfoByInterval(const napi_env &env, const napi_callback_info &info,
     AppUsageParamsByIntervalInfo &params, AsyncCallbackInfoAppUsageByInterval*& asyncCallbackInfo)
 {
@@ -483,57 +475,46 @@ napi_value ParseQueryBundleStatsInfoByInterval(const napi_env &env, const napi_c
         params.errorCode = ERR_PARAMETERS_NUMBER;
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
     }
-
     // argv[0] : intervalType
     if (BundleStateCommon::GetInt32NumberValue(env, argv[0], params.intervalType) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, intervalType is invalid.");
         params.errorCode = ERR_INTERVAL_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_INTERVAL_TYPE, "");
     }
-    if ((params.errorCode == ERR_OK) && ((params.intervalType < INTERVAL_NUMBER_MIN)
-        || (params.intervalType > INTERVAL_NUMBER_MAX))) {
+    if (((params.intervalType < INTERVAL_NUMBER_MIN) || (params.intervalType > INTERVAL_NUMBER_MAX))) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, intervalType number is invalid.");
         params.errorCode = ERR_INTERVAL_OUT_OF_RANGE;
         return BundleStateCommon::HandleParamErr(env, ERR_INTERVAL_OUT_OF_RANGE, "");
     }
-
     // argv[1] : beginTime
-    if ((params.errorCode == ERR_OK)
-        && (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.beginTime) == nullptr)) {
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.beginTime) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, beginTime type is invalid.");
         params.errorCode = ERR_BEGIN_TIME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_TYPE, "");
     }
-    if ((params.errorCode == ERR_OK)
-        && (params.beginTime < TIME_NUMBER_MIN)) {
+    if (params.beginTime < TIME_NUMBER_MIN) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, beginTime value is invalid.");
         params.errorCode = ERR_BEGIN_TIME_LESS_THEN_ZERO;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
     }
-
     // argv[SECOND_ARG] : endTime
-    if ((params.errorCode == ERR_OK)
-        && (BundleStateCommon::GetInt64NumberValue(env, argv[SECOND_ARG], params.endTime) == nullptr)) {
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[SECOND_ARG], params.endTime) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval failed, endTime type is invalid.");
         params.errorCode = ERR_END_TIME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_TYPE, "");
     }
-    if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
+    if (params.endTime <= params.beginTime) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval endTime(%{public}lld) <= beginTime(%{public}lld)",
             (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
         return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_LESS_THEN_BEGIN_TIME, "");
     }
-
     // argv[THIRD_ARG]: callback
     if (argc == APP_USAGE_PARAMS_BY_INTERVAL) {
-        napi_valuetype valuetype = napi_undefined;
-        NAPI_CALL(env, napi_typeof(env, argv[THIRD_ARG], &valuetype));
-        if (valuetype != napi_function) {
-            params.errorCode = ERR_CALL_BACK_TYPE;
-            return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
+        GetBundleStatsInfoByIntervalCallBack(env, argv, params);
+        if (params.errorCode != ERR_OK) {
+            return BundleStateCommon::NapiGetNull(env);
         }
-        napi_create_reference(env, argv[THIRD_ARG], 1, &params.callback);
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
@@ -600,32 +581,29 @@ napi_value ParseQueryBundleStatsInfos(const napi_env &env, const napi_callback_i
         params.errorCode = ERR_PARAMETERS_NUMBER;
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
     }
-
     // argv[0] : beginTime
     if (BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos failed, beginTime type is invalid.");
         params.errorCode = ERR_BEGIN_TIME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_TYPE, "");
     }
-    if ((params.errorCode == ERR_OK) && (params.beginTime < TIME_NUMBER_MIN)) {
+    if (params.beginTime < TIME_NUMBER_MIN) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos failed failed, beginTime value is invalid.");
         params.errorCode = ERR_BEGIN_TIME_LESS_THEN_ZERO;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
     }
-
     // argv[1] : endTime
-    if ((params.errorCode == ERR_OK)
-        && (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr)) {
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr)) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos failed, endTime type is invalid.");
         params.errorCode = ERR_END_TIME_TYPE;
+        return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_TYPE, "");
     }
-    if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
+    if (params.endTime <= params.beginTime) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos endTime(%{public}lld) <= beginTime(%{public}lld)",
             (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
     }
-
     // argv[SECOND_ARG]: callback
     if (argc == APP_USAGE_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
@@ -705,32 +683,29 @@ napi_value ParseDeviceEventStates(const napi_env &env, const napi_callback_info 
     }
 
     // argv[0] : beginTime
-    if ((params.errorCode == ERR_OK)
-        && BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseDeviceEventStates failed, beginTime is invalid.");
         params.errorCode = ERR_BEGIN_TIME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_TYPE, "");
     }
-    if ((params.errorCode == ERR_OK) && (params.beginTime < TIME_NUMBER_MIN)) {
+    if (params.beginTime < TIME_NUMBER_MIN) {
         BUNDLE_ACTIVE_LOGE("ParseDeviceEventStates failed, beginTime less then 0.");
         params.errorCode = ERR_BEGIN_TIME_LESS_THEN_ZERO;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
     }
 
     // argv[1] : endTime
-    if ((params.errorCode == ERR_OK)
-        && (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr)) {
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr) {
         BUNDLE_ACTIVE_LOGE("ParseDeviceEventStates failed, endTime is invalid.");
         params.errorCode = ERR_END_TIME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_TYPE, "");
     }
-    if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
+    if (params.endTime <= params.beginTime) {
         BUNDLE_ACTIVE_LOGE("ParseDeviceEventStates endTime(%{public}lld) <= beginTime(%{public}lld)",
             (long long)params.endTime, (long long)params.beginTime);
         params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
         return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_LESS_THEN_BEGIN_TIME, "");
     }
-
     // argv[SECOND_ARG]: callback
     if (argc == EVENT_STATES_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
