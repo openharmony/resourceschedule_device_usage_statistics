@@ -1198,68 +1198,87 @@ void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, Bund
     stats.lastTimeSaved_ = systemTime;
 }
 
-vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageStats(int32_t databaseType,
-    int64_t beginTime, int64_t endTime, int32_t userId)
+bool BundleActiveUsageDatabase::GetDbIndex(const int64_t beginTime, const int64_t endTime,
+    const int32_t databaseType, int32_t &startIndex, int32_t &endIndex)
 {
-    lock_guard<mutex> lock(databaseMutex_);
-    vector<BundleActivePackageStats> databaseUsageStats;
     if (databaseType < 0 || databaseType >= static_cast<int32_t>(sortedTableArray_.size())) {
         BUNDLE_ACTIVE_LOGE("databaseType is invalid, databaseType = %{public}d", databaseType);
-        return databaseUsageStats;
+        return false;
     }
     if (endTime <= beginTime) {
         BUNDLE_ACTIVE_LOGE("endTime(%{public}lld) <= beginTime(%{public}lld)",
             (long long)endTime, (long long)beginTime);
-        return databaseUsageStats;
+        return false;
     }
-    int32_t startIndex = NearIndexOnOrBeforeCurrentTime(beginTime, sortedTableArray_.at(databaseType));
+    startIndex = NearIndexOnOrBeforeCurrentTime(beginTime, sortedTableArray_.at(databaseType));
     if (startIndex < 0) {
         startIndex = 0;
     }
-    int32_t endIndex = NearIndexOnOrBeforeCurrentTime(endTime, sortedTableArray_.at(databaseType));
+    endIndex = NearIndexOnOrBeforeCurrentTime(endTime, sortedTableArray_.at(databaseType));
     if (endIndex < 0) {
-        return databaseUsageStats;
+        return false;
     }
     if (sortedTableArray_.at(databaseType).at(endIndex) == endTime) {
         endIndex--;
         if (endIndex < 0) {
-        return databaseUsageStats;
+        return false;
         }
     }
-    for (int32_t i = startIndex; i <= endIndex; i++) {
-        int64_t packageTableTime;
-        string packageTableName;
-        string queryPackageSql;
-        vector<string> queryCondition;
-        packageTableTime = sortedTableArray_.at(databaseType).at(i);
-        packageTableName = PACKAGE_LOG_TABLE + to_string(packageTableTime);
-        queryCondition.push_back(to_string(userId));
-        if (startIndex == endIndex) {
+    return true;
+}
+
+void BundleActiveUsageDatabase::GetQuerySqlCommand(const int64_t beginTime,
+    const int64_t endTime, const int32_t databaseType,
+    const int32_t index, const int32_t startIndex, const int32_t endIndex, const int32_t userId,
+    std::vector<std::string> &queryCondition, std::string &queryPackageSql)
+{
+    string packageTableName;
+    int64_t packageTableTime = sortedTableArray_.at(databaseType).at(index);
+    packageTableName = PACKAGE_LOG_TABLE + to_string(packageTableTime);
+    queryCondition.push_back(to_string(userId));
+    if (startIndex == endIndex) {
+        int64_t diff = beginTime - packageTableTime;
+        if (diff >= 0) {
+            queryCondition.push_back(to_string(diff));
+        } else {
+            queryCondition.push_back(to_string(LAST_TIME_IN_MILLIS_MIN));
+        }
+        queryCondition.push_back(to_string(endTime - packageTableTime));
+        queryPackageSql = "select * from " + packageTableName +
+            " where userId = ? and lastTime >= ? and lastTime <= ?";
+    } else {
+        if (index == startIndex) {
             int64_t diff = beginTime - packageTableTime;
             if (diff >= 0) {
                 queryCondition.push_back(to_string(diff));
             } else {
                 queryCondition.push_back(to_string(LAST_TIME_IN_MILLIS_MIN));
             }
+            queryPackageSql = "select * from " + packageTableName + " where userId = ? and lastTime >= ?";
+        } else if (index == endIndex) {
             queryCondition.push_back(to_string(endTime - packageTableTime));
-            queryPackageSql = "select * from " + packageTableName +
-                " where userId = ? and lastTime >= ? and lastTime <= ?";
+            queryPackageSql = "select * from " + packageTableName + " where userId = ? and lastTime <= ?";
         } else {
-            if (i == startIndex) {
-                int64_t diff = beginTime - packageTableTime;
-                if (diff >= 0) {
-                    queryCondition.push_back(to_string(diff));
-                } else {
-                    queryCondition.push_back(to_string(LAST_TIME_IN_MILLIS_MIN));
-                }
-                queryPackageSql = "select * from " + packageTableName + " where userId = ? and lastTime >= ?";
-            } else if (i == endIndex) {
-                queryCondition.push_back(to_string(endTime - packageTableTime));
-                queryPackageSql = "select * from " + packageTableName + " where userId = ? and lastTime <= ?";
-            } else {
-                queryPackageSql = "select * from " + packageTableName + " where userId = ?";
-            }
+            queryPackageSql = "select * from " + packageTableName + " where userId = ?";
         }
+    }
+}
+
+vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageStats(int32_t databaseType,
+    int64_t beginTime, int64_t endTime, int32_t userId)
+{
+    lock_guard<mutex> lock(databaseMutex_);
+    vector<BundleActivePackageStats> databaseUsageStats;
+    int32_t startIndex = 0;
+    int32_t endIndex = 0;
+    if (!GetDbIndex(beginTime, endTime, databaseType, startIndex, endIndex)) {
+        return databaseUsageStats;
+    }
+    for (int32_t i = startIndex; i <= endIndex; i++) {
+        string queryPackageSql;
+        vector<string> queryCondition;
+        GetQuerySqlCommand(beginTime, endTime, databaseType, i, startIndex,
+            endIndex, userId, queryCondition, queryPackageSql);
         auto bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
             queryCondition);
         if (bundleActiveResult == nullptr) {
@@ -1270,6 +1289,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
         BundleActivePackageStats usageStats;
         int64_t relativeLastTimeUsed;
         int64_t relativeLastTimeFrontServiceUsed;
+        int64_t packageTableTime = sortedTableArray_.at(databaseType).at(i);
         for (int32_t j = 0; j < tableRowNumber; j++) {
             bundleActiveResult->GoToRow(j);
             bundleActiveResult->GetString(BUNDLE_NAME_COLUMN_INDEX, usageStats.bundleName_);

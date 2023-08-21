@@ -117,6 +117,12 @@ private:
     std::string GetSystemEventName(const int32_t userId);
     int32_t ExecuteRenameTableName(std::string tablePrefix, int64_t tableOldTime, int64_t tableNewTime,
         std::shared_ptr<NativeRdb::RdbStore> rdbStore);
+    void GetQuerySqlCommand(const int64_t beginTime,
+        const int64_t endTime, const int32_t databaseType,
+        const int32_t index, const int32_t startIndex, const int32_t endIndex, const int32_t userId,
+        std::vector<std::string> &queryCondition, std::string &queryPackageSql);
+    bool GetDbIndex(const int64_t beginTime, const int64_t endTime,
+        const int32_t databaseType, int32_t &startIndex, int32_t &endIndex);
 
 private:
     std::vector<std::string> databaseFiles_;
