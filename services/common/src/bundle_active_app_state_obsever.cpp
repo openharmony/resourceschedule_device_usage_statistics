@@ -44,7 +44,6 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
     if (ret == ERR_OK && userId != -1) {
         std::stringstream stream;
         stream << abilityStateData.token.GetRefPtr();
-        std::string abilityId = stream.str();
         BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
         BundleActiveEvent event(abilityStateData.bundleName, abilityStateData.abilityName,
             abilityStateData.abilityName, abilityStateData.moduleName);
