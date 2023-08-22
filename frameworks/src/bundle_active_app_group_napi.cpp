@@ -50,14 +50,14 @@ napi_value GetQueryAppGroupBundleName(const napi_env &env, napi_value* argv, Que
     napi_valuetype valuetype;
     NAPI_CALL(env, napi_typeof(env, argv[ZERO_ARG], &valuetype));
     if (valuetype != napi_string) {
-        BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
+        BUNDLE_ACTIVE_LOGW("Wrong argument type, string expected.");
         params.errorCode = ERR_BUNDLE_NAME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_BUNDLE_NAME_TYPE, "");
     }
     std::string result = "";
     params.bundleName = BundleStateCommon::GetTypeStringValue(env, argv[ZERO_ARG], result);
     if (params.bundleName.empty()) {
-        BUNDLE_ACTIVE_LOGE("ParseSetAppGroupParameters failed, bundleName is empty.");
+        BUNDLE_ACTIVE_LOGW("ParseSetAppGroupParameters failed, bundleName is empty.");
         params.errorCode = ERR_PARAMETERS_EMPTY;
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "bundleName");
     }
@@ -129,7 +129,6 @@ void QueryAppGroupAsyncCB(napi_env env, napi_status status, void *data)
 
 napi_value QueryAppGroup(napi_env env, napi_callback_info info)
 {
-    BUNDLE_ACTIVE_LOGI("QueryAppGroup");
     QueryAppGroupParamsInfo params;
     AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = nullptr;
     ParseQueryAppGroupParameters(env, info, params, asyncCallbackInfo);
@@ -199,7 +198,7 @@ napi_value QueryAppGroupSync(napi_env env, napi_callback_info info)
 napi_value GetAppGroupParameters(const napi_env &env, napi_value* argv, ParamsBundleGroupInfo &params)
 {
     if (BundleStateCommon::GetInt32NumberValue(env, argv[1], params.newGroup) == nullptr) {
-        BUNDLE_ACTIVE_LOGE("ParseSetAppGroupParameters failed, newGroup type is invalid.");
+        BUNDLE_ACTIVE_LOGW("ParseSetAppGroupParameters failed, newGroup type is invalid.");
         params.errorCode = ERR_NEW_GROUP_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_NEW_GROUP_TYPE, "");
     }
@@ -211,7 +210,7 @@ napi_value GetAppGroupParameters(const napi_env &env, napi_value* argv, ParamsBu
         }
     }
     if (!flag) {
-        BUNDLE_ACTIVE_LOGE("ParseSetAppGroupParameters failed, newGroup value is invalid.");
+        BUNDLE_ACTIVE_LOGW("ParseSetAppGroupParameters failed, newGroup value is invalid.");
         params.errorCode = ERR_NEW_GROUP_OUT_OF_RANGE;
         return BundleStateCommon::HandleParamErr(env, ERR_NEW_GROUP_OUT_OF_RANGE, "");
     }
@@ -223,7 +222,7 @@ napi_value GetSetAppGroupBundleName(const napi_env &env, napi_value* argv, Param
     napi_valuetype valuetype;
     NAPI_CALL(env, napi_typeof(env, argv[ZERO_ARG], &valuetype));
     if (valuetype != napi_string) {
-        BUNDLE_ACTIVE_LOGE("Wrong argument type, string expected.");
+        BUNDLE_ACTIVE_LOGW("Wrong argument type, string expected.");
         params.errorCode = ERR_BUNDLE_NAME_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_BUNDLE_NAME_TYPE, "");
     }
