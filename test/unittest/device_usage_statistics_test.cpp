@@ -37,7 +37,11 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace DeviceUsageStats {
+#ifdef __aarch64__
+static std::string g_defaultBundleName = "com.huawei.hmos.camera";
+#else
 static std::string g_defaultBundleName = "com.ohos.camera";
+#endif
 static std::string g_defaultMoudleName = "defaultmodulename";
 static std::string g_defaultFormName = "defaultformname";
 static int32_t DEFAULT_DIMENSION = 4;
