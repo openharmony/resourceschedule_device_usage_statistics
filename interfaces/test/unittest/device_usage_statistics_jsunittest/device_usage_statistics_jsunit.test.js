@@ -936,7 +936,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      */
     it("DeviceUsageStatisticsJsTest033", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest033---------------------------');
-        let onBundleGroupChanged = (err, res) =>{
+        function onBundleGroupChanged (res) {
             console.log('BUNDLE_ACTIVE onBundleGroupChanged registerAppGroupCallBack callback success.');
             console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appUsageOldGroup is : ' + res.appOldGroup);
             console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appUsageNewGroup is : ' + res.appNewGroup);
@@ -971,7 +971,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
      */
     it("DeviceUsageStatisticsJsTest034", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest034---------------------------');
-        let onBundleGroupChanged = (err, res) =>{
+        function onBundleGroupChanged (res) {
             console.log('BUNDLE_ACTIVE registerAppGroupCallBack registerAppGroupCallBack callback success.');
             console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appOldGroup is : ' + res.appOldGroup);
             console.log('BUNDLE_ACTIVE registerAppGroupCallBack result appNewGroup is : ' + res.appNewGroup);
