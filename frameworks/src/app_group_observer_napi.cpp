@@ -114,11 +114,10 @@ void UvQueueWorkOnAppGroupChanged(uv_work_t *work, int status)
     napi_value resultout = nullptr;
     napi_get_reference_value(callbackReceiveDataWorkerData->env, callbackReceiveDataWorkerData->ref, &callback);
 
-    napi_value results[ARGS_TWO] = {nullptr};
-    results[PARAM_FIRST] = BundleStateCommon::GetErrorValue(callbackReceiveDataWorkerData->env, NO_ERROR);
-    results[PARAM_SECOND] = result;
+    napi_value results[ARGS_ONE] = {nullptr};
+    results[PARAM_FIRST] = result;
     NAPI_CALL_RETURN_VOID(callbackReceiveDataWorkerData->env, napi_call_function(callbackReceiveDataWorkerData->env,
-        undefined, callback, ARGS_TWO, &results[PARAM_FIRST], &resultout));
+        undefined, callback, ARGS_ONE, &results[PARAM_FIRST], &resultout));
 
     napi_close_handle_scope(callbackReceiveDataWorkerData->env, scope);
     delete callbackReceiveDataWorkerData;
