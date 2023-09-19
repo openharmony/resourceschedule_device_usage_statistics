@@ -39,14 +39,20 @@ const int32_t PRIORITY_GROUP_DEFAULT = -1;
 const uint32_t APP_USAGE_MIN_PARAMS_BUNDLE_GROUP = 2;
 const uint32_t APP_USAGE_PARAMS_BUNDLE_GROUP = 3;
 const uint32_t ZERO_ARG = 0;
+const uint32_t FRIST_ARG = 1;
 const uint32_t SECOND_ARG = 2;
 const std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50, 60};
 
 static sptr<AppGroupObserver> registerObserver = nullptr;
 std::mutex g_observerMutex_;
 
-napi_value GetQueryAppGroupBundleName(const napi_env &env, napi_value* argv, QueryAppGroupParamsInfo &params)
+napi_value GetQueryAppGroupBundleName(const napi_env &env, napi_value* argv, QueryAppGroupParamsInfo &params,
+    size_t argvLen)
 {
+    if (argvLen <= ZERO_ARG) {
+        params.errorCode = ERR_PARAMETERS_EMPTY;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "bundleName");
+    }
     napi_valuetype valuetype;
     NAPI_CALL(env, napi_typeof(env, argv[ZERO_ARG], &valuetype));
     if (valuetype != napi_string) {
@@ -82,14 +88,14 @@ napi_value ParseQueryAppGroupParameters(const napi_env &env, const napi_callback
         if (valuetype == napi_function) {
             napi_create_reference(env, argv[0], 1, &params.callback);
         } else {
-            GetQueryAppGroupBundleName(env, argv, params);
+            GetQueryAppGroupBundleName(env, argv, params, sizeof(argv));
             if (params.errorCode != ERR_OK) {
                 return BundleStateCommon::NapiGetNull(env);
             }
         }
     } else if (argc == PRIORITY_GROUP_PARAMS) {
         // argv[0] : bundleName
-        GetQueryAppGroupBundleName(env, argv, params);
+        GetQueryAppGroupBundleName(env, argv, params, sizeof(argv));
         if (params.errorCode != ERR_OK) {
             return BundleStateCommon::NapiGetNull(env);
         }
@@ -195,9 +201,14 @@ napi_value QueryAppGroupSync(napi_env env, napi_callback_info info)
     return BundleStateCommon::GetErrorValue(env, errorCode);
 }
 
-napi_value GetAppGroupParameters(const napi_env &env, napi_value* argv, ParamsBundleGroupInfo &params)
+napi_value GetAppGroupParameters(const napi_env &env, napi_value* argv, ParamsBundleGroupInfo &params,
+    size_t argvLen)
 {
-    if (BundleStateCommon::GetInt32NumberValue(env, argv[1], params.newGroup) == nullptr) {
+    if (argvLen <= FRIST_ARG) {
+        params.errorCode = ERR_PARAMETERS_EMPTY;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "newGroup");
+    }
+    if (BundleStateCommon::GetInt32NumberValue(env, argv[FRIST_ARG], params.newGroup) == nullptr) {
         BUNDLE_ACTIVE_LOGW("ParseSetAppGroupParameters failed, newGroup type is invalid.");
         params.errorCode = ERR_NEW_GROUP_TYPE;
         return BundleStateCommon::HandleParamErr(env, ERR_NEW_GROUP_TYPE, "");
@@ -217,8 +228,13 @@ napi_value GetAppGroupParameters(const napi_env &env, napi_value* argv, ParamsBu
     return BundleStateCommon::NapiGetNull(env);
 }
 
-napi_value GetSetAppGroupBundleName(const napi_env &env, napi_value* argv, ParamsBundleGroupInfo &params)
+napi_value GetSetAppGroupBundleName(const napi_env &env, napi_value* argv, ParamsBundleGroupInfo &params,
+    size_t argvLen)
 {
+    if (argvLen <= ZERO_ARG) {
+        params.errorCode = ERR_PARAMETERS_EMPTY;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "bundleName");
+    }
     napi_valuetype valuetype;
     NAPI_CALL(env, napi_typeof(env, argv[ZERO_ARG], &valuetype));
     if (valuetype != napi_string) {
@@ -247,12 +263,12 @@ napi_value ParseSetAppGroupParameters(const napi_env &env, const napi_callback_i
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
     }
     // argv[0] : bundleName
-    GetSetAppGroupBundleName(env, argv, params);
+    GetSetAppGroupBundleName(env, argv, params, sizeof(argv));
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::NapiGetNull(env);
     }
     // argv[1] : newGroup
-    GetAppGroupParameters(env, argv, params);
+    GetAppGroupParameters(env, argv, params, sizeof(argv));
     if (params.errorCode != ERR_OK) {
         return BundleStateCommon::NapiGetNull(env);
     }

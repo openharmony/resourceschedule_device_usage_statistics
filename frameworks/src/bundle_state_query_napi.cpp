@@ -452,7 +452,7 @@ napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
 }
 
 napi_value GetBundleStatsInfoByIntervalCallBack(const napi_env &env, napi_value* argv,
-    AppUsageParamsByIntervalInfo &params)
+    AppUsageParamsByIntervalInfo &params, size_t argvLen)
 {
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[THIRD_ARG], &valuetype));
@@ -510,7 +510,7 @@ napi_value ParseQueryBundleStatsInfoByInterval(const napi_env &env, const napi_c
     }
     // argv[THIRD_ARG]: callback
     if (argc == APP_USAGE_PARAMS_BY_INTERVAL) {
-        GetBundleStatsInfoByIntervalCallBack(env, argv, params);
+        GetBundleStatsInfoByIntervalCallBack(env, argv, params, sizeof(argv));
         if (params.errorCode != ERR_OK) {
             return BundleStateCommon::NapiGetNull(env);
         }
