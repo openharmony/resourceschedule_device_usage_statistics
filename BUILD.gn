@@ -57,6 +57,7 @@ ohos_shared_library("usagestatsinner") {
     "hilog:libhilog",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
+    "ffrt:libffrt",
   ]
 
   part_name = "${device_usage_statistics_part_name}"
