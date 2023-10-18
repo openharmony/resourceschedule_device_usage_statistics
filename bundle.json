@@ -40,7 +40,8 @@
         "eventhandler",
         "power_manager",
         "time_service",
-        "init"
+        "init",
+        "ffrt"
       ],
       "third_party": []
     },

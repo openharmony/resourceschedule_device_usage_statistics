@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 #include "unistd.h"
+#include "ffrt.h"
 
 #include "bundle_active_client.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
 namespace {
-    const std::string BUNDLE_ACTIVE_CLIENT_NAME = "bundleActiveName";
     static const int32_t DELAY_TIME = 5000;
     static const int32_t SLEEP_TIME = 1000;
 }
@@ -56,17 +56,6 @@ ErrCode BundleActiveClient::GetBundleActiveProxy()
     }
     if (recipient_) {
         bundleActiveProxy_->AsObject()->AddDeathRecipient(recipient_);
-    }
-
-    bundleClientRunner_ = AppExecFwk::EventRunner::Create(BUNDLE_ACTIVE_CLIENT_NAME);
-    if (!bundleClientRunner_) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveClient runner create failed!");
-        return ERR_MEMORY_OPERATION_FAILED;
-    }
-    bundleClientHandler_ = std::make_shared<OHOS::AppExecFwk::EventHandler>(bundleClientRunner_);
-    if (!bundleClientHandler_) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveClient handler create failed!");
-        return ERR_MEMORY_OPERATION_FAILED;
     }
     return ERR_OK;
 }
@@ -244,9 +233,9 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
     (void)object;
     std::lock_guard<std::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
     BundleActiveClient::GetInstance().bundleActiveProxy_ = nullptr;
-    BundleActiveClient::GetInstance().bundleClientHandler_->PostTask([this]() {
-            this->OnServiceDiedInner();
-        }, DELAY_TIME);
+    ffrt::submit([this]() {
+        this->OnServiceDiedInner();
+    }, {}, {}, ffrt::task_attr().delay(DELAY_TIME));
 }
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
