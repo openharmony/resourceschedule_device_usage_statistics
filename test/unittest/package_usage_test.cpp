@@ -508,8 +508,31 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_001, Function 
     bundleUserService->currentStats_[0]->endTime_ = 1;
     beginTime = 0;
     bundleUserService->QueryBundleStatsInfos(PackageStats, intervalType, beginTime, endTime, userId, bundleName);
+    EXPECT_NE(bundleUserService, nullptr);
+}
 
-    endTime = 0;
+/*
+ * @tc.name: PackageUsageTest_QueryBundleStatsInfos_002
+ * @tc.desc: QueryBundleStatsInfos
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_002, Function | MediumTest | Level0)
+{
+    int32_t userId = 100;
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->Init();
+    bundleActiveCore->InitBundleGroupController();
+    auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
+    int64_t timeStamp = 20000000000000;
+    bundleUserService->Init(timeStamp);
+    int64_t beginTime = 0;
+    int64_t endTime = 0;
+    std::vector<BundleActivePackageStats> PackageStats;
+    std::string bundleName = "defaultBundleName";
+    int32_t intervalType = 0;
+    bundleUserService->currentStats_[0] = std::make_shared<BundleActivePeriodStats>();
+    bundleUserService->currentStats_[0]->endTime_ = 1;
     auto packageStatsObject = std::make_shared<BundleActivePackageStats>();
     bundleUserService->currentStats_[0]->bundleStats_.emplace("defaultBundleStat", packageStatsObject);
     bundleUserService->QueryBundleStatsInfos(PackageStats, intervalType, beginTime, endTime, userId, bundleName);

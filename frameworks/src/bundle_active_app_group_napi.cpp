@@ -49,7 +49,7 @@ std::mutex g_observerMutex_;
 napi_value GetQueryAppGroupBundleName(const napi_env &env, napi_value* argv, QueryAppGroupParamsInfo &params,
     size_t argvLen)
 {
-    if (argvLen <= ZERO_ARG) {
+    if (argvLen == ZERO_ARG) {
         params.errorCode = ERR_PARAMETERS_EMPTY;
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "bundleName");
     }
@@ -231,7 +231,7 @@ napi_value GetAppGroupParameters(const napi_env &env, napi_value* argv, ParamsBu
 napi_value GetSetAppGroupBundleName(const napi_env &env, napi_value* argv, ParamsBundleGroupInfo &params,
     size_t argvLen)
 {
-    if (argvLen <= ZERO_ARG) {
+    if (argvLen == ZERO_ARG) {
         params.errorCode = ERR_PARAMETERS_EMPTY;
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "bundleName");
     }
