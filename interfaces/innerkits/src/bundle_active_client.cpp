@@ -20,7 +20,6 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 namespace {
-    const std::string BUNDLE_ACTIVE_CLIENT_NAME = "bundleActiveName";
     static const int32_t DELAY_TIME = 5000;
     static const int32_t SLEEP_TIME = 1000;
 }
@@ -57,12 +56,6 @@ ErrCode BundleActiveClient::GetBundleActiveProxy()
     }
     if (recipient_) {
         bundleActiveProxy_->AsObject()->AddDeathRecipient(recipient_);
-    }
-
-    bundleClientRunner_ = AppExecFwk::EventRunner::Create(BUNDLE_ACTIVE_CLIENT_NAME);
-    if (!bundleClientRunner_) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveClient runner create failed!");
-        return ERR_MEMORY_OPERATION_FAILED;
     }
     return ERR_OK;
 }

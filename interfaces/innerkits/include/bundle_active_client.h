@@ -219,7 +219,6 @@ private:
     ~BundleActiveClient() {}
     sptr<IBundleActiveService> bundleActiveProxy_;
     sptr<BundleActiveClientDeathRecipient> recipient_;
-    std::shared_ptr<AppExecFwk::EventRunner> bundleClientRunner_ {nullptr};
     std::recursive_mutex mutex_;
 };
 }  // namespace DeviceUsageStats
