@@ -868,8 +868,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
             relativeLastTimeFrontServiceUsed + currentPackageTime;
         bundleActiveResult->GetLong(TOTAL_TIME_COLUMN_INDEX, usageStats->totalInFrontTime_);
         bundleActiveResult->GetLong(TOTAL_TIME_CONTINUOUS_TASK_COLUMN_INDEX, usageStats->totalContiniousTaskUsedTime_);
-        bundleStats.insert(pair<string, shared_ptr<BundleActivePackageStats>>(usageStats->bundleName_,
-            usageStats));
+        bundleStats.insert(pair<string, shared_ptr<BundleActivePackageStats>>(usageStats->bundleName_, usageStats));
     }
     intervalStats->bundleStats_ = bundleStats;
     if (databaseType == DAILY_DATABASE_INDEX) {

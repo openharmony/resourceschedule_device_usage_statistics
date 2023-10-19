@@ -351,17 +351,13 @@ ErrCode BundleActiveUserService::QueryBundleStatsInfos(std::vector<BundleActiveP
     if (endTime > currentStats->beginTime_) {
         BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos need in memory stats");
         for (auto it : currentStats->bundleStats_) {
-            if (bundleName.empty()) {
-                if ((it.second->totalInFrontTime_ != 0 || it.second->totalContiniousTaskUsedTime_ != 0) &&
-                    it.second->lastTimeUsed_ >= beginTime && it.second->lastTimeUsed_ <= endTime) {
-                    PackageStats.push_back(*(it.second));
-                }
-            } else {
-                if ((it.second->totalInFrontTime_ != 0 || it.second->totalContiniousTaskUsedTime_ != 0) &&
-                    it.second->bundleName_ == bundleName && it.second->lastTimeUsed_ >= beginTime &&
-                    it.second->lastTimeUsed_ <= endTime) {
-                    PackageStats.push_back(*(it.second));
-                }
+            bool isTimeLegal = (it.second->totalInFrontTime_ != 0 || it.second->totalContiniousTaskUsedTime_ != 0) &&
+                it.second->lastTimeUsed_ >= beginTime && it.second->lastTimeUsed_ <= endTime;
+            bool isBundleNameEqual = !bundleName.empty() && it.second->bundleName_ == bundleName;
+            if (bundleName.empty() && isTimeLegal) {
+                PackageStats.push_back(*(it.second));
+            } else if (isBundleNameEqual && isTimeLegal) {
+                PackageStats.push_back(*(it.second));
             }
         }
     }
