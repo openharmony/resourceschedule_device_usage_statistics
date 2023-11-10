@@ -22,6 +22,7 @@ namespace DeviceUsageStats {
 namespace {
     static const int32_t DELAY_TIME = 5000;
     static const int32_t SLEEP_TIME = 1000;
+    static const int32_t MS_TO_US = 1000;
 }
 BundleActiveClient& BundleActiveClient::GetInstance()
 {
@@ -235,7 +236,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
     BundleActiveClient::GetInstance().bundleActiveProxy_ = nullptr;
     ffrt::submit([this]() {
         this->OnServiceDiedInner();
-    }, {}, {}, ffrt::task_attr().delay(DELAY_TIME));
+    }, {}, {}, ffrt::task_attr().delay(DELAY_TIME * MS_TO_US));
 }
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
