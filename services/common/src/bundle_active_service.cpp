@@ -45,6 +45,7 @@ static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
 const int32_t PACKAGE_USAGE_PARAM = 6;
 const int32_t MODULE_USAGE_PARAM = 4;
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
+const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const bool REGISTER_RESULT =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<BundleActiveService>::GetInstance().get());
 
