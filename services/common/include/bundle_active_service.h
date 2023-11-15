@@ -235,6 +235,7 @@ private:
     void SerModuleProperties(const HapModuleInfo& hapModuleInfo,
     const ApplicationInfo& appInfo, const AbilityInfo& abilityInfo, BundleActiveModuleRecord& moduleRecord);
     void DumpUsage(std::string &result);
+    bool AllowDump();
     int32_t ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 };
 }  // namespace DeviceUsageStats

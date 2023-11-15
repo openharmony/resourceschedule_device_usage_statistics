@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+#include <parameters.h>
+
 #include "time_service_client.h"
 #include "power_mgr_client.h"
 #include "shutdown/shutdown_client.h"
@@ -655,8 +657,26 @@ void BundleActiveService::SerModuleProperties(const HapModuleInfo& hapModuleInfo
     moduleRecord.installFreeSupported_ = hapModuleInfo.installationFree;
 }
 
+bool BundleActiveService::AllowDump()
+{
+    if (ENG_MODE == 0) {
+        BUNDLE_ACTIVE_LOGE("Not eng mode");
+        return false;
+    }
+    Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetFirstTokenID();
+    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, "ohos.permission.DUMP");
+    if (ret != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
+        BUNDLE_ACTIVE_LOGE("CheckPermission failed");
+        return false;
+    }
+    return true;
+}
+
 int32_t BundleActiveService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
+    if (!AllowDump()) {
+        return ERR_PERMISSION_DENIED;
+    }
     std::vector<std::string> argsInStr;
     std::transform(args.begin(), args.end(), std::back_inserter(argsInStr),
         [](const std::u16string &arg) {

@@ -25,7 +25,9 @@ namespace OHOS {
 namespace DeviceUsageStats {
 constexpr int32_t DEBUG_ON_DEFAULT = 0;
 std::string DEBUG_MODE = "persist.sys.device_usage_debug_on";
-const bool DEBUG_ON = static_cast<bool>(GetIntParameter(DEBUG_MODE, DEBUG_ON_DEFAULT));
+std::string ENG_PARAMETER = "const.debuggable";
+const bool ENG_MODE = static_cast<bool>(GetIntParameter(ENG_PARAMETER, DEBUG_ON_DEFAULT));
+const bool DEBUG_ON = static_cast<bool>(GetIntParameter(DEBUG_MODE, DEBUG_ON_DEFAULT)) && ENG_MODE;
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 
