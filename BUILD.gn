@@ -64,6 +64,13 @@ ohos_shared_library("usagestatsinner") {
   subsystem_name = "resourceschedule"
   innerapi_tags = [ "platformsdk" ]
   version_script = "libusagestatsinner.versionscript"
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 }
 
 ohos_prebuilt_etc("device_usage_statistics_service_init") {
@@ -101,6 +108,13 @@ ohos_shared_library("bundlestate") {
   relative_install_dir = "module"
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 }
 
 ohos_shared_library("usagestatistics") {
@@ -133,6 +147,13 @@ ohos_shared_library("usagestatistics") {
   relative_install_dir = "module/resourceschedule"
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 }
 
 ohos_shared_library("usagestatservice") {
@@ -208,6 +229,13 @@ ohos_shared_library("usagestatservice") {
   }
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 }
 
 ohos_static_library("usagestatservice_static") {
@@ -280,6 +308,13 @@ ohos_static_library("usagestatservice_static") {
   }
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 }
 
 ohos_shared_library("usagestatsutils") {
@@ -293,4 +328,11 @@ ohos_shared_library("usagestatsutils") {
   innerapi_tags = [ "platformsdk" ]
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 }
