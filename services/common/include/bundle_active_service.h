@@ -216,8 +216,10 @@ private:
 #ifdef BGTASKMGR_ENABLE
     std::shared_ptr<BundleActiveContinuousTaskObserver> continuousTaskObserver_;
 #endif
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     sptr<PowerMgr::IAsyncShutdownCallback> shutdownCallback_;
     sptr<BundleActivePowerStateCallbackService> powerStateCallback_;
+#endif
     std::shared_ptr<AppExecFwk::EventRunner> runner_;
     std::shared_ptr<AppExecFwk::EventHandler> handler_;
     bool ready_ {false};

@@ -36,7 +36,9 @@ using namespace DeviceUsageStatsGroupConst;
 class BundleActiveGroupHandler;
 class BundleActiveGroupController {
 public:
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     using PowerMgrClient = OHOS::PowerMgr::PowerMgrClient;
+#endif
     using IBundleMgr = OHOS::AppExecFwk::IBundleMgr;
     using ApplicationInfo = OHOS::AppExecFwk::ApplicationInfo;
     using BundleInfo = OHOS::AppExecFwk::BundleInfo;
