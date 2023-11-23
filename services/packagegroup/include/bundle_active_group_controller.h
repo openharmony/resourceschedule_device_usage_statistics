@@ -18,8 +18,9 @@
 
 #include <memory>
 #include <mutex>
-
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
 #include "power_mgr_client.h"
+#endif
 #include "application_info.h"
 
 #include "ibundle_active_service.h"
@@ -35,7 +36,9 @@ using namespace DeviceUsageStatsGroupConst;
 class BundleActiveGroupHandler;
 class BundleActiveGroupController {
 public:
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     using PowerMgrClient = OHOS::PowerMgr::PowerMgrClient;
+#endif
     using IBundleMgr = OHOS::AppExecFwk::IBundleMgr;
     using ApplicationInfo = OHOS::AppExecFwk::ApplicationInfo;
     using BundleInfo = OHOS::AppExecFwk::BundleInfo;

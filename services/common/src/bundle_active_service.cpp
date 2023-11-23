@@ -16,8 +16,10 @@
 #include <parameters.h>
 
 #include "time_service_client.h"
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
 #include "power_mgr_client.h"
 #include "shutdown/shutdown_client.h"
+#endif
 #include "unistd.h"
 #include "accesstoken_kit.h"
 
@@ -146,6 +148,7 @@ void BundleActiveService::InitService()
     } else {
         return;
     }
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     shutdownCallback_ = new (std::nothrow) BundleActiveShutdownCallbackService(bundleActiveCore_);
     powerStateCallback_ = new (std::nothrow) BundleActivePowerStateCallbackService(bundleActiveCore_);
     auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
@@ -156,6 +159,7 @@ void BundleActiveService::InitService()
     if (powerStateCallback_) {
         powerManagerClient.RegisterPowerStateCallback(powerStateCallback_);
     }
+#endif
     InitAppStateSubscriber(reportHandler_);
     InitContinuousSubscriber(reportHandler_);
     bundleActiveCore_->InitBundleGroupController();
@@ -230,6 +234,7 @@ bool BundleActiveService::SubscribeContinuousTask()
 
 void BundleActiveService::OnStop()
 {
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     if (shutdownCallback_ != nullptr) {
         auto& shutdownClient = OHOS::PowerMgr::ShutdownClient::GetInstance();
         auto& powerManagerClient = OHOS::PowerMgr::PowerMgrClient::GetInstance();
@@ -237,6 +242,7 @@ void BundleActiveService::OnStop()
         powerManagerClient.UnRegisterPowerStateCallback(powerStateCallback_);
         return;
     }
+#endif
     BUNDLE_ACTIVE_LOGI("[Server] OnStop");
     ready_ = false;
 }

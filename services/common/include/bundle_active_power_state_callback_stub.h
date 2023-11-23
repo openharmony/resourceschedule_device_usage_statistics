@@ -15,7 +15,7 @@
 
 #ifndef BUNDLE_ACTIVE_POWER_STATE_CALLBACK_STUB_H
 #define BUNDLE_ACTIVE_POWER_STATE_CALLBACK_STUB_H
-
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
 #include "ipower_state_callback.h"
 #include "nocopyable.h"
 #include "ibundle_active_service.h"
@@ -35,5 +35,6 @@ private:
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+#endif
 #endif  // BUNDLE_ACTIVE_POWER_STATE_CALLBACK_STUB_H
 

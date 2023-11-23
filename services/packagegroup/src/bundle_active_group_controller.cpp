@@ -386,7 +386,10 @@ void BundleActiveGroupController::ShutDown(const int64_t bootBasedTimeStamp, con
 
 bool BundleActiveGroupController::IsScreenOn()
 {
-    bool result = PowerMgrClient::GetInstance().IsScreenOn();
+    bool result = true;
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
+    result = PowerMgrClient::GetInstance().IsScreenOn();
+#endif
     BUNDLE_ACTIVE_LOGI("IsScreenOn() is %{public}d", result);
     return result;
 }

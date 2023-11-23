@@ -15,7 +15,7 @@
 
 #ifndef BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_SERVICE_H
 #define BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_SERVICE_H
-
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
 #include "shutdown/async_shutdown_callback_stub.h"
 #include "bundle_active_core.h"
 
@@ -31,5 +31,6 @@ private:
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+#endif
 #endif  // BUNDLE_ACTIVE_SHUTDOWN_CALLBACK_SERVICE_H
 

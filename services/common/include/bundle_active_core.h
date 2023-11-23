@@ -23,8 +23,9 @@
 #endif
 
 #include <mutex>
-
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
 #include "power_mgr_client.h"
+#endif
 #include "accesstoken_kit.h"
 #ifdef OS_ACCOUNT_PART_ENABLED
 #include "os_account_manager.h"
