@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
 #include "bundle_active_power_state_callback_stub.h"
 #include "bundle_active_event.h"
 #include "power_state_callback_ipc_interface_code.h"
@@ -45,4 +45,5 @@ void BundleActivePowerStateCallbackStub::PowerStateStub(PowerMgr::PowerState sta
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
+#endif
 

@@ -23,8 +23,10 @@
 #include "bundle_active_stub.h"
 #include "bundle_active_core.h"
 #include "bundle_active_report_handler.h"
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
 #include "shutdown/async_shutdown_callback_stub.h"
 #include "bundle_active_power_state_callback_service.h"
+#endif
 #include "bundle_active_app_state_observer.h"
 #include "bundle_active_continuous_task_observer.h"
 #include "bundle_active_account_helper.h"

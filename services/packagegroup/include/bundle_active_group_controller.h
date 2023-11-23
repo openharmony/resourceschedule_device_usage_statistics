@@ -18,8 +18,9 @@
 
 #include <memory>
 #include <mutex>
-
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
 #include "power_mgr_client.h"
+#endif
 #include "application_info.h"
 
 #include "ibundle_active_service.h"

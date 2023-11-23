@@ -16,8 +16,10 @@
 #include <parameters.h>
 
 #include "time_service_client.h"
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
 #include "power_mgr_client.h"
 #include "shutdown/shutdown_client.h"
+#endif
 #include "unistd.h"
 #include "accesstoken_kit.h"
 
