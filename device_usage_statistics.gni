@@ -24,7 +24,7 @@ if (!defined(global_parts_info) ||
   os_account_part_enabled = false
 }
 device_usage_statistics_with_powermgr_power_manager_enable = true
-if (!defined(global_parts_info) &&
+if (defined(global_parts_info) &&
     !defined(global_parts_info.powermgr_power_manager_enable)) {
   device_usage_statistics_with_powermgr_power_manager_enable = false
 }
