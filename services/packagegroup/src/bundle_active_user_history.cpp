@@ -199,9 +199,10 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
         AppGroupCallbackInfo callbackInfo(
             userId, oldGroup, newGroup, oneBundleUsageHistory->reasonInGroup_, bundleName);
         BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack AppGroupCallbackInfo build success");
-        if (!bundleActiveCore_.expired()) {
+        auto bundleActiveCore = bundleActiveCore_.lock();
+        if (bundleActiveCore != nullptr) {
             BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack will callback!");
-            bundleActiveCore_.lock()->OnAppGroupChanged(callbackInfo);
+            bundleActiveCore->OnAppGroupChanged(callbackInfo);
         }
     }
 }
@@ -238,8 +239,9 @@ int32_t BundleActiveUserHistory::SetAppGroup(const string& bundleName, const int
     if (!isGroupChanged) {
         AppGroupCallbackInfo callbackInfo(
             userId, oldGroup, newGroup, oneBundleHistory->reasonInGroup_, bundleName);
-        if (!bundleActiveCore_.expired()) {
-            bundleActiveCore_.lock()->OnAppGroupChanged(callbackInfo);
+        auto bundleActiveCore = bundleActiveCore_.lock();
+        if (bundleActiveCore != nullptr) {
+            bundleActiveCore->OnAppGroupChanged(callbackInfo);
         }
     }
     return ERR_OK;
