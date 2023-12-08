@@ -194,8 +194,8 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     oneBundleUsageHistory->reasonInGroup_ = GROUP_CONTROL_REASON_USAGE | groupReason;
     oneBundleUsageHistory->isChanged_ = true;
     BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack will ReportUsage");
-    bool isGroupChanged = (oldGroup == newGroup) ? true : false;
-    if (!isGroupChanged) {
+    bool isGroupChanged = (oldGroup == oneBundleUsageHistory->currentGroup_) ? false : true;
+    if (isGroupChanged) {
         AppGroupCallbackInfo callbackInfo(
             userId, oldGroup, newGroup, oneBundleUsageHistory->reasonInGroup_, bundleName);
         BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack AppGroupCallbackInfo build success");
