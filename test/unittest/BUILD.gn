@@ -214,7 +214,7 @@ group("unittest") {
     ":DeviceUsagePackageUsageTest",
     ":DeviceUsageStatsMockTest",
     ":DeviceUsageStatsMultiTest",
-    ":DeviceUsageStatsTest",
     ":DeviceUsageStatsServiceTest",
+    ":DeviceUsageStatsTest",
   ]
 }
