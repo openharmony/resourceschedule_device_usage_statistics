@@ -107,7 +107,7 @@ enum ServiceError {
     ERR_REPEAT_SET_APP_GROUP,
 };
 
-static std::map<int32_t, std::string> saErrCodeMsgMap = {
+const inline std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_PERMISSION_DENIED, "Permission denied."},
     {ERR_NOT_SYSTEM_APP, "Not system app."},
     {ERR_MEMORY_OPERATION_FAILED, "Memory operation failed. create object failed."},
@@ -139,7 +139,7 @@ static std::map<int32_t, std::string> saErrCodeMsgMap = {
         "Failed to get the application group information. The application group infomation cannot be found."},
 };
 
-static std::map<int32_t, std::string> paramErrCodeMsgMap = {
+const inline std::map<int32_t, std::string> paramErrCodeMsgMap = {
     {ERR_PARAMETERS_NUMBER, " api interface parameters count is error."},
     {ERR_PARAMETERS_EMPTY, " cannot be empty."},
     {ERR_CALL_BACK_TYPE, " Callback type must be function."},
