@@ -355,17 +355,17 @@ describe("DeviceUsageStatisticsJsTest", function () {
         try{
             usageStatistics.isIdleState(bundleName, (err, res) => {
                 if (err) {
-                    console.info('BUNDLE_ACTIVE isIdleState callback failure.');
+                    console.info('BUNDLE_ACTIVE isIdleState method callback failure.');
                     expect(false).assertEqual(true);
                     done();
                 } else {
-                    console.info('BUNDLE_ACTIVE isIdleState callback success.');
+                    console.info('BUNDLE_ACTIVE isIdleState method callback success.');
                     expect(true).assertEqual(true);
                     done();
                 }
             });
         } catch(error) {
-            console.info('BUNDLE_ACTIVE isIdleState callback throw error.');
+            console.info('BUNDLE_ACTIVE isIdleState method callback throw error.');
             expect(false).assertEqual(true);
             done();
         }
@@ -482,7 +482,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
             var isActive = power.isActive();
             usageStatistics.queryAppGroup((err, res) => {
                 if(err) {
-                    console.info('BUNDLE_ACTIVE queryAppGroup callback failure.');
+                    console.info('BUNDLE_ACTIVE queryAppGroup method callback failure.');
                     if (isActive == true) {
                         expect(false).assertEqual(true);
                     } else {
@@ -490,7 +490,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
                     }
                     done();
                 } else {
-                    console.info('BUNDLE_ACTIVE queryAppGroup callback success.');
+                    console.info('BUNDLE_ACTIVE queryAppGroup method callback success.');
                     if (isActive == true) {
                         expect(true).assertEqual(true);
                     } else {
@@ -500,7 +500,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
                 }
             });
         } catch (error) {
-            console.info('BUNDLE_ACTIVE queryAppGroup callback throw error.');
+            console.info('BUNDLE_ACTIVE queryAppGroup method callback throw error.');
             expect(false).assertEqual(true);
             done();
         }
@@ -517,7 +517,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
         try{
             var isActive = power.isActive();
             usageStatistics.queryAppGroup().then( res => {
-                console.info('BUNDLE_ACTIVE queryAppGroup promise success.');
+                console.info('BUNDLE_ACTIVE queryAppGroup method promise success.');
                 if (isActive == true) {
                     expect(true).assertEqual(true);
                 } else {
@@ -525,7 +525,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
                 }
                 done();
             }).catch( err => {
-                console.info('BUNDLE_ACTIVE queryAppGroup promise failure.');
+                console.info('BUNDLE_ACTIVE queryAppGroup method promise failure.');
                 if (isActive == true) {
                     expect(false).assertEqual(true);
                 } else {
@@ -534,7 +534,7 @@ describe("DeviceUsageStatisticsJsTest", function () {
                 done();
             });
         } catch (error) {
-            console.info('BUNDLE_ACTIVE queryAppGroup promise throw error.');
+            console.info('BUNDLE_ACTIVE queryAppGroup method promise throw error.');
             expect(false).assertEqual(true);
             done();
         }
@@ -831,17 +831,17 @@ describe("DeviceUsageStatisticsJsTest", function () {
         try{
             usageStatistics.queryModuleUsageRecords((err, res) => {
                 if(err) {
-                    console.info('BUNDLE_ACTIVE queryModuleUsageRecords callback failure.');
+                    console.info('BUNDLE_ACTIVE queryModuleUsageRecords method callback failure.');
                     expect(false).assertEqual(true);
                     done();
                 } else {
-                    console.info('BUNDLE_ACTIVE queryModuleUsageRecords callback success.');
+                    console.info('BUNDLE_ACTIVE queryModuleUsageRecords method callback success.');
                     expect(true).assertEqual(true);
                     done();
                 }
             });
         } catch (error) {
-            console.info('BUNDLE_ACTIVE queryModuleUsageRecords callback throw error.');
+            console.info('BUNDLE_ACTIVE queryModuleUsageRecords method callback throw error.');
             expect(false).assertEqual(true);
             done();
         }
@@ -857,16 +857,16 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest030---------------------------');
         try{
             usageStatistics.queryModuleUsageRecords().then( res => {
-                console.info('BUNDLE_ACTIVE queryModuleUsageRecords promise success.');
+                console.info('BUNDLE_ACTIVE queryModuleUsageRecords method promise success.');
                 expect(true).assertEqual(true);
                 done();
             }).catch( err=> {
-                console.info('BUNDLE_ACTIVE queryModuleUsageRecords promise failure.');
+                console.info('BUNDLE_ACTIVE queryModuleUsageRecords method promise failure.');
                 expect(false).assertEqual(true);
                 done();
         });
         } catch (error) {
-            console.info('BUNDLE_ACTIVE queryModuleUsageRecords promise throw error.');
+            console.info('BUNDLE_ACTIVE queryModuleUsageRecords method promise throw error.');
             expect(false).assertEqual(true);
             done();
         }
