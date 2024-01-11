@@ -213,7 +213,7 @@ bool BundleActivePackageStats::Marshalling(Parcel &parcel) const
         parcel.WriteInt64(lastContiniousTaskUsed_) &&
         parcel.WriteInt64(totalContiniousTaskUsedTime_) &&
         parcel.WriteInt32(startCount_) &&
-        parcel.WriteInt32(userId_)){
+        parcel.WriteInt32(userId_)) {
         return true;
     }
     return false;
