@@ -354,6 +354,7 @@ ErrCode BundleActiveUserService::QueryBundleStatsInfos(std::vector<BundleActiveP
             bool isTimeLegal = (it.second->totalInFrontTime_ != 0 || it.second->totalContiniousTaskUsedTime_ != 0) &&
                 it.second->lastTimeUsed_ >= beginTime && it.second->lastTimeUsed_ <= endTime;
             bool isBundleNameEqual = !bundleName.empty() && it.second->bundleName_ == bundleName;
+            it.second->userId_ = userId;
             if (bundleName.empty() && isTimeLegal) {
                 PackageStats.push_back(*(it.second));
             } else if (isBundleNameEqual && isTimeLegal) {
