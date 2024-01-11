@@ -158,6 +158,10 @@ void BundleStateCommon::GetBundleStateInfoByIntervalForResult(
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "abilityInFgTotalTime",
             abilityInFgTotalTime));
 
+        napi_value id = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.userId_, &id));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "id", id));
+
         NAPI_CALL_RETURN_VOID(env, napi_set_element(env, result, index, packageObject));
         index++;
     }
@@ -239,6 +243,10 @@ void BundleStateCommon::GetBundleStateInfoForResult(napi_env env,
         NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, item.second.totalInFrontTime_, &abilityInFgTotalTime));
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "abilityInFgTotalTime",
             abilityInFgTotalTime));
+
+        napi_value id = nullptr;
+        NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, item.second.userId_, &id));
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "id", id));
 
         NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, item.first.c_str(), packageObject));
     }

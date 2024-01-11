@@ -1303,6 +1303,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
             bundleActiveResult->GetLong(TOTAL_TIME_COLUMN_INDEX, usageStats.totalInFrontTime_);
             bundleActiveResult->GetLong(TOTAL_TIME_CONTINUOUS_TASK_COLUMN_INDEX,
                 usageStats.totalContiniousTaskUsedTime_);
+            usageStats.userId_ = userId;
             databaseUsageStats.push_back(usageStats);
         }
         queryCondition.clear();
