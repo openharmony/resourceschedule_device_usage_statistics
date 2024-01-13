@@ -888,7 +888,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
     coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
     coreObject->bundleGroupController_->sptrBundleMgr_ = nullptr;
     coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
-}s
+}
 
 /*
  * @tc.name: BundleActiveGroupControllerTest_010
