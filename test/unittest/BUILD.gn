@@ -28,6 +28,47 @@ config("module_private_config") {
   ]
 }
 
+ohos_unittest("BundleActiveTotalTest") {
+  module_out_path = module_output_path
+
+  sources = [ "bundle_active_total_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "../../:usagestatservice_static",
+    "../../:usagestatsinner",
+    "../../:usagestatsutils",
+    "//third_party/jsoncpp:jsoncpp",
+  ]
+
+  external_deps = [
+    "access_token:libaccesstoken_sdk",
+    "access_token:libtokenid_sdk",
+    "relational_store:native_rdb",
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "ipc:ipc_single",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+
+    "ability_base:want",
+    "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "common_event_service:cesfwk_innerkits",
+    "init:libbegetutil",
+    "time_service:time_client",
+  ]
+  defines = []
+  if (device_usage_statistics_with_powermgr_power_manager_enable) {
+    defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
+    external_deps += [ "power_manager:powermgr_client" ]
+  }
+}
+
 ohos_unittest("DeviceUsageStatsTest") {
   module_out_path = module_output_path
 
@@ -212,6 +253,7 @@ group("unittest") {
   testonly = true
   deps = [
     ":DeviceUsagePackageUsageTest",
+    ":DeviceActiveTotalTest",
     ":DeviceUsageStatsMockTest",
     ":DeviceUsageStatsMultiTest",
     ":DeviceUsageStatsServiceTest",

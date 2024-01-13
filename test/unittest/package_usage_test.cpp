@@ -30,6 +30,7 @@
 #include "bundle_active_user_service.h"
 #include "bundle_active_core.h"
 #include "bundle_active_stats_combiner.h"
+#include "bundle_active_report_handler.h"
 
 using namespace testing::ext;
 
@@ -730,6 +731,30 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_RenewStatsInMemory_001, Function | M
     bundleUserService->currentStats_[0]->bundleStats_.emplace("default", packageStat);
     bundleUserService->RenewStatsInMemory(timeStamp);
     EXPECT_NE(bundleUserService, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveReportHandlerTest_001
+ * @tc.desc: RenewStatsInMemory
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumTest | Level0)
+{
+    std::string threadName = "bundle_active_report_handler";
+    auto runner = AppExecFwk::EventRunner::Create(threadName);
+        if (runner == nullptr) {
+            BUNDLE_ACTIVE_LOGE("report handler is null");
+            return;
+        }
+    std::shared_ptr<BundleActiveReportHandler> bundleActiveReportHandler;
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    AppExecFwk::InnerEvent::Pointer pointer = AppExecFwk::InnerEvent::Get(0);
+    pointer.release();
+    bundleActiveReportHandler = std::make_shared<BundleActiveReportHandler>(runner);
+    bundleActiveReportHandler->Init(bundleActiveCore);
+    bundleActiveReportHandler->ProcessEvent(pointer);
+    bundleActiveReportHandler->ProcessEvent(pointer);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

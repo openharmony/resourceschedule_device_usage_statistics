@@ -510,6 +510,10 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ModuleRecord_001, 
     BundleActiveModuleRecord bundleActiveModuleRecordB;
     bundleActiveModuleRecordB.lastModuleUsedTime_ = 1;
     EXPECT_TRUE(bundleActiveModuleRecord->cmp(bundleActiveModuleRecordA, bundleActiveModuleRecordB));
+
+    BundleActiveModuleRecord bundleActiveModuleRecordC;
+    bundleActiveModuleRecordB.lastModuleUsedTime_ = 2;
+    bundleActiveModuleRecord->UpdateModuleRecord(1000);
 }
 
 /*
@@ -548,6 +552,8 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_AppGroupCallbackSt
     MessageParcel data1;
     MessageParcel reply;
     MessageOption option;
+    EXPECT_EQ(appGroupCallbackStub->OnRemoteRequest(1, data1, reply, option), -1);
+    data1.WriteInterfaceToken(AppGroupCallbackStub::GetDescriptor());
     EXPECT_EQ(appGroupCallbackStub->OnRemoteRequest(1, data1, reply, option), -1);
 }
 }  // namespace DeviceUsageStats
