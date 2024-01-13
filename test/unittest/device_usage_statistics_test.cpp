@@ -512,7 +512,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ModuleRecord_001, 
     EXPECT_TRUE(bundleActiveModuleRecord->cmp(bundleActiveModuleRecordA, bundleActiveModuleRecordB));
 
     BundleActiveModuleRecord bundleActiveModuleRecordC;
-    bundleActiveModuleRecordB.lastModuleUsedTime_ = 2;
+    bundleActiveModuleRecordC.lastModuleUsedTime_ = 2;
     bundleActiveModuleRecord->UpdateModuleRecord(1000);
 }
 

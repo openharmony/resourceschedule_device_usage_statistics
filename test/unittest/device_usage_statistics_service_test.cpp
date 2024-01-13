@@ -728,7 +728,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_001,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(coreObject->debugCore_);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
     coreObject->InitBundleGroupController();
 
     int userId = 100;
@@ -749,7 +749,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_002,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(coreObject->debugCore_);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
     coreObject->InitBundleGroupController();
 
     int userId = 100;
@@ -770,7 +770,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_003,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(coreObject->debugCore_);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
     coreObject->InitBundleGroupController();
 
     int userId = 100;
@@ -791,7 +791,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_004,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(coreObject->debugCore_);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
     coreObject->InitBundleGroupController();
     int userId = 100;
     BundleActiveEvent event;
@@ -813,7 +813,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_005,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(coreObject->debugCore_);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
     coreObject->InitBundleGroupController();
     int userId = 100;
     int64_t timeStamp = 20000000000000;
@@ -830,7 +830,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_006,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(coreObject->debugCore_);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
     coreObject->InitBundleGroupController();
     int userId = 100;
     int64_t timeStamp = 20000000000000;
@@ -848,7 +848,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_007,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(coreObject->debugCore_);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
     coreObject->InitBundleGroupController();
     int userId = 100;
     coreObject->bundleGroupController_->IsBundleIdle("test", userId);
@@ -864,9 +864,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_008,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(true);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
     coreObject->InitBundleGroupController();
-    int userId = 100;
+    int32_t userId = 100;
     int32_t appGroup = 0;
     coreObject->bundleGroupController_->QueryAppGroup(appGroup, nullptr, userId);
     coreObject->bundleGroupController_->QueryAppGroup(appGroup, "test", userId);
@@ -882,13 +882,13 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(true);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
     coreObject->InitBundleGroupController();
     int userId = 100;
     coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
     coreObject->bundleGroupController_->sptrBundleMgr_ = nullptr;
-    coreObject->bundleGroupController_->QueryAppGroup("test", userId);
-}
+    coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
+}s
 
 /*
  * @tc.name: BundleActiveGroupControllerTest_010
@@ -900,7 +900,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_010,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(true);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
     coreObject->InitBundleGroupController();
     int userId = 100;
     int64_t timeStamp = 20000000000000;
@@ -937,7 +937,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_002,
     std::shared_ptr<BundleActiveCore> bundleActiveCore;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
     bundleUserHistory_->WriteDeviceDuration();
-    bundleUserHistory_->GetLevelIndex(0, "test");
+    bundleUserHistory_->OnBundleUninstalled(0, "test");
 }
 
 /*

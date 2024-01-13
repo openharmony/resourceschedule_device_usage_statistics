@@ -73,8 +73,8 @@ void BundleActiveTotalTest::TearDown(void)
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveAccountHelperTest_001, Function | MediumTest | Level0)
 {
-    std::vector<int32_t> activatedOsAccoountIds;
-    BundleActiveAccountHelper::GetActiveUserId(activatedOsAccoountIds);
+    std::vector<int32_t> activatedOsAccountIds;
+    BundleActiveAccountHelper::GetActiveUserId(activatedOsAccountIds);
 }
 
 /*
@@ -116,8 +116,8 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Func
 HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_001, Function | MediumTest | Level0)
 {
     AppExecFwk::ApplicationFlag flag = AppExecFwk::GET_BASIC_APPLICATION_INFO;
-    AppExecFwk::ApplicationInfo appinfo;
-    AppExecFwk::BundleInfo bunldleinfo;
+    AppExecFwk::ApplicationInfo appInfo;
+    AppExecFwk::BundleInfo bundleInfo;
     BundleActiveBundleMgrHelper test;
 
     std::string string = "test";
@@ -212,7 +212,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_005, Function | Me
     test.GetTableIndexSql(5, 0, false, 0);
     test.GetTableIndexSql(5, 0, false, 1);
     test.GetTableIndexSql(5, 0, false, 2);
-    test.GetTableIndexSql(5, 0, false, 0);
+    test.GetTableIndexSql(0, 0, false, 0);
 }
 
 /*
@@ -257,7 +257,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActivePowerStateCallbackServiceTest_001, F
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     BundleActivePowerStateCallbackService test1(nullptr);
 
-    std::shared_ptr<BundleActiveCore> bundleActiveCore = std::make_shared<>(BundleActiveCore);
+    std::shared_ptr<BundleActiveCore> bundleActiveCore = std::make_shared<BundleActiveCore>();
     BundleActivePowerStateCallbackService test2(bundleActiveCore);
     
     test2.OnPowerStateChanged(PowerState::AWAKE);
