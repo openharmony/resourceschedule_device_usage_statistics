@@ -85,25 +85,24 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveAccountHelperTest_001, Function | Me
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Function | MediumTest | Level0)
 {
-    #ifdef BGTASKMGR_ENABLE
-    #ifdef OS_ACCOUNT_PART_ENABLED
-    const std::shared_ptr<AppExecFwk::EventRunner> runner;
+#ifdef BGTASKMGR_ENABLE
+#ifdef OS_ACCOUNT_PART_ENABLED
+    std::shared_ptr<AppExecFwk::EventRunner> runner;
     auto reportHandler = std::make_shared<BundleActiveReportHandler>(runner);
     auto reportHandler1 = std::make_shared<BundleActiveReportHandler>(runner);
-    BundleActiveContinuousTaskObserver test();
+    BundleActiveContinuousTaskObserver test;
     test.Init(reportHandler);
     test.Init(reportHandler1);
 
-    const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo> continuousTaskCallbackInfo;
-    BundleActiveContinuousTaskObserver::OnContinuousTaskStart(continuousTaskCallbackInfo);
+    std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo> continuousTaskCallbackInfo;
+    test.OnContinuousTaskStart(continuousTaskCallbackInfo);
 
-    BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(continuousTaskCallbackInfo, true);
-    BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(continuousTaskCallbackInfo, false);
+    test.ReportContinuousTaskEvent(continuousTaskCallbackInfo, true);
+    test.ReportContinuousTaskEvent(continuousTaskCallbackInfo, false);
 
-    IBundleMgr bundleMgr_ = new IBundleMgr(nullptr);
-    BundleActiveContinuousTaskObserver::GetBundleMgr();
-    IBundleMgr bundleMgr_ = new IBundleMgr();
-    BundleActiveContinuousTaskObserver::GetBundleMgr();
+    test.GetBundleMgr();
+    test.bundleMgr_ = nullptr;
+    test.GetBundleMgr();
 #endif
 #endif
 }
@@ -141,7 +140,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_001, Function | 
 HWTEST_F(BundleActiveTotalTest, BundleActiveAppStateObserverTest_001, Function | MediumTest | Level0)
 {
     AbilityStateData abilityStateData;
-    const std::shared_ptr<AppExecFwk::EventRunner> runner;
+    std::shared_ptr<AppExecFwk::EventRunner> runner;
     auto reportHandler = std::make_shared<BundleActiveReportHandler>(runner);
     BundleActiveAppStateObserver test;
     test.Init(reportHandler);
@@ -241,7 +240,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_007, Function | Me
 {
     BundleActiveUsageDatabase test;
     std::shared_ptr<NativeRdb::RdbStore> rdbStore;
-    const BundleActiveFormRecord formRecord;
+    BundleActiveFormRecord formRecord;
     test.UpdateFormData(0, "test", "test", formRecord, rdbStore);
     test.GetSystemEventName(0);
     test.JudgeQueryCondition(0, 0, 1);
@@ -255,7 +254,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_007, Function | Me
  */
 HWTEST_F(BundleActiveTotalTest, BundleActivePowerStateCallbackServiceTest_001, Function | MediumTest | Level0)
 {
-    #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
+#ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     BundleActivePowerStateCallbackService test1(nullptr);
 
     std::shared_ptr<BundleActiveCore> bundleActiveCore = std::make_shared<>(BundleActiveCore);
@@ -274,7 +273,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActivePowerStateCallbackServiceTest_001, F
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveBinarySearchTest_001, Function | MediumTest | Level0)
 {
-    const std::vector<int64_t> tableNameArray;
+    std::vector<int64_t> tableNameArray;
     BundleActiveBinarySearch test;
     test.BinarySearch(tableNameArray, 0);
     test.BinarySearch(tableNameArray, -100);

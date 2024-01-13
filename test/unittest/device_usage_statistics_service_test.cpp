@@ -794,7 +794,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_004,
     coreObject->bundleGroupController_ = std::make_shared<BundleGroupController>(coreObject->debugCore_);
     coreObject->InitBundleGroupController();
     int userId = 100;
-    const BundleActiveEvent event;
+    BundleActiveEvent event;
     int64_t timeStamp = 20000000000000;
     coreObject->bundleGroupController_->ReportEvent(event, timeStamp, userId);
     coreObject->bundleGroupController_->ReportEvent(event, timeStamp, 19);
@@ -868,7 +868,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_008,
     coreObject->InitBundleGroupController();
     int userId = 100;
     int32_t appGroup = 0;
-    coreObject->bundleGroupController_->QueryAppGroup(appGroup, nullptr,userId);
+    coreObject->bundleGroupController_->QueryAppGroup(appGroup, nullptr, userId);
     coreObject->bundleGroupController_->QueryAppGroup(appGroup, "test", userId);
 }
 
@@ -916,10 +916,10 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_010,
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_001,
     Function | MediumTest | Level0)
 {
-    const int64_t bootBasedTimeStamp = 2000;
-    const std::shared_ptr<BundleActiveCore> bundleActiveCore;
-    const std::vector<int64_t> screenTimeLevel;
-    const std::vector<int64_t> bootFromTimeLevel;
+    int64_t bootBasedTimeStamp = 2000;
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    std::vector<int64_t> screenTimeLevel;
+    std::vector<int64_t> bootFromTimeLevel;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
     bundleUserHistory_->GetLevelIndex("test", 0, 20000, screenTimeLevel, bootFromTimeLevel);
 }
@@ -933,8 +933,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_001,
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_002,
     Function | MediumTest | Level0)
 {
-    const int64_t bootBasedTimeStamp = 2000;
-    const std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    int64_t bootBasedTimeStamp = 2000;
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
     bundleUserHistory_->WriteDeviceDuration();
     bundleUserHistory_->GetLevelIndex(0, "test");
@@ -949,8 +949,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_002,
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_003,
     Function | MediumTest | Level0)
 {
-    const int64_t bootBasedTimeStamp = 2000;
-    const std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    int64_t bootBasedTimeStamp = 2000;
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
     std::shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 0, 0, 1000, 2000, 100);
@@ -969,9 +969,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_003,
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_004,
     Function | MediumTest | Level0)
 {
-    const std::shared_ptr<BundleActiveCore> bundleActiveCore;
-    const int32_t userId = 100;
-    const int64_t bootBasedTimeStamp = 2000;
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    int32_t userId = 100;
+    int64_t bootBasedTimeStamp = 2000;
     int32_t newgroup = 0;
     uint32_t groupReason = 0;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
@@ -988,8 +988,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_004,
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_005,
     Function | MediumTest | Level0)
 {
-    const std::shared_ptr<BundleActiveCore> bundleActiveCore;
-    const int64_t bootBasedTimeStamp = 2000;
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    int64_t bootBasedTimeStamp = 2000;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
     bundleUserHistory_->PrintData(0);
 }

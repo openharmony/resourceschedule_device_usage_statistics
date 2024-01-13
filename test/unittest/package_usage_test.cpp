@@ -743,10 +743,10 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumT
 {
     std::string threadName = "bundle_active_report_handler";
     auto runner = AppExecFwk::EventRunner::Create(threadName);
-        if (runner == nullptr) {
-            BUNDLE_ACTIVE_LOGE("report handler is null");
-            return;
-        }
+    if (runner == nullptr) {
+        BUNDLE_ACTIVE_LOGE("report handler is null");
+        return;
+    }
     std::shared_ptr<BundleActiveReportHandler> bundleActiveReportHandler;
     std::shared_ptr<BundleActiveCore> bundleActiveCore;
     AppExecFwk::InnerEvent::Pointer pointer = AppExecFwk::InnerEvent::Get(0);
