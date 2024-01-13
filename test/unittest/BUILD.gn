@@ -251,7 +251,7 @@ ohos_unittest("DeviceUsagePackageUsageTest") {
 group("unittest") {
   testonly = true
   deps = [
-    ":DeviceActiveTotalTest",
+    ":BundleActiveTotalTest",
     ":DeviceUsagePackageUsageTest",
     ":DeviceUsageStatsMockTest",
     ":DeviceUsageStatsMultiTest",
