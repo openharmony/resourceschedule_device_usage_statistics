@@ -28,6 +28,7 @@
 #include "app_group_callback_info.h"
 #include "bundle_active_usage_database.h"
 #include "bundle_active_user_history.h"
+#include "bundle_active_group_controller.h"
 
 using namespace testing::ext;
 
@@ -715,6 +716,282 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rest
     userId = 101;
     coreObject->RestoreToDatabase(userId);
     EXPECT_NE(coreObject, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_001
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_001,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
+    coreObject->InitBundleGroupController();
+
+    int userId = 100;
+    auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
+    int64_t timeStamp = 20000000000000;
+    userService->Init(timeStamp);
+    coreObject->userStatServices_[userId] = userService;
+    coreObject->OnUserRemoved(userId);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_002
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_002,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
+    coreObject->InitBundleGroupController();
+
+    int userId = 100;
+    auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
+    int64_t timeStamp = 20000000000000;
+    userService->Init(timeStamp);
+    coreObject->userStatServices_[userId] = userService;
+    coreObject->bundleGroupController_->OnUserSwitched(userId, userId);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_003
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_003,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
+    coreObject->InitBundleGroupController();
+
+    int userId = 100;
+    auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
+    int64_t timeStamp = 20000000000000;
+    userService->Init(timeStamp);
+    coreObject->userStatServices_[userId] = userService;
+    coreObject->bundleGroupController_->GetNewGroup("test", userId, timeStamp);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_004
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_004,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
+    coreObject->InitBundleGroupController();
+    int userId = 100;
+    BundleActiveEvent event;
+    int64_t timeStamp = 20000000000000;
+    coreObject->bundleGroupController_->ReportEvent(event, timeStamp, userId);
+    coreObject->bundleGroupController_->ReportEvent(event, timeStamp, 19);
+    coreObject->bundleGroupController_->ReportEvent(event, timeStamp, 7);
+    coreObject->bundleGroupController_->bundleGroupEnable_ = false;
+    coreObject->bundleGroupController_->ReportEvent(event, timeStamp, userId);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_005
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_005,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
+    coreObject->InitBundleGroupController();
+    int userId = 100;
+    int64_t timeStamp = 20000000000000;
+    coreObject->bundleGroupController_->CheckAndUpdateGroup("test", userId, timeStamp);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_006
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_006,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
+    coreObject->InitBundleGroupController();
+    int userId = 100;
+    int64_t timeStamp = 20000000000000;
+    coreObject->bundleGroupController_->SetAppGroup("test", userId, 0, 0, timeStamp, true);
+    coreObject->bundleGroupController_->SetAppGroup("test", userId, 0, 0, timeStamp, false);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_007
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_007,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
+    coreObject->InitBundleGroupController();
+    int userId = 100;
+    coreObject->bundleGroupController_->IsBundleIdle("test", userId);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_008
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_008,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
+    coreObject->InitBundleGroupController();
+    int32_t userId = 100;
+    int32_t appGroup = 0;
+    coreObject->bundleGroupController_->QueryAppGroup(appGroup, nullptr, userId);
+    coreObject->bundleGroupController_->QueryAppGroup(appGroup, "test", userId);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_009
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
+    coreObject->InitBundleGroupController();
+    int userId = 100;
+    coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
+    coreObject->bundleGroupController_->sptrBundleMgr_ = nullptr;
+    coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_010
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_010,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
+    coreObject->InitBundleGroupController();
+    int userId = 100;
+    int64_t timeStamp = 20000000000000;
+    coreObject->bundleGroupController_->ShutDown(timeStamp, userId);
+}
+
+/*
+ * @tc.name: BundleActiveUserHistoryTest_001
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_001,
+    Function | MediumTest | Level0)
+{
+    int64_t bootBasedTimeStamp = 2000;
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    std::vector<int64_t> screenTimeLevel;
+    std::vector<int64_t> bootFromTimeLevel;
+    auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
+    bundleUserHistory_->GetLevelIndex("test", 0, 20000, screenTimeLevel, bootFromTimeLevel);
+}
+
+/*
+ * @tc.name: BundleActiveUserHistoryTest_002
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_002,
+    Function | MediumTest | Level0)
+{
+    int64_t bootBasedTimeStamp = 2000;
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
+    bundleUserHistory_->WriteDeviceDuration();
+    bundleUserHistory_->OnBundleUninstalled(0, "test");
+}
+
+/*
+ * @tc.name: BundleActiveUserHistoryTest_003
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_003,
+    Function | MediumTest | Level0)
+{
+    int64_t bootBasedTimeStamp = 2000;
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    std::shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory;
+    auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
+    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 0, 0, 1000, 2000, 100);
+    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 0, 0, 2000, 1000, 100);
+    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 10, 0, 1000, 2000, 100);
+    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 20, 0, 1000, 2000, 100);
+    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 20, 0, 0, 2000, 100);
+}
+
+/*
+ * @tc.name: BundleActiveUserHistoryTest_004
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_004,
+    Function | MediumTest | Level0)
+{
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    int32_t userId = 100;
+    int64_t bootBasedTimeStamp = 2000;
+    int32_t newgroup = 0;
+    uint32_t groupReason = 0;
+    auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
+    bundleUserHistory_->SetAppGroup("test", userId, bootBasedTimeStamp, newgroup, groupReason, true);
+    bundleUserHistory_->SetAppGroup("test", userId, bootBasedTimeStamp, newgroup, groupReason, false);
+}
+
+/*
+ * @tc.name: BundleActiveUserHistoryTest_005
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_005,
+    Function | MediumTest | Level0)
+{
+    std::shared_ptr<BundleActiveCore> bundleActiveCore;
+    int64_t bootBasedTimeStamp = 2000;
+    auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
+    bundleUserHistory_->PrintData(0);
 }
 
 /*
