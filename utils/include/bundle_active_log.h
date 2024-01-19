@@ -52,15 +52,15 @@ private:
     static BundleActiveLogLevel logLevel_;
 };
 
-#define BUNDLE_ACTIVE_LOGD(fmt, ...) HILOG_DEBUG(LOG_CORE, "[%{public}s(%{public}s):%{public}d]" fmt,\
+#define BUNDLE_ACTIVE_LOGD(fmt, ...) HILOG_DEBUG(LOG_CORE, "[%{public}s(%{public}s):%{public}d]" fmt, \
         BundleActiveLog::GetCurrFileName(__FILE__).c_str(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
-#define BUNDLE_ACTIVE_LOGI(fmt, ...) HILOG_INFO(LOG_CORE, "[%{public}s(%{public}s):%{public}d]" fmt,\
+#define BUNDLE_ACTIVE_LOGI(fmt, ...) HILOG_INFO(LOG_CORE, "[%{public}s(%{public}s):%{public}d]" fmt, \
         BundleActiveLog::GetCurrFileName(__FILE__).c_str(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
-#define BUNDLE_ACTIVE_LOGW(fmt, ...) HILOG_WARN(LOG_CORE, "[%{public}s(%{public}s):%{public}d]" fmt,\
+#define BUNDLE_ACTIVE_LOGW(fmt, ...) HILOG_WARN(LOG_CORE, "[%{public}s(%{public}s):%{public}d]" fmt, \
         BundleActiveLog::GetCurrFileName(__FILE__).c_str(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
-#define BUNDLE_ACTIVE_LOGE(fmt, ...) HILOG_ERROR(LOG_CORE, "[%{public}s(%{public}s):%{public}d]" fmt,\
+#define BUNDLE_ACTIVE_LOGE(fmt, ...) HILOG_ERROR(LOG_CORE, "[%{public}s(%{public}s):%{public}d]" fmt, \
         BundleActiveLog::GetCurrFileName(__FILE__).c_str(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
-#define BUNDLE_ACTIVE_LOGF(fmt, ...) HILOG_FATAL(LOG_CORE, "[%{public}s(%{public}s):%{public}d]" fmt,\
+#define BUNDLE_ACTIVE_LOGF(fmt, ...) HILOG_FATAL(LOG_CORE, "[%{public}s(%{public}s):%{public}d]" fmt, \
         BundleActiveLog::GetCurrFileName(__FILE__).c_str(), __FUNCTION__, __LINE__, ##__VA_ARGS__)
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
