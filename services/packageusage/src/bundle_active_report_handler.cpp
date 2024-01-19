@@ -34,17 +34,16 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
         BUNDLE_ACTIVE_LOGE("event is null, exit ProcessEvent");
         return;
     }
+    auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
     switch (event->GetInnerEventId()) {
         case MSG_REPORT_EVENT: {
             BUNDLE_ACTIVE_LOGI("MSG_REPORT_EVENT CALLED");
-            auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->ReportEvent(tmpHandlerobj.event_, tmpHandlerobj.userId_);
             break;
         }
         case MSG_FLUSH_TO_DISK: {
             BUNDLE_ACTIVE_LOGI("FLUSH TO DISK HANDLE");
-            auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             if (tmpHandlerobj.userId_ != bundleActiveCore_->currentUsedUser_) {
                 BUNDLE_ACTIVE_LOGE("flush user is %{public}d, not last user %{public}d, return",
@@ -56,21 +55,18 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
             break;
         }
         case MSG_REMOVE_USER: {
-            auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->OnUserRemoved(tmpHandlerobj.userId_);
             break;
         }
         case MSG_BUNDLE_UNINSTALLED: {
             BUNDLE_ACTIVE_LOGI("MSG_BUNDLE_UNINSTALLED CALLED");
-            auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->OnBundleUninstalled(tmpHandlerobj.userId_, tmpHandlerobj.bundleName_);
             break;
         }
         case MSG_SWITCH_USER: {
             BUNDLE_ACTIVE_LOGI("MSG_SWITCH_USER CALLED");
-            auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->OnUserSwitched(tmpHandlerobj.userId_);
             break;
