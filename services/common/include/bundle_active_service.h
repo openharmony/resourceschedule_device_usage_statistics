@@ -16,7 +16,6 @@
 #ifndef BUNDLE_ACTIVE_SERVICE_H
 #define BUNDLE_ACTIVE_SERVICE_H
 
-#include "bundle_mgr_interface.h"
 #include "singleton.h"
 
 #include "app_mgr_interface.h"
@@ -224,7 +223,6 @@ private:
     int32_t ConvertIntervalType(const int32_t intervalType);
     void InitNecessaryState();
     void InitService();
-    ErrCode GetBundleMgrProxy();
     ErrCode CheckBundleIsSystemAppAndHasPermission(const int32_t uid,
         OHOS::Security::AccessToken::AccessTokenID tokenId);
     ErrCode CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId);

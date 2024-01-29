@@ -63,6 +63,9 @@ ErrCode BundleActiveProxy::QueryBundleStatsInfoByInterval(std::vector<BundleActi
     data.WriteInt32(userId);
     Remote() -> SendRequest(QUERY_BUNDLE_STATS_INFO_BY_INTERVAL, data, reply, option);
     ErrCode errCode = reply.ReadInt32();
+    if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
+        return errCode;
+    }
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int32_t i = 0; i < size; i++) {
@@ -97,6 +100,9 @@ ErrCode BundleActiveProxy::QueryBundleEvents(std::vector<BundleActiveEvent>& bun
     data.WriteInt32(userId);
     Remote() -> SendRequest(QUERY_BUNDLE_EVENTS, data, reply, option);
     ErrCode errCode = reply.ReadInt32();
+    if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
+        return errCode;
+    }
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int32_t i = 0; i < size; i++) {
@@ -142,6 +148,9 @@ ErrCode BundleActiveProxy::QueryBundleStatsInfos(std::vector<BundleActivePackage
     data.WriteInt64(endTime);
     Remote() -> SendRequest(QUERY_BUNDLE_STATS_INFOS, data, reply, option);
     ErrCode errCode = reply.ReadInt32();
+    if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
+        return errCode;
+    }
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int32_t i = 0; i < size; i++) {
@@ -177,6 +186,9 @@ ErrCode BundleActiveProxy::QueryCurrentBundleEvents(std::vector<BundleActiveEven
     data.WriteInt64(endTime);
     Remote() -> SendRequest(QUERY_CURRENT_BUNDLE_EVENTS, data, reply, option);
     ErrCode errCode = reply.ReadInt32();
+    if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
+        return errCode;
+    }
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int32_t i = 0; i < size; i++) {
@@ -224,6 +236,9 @@ ErrCode BundleActiveProxy::QueryModuleUsageRecords(int32_t maxNum, std::vector<B
     data.WriteInt32(userId);
     Remote() -> SendRequest(QUERY_MODULE_USAGE_RECORDS, data, reply, option);
     ErrCode errCode = reply.ReadInt32();
+    if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
+        return errCode;
+    }
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveModuleRecord> tmp;
     for (int32_t i = 0; i < size; i++) {
@@ -327,6 +342,9 @@ ErrCode BundleActiveProxy::IPCCommunication(int64_t beginTime, int64_t endTime,
     data.WriteInt32(userId);
     Remote() -> SendRequest(communicationFlag, data, reply, option);
     ErrCode errCode = reply.ReadInt32();
+    if (errCode == ERR_QUERY_RESULT_TOO_LARGE) {
+        return errCode;
+    }
     int32_t size = reply.ReadInt32();
     std::shared_ptr<BundleActiveEventStats> tmp;
     for (int32_t i = 0; i < size; i++) {

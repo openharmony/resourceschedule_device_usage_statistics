@@ -102,6 +102,7 @@ enum ServiceError {
     ERR_NO_RECORDS_INFO_BY_INTERVAL,
     ERR_QUERY_TIME_OUT_OF_RANGE,
     ERR_GET_BUNDLE_USED_HISTORY_FAILED,
+    ERR_QUERY_RESULT_TOO_LARGE,
     ERR_REPEAT_REGISTER_OR_DEREGISTER_GROUP_CALLBACK = 1010000101,
     ERR_REPEAT_SET_APP_GROUP,
 };
@@ -123,6 +124,9 @@ static std::map<int32_t, std::string> saErrCodeMsgMap = {
         "According to inetrvalType. no information is recorded in the related table."},
     {ERR_QUERY_TIME_OUT_OF_RANGE,
         "Failed to get the application information. According to beginTime and endTime. no information is recorded"},
+    {ERR_QUERY_RESULT_TOO_LARGE,
+        "Query events max size is 100000, Query package stats max result size is 1000."
+        "Query result is too large, please narrow query time span."},
     {ERR_GET_BUNDLE_USED_HISTORY_FAILED,
         "Failed to get the application information. According to userId、bundleName, no information is recorded"},
     {ERR_TIME_OPERATION_FAILED, "Get system or actual time operation failed."},
