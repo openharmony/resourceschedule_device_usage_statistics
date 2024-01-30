@@ -223,6 +223,7 @@ private:
     int32_t ConvertIntervalType(const int32_t intervalType);
     void InitNecessaryState();
     void InitService();
+    ErrCode GetBundleMgrProxy();
     ErrCode CheckBundleIsSystemAppAndHasPermission(const int32_t uid,
         OHOS::Security::AccessToken::AccessTokenID tokenId);
     ErrCode CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId);
