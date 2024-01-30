@@ -694,7 +694,7 @@ int64_t BundleActiveCore::GetSystemTimeMs()
 
 void BundleActiveCore::OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo)
 {
-    std::lock_guard<std::mutex> lock(callbackMutex_);
+    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
     AccessToken::HapTokenInfo tokenInfo = AccessToken::HapTokenInfo();
     for (const auto &item : groupChangeObservers_) {
         auto observer = item.second;
@@ -719,7 +719,7 @@ void BundleActiveCore::OnAppGroupChanged(const AppGroupCallbackInfo& callbackInf
 ErrCode BundleActiveCore::RegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
     const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::mutex> lock(callbackMutex_);
+    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
     if (!observer) {
         return ERR_MEMORY_OPERATION_FAILED;
     }
@@ -736,7 +736,7 @@ ErrCode BundleActiveCore::RegisterAppGroupCallBack(const AccessToken::AccessToke
 ErrCode BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
     const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::mutex> lock(callbackMutex_);
+    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
     auto item = groupChangeObservers_.find(tokenId);
     if (item == groupChangeObservers_.end()) {
         BUNDLE_ACTIVE_LOGI("UnRegisterAppGroupCallBack observer is not exist, return");
@@ -749,7 +749,7 @@ ErrCode BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTo
 
 void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::mutex> lock(deathRecipientMutex_);
+    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("observer nullptr.");
         return;
@@ -775,7 +775,7 @@ void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &
 }
 void BundleActiveCore::RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::mutex> lock(deathRecipientMutex_);
+    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
     if (!observer) {
         return;
     }
@@ -802,12 +802,12 @@ void BundleActiveCore::OnObserverDied(const wptr<IRemoteObject> &remote)
 
 void BundleActiveCore::OnObserverDiedInner(const wptr<IRemoteObject> &remote)
 {
-    std::lock_guard<std::mutex> lock(deathRecipientMutex_);
     sptr<IRemoteObject> objectProxy = remote.promote();
     if (remote == nullptr || !objectProxy) {
         BUNDLE_ACTIVE_LOGE("get remote object failed");
         return;
     }
+    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
     for (const auto& item : groupChangeObservers_) {
         if (!(item.second)) {
             continue;

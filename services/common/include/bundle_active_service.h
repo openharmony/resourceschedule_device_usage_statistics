@@ -16,7 +16,6 @@
 #ifndef BUNDLE_ACTIVE_SERVICE_H
 #define BUNDLE_ACTIVE_SERVICE_H
 
-#include "bundle_mgr_interface.h"
 #include "singleton.h"
 
 #include "app_mgr_interface.h"

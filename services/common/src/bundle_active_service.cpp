@@ -15,14 +15,13 @@
 
 #include "time_service_client.h"
 #include "power_mgr_client.h"
-#include "bundle_mgr_proxy.h"
 #include "unistd.h"
-#include "accesstoken_kit.h"
 
 #include "bundle_state_inner_errors.h"
 #include "bundle_active_event.h"
 #include "bundle_active_package_stats.h"
 #include "bundle_active_account_helper.h"
+#include "bundle_active_bundle_mgr_helper.h"
 #include "bundle_active_service.h"
 
 namespace OHOS {
@@ -266,13 +265,9 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    ErrCode ret = GetBundleMgrProxy();
-    if (ret != ERR_OK) {
-        BUNDLE_ACTIVE_LOGE("IsBundleIdle Get bundle manager proxy failed!");
-        return ret;
-    }
+    ErrCode ret = ERR_OK;
     std::string callingBundleName = "";
-    sptrBundleMgr_->GetBundleNameForUid(callingUid, callingBundleName);
+    BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, callingBundleName);
     BUNDLE_ACTIVE_LOGI("UID is %{public}d, bundle name is %{public}s", callingUid, callingBundleName.c_str());
     // get user id
     int32_t result = -1;
@@ -285,7 +280,7 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
 
     if (callingBundleName == bundleName) {
         if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
-            BUNDLE_ACTIVE_LOGE("%{public}s is not sys app", bundleName.c_str());
+            BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
             return ERR_NOT_SYSTEM_APP;
         }
         BUNDLE_ACTIVE_LOGI("%{public}s check its own idle state", bundleName.c_str());
@@ -364,13 +359,8 @@ ErrCode BundleActiveService::SetAppGroup(const std::string& bundleName, int32_t 
     }
     BUNDLE_ACTIVE_LOGI("SetAppGroup userId is %{public}d", userId);
 
-    ret = GetBundleMgrProxy();
-    if (ret != ERR_OK) {
-        BUNDLE_ACTIVE_LOGE("SetAppGroup Get bundle manager proxy failed!");
-        return ret;
-    }
     std::string localBundleName = "";
-    sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
+    BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, localBundleName);
     if (localBundleName == bundleName) {
         BUNDLE_ACTIVE_LOGI("SetAppGroup can not set its bundleName");
         return ERR_PERMISSION_DENIED;
@@ -395,13 +385,8 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
     ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
         BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos userid is %{public}d", userId);
-        ret = GetBundleMgrProxy();
-        if (ret != ERR_OK) {
-            BUNDLE_ACTIVE_LOGE("QueryBundleStatsInfos Get bundle manager proxy failed!");
-            return ret;
-        }
         std::string bundleName = "";
-        sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
+        BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
         ErrCode isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId);
         if (!bundleName.empty() && isSystemAppAndHasPermission == ERR_OK) {
             int32_t convertedIntervalType = ConvertIntervalType(intervalType);
@@ -422,17 +407,12 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
     int32_t userId = -1;
     ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
-        ret = GetBundleMgrProxy();
-        if (ret != ERR_OK) {
-            BUNDLE_ACTIVE_LOGE("QueryCurrentBundleEvents Get bundle manager proxy failed!");
-            return ret;
-        }
         std::string bundleName = "";
-        sptrBundleMgr_->GetBundleNameForUid(callingUid, bundleName);
+        BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
         if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
-            BUNDLE_ACTIVE_LOGE("%{public}s is not sys app", bundleName.c_str());
-            return ERR_NOT_SYSTEM_APP;
-        }
+                BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
+                return ERR_NOT_SYSTEM_APP;
+            }
         if (!bundleName.empty()) {
             BUNDLE_ACTIVE_LOGI("QueryCurrentBundleEvents buindle name is %{public}s",
                 bundleName.c_str());
@@ -456,15 +436,10 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundl
         }
     }
     if (bundleName.empty()) {
-        ret = GetBundleMgrProxy();
-        if (ret != ERR_OK) {
-            BUNDLE_ACTIVE_LOGE("QueryAppGroup Get bundle manager proxy failed!");
-            return ret;
-        }
         std::string localBundleName = "";
-        sptrBundleMgr_->GetBundleNameForUid(callingUid, localBundleName);
+        BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, localBundleName);
         if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
-            BUNDLE_ACTIVE_LOGE("%{public}s is not sys app", localBundleName.c_str());
+            BUNDLE_ACTIVE_LOGE("%{public}s is not system app", localBundleName.c_str());
             return ERR_NOT_SYSTEM_APP;
         }
         bundleName = localBundleName;
@@ -507,6 +482,31 @@ ErrCode BundleActiveService::UnRegisterAppGroupCallBack(const sptr<IAppGroupCall
     return ret;
 }
 
+int32_t BundleActiveService::ConvertIntervalType(const int32_t intervalType)
+{
+    if (intervalType == PERIOD_BEST_JS) {
+        return PERIOD_BEST_SERVICE;
+    } else if (intervalType > PERIOD_BEST_JS && intervalType <= PERIOD_YEARLY_JS) {
+        return intervalType - 1;
+    }
+    return -1;
+}
+
+ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_t uid,
+    OHOS::Security::AccessToken::AccessTokenID tokenId)
+{
+    std::string bundleName = "";
+    BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(uid, bundleName);
+
+    int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
+    if (bundleHasPermission != 0) {
+        BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
+        return ERR_PERMISSION_DENIED;
+    }
+    BUNDLE_ACTIVE_LOGI("%{public}s has permission", bundleName.c_str());
+    return ERR_OK;
+}
+
 ErrCode BundleActiveService::GetBundleMgrProxy()
 {
     if (!sptrBundleMgr_) {
@@ -532,36 +532,6 @@ ErrCode BundleActiveService::GetBundleMgrProxy()
             return ERR_REMOTE_OBJECT_IF_CAST_FAILED;
         }
     }
-    return ERR_OK;
-}
-
-int32_t BundleActiveService::ConvertIntervalType(const int32_t intervalType)
-{
-    if (intervalType == PERIOD_BEST_JS) {
-        return PERIOD_BEST_SERVICE;
-    } else if (intervalType > PERIOD_BEST_JS && intervalType <= PERIOD_YEARLY_JS) {
-        return intervalType - 1;
-    }
-    return -1;
-}
-
-ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_t uid,
-    OHOS::Security::AccessToken::AccessTokenID tokenId)
-{
-    ErrCode errCode = GetBundleMgrProxy();
-    if (errCode != ERR_OK) {
-        BUNDLE_ACTIVE_LOGE("CheckBundleIsSystemAppAndHasPermission Get bundle manager proxy failed!");
-        return errCode;
-    }
-    std::string bundleName = "";
-    sptrBundleMgr_->GetBundleNameForUid(uid, bundleName);
-
-    int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
-    if (bundleHasPermission != 0) {
-        BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
-        return ERR_PERMISSION_DENIED;
-    }
-    BUNDLE_ACTIVE_LOGI("%{public}s has permission", bundleName.c_str());
     return ERR_OK;
 }
 
@@ -658,19 +628,15 @@ ErrCode BundleActiveService::QueryNotificationEventStats(int64_t beginTime, int6
 
 void BundleActiveService::QueryModuleRecordInfos(BundleActiveModuleRecord& moduleRecord)
 {
-    ErrCode errCode = GetBundleMgrProxy();
-    if (errCode != ERR_OK) {
-        return;
-    }
     ApplicationInfo appInfo;
-    bool getInfoIsSuccess = sptrBundleMgr_->GetApplicationInfo(moduleRecord.bundleName_,
+    bool getInfoIsSuccess = BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfo(moduleRecord.bundleName_,
         ApplicationFlag::GET_BASIC_APPLICATION_INFO, moduleRecord.userId_, appInfo);
     if (!getInfoIsSuccess) {
         BUNDLE_ACTIVE_LOGE("GetApplicationInfo failed!");
         return;
     }
     BundleInfo bundleInfo;
-    getInfoIsSuccess = sptrBundleMgr_->GetBundleInfo(moduleRecord.bundleName_,
+    getInfoIsSuccess = BundleActiveBundleMgrHelper::GetInstance()->GetBundleInfo(moduleRecord.bundleName_,
         BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo, moduleRecord.userId_);
     if (!getInfoIsSuccess) {
         BUNDLE_ACTIVE_LOGE("GetBundleInfo failed!");
