@@ -507,6 +507,34 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
     return ERR_OK;
 }
 
+ErrCode BundleActiveService::GetBundleMgrProxy()
+{
+    if (!sptrBundleMgr_) {
+        sptr<ISystemAbilityManager> systemAbilityManager =
+            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        if (!systemAbilityManager) {
+            BUNDLE_ACTIVE_LOGE("Failed to get system ability mgr.");
+            return ERR_GET_SYSTEM_ABILITY_MANAGER_FAILED;
+        }
+        sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+        if (!remoteObject) {
+            BUNDLE_ACTIVE_LOGE("Failed to get bundle manager service.");
+            return ERR_GET_SYSTEM_ABILITY_FAILED;
+        }
+        sptrBundleMgr_ = iface_cast<IBundleMgr>(remoteObject);
+        if (!sptrBundleMgr_) {
+            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability, sptrBundleMgr_");
+            return ERR_REMOTE_OBJECT_IF_CAST_FAILED;
+        }
+        auto object = sptrBundleMgr_->AsObject();
+        if (!object) {
+            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability, sptrBundleMgr_->AsObject()");
+            return ERR_REMOTE_OBJECT_IF_CAST_FAILED;
+        }
+    }
+    return ERR_OK;
+}
+
 ErrCode BundleActiveService::CheckNativePermission(OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
     auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
