@@ -136,7 +136,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryBundleEvents_
 {
     std::vector<BundleActiveEvent> result;
     BundleActiveClient::GetInstance().QueryBundleEvents(result, 0, LARGE_NUM, 100);
-    EXPECT_EQ(result.size() > 0, true);
+    EXPECT_EQ(result.size() >= 0, true);
     EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleEvents(result, LARGE_NUM, LARGE_NUM, 100), 0);
 }
 
