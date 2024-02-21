@@ -855,6 +855,24 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_007,
 }
 
 /*
+ * @tc.name: BundleActiveGroupControllerTest_008
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: DTS2023121404861
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_008,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
+    coreObject->InitBundleGroupController();
+    int32_t userId = 100;
+    int32_t appGroup = 0;
+    coreObject->bundleGroupController_->QueryAppGroup(appGroup, nullptr, userId);
+    coreObject->bundleGroupController_->QueryAppGroup(appGroup, "test", userId);
+}
+
+/*
  * @tc.name: BundleActiveGroupControllerTest_009
  * @tc.desc: test the interface
  * @tc.type: FUNC
