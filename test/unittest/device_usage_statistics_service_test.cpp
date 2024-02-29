@@ -933,13 +933,18 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_003,
 {
     int64_t bootBasedTimeStamp = 2000;
     std::shared_ptr<BundleActiveCore> bundleActiveCore;
-    std::shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory;
+    auto oneBundleUsageHistory = std::make_shared<BundleActivePackageHistory>();
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 0, 0, 1000, 2000, 100);
+    SUCCEED();
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 0, 0, 2000, 1000, 100);
+    SUCCEED();
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 10, 0, 1000, 2000, 100);
+    SUCCEED();
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 20, 0, 1000, 2000, 100);
+    SUCCEED();
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 20, 0, 0, 2000, 100);
+    SUCCEED();
 }
 
 /*
