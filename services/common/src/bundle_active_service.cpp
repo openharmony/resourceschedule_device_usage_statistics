@@ -265,7 +265,11 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    ErrCode ret = ERR_OK;
+    ErrCode ret = GetBundleMgrProxy();
+    if (ret != ERR_OK) {
+        BUNDLE_ACTIVE_LOGE("IsBundleIdle Get bundle manager proxy failed!");
+        return ret;
+    }
     std::string callingBundleName = "";
     BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, callingBundleName);
     BUNDLE_ACTIVE_LOGI("UID is %{public}d, bundle name is %{public}s", callingUid, callingBundleName.c_str());
@@ -277,7 +281,6 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
             return ret;
         }
     }
-
     if (callingBundleName == bundleName) {
         if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
             BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
@@ -407,6 +410,11 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
     int32_t userId = -1;
     ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
     if (ret == ERR_OK && userId != -1) {
+        ret = GetBundleMgrProxy();
+        if (ret != ERR_OK) {
+            BUNDLE_ACTIVE_LOGE("QueryCurrentBundleEvents Get bundle manager proxy failed!");
+            return ret;
+        }
         std::string bundleName = "";
         BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
         if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
@@ -436,6 +444,11 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundl
         }
     }
     if (bundleName.empty()) {
+        ret = GetBundleMgrProxy();
+        if (ret != ERR_OK) {
+            BUNDLE_ACTIVE_LOGE("QueryCurrentBundleEvents Get bundle manager proxy failed!");
+            return ret;
+        }
         std::string localBundleName = "";
         BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, localBundleName);
         if (!sptrBundleMgr_->CheckIsSystemAppByUid(callingUid)) {
