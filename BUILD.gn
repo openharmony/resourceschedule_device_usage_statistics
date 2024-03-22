@@ -73,13 +73,6 @@ ohos_shared_library("usagestatsinner") {
   }
 }
 
-ohos_prebuilt_etc("device_usage_statistics_service_init") {
-  source = "init/device_usage_statistics_service.cfg"
-  relative_install_dir = "init"
-  part_name = "${device_usage_statistics_part_name}"
-  subsystem_name = "resourceschedule"
-}
-
 ohos_shared_library("bundlestate") {
   sources = [
     "frameworks/src/bundle_state_common.cpp",
