@@ -1,5 +1,5 @@
 {
-    "process": "device_usage_stats_service",
+    "process": "bgtaskmgr_service",
     "systemability": [
         {
             "name": 1907,
