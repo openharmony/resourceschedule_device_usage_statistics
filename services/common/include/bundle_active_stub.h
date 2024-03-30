@@ -24,7 +24,7 @@ namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveStub : public IRemoteStub<IBundleActiveService> {
 public:
-    BundleActiveStub() = default;
+    BundleActiveStub(bool serialInvokeFlag = true) : IRemoteStub<IBundleActiveService>(serialInvokeFlag) {}
     ~BundleActiveStub() override = default;
     DISALLOW_COPY_AND_MOVE(BundleActiveStub);
     /*
