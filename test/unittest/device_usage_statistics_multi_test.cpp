@@ -190,7 +190,8 @@ void MultiTestQueryBundleStatsInfoByInterval(void)
     std::vector<BundleActivePackageStats> result;
     BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(result, g_intervalType, 0, g_largeNum);
     EXPECT_EQ(result.size(), 0);
-    EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(result, g_intervalType, g_largeNum, g_largeNum), 0);
+    EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(
+        result, g_intervalType, g_largeNum, g_largeNum), 0);
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryPackagesStats_001,
