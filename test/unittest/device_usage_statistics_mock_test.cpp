@@ -40,6 +40,7 @@ static int32_t g_defaultUserId = 0;
 static int32_t g_commonUserid = 100;
 static int64_t g_largeNum = 20000000000000;
 static int32_t g_defaultGroup = 10;
+static int32_t g_intervalType = 4;
 static sptr<IAppGroupCallback> observer = nullptr;
 
 class DeviceUsageStatisticsMockTest : public testing::Test {
@@ -83,8 +84,10 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     EXPECT_NE(BundleActiveClient::GetInstance().IsBundleIdle(isIdle, g_defaultBundleName, g_defaultUserId), ERR_OK);
 
     std::vector<BundleActivePackageStats> packageStats;
-    EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats, 4, 0, g_largeNum), ERR_OK);
-    EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleStatsInfos(packageStats, 4, 0, g_largeNum), ERR_OK);
+    EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats,
+        g_intervalType, 0, g_largeNum), ERR_OK);
+    EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleStatsInfos(packageStats,
+        g_intervalType, 0, g_largeNum), ERR_OK);
 
     std::vector<BundleActiveEvent> event;
     EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleEvents(event, 0, g_largeNum, 100), ERR_OK);
@@ -93,7 +96,8 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     int32_t result = 0;
     EXPECT_NE(BundleActiveClient::GetInstance().QueryAppGroup(result, g_defaultBundleName, g_commonUserid), ERR_OK);
 
-    EXPECT_NE(BundleActiveClient::GetInstance().SetAppGroup(g_defaultBundleName, g_defaultGroup, g_commonUserid), ERR_OK);
+    EXPECT_NE(BundleActiveClient::GetInstance().SetAppGroup(
+        g_defaultBundleName, g_defaultGroup, g_commonUserid), ERR_OK);
 
     EXPECT_NE(BundleActiveClient::GetInstance().RegisterAppGroupCallBack(observer), ERR_OK);
     EXPECT_NE(BundleActiveClient::GetInstance().UnRegisterAppGroupCallBack(observer), ERR_OK);
@@ -150,8 +154,8 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryNotif
     Function | MediumTest | Level0)
 {
     std::vector<BundleActiveEventStats> eventStats;
-    ErrCode code =
-        DelayedSingleton<BundleActiveService>::GetInstance()->QueryNotificationEventStats(0, g_largeNum, eventStats, -1);
+    ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()->QueryNotificationEventStats(
+        0, g_largeNum, eventStats, -1);
     EXPECT_EQ(code, ERR_OK);
 }
 
@@ -290,11 +294,13 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_CheckTimeC
     EXPECT_NE(bundleActiveCore->QueryModuleUsageRecords(1000, moduleRecords, g_defaultUserId), ERR_OK);
 
     std::vector<BundleActiveEvent> activeEvent;
-    ErrCode code = bundleActiveCore->QueryBundleEvents(activeEvent, g_defaultUserId, 0, g_largeNum, g_defaultBundleName);
+    ErrCode code = bundleActiveCore->QueryBundleEvents(
+        activeEvent, g_defaultUserId, 0, g_largeNum, g_defaultBundleName);
     EXPECT_NE(code, ERR_OK);
 
     std::vector<BundleActivePackageStats> packageStats;
-    code = bundleActiveCore->QueryBundleStatsInfos(packageStats, g_defaultUserId, 4, 0, g_largeNum, g_defaultBundleName);
+    code = bundleActiveCore->QueryBundleStatsInfos(
+        packageStats, g_defaultUserId, g_intervalType, 0, g_largeNum, g_defaultBundleName);
     EXPECT_NE(code, ERR_OK);
     
     BundleActiveEvent eventTemp;
@@ -309,7 +315,8 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_CheckTimeC
     code = bundleActiveCore->QueryBundleEvents(activeEvent, g_commonUserid, 0, g_largeNum, g_defaultBundleName);
     EXPECT_NE(code, ERR_OK);
 
-    code = bundleActiveCore->QueryBundleStatsInfos(packageStats, g_commonUserid, 4, 0, g_largeNum, g_defaultBundleName);
+    code = bundleActiveCore->QueryBundleStatsInfos(packageStats, g_commonUserid,
+        g_intervalType, 0, g_largeNum, g_defaultBundleName);
     EXPECT_NE(code, ERR_OK);
     
     bundleActiveCore->OnBundleUninstalled(g_commonUserid, g_defaultBundleName);
