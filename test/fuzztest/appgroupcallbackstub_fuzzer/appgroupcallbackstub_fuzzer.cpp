@@ -18,7 +18,6 @@
 #include "accesstoken_kit.h"
 #include "app_mgr_interface.h"
 
-#define private public
 #include "app_group_callback_stub.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"

@@ -30,6 +30,10 @@ config("module_private_config") {
 
 ohos_unittest("BundleActiveTotalTest") {
   module_out_path = module_output_path
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
 
   sources = [ "bundle_active_total_test.cpp" ]
 
@@ -70,6 +74,10 @@ ohos_unittest("BundleActiveTotalTest") {
 
 ohos_unittest("DeviceUsageStatsTest") {
   module_out_path = module_output_path
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
 
   sources = [ "device_usage_statistics_test.cpp" ]
 
@@ -99,6 +107,10 @@ ohos_unittest("DeviceUsageStatsTest") {
 
 ohos_unittest("DeviceUsageStatsMultiTest") {
   module_out_path = module_output_path
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
 
   sources = [ "device_usage_statistics_multi_test.cpp" ]
 
@@ -128,6 +140,10 @@ ohos_unittest("DeviceUsageStatsMultiTest") {
 
 ohos_unittest("DeviceUsageStatsServiceTest") {
   module_out_path = module_output_path
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
 
   sources = [ "device_usage_statistics_service_test.cpp" ]
 
@@ -171,6 +187,10 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
 
 ohos_unittest("DeviceUsageStatsMockTest") {
   module_out_path = module_output_path
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
 
   sources = [
     "device_usage_statistics_mock_test.cpp",
@@ -216,6 +236,10 @@ ohos_unittest("DeviceUsageStatsMockTest") {
 
 ohos_unittest("DeviceUsagePackageUsageTest") {
   module_out_path = module_output_path
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
 
   sources = [ "package_usage_test.cpp" ]
 

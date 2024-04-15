@@ -170,13 +170,14 @@ void BundleActiveUserService::RestoreStats(bool forced)
     if (statsChanged_ || forced) {
         BUNDLE_ACTIVE_LOGI("RestoreStats() stat changed is true");
         for (uint32_t i = 0; i < currentStats_.size(); i++) {
-            if (currentStats_[i]) {
-                if (!currentStats_[i]->bundleStats_.empty()) {
-                    database_.UpdateBundleUsageData(i, *(currentStats_[i]));
-                }
-                if (!currentStats_[i]->events_.events_.empty() && i == BundleActivePeriodStats::PERIOD_DAILY) {
-                    database_.UpdateEventData(i, *(currentStats_[i]));
-                }
+            if (!currentStats_[i]) {
+                continue;
+            }
+            if (!currentStats_[i]->bundleStats_.empty()) {
+                database_.UpdateBundleUsageData(i, *(currentStats_[i]));
+            }
+            if (!currentStats_[i]->events_.events_.empty() && i == BundleActivePeriodStats::PERIOD_DAILY) {
+                database_.UpdateEventData(i, *(currentStats_[i]));
             }
         }
         if (!moduleRecords_.empty()) {
@@ -295,14 +296,15 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
             itInterval != currentStats_.end(); ++itInterval) {
-            if (continueAbilities.find(continueBundleName) != continueAbilities.end()) {
-                for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
-                    it != continueAbilities[continueBundleName].end(); ++it) {
-                    if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
-                        continue;
-                    }
-                    (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
+            if (continueAbilities.find(continueBundleName) == continueAbilities.end()) {
+                continue;
+            }
+            for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
+                it != continueAbilities[continueBundleName].end(); ++it) {
+                if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
+                    continue;
                 }
+                (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
             }
             if (continueServices.find(continueBundleName) != continueServices.end()) {
                 for (std::map<std::string, int>::iterator it = continueServices[continueBundleName].begin();
@@ -390,10 +392,11 @@ ErrCode BundleActiveUserService::QueryBundleEvents(std::vector<BundleActiveEvent
         int32_t eventBeginIdx = currentStats->events_.FindBestIndex(beginTime);
         int32_t eventSize = currentStats->events_.Size();
         for (int32_t i = eventBeginIdx; i < eventSize; i++) {
-            if (currentStats->events_.events_[i].timeStamp_ <= endTime) {
-                if (bundleName.empty() || currentStats->events_.events_[i].bundleName_ == bundleName) {
-                    bundleActiveEvent.push_back(currentStats->events_.events_[i]);
-                }
+            if (currentStats->events_.events_[i].timeStamp_ > endTime) {
+                continue;
+            }
+            if (bundleName.empty() || currentStats->events_.events_[i].bundleName_ == bundleName) {
+                bundleActiveEvent.push_back(currentStats->events_.events_[i]);
             }
         }
     }

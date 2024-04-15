@@ -41,6 +41,8 @@ ohos_fuzztest("BundleActiveObserverFuzzTest") {
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
+    "-Dprivate=public",
+    "-Dprotected=public",
   ]
   sources = [
     "../common/fuzztest_helper.cpp",

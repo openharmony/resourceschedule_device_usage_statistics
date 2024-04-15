@@ -635,7 +635,7 @@ void BundleActiveService::QueryModuleRecordInfos(BundleActiveModuleRecord& modul
         BUNDLE_ACTIVE_LOGE("GetBundleInfo failed!");
         return;
     }
-    for (const auto & oneModuleInfo : bundleInfo.hapModuleInfos) {
+    for (const auto& oneModuleInfo : bundleInfo.hapModuleInfos) {
         if (oneModuleInfo.moduleName == moduleRecord.moduleName_) {
             std::string mainAbility = oneModuleInfo.mainAbility;
             for (auto oneAbilityInfo : oneModuleInfo.abilityInfos) {
