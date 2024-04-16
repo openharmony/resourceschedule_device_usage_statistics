@@ -77,35 +77,23 @@ napi_value SetBundleGroupChangedData(const CallbackReceiveDataWorker *commonEven
     return BundleStateCommon::NapiGetNull(commonEventDataWorkerData->env);
 }
 
-void UvQueueWorkOnAppGroupChanged(uv_work_t *work, int status)
+void UvQueueWorkOnAppGroupChanged(CallbackReceiveDataWorker *callbackReceiveDataWorkerData)
 {
     BUNDLE_ACTIVE_LOGD("OnAppGroupChanged uv_work_t start");
-    if (!work) {
-        return;
-    }
-    CallbackReceiveDataWorker *callbackReceiveDataWorkerData = (CallbackReceiveDataWorker *)work->data;
     if (!callbackReceiveDataWorkerData || !callbackReceiveDataWorkerData->ref) {
         BUNDLE_ACTIVE_LOGE("OnAppGroupChanged commonEventDataWorkerData or ref is null");
-        delete work;
-        work = nullptr;
         return;
     }
     napi_handle_scope scope = nullptr;
     napi_open_handle_scope(callbackReceiveDataWorkerData->env, &scope);
     if (scope == nullptr) {
-        delete work;
-        work = nullptr;
         return;
     }
 
     napi_value result = nullptr;
     napi_create_object(callbackReceiveDataWorkerData->env, &result);
     if (!SetBundleGroupChangedData(callbackReceiveDataWorkerData, result)) {
-        delete work;
-        work = nullptr;
         napi_close_handle_scope(callbackReceiveDataWorkerData->env, scope);
-        delete callbackReceiveDataWorkerData;
-        callbackReceiveDataWorkerData = nullptr;
         return;
     }
 
@@ -122,10 +110,6 @@ void UvQueueWorkOnAppGroupChanged(uv_work_t *work, int status)
         undefined, callback, ARGS_ONE, &results[PARAM_FIRST], &resultout));
 
     napi_close_handle_scope(callbackReceiveDataWorkerData->env, scope);
-    delete callbackReceiveDataWorkerData;
-    callbackReceiveDataWorkerData = nullptr;
-    delete work;
-    work = nullptr;
 }
 
 /*
@@ -140,16 +124,9 @@ void AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCal
         BUNDLE_ACTIVE_LOGE("loop instance is nullptr");
         return;
     }
-    uv_work_t* work = new (std::nothrow) uv_work_t;
-    if (!work) {
-        BUNDLE_ACTIVE_LOGE("work is null");
-        return;
-    }
     CallbackReceiveDataWorker* callbackReceiveDataWorker = new (std::nothrow) CallbackReceiveDataWorker();
     if (!callbackReceiveDataWorker) {
         BUNDLE_ACTIVE_LOGE("callbackReceiveDataWorker is null");
-        delete work;
-        work = nullptr;
         return;
     }
     MessageParcel data;
@@ -167,13 +144,9 @@ void AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCal
     delete callBackInfo;
 
     work->data = static_cast<void*>(callbackReceiveDataWorker);
-    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnAppGroupChanged);
-    if (ret != 0) {
-        delete callbackReceiveDataWorker;
-        callbackReceiveDataWorker = nullptr;
-        delete work;
-        work = nullptr;
-    }
+    UvQueueWorkOnAppGroupChanged(callbackReceiveDataWorker);
+    delete callbackReceiveDataWorker;
+    callbackReceiveDataWorker = nullptr;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
