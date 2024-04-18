@@ -284,14 +284,15 @@ void BundleActiveUserService::UpdateContinueAbilitiesMemory(int64_t beginTime,
     std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName,
     std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval)
 {
-    if (continueAbilities.find(continueBundleName) != continueAbilities.end()) {
-        for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
-            it != continueAbilities[continueBundleName].end(); ++it) {
-            if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
-                continue;
-            }
-            (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
+    if (continueAbilities.find(continueBundleName) == continueAbilities.end()) {
+        return;
+    }
+    for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
+        it != continueAbilities[continueBundleName].end(); ++it) {
+        if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
+            continue;
         }
+        (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
     }
 }
 
@@ -299,11 +300,13 @@ void BundleActiveUserService::UpdateContinueServicesMemory(int64_t beginTime,
     std::map<std::string, std::map<std::string, int>> continueServices, std::string continueBundleName,
     std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval)
 {
-    if (continueServices.find(continueBundleName) != continueServices.end()) {
-        for (std::map<std::string, int>::iterator it = continueServices[continueBundleName].begin();
-            it != continueServices[continueBundleName].end(); ++it) {
-            (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
-        }
+    if (continueServices.find(continueBundleName) == continueServices.end()) {
+        return;
+    }
+
+    for (std::map<std::string, int>::iterator it = continueServices[continueBundleName].begin();
+        it != continueServices[continueBundleName].end(); ++it) {
+        (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
     }
 }
 
