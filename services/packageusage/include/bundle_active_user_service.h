@@ -91,7 +91,7 @@ private:
     void NotifyStatsChanged();
     void NotifyNewUpdate();
     std::shared_ptr<BundleActiveModuleRecord> GetOrCreateModuleRecord(const BundleActiveEvent& event);
-    void UpdateContinueAbilitiesMemory(int64_t beginTime, 
+    void UpdateContinueAbilitiesMemory(int64_t beginTime,
         std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName,
         std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval);
     void UpdateContinueServicesMemory(int64_t beginTime,
