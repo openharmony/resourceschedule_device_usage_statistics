@@ -280,7 +280,7 @@ void BundleActiveUserService::FlushDataInMem(std::set<std::string> &continueBund
     }
 }
 
-void BundleActiveUserService::UpdateContinueAbilitiesMemory(
+void BundleActiveUserService::UpdateContinueAbilitiesMemory(int64_t beginTime,
     std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName,
     std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval)
 {
@@ -295,7 +295,7 @@ void BundleActiveUserService::UpdateContinueAbilitiesMemory(
     }
 }
 
-void BundleActiveUserService::UpdateContinueServicesMemory(
+void BundleActiveUserService::UpdateContinueServicesMemory(int64_t beginTime,
     std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName,
     std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval)
 {
@@ -323,8 +323,8 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
             itInterval != currentStats_.end(); ++itInterval) {
-            UpdateContinueAbilitiesMemory(continueAbilities, continueBundleName, itInterval);
-            UpdateContinueServicesMemory(continueServices, continueBundleName, itInterval);
+            UpdateContinueAbilitiesMemory(beginTime, continueAbilities, continueBundleName, itInterval);
+            UpdateContinueServicesMemory(beginTime, continueServices, continueBundleName, itInterval);
         }
     }
     RestoreStats(true);

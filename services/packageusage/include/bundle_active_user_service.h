@@ -91,10 +91,12 @@ private:
     void NotifyStatsChanged();
     void NotifyNewUpdate();
     std::shared_ptr<BundleActiveModuleRecord> GetOrCreateModuleRecord(const BundleActiveEvent& event);
-    void UpdateContinueAbilitiesMemory(std::map<std::string, std::map<std::string, int>> continueAbilities,
-        std::string continueBundleName, std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval);
-    void UpdateContinueServicesMemory(std::map<std::string, std::map<std::string, int>> continueAbilities,
-        std::string continueBundleName, std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval);
+    void UpdateContinueAbilitiesMemory(int64_t beginTime, 
+        std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName,
+        std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval);
+    void UpdateContinueServicesMemory(int64_t beginTime,
+        std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName,
+        std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval);
     void PrintInMemPackageStats(const int32_t idx, const bool debug);
     void PrintInMemEventStats(const bool debug);
     void PrintInMemFormStats(const bool debug, const bool printform);
