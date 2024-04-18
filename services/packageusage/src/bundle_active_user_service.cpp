@@ -321,22 +321,8 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
             itInterval != currentStats_.end(); ++itInterval) {
-            if (continueAbilities.find(continueBundleName) == continueAbilities.end()) {
-                continue;
-            }
-            for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
-                it != continueAbilities[continueBundleName].end(); ++it) {
-                if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
-                    continue;
-                }
-                (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
-            }
-            if (continueServices.find(continueBundleName) != continueServices.end()) {
-                for (std::map<std::string, int>::iterator it = continueServices[continueBundleName].begin();
-                    it != continueServices[continueBundleName].end(); ++it) {
-                    (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
-                }
-            }
+            UpdateContinueAbilitiesMemory(continueAbilities, continueBundleName);
+            UpdateContinueServicesMemory(continueServices, continueBundleName);
         }
     }
     RestoreStats(true);
