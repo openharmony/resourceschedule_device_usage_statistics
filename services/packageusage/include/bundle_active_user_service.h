@@ -95,7 +95,7 @@ private:
         std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName,
         std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval);
     void UpdateContinueServicesMemory(int64_t beginTime,
-        std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName,
+        std::map<std::string, std::map<std::string, int>> continueServices, std::string continueBundleName,
         std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval);
     void PrintInMemPackageStats(const int32_t idx, const bool debug);
     void PrintInMemEventStats(const bool debug);

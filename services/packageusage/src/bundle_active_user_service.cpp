@@ -296,7 +296,7 @@ void BundleActiveUserService::UpdateContinueAbilitiesMemory(int64_t beginTime,
 }
 
 void BundleActiveUserService::UpdateContinueServicesMemory(int64_t beginTime,
-    std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName,
+    std::map<std::string, std::map<std::string, int>> continueServices, std::string continueBundleName,
     std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval)
 {
     if (continueServices.find(continueBundleName) != continueServices.end()) {
