@@ -280,6 +280,31 @@ void BundleActiveUserService::FlushDataInMem(std::set<std::string> &continueBund
     }
 }
 
+void BundleActiveUserService::UpdateContinueAbilitiesMemory(
+    std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName)
+{
+    if (continueAbilities.find(continueBundleName) != continueAbilities.end()) {
+        for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
+            it != continueAbilities[continueBundleName].end(); ++it) {
+            if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
+                continue;
+            }
+            (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
+        }
+    }
+}
+
+void BundleActiveUserService::UpdateContinueServicesMemory(
+    std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName)
+{
+    if (continueServices.find(continueBundleName) != continueServices.end()) {
+        for (std::map<std::string, int>::iterator it = continueServices[continueBundleName].begin();
+            it != continueServices[continueBundleName].end(); ++it) {
+            (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
+        }
+    }
+}
+
 void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
 {
     std::set<std::string> continueBundles;

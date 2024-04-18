@@ -91,6 +91,10 @@ private:
     void NotifyStatsChanged();
     void NotifyNewUpdate();
     std::shared_ptr<BundleActiveModuleRecord> GetOrCreateModuleRecord(const BundleActiveEvent& event);
+    void BundleActiveUserService::UpdateContinueAbilitiesMemory(
+        std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName);
+    void BundleActiveUserService::UpdateContinueServicesMemory(
+    std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName);
     void PrintInMemPackageStats(const int32_t idx, const bool debug);
     void PrintInMemEventStats(const bool debug);
     void PrintInMemFormStats(const bool debug, const bool printform);
