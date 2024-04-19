@@ -284,11 +284,11 @@ void BundleActiveUserService::UpdateContinueAbilitiesMemory(const int64_t& begin
     const std::map<std::string, std::map<std::string, int>>& continueAbilities, const std::string& continueBundleName,
     const std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator& itInterval)
 {
-    if (continueAbilities.find(continueBundleName) == continueAbilities.end()) {
+    auto ability = continueAbilities.find(continueBundleName);
+    if (ability == continueAbilities.end()) {
         return;
     }
-    for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
-        it != continueAbilities[continueBundleName].end(); ++it) {
+    for (auto it = ability->second.begin(); it != ability->second.end(); ++it) {
         if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
             continue;
         }
@@ -300,12 +300,12 @@ void BundleActiveUserService::UpdateContinueServicesMemory(const int64_t& beginT
     const std::map<std::string, std::map<std::string, int>>& continueServices, const std::string& continueBundleName,
     const std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator& itInterval)
 {
-    if (continueServices.find(continueBundleName) == continueServices.end()) {
+    auto service = continueServices.find(continueBundleName);
+    if (service == continueServices.end()) {
         return;
     }
 
-    for (std::map<std::string, int>::iterator it = continueServices[continueBundleName].begin();
-        it != continueServices[continueBundleName].end(); ++it) {
+    for (auto it = service->second.begin(); it != continueServices[continueBundleName].end(); ++it) {
         (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
     }
 }
@@ -323,6 +323,10 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
     LoadActiveStats(timeStamp, false, false);
     // update timestamps of events in memory
     for (std::string continueBundleName : continueBundles) {
+        if (continueAbilities.find(continueBundleName) == continueAbilities.end() &&
+        continueServices.find(continueBundleName) == continueServices.end()) {
+            continue;
+        }
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
             itInterval != currentStats_.end(); ++itInterval) {
