@@ -305,7 +305,7 @@ void BundleActiveUserService::UpdateContinueServicesMemory(const int64_t& beginT
         return;
     }
 
-    for (auto it = service->second.begin(); it != continueServices[continueBundleName].end(); ++it) {
+    for (auto it = service->second.begin(); it != service->second.end(); ++it) {
         (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
     }
 }
