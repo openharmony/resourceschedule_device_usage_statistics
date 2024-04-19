@@ -280,9 +280,9 @@ void BundleActiveUserService::FlushDataInMem(std::set<std::string> &continueBund
     }
 }
 
-void BundleActiveUserService::UpdateContinueAbilitiesMemory(int64_t beginTime,
-    std::map<std::string, std::map<std::string, int>> continueAbilities, std::string continueBundleName,
-    std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval)
+void BundleActiveUserService::UpdateContinueAbilitiesMemory(const int64_t& beginTime,
+    const std::map<std::string, std::map<std::string, int>>& continueAbilities, const std::string& continueBundleName,
+    const std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator& itInterval)
 {
     if (continueAbilities.find(continueBundleName) == continueAbilities.end()) {
         return;
@@ -296,9 +296,9 @@ void BundleActiveUserService::UpdateContinueAbilitiesMemory(int64_t beginTime,
     }
 }
 
-void BundleActiveUserService::UpdateContinueServicesMemory(int64_t beginTime,
-    std::map<std::string, std::map<std::string, int>> continueServices, std::string continueBundleName,
-    std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval)
+void BundleActiveUserService::UpdateContinueServicesMemory(const int64_t& beginTime,
+    const std::map<std::string, std::map<std::string, int>>& continueServices, const std::string& continueBundleName,
+    const std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator& itInterval)
 {
     if (continueServices.find(continueBundleName) == continueServices.end()) {
         return;
@@ -326,8 +326,8 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
             itInterval != currentStats_.end(); ++itInterval) {
-            UpdateContinueAbilitiesMemory(beginTime, continueAbilities, continueBundleName, itInterval);
-            UpdateContinueServicesMemory(beginTime, continueServices, continueBundleName, itInterval);
+            UpdateContinueAbilitiesMemory(&beginTime, &continueAbilities, &continueBundleName, &itInterval);
+            UpdateContinueServicesMemory(&beginTime, &continueServices, &continueBundleName, &itInterval);
         }
     }
     RestoreStats(true);
