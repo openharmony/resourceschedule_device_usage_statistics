@@ -18,7 +18,6 @@
 #include "accesstoken_kit.h"
 #include "app_mgr_interface.h"
 
-#define private public
 #include "system_ability_definition.h"
 #include "iservice_registry.h"
 #include "bundle_active_service.h"

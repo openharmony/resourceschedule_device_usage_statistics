@@ -170,13 +170,14 @@ void BundleActiveUserService::RestoreStats(bool forced)
     if (statsChanged_ || forced) {
         BUNDLE_ACTIVE_LOGI("RestoreStats() stat changed is true");
         for (uint32_t i = 0; i < currentStats_.size(); i++) {
-            if (currentStats_[i]) {
-                if (!currentStats_[i]->bundleStats_.empty()) {
-                    database_.UpdateBundleUsageData(i, *(currentStats_[i]));
-                }
-                if (!currentStats_[i]->events_.events_.empty() && i == BundleActivePeriodStats::PERIOD_DAILY) {
-                    database_.UpdateEventData(i, *(currentStats_[i]));
-                }
+            if (!currentStats_[i]) {
+                continue;
+            }
+            if (!currentStats_[i]->bundleStats_.empty()) {
+                database_.UpdateBundleUsageData(i, *(currentStats_[i]));
+            }
+            if (!currentStats_[i]->events_.events_.empty() && i == BundleActivePeriodStats::PERIOD_DAILY) {
+                database_.UpdateEventData(i, *(currentStats_[i]));
             }
         }
         if (!moduleRecords_.empty()) {
@@ -279,6 +280,36 @@ void BundleActiveUserService::FlushDataInMem(std::set<std::string> &continueBund
     }
 }
 
+void BundleActiveUserService::UpdateContinueAbilitiesMemory(const int64_t& beginTime,
+    const std::map<std::string, std::map<std::string, int>>& continueAbilities, const std::string& continueBundleName,
+    const std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator& itInterval)
+{
+    auto ability = continueAbilities.find(continueBundleName);
+    if (ability == continueAbilities.end()) {
+        return;
+    }
+    for (auto it = ability->second.begin(); it != ability->second.end(); ++it) {
+        if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
+            continue;
+        }
+        (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
+    }
+}
+
+void BundleActiveUserService::UpdateContinueServicesMemory(const int64_t& beginTime,
+    const std::map<std::string, std::map<std::string, int>>& continueServices, const std::string& continueBundleName,
+    const std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator& itInterval)
+{
+    auto service = continueServices.find(continueBundleName);
+    if (service == continueServices.end()) {
+        return;
+    }
+
+    for (auto it = service->second.begin(); it != service->second.end(); ++it) {
+        (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
+    }
+}
+
 void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
 {
     std::set<std::string> continueBundles;
@@ -292,24 +323,15 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
     LoadActiveStats(timeStamp, false, false);
     // update timestamps of events in memory
     for (std::string continueBundleName : continueBundles) {
+        if (continueAbilities.find(continueBundleName) == continueAbilities.end() &&
+        continueServices.find(continueBundleName) == continueServices.end()) {
+            continue;
+        }
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
             itInterval != currentStats_.end(); ++itInterval) {
-            if (continueAbilities.find(continueBundleName) != continueAbilities.end()) {
-                for (std::map<std::string, int>::iterator it = continueAbilities[continueBundleName].begin();
-                    it != continueAbilities[continueBundleName].end(); ++it) {
-                    if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
-                        continue;
-                    }
-                    (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
-                }
-            }
-            if (continueServices.find(continueBundleName) != continueServices.end()) {
-                for (std::map<std::string, int>::iterator it = continueServices[continueBundleName].begin();
-                    it != continueServices[continueBundleName].end(); ++it) {
-                    (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
-                }
-            }
+            UpdateContinueAbilitiesMemory(beginTime, continueAbilities, continueBundleName, itInterval);
+            UpdateContinueServicesMemory(beginTime, continueServices, continueBundleName, itInterval);
         }
     }
     RestoreStats(true);
@@ -390,10 +412,11 @@ ErrCode BundleActiveUserService::QueryBundleEvents(std::vector<BundleActiveEvent
         int32_t eventBeginIdx = currentStats->events_.FindBestIndex(beginTime);
         int32_t eventSize = currentStats->events_.Size();
         for (int32_t i = eventBeginIdx; i < eventSize; i++) {
-            if (currentStats->events_.events_[i].timeStamp_ <= endTime) {
-                if (bundleName.empty() || currentStats->events_.events_[i].bundleName_ == bundleName) {
-                    bundleActiveEvent.push_back(currentStats->events_.events_[i]);
-                }
+            if (currentStats->events_.events_[i].timeStamp_ > endTime) {
+                continue;
+            }
+            if (bundleName.empty() || currentStats->events_.events_[i].bundleName_ == bundleName) {
+                bundleActiveEvent.push_back(currentStats->events_.events_[i]);
             }
         }
     }

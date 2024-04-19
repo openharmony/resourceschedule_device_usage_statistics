@@ -45,7 +45,6 @@ namespace {
 BundleActiveUsageDatabase::BundleActiveUsageDatabase()
 {
     currentVersion_ = BUNDLE_ACTIVE_CURRENT_VERSION;
-    versionDirectoryPath_ = BUNDLE_ACTIVE_DATABASE_DIR + BUNDLE_ACTIVE_VERSION_FILE;
     for (uint32_t i = 0; i < sizeof(DATABASE_TYPE)/sizeof(DATABASE_TYPE[0]); i++) {
         databaseFiles_.push_back(DATABASE_TYPE[i] + SUFFIX_TYPE[0]);
     }
@@ -253,8 +252,11 @@ void BundleActiveUsageDatabase::HandleTableInfo(uint32_t databaseType)
             sort(sortedTableArray_.at(databaseType).begin(), sortedTableArray_.at(databaseType).end());
         }
         if ((databaseType == DAILY_DATABASE_INDEX) && !sortedTableArray_.at(databaseType).empty()) {
-            size_t lastTableIndex = sortedTableArray_.at(databaseType).size() - 1;
-            eventBeginTime_ = sortedTableArray_.at(databaseType).at(lastTableIndex);
+            size_t lastTableIndex = sortedTableArray_.at(databaseType).size();
+            if (lastTableIndex == 0) {
+                return;
+            }
+            eventBeginTime_ = sortedTableArray_.at(databaseType).at(lastTableIndex -1);
         }
     } else if (databaseType == EVENT_DATABASE_INDEX) {
         if (tableNumber == EVENT_TABLE_NUMBER) {
@@ -399,7 +401,7 @@ void BundleActiveUsageDatabase::CheckDatabaseVersion()
 {
     if (access(BUNDLE_ACTIVE_DATABASE_DIR.c_str(), F_OK) == 0) {
         ofstream openVersionFile;
-        openVersionFile.open(versionDirectoryPath_, ios::out);
+        openVersionFile.open(BUNDLE_ACTIVE_VERSION_DIRECTORY_PATH, ios::out);
         if (openVersionFile) {
             openVersionFile << "version : " << BUNDLE_ACTIVE_CURRENT_VERSION;
         }

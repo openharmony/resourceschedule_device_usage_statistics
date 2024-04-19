@@ -124,6 +124,7 @@ const std::string BUNDLE_ACTIVE_DB_SCREEN_ON_DURATION = "screenOnDuration";
 const std::string REFRESH_DATABASE_RUNNER_NAME = "RefreshDatabase";
 const std::string BUNDLE_ACTIVE_DATABASE_DIR = "/data/service/el1/public/bundle_usage/";
 const std::string BUNDLE_ACTIVE_VERSION_FILE = "/version";
+const std::string BUNDLE_ACTIVE_VERSION_DIRECTORY_PATH = BUNDLE_ACTIVE_DATABASE_DIR + BUNDLE_ACTIVE_VERSION_FILE;
 const std::string DATABASE_FILE_TABLE_NAME = "table";
 const std::string SQLITE_MASTER_NAME = "name";
 const std::string COMMON_EVENT_UNLOCK_SCREEN = "common.event.UNLOCK_SCREEN";

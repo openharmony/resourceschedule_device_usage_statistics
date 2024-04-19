@@ -134,7 +134,6 @@ private:
     std::string bundleHistoryTableName_;
     std::string moduleRecordsTableName_;
     std::string formRecordsTableName_;
-    std::string versionDirectoryPath_;
     std::string versionFile_;
     uint32_t currentVersion_;
     std::mutex databaseMutex_;
