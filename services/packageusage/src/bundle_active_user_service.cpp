@@ -326,8 +326,8 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
             itInterval != currentStats_.end(); ++itInterval) {
-            UpdateContinueAbilitiesMemory(&beginTime, &continueAbilities, &continueBundleName, &itInterval);
-            UpdateContinueServicesMemory(&beginTime, &continueServices, &continueBundleName, &itInterval);
+            UpdateContinueAbilitiesMemory(beginTime, continueAbilities, continueBundleName, itInterval);
+            UpdateContinueServicesMemory(beginTime, continueServices, continueBundleName, itInterval);
         }
     }
     RestoreStats(true);
