@@ -342,3 +342,37 @@ ohos_shared_library("usagestatsutils") {
     debug = false
   }
 }
+
+group("bfwk_group_all") {
+  if (device_usage_statistics_device_enable) {
+    deps = [
+      "${usage_statistics_path}:usagestatsinner",
+      "${usage_statistics_path}:usagestatsutils",
+      "${usage_statistics_path}:bundlestate"
+    ]
+  }
+}
+
+group("service_group_all") {
+  if (device_usage_statistics_device_enable) {
+    deps = [
+      "${usage_statistics_path}:usagestatservice",
+      "${usage_statistics_path}:device_usage_statistics_sa_profile",
+      "${usage_statistics_path}:device_usage_statistics_service_init",
+      "${usage_statistics_path}:usagestatistics"
+    ]
+  }
+}
+
+group("test_all") {
+  testonly = true
+  if (device_usage_statistics_device_enable) {
+    deps = [
+      "${usage_statistics_path}/interfaces/test/unittest/device_usage_statistics_jsunittest:js_unittest",
+      "${usage_statistics_path}/test/unittest:unittest",
+      "${usage_statistics_path}/test/fuzztest/bundleactiveonremoterequest_fuzzer:fuzztest",
+      "${usage_statistics_path}/test/fuzztest/bundleactiveobserver_fuzzer:fuzztest",
+      "${usage_statistics_path}/test/fuzztest/appgroupcallbackstub_fuzzer:fuzztest"
+    ]
+  }
+}
