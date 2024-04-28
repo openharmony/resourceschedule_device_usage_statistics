@@ -15,7 +15,7 @@
     "syscap": [ "SystemCapability.ResourceSchedule.UsageStatistics.AppGroup",
                 "SystemCapability.ResourceSchedule.UsageStatistics.App"
               ],
-    "features": [],
+    "features": [ "device_usage_statistics_device_enable" ],
     "adapted_system_type": [
       "standard"
     ],
@@ -49,15 +49,10 @@
       "group_type" : {
         "base_group": [],
         "fwk_group": [
-          "//foundation/resourceschedule/device_usage_statistics:usagestatsinner",
-          "//foundation/resourceschedule/device_usage_statistics:usagestatsutils",
-          "//foundation/resourceschedule/device_usage_statistics:bundlestate"
+          "//foundation/resourceschedule/device_usage_statistics:bfwk_group_all"
         ],
         "service_group": [
-          "//foundation/resourceschedule/device_usage_statistics:usagestatservice",
-          "//foundation/resourceschedule/device_usage_statistics:device_usage_statistics_sa_profile",
-          "//foundation/resourceschedule/device_usage_statistics:device_usage_statistics_service_init",
-          "//foundation/resourceschedule/device_usage_statistics:usagestatistics"
+          "//foundation/resourceschedule/device_usage_statistics:service_group_all"
         ]
       },
       "inner_kits": [
@@ -88,7 +83,8 @@
         "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/bundleactiveonremoterequest_fuzzer:fuzztest",
         "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/bundleactiveobserver_fuzzer:fuzztest",
         "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/appgroupcallbackstub_fuzzer:fuzztest",
-        "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/bundleactivepowerstatecallbackproxy_fuzzer:fuzztest"
+        "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/bundleactivepowerstatecallbackproxy_fuzzer:fuzztest",
+        "//foundation/resourceschedule/device_usage_statistics:test_all"
       ]
     }
   }
