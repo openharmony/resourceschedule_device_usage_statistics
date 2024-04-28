@@ -34,6 +34,7 @@ namespace DeviceUsageStats {
     static int32_t DEFAULT_DIMENSION = 4;
     static int64_t DEFAULT_FORMID = 1;
     constexpr uint32_t U32_AT_SIZE = 4;
+    constexpr uint32_t MAX = 100;
     constexpr uint8_t TWENTYFOUR = 24;
     constexpr uint8_t SIXTEEN = 16;
     constexpr uint8_t EIGHT = 8;
@@ -159,13 +160,13 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     if (size < OHOS::DeviceUsageStats::U32_AT_SIZE) {
         return 0;
     }
-    char* ch = (char *)malloc(size + 1);
+    char ch[MAX];
     if (ch == nullptr) {
         return 0;
     }
 
     (void)memset_s(ch, size + 1, 0x00, size + 1);
-    if (memcpy_s(ch, sizeof(ch), data, size) != EOK) {
+    if (memcpy_s(ch, MAX, data, size) != EOK) {
         free(ch);
         ch = nullptr;
         return 0;
