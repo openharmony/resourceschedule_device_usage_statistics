@@ -50,7 +50,7 @@ ohos_fuzztest("BundleActivePowerstateCallbackproxyFuzzTest") {
   ]
 
   deps = [
-    "//foundation/resourceschedule/device_usage_statistics:usagestatistics",
+    "${usage_statistics_path}:usagestatistics",
 
   ]
 
