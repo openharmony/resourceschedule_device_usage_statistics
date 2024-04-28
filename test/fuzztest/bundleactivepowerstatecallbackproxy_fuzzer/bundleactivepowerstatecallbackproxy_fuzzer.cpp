@@ -14,11 +14,9 @@
  */
 
 #include "bundleactivepowerstatecallbackproxy_fuzzer.h"
-
 #include "accesstoken_kit.h"
 #include "app_mgr_interface.h"
 
-#define pricate public
 #include "bundle_active_power_state_callback_proxy.h"
 #include "power_state_callback_ipc_interface_code.h"
 #include "power_state_machine_info.h"
@@ -41,7 +39,6 @@ namespace DeviceUsageStats {
     constexpr uint8_t EIGHT = 8;
     constexpr uint8_t TWO = 2;
     constexpr uint8_t THREE = 3;
-    bool isInited = false;
 
     uint32_t GetU32Data(const char* ptr)
     {
@@ -64,10 +61,9 @@ namespace DeviceUsageStats {
         }
         std::string str(cstr);
         return str;
-    } 
+    }
     bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
     {
-
         uint32_t code = GetU32Data(data);
         PowerMgr::PowerState state = static_cast<PowerMgr::PowerState>(code);
         const sptr<IRemoteObject> tempImpl;
@@ -169,7 +165,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     }
 
     (void)memset_s(ch, size + 1, 0x00, size + 1);
-    if (memcpy_s(ch, size, data, size) != EOK) {
+    if (memcpy_s(ch, sizeof(ch), data, size) != EOK) {
         free(ch);
         ch = nullptr;
         return 0;
