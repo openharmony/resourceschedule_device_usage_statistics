@@ -87,7 +87,8 @@
         "//foundation/resourceschedule/device_usage_statistics/interfaces/test/unittest/device_usage_statistics_jsunittest:js_unittest",
         "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/bundleactiveonremoterequest_fuzzer:fuzztest",
         "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/bundleactiveobserver_fuzzer:fuzztest",
-        "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/appgroupcallbackstub_fuzzer:fuzztest"
+        "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/appgroupcallbackstub_fuzzer:fuzztest",
+        "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/bundleactivepowerstatecallbackproxy_fuzzer:fuzztest"
       ]
     }
   }
