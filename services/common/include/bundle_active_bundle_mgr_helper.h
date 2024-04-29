@@ -23,8 +23,6 @@
 #include "iremote_object.h"
 #include "singleton.h"
 
-#include "bundle_active_log.h"
-
 namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveBundleMgrHelper : public DelayedSingleton<BundleActiveBundleMgrHelper> {
