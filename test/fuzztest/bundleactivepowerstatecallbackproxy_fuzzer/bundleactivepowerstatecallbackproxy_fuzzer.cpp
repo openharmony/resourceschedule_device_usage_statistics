@@ -26,6 +26,14 @@
 #include "bundle_active_stats_combiner.h"
 #include "bundle_active_event_list.h"
 
+#ifndef errno_t
+typedef int errno_t;
+#endif
+
+#ifndef EOK
+#define EOK 0
+#endif
+
 namespace OHOS {
 namespace DeviceUsageStats {
     static std::string g_defaultBundleName = "com.ohos.camera";
@@ -39,6 +47,9 @@ namespace DeviceUsageStats {
     constexpr uint8_t EIGHT = 8;
     constexpr uint8_t TWO = 2;
     constexpr uint8_t THREE = 3;
+    const uint8_t* g_data = nullptr;
+    size_t g_size = 0;
+    size_t g_pos;
 
     template<class T>
     T GetData()
@@ -76,6 +87,9 @@ namespace DeviceUsageStats {
 
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
+        g_data = data;
+        g_size = size;
+        g_pos = 0;
         uint32_t code = GetData<uint32_t>();
         PowerMgr::PowerState state = static_cast<PowerMgr::PowerState>(code);
         const sptr<IRemoteObject> tempImpl;
@@ -86,6 +100,9 @@ namespace DeviceUsageStats {
 
     bool BundleActiveClientFuzzTest(const uint8_t* data, size_t size)
     {
+        g_data = data;
+        g_size = size;
+        g_pos = 0;
         bool result = false;
         int32_t userId = GetData<int32_t>();
         std::string inputBundleName(data);
@@ -124,6 +141,9 @@ namespace DeviceUsageStats {
 
     bool BundleActiveEventListFuzzTest(const uint8_t* data, size_t size)
     {
+        g_data = data;
+        g_size = size;
+        g_pos = 0;
         BundleActiveEventList right;
         int64_t resultData = GetData<int64_t>();
         auto combiner = std::make_shared<BundleActiveEventList>();
@@ -142,6 +162,9 @@ namespace DeviceUsageStats {
 
     bool BundleActiveStatsCombinerFuzzTest(const uint8_t* data, size_t size)
     {
+        g_data = data;
+        g_size = size;
+        g_pos = 0;
         auto combiner = std::make_shared<BundleActiveStatsCombiner<BundleActivePackageStats>>();
         auto stats = std::make_shared<BundleActivePeriodStats>();
         auto packageStat = std::make_shared<BundleActivePackageStats>();
