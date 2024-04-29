@@ -43,11 +43,7 @@ namespace DeviceUsageStats {
     static int32_t DEFAULT_DIMENSION = 4;
     static int64_t DEFAULT_FORMID = 1;
     constexpr uint32_t U32_AT_SIZE = 4;
-    constexpr uint8_t TWENTYFOUR = 24;
-    constexpr uint8_t SIXTEEN = 16;
-    constexpr uint8_t EIGHT = 8;
-    constexpr uint8_t TWO = 2;
-    constexpr uint8_t THREE = 3;
+    
     const uint8_t* g_data = nullptr;
     size_t g_size = 0;
     size_t g_pos;
