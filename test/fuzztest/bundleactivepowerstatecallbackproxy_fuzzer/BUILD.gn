@@ -33,8 +33,7 @@ config("module_private_config") {
 
 ohos_fuzztest("BundleActivePowerstateCallbackproxyFuzzTest") {
   module_out_path = module_output_path
-  fuzz_config_file =
-      "${usage_statistics_path}/test/fuzztest/bundleactivepowerstatecallbackproxy_fuzzer"
+  fuzz_config_file = "${usage_statistics_path}/test/fuzztest/bundleactivepowerstatecallbackproxy_fuzzer"
   configs = [ ":module_private_config" ]
   cflags = [
     "-g",
@@ -49,10 +48,7 @@ ohos_fuzztest("BundleActivePowerstateCallbackproxyFuzzTest") {
     "bundleactivepowerstatecallbackproxy_fuzzer.cpp",
   ]
 
-  deps = [
-    "${usage_statistics_path}:usagestatistics",
-
-  ]
+  deps = [ "${usage_statistics_path}:usagestatistics" ]
 
   public_deps = [
     "${usage_statistics_path}:usagestatservice_static",
