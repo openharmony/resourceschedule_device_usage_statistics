@@ -40,12 +40,23 @@ namespace DeviceUsageStats {
     constexpr uint8_t TWO = 2;
     constexpr uint8_t THREE = 3;
 
-    uint32_t GetU32Data(const char* ptr)
+    template<class T>
+    T GetData()
     {
-        return (ptr[0] << TWENTYFOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
+        T object {};
+        size_t objectSize = sizeof(object);
+        if (g_data == nullptr || objectSize > g_size - g_pos) {
+            return object;
+        }
+        errno_t ret = memcpy_s(&object, objectSize, g_data + g_pos, objectSize);
+        if (ret != EOK) {
+            return {};
+        }
+        g_pos += objectSize;
+        return object;
     }
 
-    std::string GetStringFromData(int strlen, const char* ptr)
+    std::string GetStringFromData(int strlen)
     {
         if (strlen <= 0) {
             return "";
@@ -53,7 +64,7 @@ namespace DeviceUsageStats {
         char cstr[strlen];
         cstr[strlen - 1] = '\0';
         for (int i = 0; i < strlen - 1; i++) {
-            char tmp = static_cast<char>(GetU32Data(ptr));
+            char tmp = GetData<char>();
             if (tmp == '\0') {
                 tmp = '1';
             }
@@ -62,9 +73,10 @@ namespace DeviceUsageStats {
         std::string str(cstr);
         return str;
     }
-    bool DoSomethingInterestingWithMyAPI(const char* data, size_t size)
+
+    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
-        uint32_t code = GetU32Data(data);
+        uint32_t code = GetData<uint32_t>();
         PowerMgr::PowerState state = static_cast<PowerMgr::PowerState>(code);
         const sptr<IRemoteObject> tempImpl;
         BundleActivePowerStateCallbackProxy bundleActivePowerStateCallbackProxy(tempImpl);
@@ -72,15 +84,15 @@ namespace DeviceUsageStats {
         return true;
     }
 
-    bool BundleActiveClientFuzzTest(const char* data, size_t size)
+    bool BundleActiveClientFuzzTest(const uint8_t* data, size_t size)
     {
         bool result = false;
-        int32_t userId = static_cast<int32_t>(GetU32Data(data));
+        int32_t userId = GetData<int32_t>();
         std::string inputBundleName(data);
         sptr<IAppGroupCallback> appGroupCallback = nullptr;
-        int32_t intervalType = static_cast<int32_t>(GetU32Data(data));
-        int64_t beginTime = static_cast<int64_t>(GetU32Data(data));
-        int64_t endTime = static_cast<int64_t>(GetU32Data(data));
+        int32_t intervalType = GetData<int32_t>();
+        int64_t beginTime = GetData<int64_t>();
+        int64_t endTime = GetData<int64_t>();
 
         DelayedSingleton<BundleActiveClient>::GetInstance()->GetBundleActiveProxy();
         DelayedSingleton<BundleActiveClient>::GetInstance()->RegisterAppGroupCallBack(appGroupCallback);
@@ -98,8 +110,8 @@ namespace DeviceUsageStats {
         DelayedSingleton<BundleActiveClient>::GetInstance()->QueryBundleEvents(bundleActiveEvent,
         beginTime, endTime, userId);
 
-        int32_t newGroup = static_cast<int32_t>(GetU32Data(data));
-        std::string bundleName = GetStringFromData(size, data);
+        int32_t newGroup = GetData<int32_t>();
+        std::string bundleName = GetStringFromData(size);
         DelayedSingleton<BundleActiveClient>::GetInstance()->SetAppGroup(bundleName, newGroup, userId);
 
         std::vector<BundleActiveEventStats> eventStats;
@@ -110,15 +122,15 @@ namespace DeviceUsageStats {
         return true;
     }
 
-    bool BundleActiveEventListFuzzTest(const char* data, size_t size)
+    bool BundleActiveEventListFuzzTest(const uint8_t* data, size_t size)
     {
         BundleActiveEventList right;
-        int64_t resultData = static_cast<int64_t>(GetU32Data(data));
+        int64_t resultData = GetData<int64_t>();
         auto combiner = std::make_shared<BundleActiveEventList>();
         BundleActiveEvent event;
-        event.bundleName_ = GetStringFromData(size, data);
-        event.continuousTaskAbilityName_ = GetStringFromData(size, data);
-        event.timeStamp_ = static_cast<int64_t>(GetU32Data(data));
+        event.bundleName_ = GetStringFromData(size);
+        event.continuousTaskAbilityName_ = GetStringFromData(size);
+        event.timeStamp_ = GetData<int64_t>();
 
         combiner->Size();
         combiner->FindBestIndex(resultData);
@@ -128,7 +140,7 @@ namespace DeviceUsageStats {
         return true;
     }
 
-    bool BundleActiveStatsCombinerFuzzTest(const char* data, size_t size)
+    bool BundleActiveStatsCombinerFuzzTest(const uint8_t* data, size_t size)
     {
         auto combiner = std::make_shared<BundleActiveStatsCombiner<BundleActivePackageStats>>();
         auto stats = std::make_shared<BundleActivePeriodStats>();
@@ -136,7 +148,7 @@ namespace DeviceUsageStats {
         stats->bundleStats_.emplace("normal", packageStat);
         packageStat = nullptr;
         stats->bundleStats_.emplace("default", packageStat);
-        int64_t beginTime = static_cast<int64_t>(GetU32Data(data));
+        int64_t beginTime = GetData<int64_t>();
         std::vector<BundleActivePackageStats> accumulatedResult;
         combiner->combine(stats, accumulatedResult, beginTime);
 
@@ -166,4 +178,3 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::DeviceUsageStats::BundleActiveStatsCombinerFuzzTest(data, size);
     return 0;
 }
-
