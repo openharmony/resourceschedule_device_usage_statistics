@@ -29,7 +29,7 @@ config("usagestats_public_config") {
   ]
 }
 
-config("usagestatsutils_public_config") {
+config("usagestatsutils_config") {
   include_dirs = [ "utils/include" ]
 }
 
@@ -47,8 +47,10 @@ ohos_shared_library("usagestatsinner") {
     "interfaces/innerkits/src/bundle_active_proxy.cpp",
   ]
   public_configs = [
-    ":usagestats_public_config",
-    ":usagestatsutils_public_config",
+    ":usagestats_public_config",  
+  ]
+  config = [
+    ":usagestatsutils_config",
   ]
   deps = [ ":usagestatsutils" ]
   external_deps = [
@@ -325,7 +327,7 @@ ohos_static_library("usagestatservice_static") {
 
 ohos_shared_library("usagestatsutils") {
   sources = [ "utils/src/bundle_active_log.cpp" ]
-  public_configs = [ ":usagestatsutils_public_config" ]
+  public_configs = [ ":usagestatsutils_config" ]
 
   external_deps = [
     "c_utils:utils",
