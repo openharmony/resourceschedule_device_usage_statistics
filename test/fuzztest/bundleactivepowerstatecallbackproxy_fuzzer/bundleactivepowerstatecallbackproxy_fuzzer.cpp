@@ -17,6 +17,7 @@
 #include "accesstoken_kit.h"
 #include "app_mgr_interface.h"
 
+#include <securec.h>
 #include "bundle_active_power_state_callback_proxy.h"
 #include "power_state_callback_ipc_interface_code.h"
 #include "power_state_machine_info.h"
@@ -105,7 +106,7 @@ namespace DeviceUsageStats {
         g_pos = 0;
         bool result = false;
         int32_t userId = GetData<int32_t>();
-        std::string inputBundleName(data);
+        std::string inputBundleName = GetStringFromData(size);
         sptr<IAppGroupCallback> appGroupCallback = nullptr;
         int32_t intervalType = GetData<int32_t>();
         int64_t beginTime = GetData<int64_t>();
