@@ -16,6 +16,7 @@
 #include "accesstoken_kit.h"
 #include "time_service_client.h"
 
+#include "bundle_active_log.h"
 #include "bundle_active_event.h"
 #include "bundle_active_event_stats.h"
 #include "bundle_active_report_handler.h"

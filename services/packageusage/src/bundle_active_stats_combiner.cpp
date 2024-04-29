@@ -14,6 +14,7 @@
  */
 
 #include "bundle_active_stats_combiner.h"
+#include "bundle_active_log.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

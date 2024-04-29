@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "bundle_active_log.h"
 #include "bundle_active_report_handler.h"
 #include "bundle_active_event.h"
 

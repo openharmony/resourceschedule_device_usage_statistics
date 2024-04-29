@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "bundle_active_log.h"
 #include "app_group_callback_stub.h"
 #include "iapp_group_callback_ipc_interface_code.h"
 

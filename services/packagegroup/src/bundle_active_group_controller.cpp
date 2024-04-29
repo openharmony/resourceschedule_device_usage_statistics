@@ -15,6 +15,7 @@
 
 #include "time_service_client.h"
 
+#include "bundle_active_log.h"
 #include "bundle_active_user_history.h"
 #include "bundle_active_group_handler.h"
 #include "ibundle_active_service.h"
