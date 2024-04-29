@@ -13,6 +13,7 @@
 
 group("fuzztest") {
   testonly = true
+  deps = []
 
-  deps = [ "bundleactivepowerstatecallbackproxy_fuzzer:fuzztest" ]
+  deps += [ "bundleactivepowerstatecallbackproxy_fuzzer:fuzztest" ]
 }
