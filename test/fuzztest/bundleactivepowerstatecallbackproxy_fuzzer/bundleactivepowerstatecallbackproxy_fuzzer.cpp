@@ -160,10 +160,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         return 0;
     }
 
-    OHOS::DeviceUsageStats::DoSomethingInterestingWithMyAPI(ch, size);
-    OHOS::DeviceUsageStats::BundleActiveClientFuzzTest(ch, size);
-    OHOS::DeviceUsageStats::BundleActiveEventListFuzzTest(ch, size);
-    OHOS::DeviceUsageStats::BundleActiveStatsCombinerFuzzTest(ch, size);
+    OHOS::DeviceUsageStats::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::DeviceUsageStats::BundleActiveClientFuzzTest(data, size);
+    OHOS::DeviceUsageStats::BundleActiveEventListFuzzTest(data, size);
+    OHOS::DeviceUsageStats::BundleActiveStatsCombinerFuzzTest(data, size);
     return 0;
 }
 
