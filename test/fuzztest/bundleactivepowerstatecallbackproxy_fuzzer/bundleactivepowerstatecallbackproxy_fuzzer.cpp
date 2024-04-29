@@ -34,7 +34,6 @@ namespace DeviceUsageStats {
     static int32_t DEFAULT_DIMENSION = 4;
     static int64_t DEFAULT_FORMID = 1;
     constexpr uint32_t U32_AT_SIZE = 4;
-    constexpr uint32_t MAX = 100;
     constexpr uint8_t TWENTYFOUR = 24;
     constexpr uint8_t SIXTEEN = 16;
     constexpr uint8_t EIGHT = 8;
@@ -77,7 +76,7 @@ namespace DeviceUsageStats {
     {
         bool result = false;
         int32_t userId = static_cast<int32_t>(GetU32Data(data));
-        std:string inputBundleName(data);
+        std::string inputBundleName(data);
         sptr<IAppGroupCallback> appGroupCallback = nullptr;
         int32_t intervalType = static_cast<int32_t>(GetU32Data(data));
         int64_t beginTime = static_cast<int64_t>(GetU32Data(data));
@@ -104,7 +103,7 @@ namespace DeviceUsageStats {
         DelayedSingleton<BundleActiveClient>::GetInstance()->SetAppGroup(bundleName, newGroup, userId);
 
         std::vector<BundleActiveEventStats> eventStats;
-        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryDeviceEventStats(bundleName, endTime,
+        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryDeviceEventStats(beginTime, endTime,
         eventStats, userId);
         DelayedSingleton<BundleActiveClient>::GetInstance()->QueryNotificationEventStats(beginTime, endTime,
         eventStats, userId);
@@ -132,7 +131,7 @@ namespace DeviceUsageStats {
     bool BundleActiveStatsCombinerFuzzTest(const char* data, size_t size)
     {
         auto combiner = std::make_shared<BundleActiveStatsCombiner<BundleActivePackageStats>>();
-        auto stats = std::make_shared<BundleActivePackageStats>();
+        auto stats = std::make_shared<BundleActivePeriodStats>();
         auto packageStat = std::make_shared<BundleActivePackageStats>();
         stats->bundleStats_.emplace("normal", packageStat);
         packageStat = nullptr;
@@ -160,25 +159,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     if (size < OHOS::DeviceUsageStats::U32_AT_SIZE) {
         return 0;
     }
-    char ch[MAX];
-    if (ch == nullptr) {
-        return 0;
-    }
-
-    (void)memset_s(ch, size + 1, 0x00, size + 1);
-    if (memcpy_s(ch, MAX, data, size) != EOK) {
-        free(ch);
-        ch = nullptr;
-        return 0;
-    }
 
     OHOS::DeviceUsageStats::DoSomethingInterestingWithMyAPI(ch, size);
     OHOS::DeviceUsageStats::BundleActiveClientFuzzTest(ch, size);
     OHOS::DeviceUsageStats::BundleActiveEventListFuzzTest(ch, size);
     OHOS::DeviceUsageStats::BundleActiveStatsCombinerFuzzTest(ch, size);
-
-    free(ch);
-    ch = nullptr;
     return 0;
 }
 
