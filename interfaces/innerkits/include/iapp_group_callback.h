@@ -19,7 +19,6 @@
 #include <ipc_types.h>
 #include <iremote_broker.h>
 
-#include "bundle_active_log.h"
 #include "app_group_callback_info.h"
 
 namespace OHOS {

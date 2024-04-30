@@ -16,6 +16,7 @@
 #include "time_service_client.h"
 #include "bundle_active_account_helper.h"
 #include "bundle_active_group_handler.h"
+#include "bundle_active_log.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

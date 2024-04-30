@@ -26,6 +26,7 @@
 #include "bundle_active_usage_database.h"
 #include "bundle_active_user_history.h"
 #include "bundle_active_group_controller.h"
+#include "bundle_active_log.h"
 
 using namespace testing::ext;
 

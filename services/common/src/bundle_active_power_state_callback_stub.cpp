@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
+#include "bundle_active_log.h"
 #include "bundle_active_power_state_callback_stub.h"
 #include "bundle_active_event.h"
 #include "power_state_callback_ipc_interface_code.h"

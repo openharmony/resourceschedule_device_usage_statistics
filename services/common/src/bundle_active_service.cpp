@@ -23,6 +23,7 @@
 #include "unistd.h"
 #include "accesstoken_kit.h"
 
+#include "bundle_active_log.h"
 #include "bundle_state_inner_errors.h"
 #include "bundle_active_event.h"
 #include "bundle_active_package_stats.h"

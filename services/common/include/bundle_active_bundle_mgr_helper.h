@@ -24,8 +24,6 @@
 #include "singleton.h"
 #include <unordered_set>
 
-#include "bundle_active_log.h"
-
 namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveBundleMgrHelper : public DelayedSingleton<BundleActiveBundleMgrHelper> {

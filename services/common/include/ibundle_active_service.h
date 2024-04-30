@@ -34,7 +34,6 @@
 #include "iapp_group_callback.h"
 #include "app_group_callback_proxy.h"
 
-#include "bundle_active_log.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

@@ -15,6 +15,7 @@
 #include "unistd.h"
 #include "ffrt.h"
 
+#include "bundle_active_log.h"
 #include "bundle_active_client.h"
 
 namespace OHOS {

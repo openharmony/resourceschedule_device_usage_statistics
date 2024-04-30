@@ -15,6 +15,7 @@
 
 #include "bundle_active_bundle_mgr_helper.h"
 
+#include "bundle_active_log.h"
 #include "accesstoken_kit.h"
 #include "application_info.h"
 #include "iservice_registry.h"

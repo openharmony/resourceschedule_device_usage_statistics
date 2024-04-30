@@ -28,6 +28,7 @@
 #include "bundle_active_core.h"
 #include "bundle_active_stats_combiner.h"
 #include "bundle_active_report_handler.h"
+#include "bundle_active_log.h"
 
 using namespace testing::ext;
 

@@ -16,6 +16,7 @@
 #ifdef BGTASKMGR_ENABLE
 #include "time_service_client.h"
 
+#include "bundle_active_log.h"
 #include "bundle_active_app_state_observer.h"
 #include "bundle_active_report_handler.h"
 #include "bundle_active_event.h"

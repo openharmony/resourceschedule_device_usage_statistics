@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "bundle_active_log.h"
 #include "bundle_active_proxy.h"
 #include "ibundle_active_service_ipc_interface_code.h"
 

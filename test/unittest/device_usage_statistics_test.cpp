@@ -29,6 +29,7 @@
 #include "bundle_active_package_stats.h"
 #include "app_group_callback_proxy.h"
 #include "iapp_group_callback.h"
+#include "bundle_active_log.h"
 
 using namespace testing::ext;
 
