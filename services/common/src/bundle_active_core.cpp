@@ -20,11 +20,11 @@
 #include "bundle_active_event_stats.h"
 #include "bundle_active_report_handler.h"
 #include "bundle_active_group_common.h"
+#include "bundle_active_bundle_mgr_helper.h"
 #include "bundle_active_constant.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-const std::string LAUNCHER_BUNDLE_NAME = "com.ohos.launcher";
 #ifndef OS_ACCOUNT_PART_ENABLED
 const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 #endif // OS_ACCOUNT_PART_ENABLED
@@ -469,7 +469,7 @@ int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, int32_t userId)
     }
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    if (event.bundleName_ == LAUNCHER_BUNDLE_NAME) {
+    if (BundleActiveBundleMgrHelper::GetInstance()->IsLauncherApp(event.bundleName_, userId)) {
         BUNDLE_ACTIVE_LOGI("launcher event, only update app group");
         bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
         return 0;
