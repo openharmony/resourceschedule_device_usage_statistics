@@ -16,6 +16,7 @@
 #include "bundle_active_bundle_mgr_helper.h"
 
 #include "accesstoken_kit.h"
+#include "application_info.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 #include "tokenid_kit.h"
@@ -98,6 +99,24 @@ bool BundleActiveBundleMgrHelper::Connect()
 
     bundleMgr_ = iface_cast<AppExecFwk::IBundleMgr>(remoteObject);
     return bundleMgr_ ? true : false;
+}
+
+bool BundleActiveBundleMgrHelper::IsLauncherApp(const std::string &bundleName, const int32_t userId)
+{
+    if (launcherAppSet_.find(bundleName) != launcherAppSet_.end()) {
+        return true;
+    }
+    AppExecFwk::ApplicationInfo appInfo;
+    if (GetApplicationInfo(bundleName,
+    AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, userId, appInfo) != ERR_OK) {
+        BUNDLE_ACTIVE_LOGE("get applicationInfo failed.");
+        return false;
+    }
+    if (appInfo.isLauncherApp) {
+        launcherAppSet_.insert(bundleName);
+        return true;
+    }
+    return false;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

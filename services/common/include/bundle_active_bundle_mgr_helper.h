@@ -22,6 +22,7 @@
 #include "ipc_skeleton.h"
 #include "iremote_object.h"
 #include "singleton.h"
+#include <unordered_set>
 
 #include "bundle_active_log.h"
 
@@ -59,13 +60,15 @@ public:
     bool GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
         const int userId, AppExecFwk::ApplicationInfo &appInfo);
 
+    bool IsLauncherApp(const std::string &bundleName, const int32_t userId);
+
 private:
     bool Connect();
 
 private:
+    std::unordered_set<std::string> launcherAppSet_;
     sptr<AppExecFwk::IBundleMgr> bundleMgr_ = nullptr;
     std::mutex connectionMutex_;
-
     DECLARE_DELAYED_SINGLETON(BundleActiveBundleMgrHelper);
 };
 }  // namespace DeviceUsageStats
