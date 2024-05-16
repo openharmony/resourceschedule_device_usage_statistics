@@ -47,7 +47,6 @@ ohos_shared_library("usagestatsinner") {
     "interfaces/innerkits/src/bundle_active_proxy.cpp",
   ]
   public_configs = [ ":usagestats_public_config" ]
-  config = [ ":usagestatsutils_config" ]
   deps = [ ":usagestatsutils" ]
   external_deps = [
     "c_utils:utils",
