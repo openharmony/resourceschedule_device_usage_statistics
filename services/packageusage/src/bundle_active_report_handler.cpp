@@ -38,7 +38,7 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
     auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
     switch (event->GetInnerEventId()) {
         case MSG_REPORT_EVENT: {
-            BUNDLE_ACTIVE_LOGI("MSG_REPORT_EVENT CALLED");
+            BUNDLE_ACTIVE_LOGD("MSG_REPORT_EVENT CALLED");
             BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->ReportEvent(tmpHandlerobj.event_, tmpHandlerobj.userId_);
             break;
