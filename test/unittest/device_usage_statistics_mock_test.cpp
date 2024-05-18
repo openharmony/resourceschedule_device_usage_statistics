@@ -448,7 +448,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     std::string tableName = "defaultTableName";
     int32_t uid = 0;
     int32_t appIndex = 0;
-    database->DeleteUninstalledInfo(userId, bundleName, 0, tableName, databaseType, uid, appIndex);
+    database->DeleteUninstalledInfo(userId, bundleName, uid, tableName, databaseType, appIndex);
 
     auto moduleRecords = std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>();
     int64_t timeStamp = 20000000000;
