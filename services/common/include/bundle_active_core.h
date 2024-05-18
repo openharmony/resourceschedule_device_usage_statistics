@@ -51,6 +51,8 @@ public:
     BundleActiveEvent event_;
     int32_t userId_;
     std::string bundleName_;
+    int32_t uid_ = 0;
+    int32_t appIndex_ = 0;
     BundleActiveReportHandlerObject();
     BundleActiveReportHandlerObject(const int32_t userId, const std::string bundleName);
     BundleActiveReportHandlerObject(const BundleActiveReportHandlerObject& orig);
@@ -107,7 +109,8 @@ public:
     * BundleActiveCommonEventSubscriber call it to remove data.
     * parameters: userId, bundleName
     */
-    void OnBundleUninstalled(const int32_t userId, const std::string& bundleName);
+    void OnBundleUninstalled(const int32_t userId, const std::string& bundleName, const int32_t uid,
+        const int32_t appIndex);
 
     /*
     * function: Init, BundleAciveService call it to init systemTimeShot_, realTimeShot_,

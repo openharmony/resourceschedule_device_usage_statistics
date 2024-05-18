@@ -30,6 +30,7 @@ BundleActiveEvent::BundleActiveEvent()
     formDimension_ = 0;
     timeStamp_ = 0;
     eventId_ = DEFAULT_EVENT_ID;
+    uid_ = 0;
 }
 
 BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig)
@@ -44,6 +45,7 @@ BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig)
     formDimension_ = orig.formDimension_;
     timeStamp_ = orig.timeStamp_;
     eventId_ = orig.eventId_;
+    uid_ = orig.uid_;
 }
 
 BundleActiveEvent::BundleActiveEvent(int32_t eventId, int64_t timeStamp)
@@ -58,9 +60,10 @@ BundleActiveEvent::BundleActiveEvent(int32_t eventId, int64_t timeStamp)
     formId_ = 0;
     timeStamp_ = timeStamp;
     eventId_ = eventId;
+    uid_ = 0;
 }
 
-BundleActiveEvent::BundleActiveEvent(const int32_t eventId, const std::string bundleName)
+BundleActiveEvent::BundleActiveEvent(const int32_t eventId, const std::string bundleName, const int32_t uid)
 {
     bundleName_ = bundleName;
     continuousTaskAbilityName_.clear();
@@ -72,9 +75,11 @@ BundleActiveEvent::BundleActiveEvent(const int32_t eventId, const std::string bu
     formId_ = 0;
     timeStamp_ = 0;
     eventId_ = eventId;
+    uid_ = uid;
 }
 
-BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string continuousTaskAbilityName)
+BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string continuousTaskAbilityName,
+    const int32_t uid)
 {
     bundleName_ = bundleName;
     continuousTaskAbilityName_ = continuousTaskAbilityName;
@@ -86,10 +91,11 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
     formId_ = 0;
     timeStamp_ = 0;
     eventId_ = DEFAULT_EVENT_ID;
+    uid_ = uid;
 }
 
 BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string abilityName,
-    const std::string abilityId, const std::string moduleName)
+    const std::string abilityId, const std::string moduleName, const int32_t uid)
 {
     bundleName_ = bundleName;
     continuousTaskAbilityName_.clear();
@@ -101,11 +107,12 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
     formId_ = 0;
     timeStamp_ = 0;
     eventId_ = DEFAULT_EVENT_ID;
+    uid_ = uid;
 }
 
 BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::string moduleName,
     const std::string formName, const int32_t formDimension,
-    const int64_t formId, const int32_t eventId)
+    const int64_t formId, const int32_t eventId, const int32_t uid)
 {
     bundleName_ = bundleName;
     continuousTaskAbilityName_.clear();
@@ -117,6 +124,7 @@ BundleActiveEvent::BundleActiveEvent(const std::string bundleName, const std::st
     formId_ = formId;
     timeStamp_ = 0;
     eventId_ = eventId;
+    uid_ = uid;
 }
 
 BundleActiveEvent& BundleActiveEvent::operator=(const BundleActiveEvent& orig)
@@ -131,6 +139,7 @@ BundleActiveEvent& BundleActiveEvent::operator=(const BundleActiveEvent& orig)
     formId_ = orig.formId_;
     timeStamp_ = orig.timeStamp_;
     eventId_ = orig.eventId_;
+    uid_ = orig.uid_;
     return *this;
 }
 
@@ -140,10 +149,10 @@ void BundleActiveEvent::PrintEvent(const bool debug) const
         return;
     }
     BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, ability name is %{public}s, continue task ability is %{public}s, "
-        "module name is %{public}s, "
-        "form name is %{public}s, form dimension is %{public}d, form id is %{public}lld, event id is %{public}d",
+        "module name is %{public}s, form name is %{public}s, form dimension is %{public}d, "
+        "form id is %{public}lld, event id is %{public}d, uid is %{public}d",
         bundleName_.c_str(), abilityName_.c_str(), continuousTaskAbilityName_.c_str(), moduleName_.c_str(),
-        formName_.c_str(), formDimension_, (long long)formId_, eventId_);
+        formName_.c_str(), formDimension_, (long long)formId_, eventId_, uid_);
 }
 
 bool BundleActiveEvent::Marshalling(Parcel &parcel) const
@@ -157,7 +166,8 @@ bool BundleActiveEvent::Marshalling(Parcel &parcel) const
         parcel.WriteInt32(formDimension_) &&
         parcel.WriteInt64(formId_) &&
         parcel.WriteInt64(timeStamp_) &&
-        parcel.WriteInt32(eventId_)) {
+        parcel.WriteInt32(eventId_) &&
+        parcel.WriteInt32(uid_)) {
         return true;
     }
     return false;
@@ -176,12 +186,13 @@ std::shared_ptr<BundleActiveEvent> BundleActiveEvent::UnMarshalling(Parcel &parc
     result->formId_ = parcel.ReadInt64();
     result->timeStamp_ = parcel.ReadInt64();
     result->eventId_ = parcel.ReadInt32();
+    result->uid_ = parcel.ReadInt32();
     return result;
 }
 
 std::string BundleActiveEvent::ToString()
 {
-    return "bundle name is " + this->bundleName_ + ", event is " +
+    return "bundle name is " + this->bundleName_ + "uid is " + std::to_string(this->uid_)+ ", event is " +
         std::to_string(this->eventId_) + ", timestamp is " + std::to_string(this->timeStamp_) + "\n";
 }
 

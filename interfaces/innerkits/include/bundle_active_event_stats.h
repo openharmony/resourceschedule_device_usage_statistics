@@ -31,6 +31,7 @@ public:
     int64_t lastEventTime_;
     int64_t totalTime_;
     int32_t count_;
+    int32_t uid_;
     std::string name_;
 
     /*

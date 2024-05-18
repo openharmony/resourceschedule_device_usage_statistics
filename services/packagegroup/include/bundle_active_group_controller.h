@@ -60,12 +60,14 @@ public:
     void SetHandlerAndCreateUserHistory(const std::shared_ptr<BundleActiveGroupHandler>& groupHandler,
         const int64_t bootFromTimeStamp, const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
     void ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp, const int32_t userId);
-    void CheckAndUpdateGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp);
+    void CheckAndUpdateGroup(const std::string& bundleName, const int32_t uid,
+        int32_t userId, const int64_t bootBasedTimeStamp);
     bool CheckEachBundleState(const int32_t userId);
     void CheckIdleStatsOneTime();
     void PeriodCheckBundleState(const int32_t userId);
     void OnUserRemoved(const int32_t userId);
-    void OnBundleUninstalled(const int32_t userId, const std::string bundleName);
+    void OnBundleUninstalled(const int32_t userId, const std::string bundleName, const int32_t uid,
+        const int32_t appIndex);
     void OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp);
     int32_t SetAppGroup(const std::string& bundleName, const int32_t userId, int32_t newGroup, uint32_t reason,
         const int64_t bootBasedTimeStamp, const bool isFlush);
@@ -90,7 +92,8 @@ private:
     sptr<IBundleMgr> sptrBundleMgr_;
     bool calculationTimeOut(const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory,
         const int64_t bootBasedTimeStamp);
-    int32_t GetNewGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp);
+    int32_t GetNewGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
+        const int32_t uid);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

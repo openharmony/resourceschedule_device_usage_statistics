@@ -104,7 +104,8 @@ void BundleActiveGroupController::SetHandlerAndCreateUserHistory(
     activeGroupHandler_ = groupHandler;
 }
 
-void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, const std::string bundleName)
+void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, const std::string bundleName,
+    const int32_t uid, const int32_t appIndex)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     BUNDLE_ACTIVE_LOGI("OnBundleUninstalled called, userId is %{public}d, bundlename is %{public}s",
@@ -114,7 +115,7 @@ void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, cons
         return;
     }
     oneUserHistory->erase(bundleName);
-    bundleUserHistory_->OnBundleUninstalled(userId, bundleName);
+    bundleUserHistory_->OnBundleUninstalled(userId, bundleName, uid, appIndex);
 }
 
 bool BundleActiveGroupController::GetBundleMgrProxy()
@@ -169,14 +170,10 @@ bool BundleActiveGroupController::CheckEachBundleState(const int32_t userId)
         return false;
     }
     sptrBundleMgr_->GetApplicationInfos(flag, userId, allBundlesForUser);
-    std::vector<std::string> bundleNamesOfUser;
-    for (auto oneBundle : allBundlesForUser) {
-        bundleNamesOfUser.push_back(oneBundle.bundleName);
-    }
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    for (auto oneBundleName : bundleNamesOfUser) {
-        CheckAndUpdateGroup(oneBundleName, userId, bootBasedTimeStamp);
+    for (auto oneBundle : allBundlesForUser) {
+        CheckAndUpdateGroup(oneBundle.oneBundleName, oneBundle.uid, userId, bootBasedTimeStamp);
     }
     return true;
 }
@@ -192,10 +189,10 @@ void BundleActiveGroupController::CheckIdleStatsOneTime()
 }
 
 int32_t BundleActiveGroupController::GetNewGroup(const std::string& bundleName, const int32_t userId,
-    const int64_t bootBasedTimeStamp)
+    const int64_t bootBasedTimeStamp, const int32_t uid)
 {
     int32_t groupIndex = bundleUserHistory_->GetLevelIndex(bundleName, userId, bootBasedTimeStamp, screenTimeLevel_,
-        bootTimeLevel_);
+        bootTimeLevel_, uid);
     if (groupIndex < 0) {
         return -1;
     }
@@ -228,7 +225,7 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
     auto item  = eventIdMatchReason_.find(eventId);
     if (item != eventIdMatchReason_.end()) {
         std::shared_ptr<BundleActivePackageHistory> bundleUsageHistory = bundleUserHistory_->GetUsageHistoryForBundle(
-            event.bundleName_, userId, bootBasedTimeStamp, true);
+            event.bundleName_, userId, bootBasedTimeStamp, true, event.uid_);
         if (bundleUsageHistory == nullptr) {
             return;
         }
@@ -237,23 +234,24 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
         switch (eventId) {
             case BundleActiveEvent::NOTIFICATION_SEEN:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_DAILY,
-                    eventReason, 0, bootBasedTimeStamp + timeoutForNotifySeen_, userId);
+                    eventReason, 0, bootBasedTimeStamp + timeoutForNotifySeen_, userId, event.uid_);
                 timeUntilNextCheck = timeoutForNotifySeen_;
                 break;
             case BundleActiveEvent::SYSTEM_INTERACTIVE:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_ALIVE,
-                    eventReason, 0, bootBasedTimeStamp + timeoutForSystemInteraction_, userId);
+                    eventReason, 0, bootBasedTimeStamp + timeoutForSystemInteraction_, userId, event.uid_);
                 timeUntilNextCheck = timeoutForSystemInteraction_;
                 break;
             default:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_ALIVE,
-                    eventReason, bootBasedTimeStamp, bootBasedTimeStamp + timeoutForDirectlyUse_, userId);
+                    eventReason, bootBasedTimeStamp, bootBasedTimeStamp + timeoutForDirectlyUse_, userId, event.uid_);
                 timeUntilNextCheck = timeoutForDirectlyUse_;
                 break;
         }
         BundleActiveGroupHandlerObject tmpGroupHandlerObj;
         tmpGroupHandlerObj.userId_ = userId;
         tmpGroupHandlerObj.bundleName_ = event.bundleName_;
+        tmpGroupHandlerObj.uid_ = event.uid_;
         std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
         auto handlerEvent = AppExecFwk::InnerEvent::Get(BundleActiveGroupHandler::MSG_CHECK_BUNDLE_STATE,
@@ -266,10 +264,11 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
 }
 
 void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleName, const int32_t userId,
-    const int64_t bootBasedTimeStamp)
+    const int32_t uid, const int64_t bootBasedTimeStamp)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName, userId, bootBasedTimeStamp, true);
+    auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName, userId,
+        bootBasedTimeStamp, true, uid);
     if (oneBundleHistory == nullptr) {
         return;
     }
@@ -284,7 +283,7 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     if (oldGroupControlReason == GROUP_CONTROL_REASON_DEFAULT ||
         oldGroupControlReason == GROUP_CONTROL_REASON_USAGE ||
         oldGroupControlReason == GROUP_CONTROL_REASON_TIMEOUT) {
-        newGroup = GetNewGroup(bundleName, userId, bootBasedTimeStamp);
+        newGroup = GetNewGroup(bundleName, userId, bootBasedTimeStamp, uid);
         if (newGroup < 0) {
             return;
         }
@@ -305,7 +304,8 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     }
     if (oldGroup < newGroup || notTimeout) {
         BUNDLE_ACTIVE_LOGI("CheckAndUpdateGroup called SetAppGroup");
-        bundleUserHistory_->SetAppGroup(bundleName, userId, bootBasedTimeStamp, newGroup, groupReason, false);
+        bundleUserHistory_->SetAppGroup(bundleName, userId, bootBasedTimeStamp, newGroup,
+            groupReason, false, uid);
     }
 }
 
@@ -316,11 +316,25 @@ ErrCode BundleActiveGroupController::SetAppGroup(const std::string& bundleName, 
     if (!IsBundleInstalled(bundleName, userId)) {
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
-    auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName, userId, bootBasedTimeStamp, true);
-    if (!oneBundleHistory) {
+    auto iter = bundleUserHistory_->packageContainUid_.find(bundleName);
+    if (iter == bundleUserHistory_->packageContainUid_.end()) {
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
-    return bundleUserHistory_->SetAppGroup(bundleName, userId, bootBasedTimeStamp, newGroup, reason, isFlush);
+    int32_t result = 0;
+    int32_t tempResult = 0;
+    for (int32_t uid: iter->second) {
+        auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName,
+            userId, bootBasedTimeStamp, true, uid);
+        if (!oneBundleHistory) {
+            continue;
+        }
+        tempResult = bundleUserHistory_->SetAppGroup(bundleName, userId,
+            uid, bootBasedTimeStamp, newGroup, reason, isFlush);
+        if (tempResult != ERR_OK) {
+            result = tempResult;
+        }
+    }
+    return result;
 }
 
 int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, const int32_t userId)
@@ -331,17 +345,22 @@ int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName,
         return -1;
     }
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(
-        bundleName, userId, bootBasedTimeStamp, false);
-    if (oneBundleHistory == nullptr) {
-        return 1;
-    } else if (oneBundleHistory->currentGroup_ >= ACTIVE_GROUP_RARE) {
-        BUNDLE_ACTIVE_LOGI("IsBundleIdle, bundle group is %{public}d", oneBundleHistory->currentGroup_);
-        return 1;
-    } else {
-        BUNDLE_ACTIVE_LOGI("IsBundleIdle, bundle group is %{public}d", oneBundleHistory->currentGroup_);
-        return 0;
+    auto iter = bundleUserHistory_->packageContainUid_.find(bundleName);
+    if (iter == bundleUserHistory_->packageContainUid_.end()) {
+        return -1;
     }
+    int32_t IsBundleIdle = 1;
+    for (int32_t uid: iter->second) {
+        auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName,
+            userId, bootBasedTimeStamp, false, uid);
+        if (!oneBundleHistory) {
+            continue;
+        }
+        if (oneBundleHistory->currentGroup_ <= ACTIVE_GROUP_RARE) {
+            IsBundleIdle = 0;
+        }
+    }
+    return IsBundleIdle;
 }
 
 ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
@@ -358,13 +377,20 @@ ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
         return ERR_APPLICATION_IS_NOT_INSTALLED;
     }
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(
-        bundleName, userId, bootBasedTimeStamp, false);
-    if (!oneBundleHistory) {
+    auto iter = bundleUserHistory_->packageContainUid_.find(bundleName);
+    if (iter == bundleUserHistory_->packageContainUid_.end()) {
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
-    BUNDLE_ACTIVE_LOGI("QueryAppGroup group is %{public}d", oneBundleHistory->currentGroup_);
-    appGroup = oneBundleHistory->currentGroup_;
+
+    for (int32_t uid: iter->second) {
+        auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName, userId,
+            bootBasedTimeStamp, false, uid);
+        if (!oneBundleHistory) {
+            continue;
+        }
+        BUNDLE_ACTIVE_LOGI("QueryAppGroup group is %{public}d", oneBundleHistory->currentGroup_);
+        appGroup = std::min(oneBundleHistory->currentGroup_, appGroup);
+    }
     return ERR_OK;
 }
 

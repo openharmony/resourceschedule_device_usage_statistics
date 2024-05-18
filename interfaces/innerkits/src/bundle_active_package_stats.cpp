@@ -31,6 +31,7 @@ BundleActivePackageStats::BundleActivePackageStats()
     bundleStartedCount_ = 0;
     lastEvent_ = 0;
     userId_ = 0;
+    uid_ = 0;
 }
 
 BundleActivePackageStats::BundleActivePackageStats (const BundleActivePackageStats& orig)
@@ -48,6 +49,7 @@ BundleActivePackageStats::BundleActivePackageStats (const BundleActivePackageSta
     longTimeTasks_ = orig.longTimeTasks_;
     lastEvent_ = orig.lastEvent_;
     userId_ = orig.userId_;
+    uid_ = orig.uid_;
 }
 
 bool BundleActivePackageStats::HasFrontAbility()
@@ -169,7 +171,7 @@ void BundleActivePackageStats::UpdateLongTimeTask(const std::string& longTimeTas
 }
 
 void BundleActivePackageStats::Update(const std::string& longTimeTaskName, const int64_t timeStamp,
-    const int32_t eventId, const std::string& abilityId)
+    const int32_t eventId, const std::string& abilityId, const int32_t uid)
 {
     switch (eventId) {
         case BundleActiveEvent::ABILITY_FOREGROUND:

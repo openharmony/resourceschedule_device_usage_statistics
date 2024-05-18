@@ -37,6 +37,7 @@ public:
     int32_t bundleStartedCount_;
     int32_t lastEvent_;
     int32_t userId_;
+    int32_t uid_;
     // key is abilityId, value is the last event of this ability. Restore all abilities' last event of bundle.
     std::map<std::string, int32_t> abilities_;
     // key is name of continuous task, value is last event of this last continuous task.
@@ -59,7 +60,7 @@ public:
     * parameters: longTimeTaskName timeStamp eventId abilityId
     */
     void Update(const std::string& longTimeTaskName, const int64_t timeStamp, const int32_t eventId,
-        const std::string& abilityId);
+        const std::string& abilityId, const int32_t uid);
     /*
     * function: IncrementTimeUsed, increase bundle's use time.
     * parameters: timeStamp

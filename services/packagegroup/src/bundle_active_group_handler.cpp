@@ -63,7 +63,7 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
             sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
             int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
             bundleActiveGroupController_->CheckAndUpdateGroup(
-                tmpHandlerobj.bundleName_, tmpHandlerobj.userId_, bootBasedTimeStamp);
+                tmpHandlerobj.bundleName_, tmpHandlerobj.uid_, tmpHandlerobj.userId_, bootBasedTimeStamp);
             bundleActiveGroupController_->RestoreToDatabase(tmpHandlerobj.userId_);
             break;
         }

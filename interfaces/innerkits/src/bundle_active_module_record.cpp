@@ -21,9 +21,9 @@ namespace {
     static const int32_t MAX_FORM_NUM = 1000;
 }
 void BundleActiveModuleRecord::AddOrUpdateOneFormRecord(const std::string formName, const int32_t formDimension,
-    const int64_t formId, const int64_t timeStamp)
+    const int64_t formId, const int64_t timeStamp, const int32_t uid)
 {
-    BundleActiveFormRecord newFormRecord(formName, formDimension, formId, timeStamp, userId_);
+    BundleActiveFormRecord newFormRecord(formName, formDimension, formId, timeStamp, userId_, uid);
     for (auto& formRecord : formRecords_) {
         if (formRecord == newFormRecord) {
             formRecord.UpdateFormRecord(timeStamp);
@@ -70,6 +70,7 @@ BundleActiveModuleRecord::BundleActiveModuleRecord()
     installFreeSupported_ = false;
     isNewAdded_ = false;
     userId_ = -1;
+    uid_ = 0;
 }
 
 bool BundleActiveModuleRecord::Marshalling(Parcel &parcel) const
@@ -85,7 +86,8 @@ bool BundleActiveModuleRecord::Marshalling(Parcel &parcel) const
         parcel.WriteUint32(abilityIconId_) &&
         parcel.WriteInt32(launchedCount_) &&
         parcel.WriteInt64(lastModuleUsedTime_) &&
-        parcel.WriteUint32(formRecords_.size())
+        parcel.WriteUint32(formRecords_.size()) &&
+        parcel.WriteInt32(uid_)
         ) {
             for (auto formRecord : formRecords_) {
                 formRecord.Marshalling(parcel);
@@ -110,6 +112,7 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveModuleRecord::UnMarshallin
     result->launchedCount_ = parcel.ReadInt32();
     result->lastModuleUsedTime_ = parcel.ReadInt64();
     uint32_t size = parcel.ReadUint32();
+    result->uid_ = parcel.ReadInt32();
     if (size > MAX_FORM_NUM) {
         return nullptr;
     }
@@ -134,6 +137,7 @@ std::string BundleActiveModuleRecord::ToString()
 {
     return "bundle name is " + this->bundleName_ +
         ", module name is " + this->moduleName_ +
+        ", uid is " + std::to_string(this->uid_) +
         ", last used time stamp is " + std::to_string(this->lastModuleUsedTime_) +
         ", module is used for " + std::to_string(this->launchedCount_) + " times\n";
 }

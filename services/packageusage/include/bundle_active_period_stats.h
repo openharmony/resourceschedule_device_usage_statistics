@@ -40,6 +40,7 @@ public:
     int64_t lastTimeSaved_;
     int32_t userId_;
     std::map<std::string, std::shared_ptr<BundleActivePackageStats>> bundleStats_;
+    std::map<std::string, std::set<int32_t>> packageContainUid_;
     BundleActiveEventList events_;
     std::set<std::string> packetNamesCache_;
     BundleActiveEventTracker interactiveTracker_;
@@ -62,13 +63,13 @@ public:
     * parameters: bundleName
     * return: point to bundle usage statistics object.
     */
-    std::shared_ptr<BundleActivePackageStats> GetOrCreateUsageStats(const std::string& bundleName);
+    std::shared_ptr<BundleActivePackageStats> GetOrCreateUsageStats(const std::string& bundleName, const int32_t uid);
     /*
     * function: Update, update usage statistics of specific bundle.
     * parameters: bundleName, longTimeTaskName, timeStamp, eventId, abilityId
     */
     void Update(const std::string bundleName, const std::string longTimeTaskName, const int64_t timeStamp,
-        const int32_t eventId, const std::string abilityId);
+        const int32_t eventId, const std::string abilityId, const int32_t uid);
     /*
     * function: AddEvent, add a event to member events_.
     * parameters: event
@@ -110,6 +111,9 @@ public:
     * return: string
     */
     std::string GetCachedString(std::string str);
+private:
+    void updateAllPackageStats(const std::string bundleName, const int64_t timeStamp, const int32_t eventId,
+    const std::string abilityId);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

@@ -32,6 +32,7 @@ class BundleActiveCore;
 class BundleActiveUserHistory {
 public:
     std::map<int, std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>> userHistory_;
+    std::map<std::string, std::set<int32_t>> packageContainUid_;
     int64_t bootBasedTimeStamp_;
     int64_t bootBasedDuration_;
     int64_t screenOnTimeStamp_;
@@ -40,27 +41,28 @@ public:
     BundleActiveUserHistory(const int64_t bootBasedTimeStamp,
         const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
     std::shared_ptr<BundleActivePackageHistory> GetUsageHistoryForBundle(const std::string& bundleName,
-        const int32_t userId, const int64_t bootBasedTimeStamp, const bool create);
+        const int32_t userId, const int64_t bootBasedTimeStamp, const bool create, const int32_t uid);
     std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>> GetUserHistory(
             const int32_t userId, const bool create);
     std::shared_ptr<BundleActivePackageHistory> GetUsageHistoryInUserHistory(std::shared_ptr<std::map<std::string,
         std::shared_ptr<BundleActivePackageHistory>>> oneUserHistory, std::string bundleName,
-        int64_t bootBasedTimeStamp, bool create);
+        int64_t bootBasedTimeStamp, bool create, const int32_t uid);
     int64_t GetBootBasedTimeStamp(int64_t bootBasedTimeStamp);
     int64_t GetScreenOnTimeStamp(int64_t bootBasedTimeStamp);
     void ReportUsage(std::shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory, const std::string& bundleName,
         const int32_t newGroup, const uint32_t groupReason, const int64_t bootBasedTimeStamp,
-        const int64_t timeUntilNextCheck, const int32_t userId);
-    int32_t SetAppGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
-        int32_t newGroup, uint32_t groupReason, const bool isFlush);
+        const int64_t timeUntilNextCheck, const int32_t userId, const int32_t uid);
+    int32_t SetAppGroup(const std::string& bundleName, const int32_t userId, const int32_t uid,
+        int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason, const bool isFlush);
     int32_t GetLevelIndex(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
-        const std::vector<int64_t> screenTimeLeve, const std::vector<int64_t> bootFromTimeLevel);
+        const std::vector<int64_t> screenTimeLeve, const std::vector<int64_t> bootFromTimeLevel, const int32_t uid);
     void WriteDeviceDuration();
     void WriteBundleUsage(const int32_t userId);
     void PrintData(int32_t userId);
     void UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t bootBasedTimeStamp,
         const bool& isShutdown = false);
-    void OnBundleUninstalled(const int32_t userId, const std::string bundleName);
+    void OnBundleUninstalled(const int32_t userId, const std::string bundleName, const int32_t uid,
+        const int32_t appIndex);
 
 private:
     std::mutex setGroupMutex_;
