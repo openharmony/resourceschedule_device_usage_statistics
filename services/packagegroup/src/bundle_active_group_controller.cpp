@@ -173,7 +173,7 @@ bool BundleActiveGroupController::CheckEachBundleState(const int32_t userId)
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     for (auto oneBundle : allBundlesForUser) {
-        CheckAndUpdateGroup(oneBundle.oneBundleName, oneBundle.uid, userId, bootBasedTimeStamp);
+        CheckAndUpdateGroup(oneBundle.bundleName, oneBundle.uid, userId, bootBasedTimeStamp);
     }
     return true;
 }
