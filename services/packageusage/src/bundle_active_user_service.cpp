@@ -724,7 +724,7 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateMo
     const BundleActiveEvent& event)
 {
     BUNDLE_ACTIVE_LOGI("GetOrCreateModuleRecord called");
-    std::string combinedInfo = event.bundleName_ + " " + std::to_string(event.uid) + " " + event.moduleName_;
+    std::string combinedInfo = event.bundleName_ + " " + std::to_string(event.uid_) + " " + event.moduleName_;
     auto it = moduleRecords_.find(combinedInfo);
     if (it == moduleRecords_.end()) {
         auto moduleRecordInserted = std::make_shared<BundleActiveModuleRecord>();
