@@ -82,9 +82,9 @@ void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)
 
 void BundleActiveUserService::NotifyStatsChanged()
 {
-    BUNDLE_ACTIVE_LOGI("NotifyStatsChanged stat change is %{public}d, user is %{public}d", statsChanged_, userId_);
+    BUNDLE_ACTIVE_LOGD("NotifyStatsChanged stat change is %{public}d, user is %{public}d", statsChanged_, userId_);
     if (!statsChanged_) {
-        BUNDLE_ACTIVE_LOGI("NotifyStatsChanged() set stats changed to true");
+        BUNDLE_ACTIVE_LOGD("NotifyStatsChanged() set stats changed to true");
         statsChanged_ = true;
         listener_.OnStatsChanged(userId_);
     }
@@ -97,7 +97,7 @@ void BundleActiveUserService::NotifyNewUpdate()
 
 void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
 {
-    BUNDLE_ACTIVE_LOGI("ReportEvent, B time is %{public}lld, E time is %{public}lld, userId is %{public}d,",
+    BUNDLE_ACTIVE_LOGD("ReportEvent, B time is %{public}lld, E time is %{public}lld, userId is %{public}d,",
         (long long)currentStats_[0]->beginTime_, (long long)dailyExpiryDate_.GetMilliseconds(), userId_);
     event.PrintEvent(debugUserService_);
     if (event.timeStamp_ >= dailyExpiryDate_.GetMilliseconds()) {
@@ -621,7 +621,7 @@ void BundleActiveUserService::PrintInMemFormStats(const bool debug, const bool p
 
 void BundleActiveUserService::ReportModuleEvent(const BundleActiveEvent& event)
 {
-    BUNDLE_ACTIVE_LOGI("ReportModuleEvent called");
+    BUNDLE_ACTIVE_LOGD("ReportModuleEvent called");
     if (event.eventId_ != BundleActiveEvent::ABILITY_FOREGROUND) {
         return;
     }

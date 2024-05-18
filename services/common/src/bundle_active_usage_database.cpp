@@ -207,7 +207,7 @@ shared_ptr<NativeRdb::ResultSet> WEAK_FUNC BundleActiveUsageDatabase::QueryStats
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("query stats info by step fail, rdbStore is nullptr");
         return nullptr;
     }
     shared_ptr<NativeRdb::ResultSet> result;
@@ -301,7 +301,7 @@ void BundleActiveUsageDatabase::DeleteExcessiveTableData(uint32_t databaseType)
         }
         shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
         if (rdbStore == nullptr) {
-            BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+            BUNDLE_ACTIVE_LOGE("delete excessive tableData fail, rdbStore is nullptr");
             return;
         }
         string deleteEventDataSql = "delete from " + eventTableName_ + " where timeStamp <= " +
@@ -357,7 +357,7 @@ int32_t BundleActiveUsageDatabase::DeleteInvalidTable(uint32_t databaseType, int
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("delete invalid table fail, rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
@@ -422,7 +422,7 @@ shared_ptr<NativeRdb::RdbStore> WEAK_FUNC BundleActiveUsageDatabase::GetBundleAc
         config.SetSecurityLevel(NativeRdb::SecurityLevel::S1);
         rdbStore = RdbHelper::GetRdbStore(config, BUNDLE_ACTIVE_RDB_VERSION, rdbDataCallBack, errCode);
         if ((rdbStore == nullptr)) {
-            BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+            BUNDLE_ACTIVE_LOGE("get bundle active rdbStore fail, rdbStore is nullptr");
             return nullptr;
         }
         bundleActiveRdbStoreCache_.insert(pair {file, rdbStore});
@@ -430,7 +430,7 @@ shared_ptr<NativeRdb::RdbStore> WEAK_FUNC BundleActiveUsageDatabase::GetBundleAc
         rdbStore = bundleActiveRdbStoreCache_[file];
     }
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("get bundle active rdbStore fail, rdbStore is nullptr");
         return nullptr;
     }
     return rdbStore;
@@ -465,7 +465,7 @@ int32_t BundleActiveUsageDatabase::CreateEventLogTable(uint32_t databaseType, in
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE(" create event log table faile, rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string eventTable = EVENT_LOG_TABLE + to_string(currentTimeMillis);
@@ -496,7 +496,7 @@ int32_t BundleActiveUsageDatabase::CreatePackageLogTable(uint32_t databaseType, 
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE(" create package log table fail, rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string packageTable = PACKAGE_LOG_TABLE + to_string(currentTimeMillis);
@@ -528,7 +528,7 @@ int32_t BundleActiveUsageDatabase::CreateModuleRecordTable(uint32_t databaseType
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("create module record table fail, rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string moduleRecord = MODULE_RECORD_LOG_TABLE + to_string(timeStamp);
@@ -559,7 +559,7 @@ int32_t BundleActiveUsageDatabase::CreateFormRecordTable(uint32_t databaseType, 
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("create form record table fail, rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string formRecord = FORM_RECORD_LOG_TABLE + to_string(timeStamp);
@@ -593,7 +593,7 @@ int32_t BundleActiveUsageDatabase::CreateDurationTable(uint32_t databaseType)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("create duration table fail, rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string createDurationTableSql = "CREATE TABLE IF NOT EXISTS "
@@ -613,7 +613,7 @@ int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(uint32_t databaseTyp
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("create bundle history table fail, rdbStore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string createBundleHistoryTableSql = "CREATE TABLE IF NOT EXISTS "
@@ -789,7 +789,7 @@ void BundleActiveUsageDatabase::FlushPackageInfo(uint32_t databaseType, const Bu
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("flush package info fail, rdbStore is nullptr");
         return;
     }
     string tableName = PACKAGE_LOG_TABLE + to_string(stats.beginTime_);
@@ -885,7 +885,7 @@ void BundleActiveUsageDatabase::FlushEventInfo(uint32_t databaseType, BundleActi
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("flush event info fail, rdbStore is nullptr");
         return;
     }
     if (eventTableName_ == UNKNOWN_TABLE_NAME) {
@@ -1035,7 +1035,7 @@ int32_t BundleActiveUsageDatabase::ExecuteRenameTableName(std::string tablePrefi
     int64_t tableNewTime, std::shared_ptr<NativeRdb::RdbStore> rdbStore)
 {
     if (!rdbStore) {
-        BUNDLE_ACTIVE_LOGE("rdbstore is nullptr");
+        BUNDLE_ACTIVE_LOGE("execute rename table name fail, rdbstore is nullptr");
         return BUNDLE_ACTIVE_FAIL;
     }
     string oldTableName = tablePrefix + to_string(tableOldTime);
@@ -1391,7 +1391,7 @@ void BundleActiveUsageDatabase::DeleteUninstalledInfo(const int32_t userId, cons
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("delete uninstalled info fail, rdbStore is nullptr");
         return;
     }
     int32_t deletedRows = BUNDLE_ACTIVE_FAIL;
@@ -1430,7 +1430,7 @@ void BundleActiveUsageDatabase::UpdateModuleData(const int32_t userId,
     CheckDatabaseFile(APP_GROUP_DATABASE_INDEX);
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("update module data fail, rdbStore is nullptr");
         return;
     }
     if (moduleRecordsTableName_ == UNKNOWN_TABLE_NAME) {
@@ -1519,7 +1519,7 @@ void BundleActiveUsageDatabase::RemoveFormData(const int32_t userId, const std::
     lock_guard<mutex> lock(databaseMutex_);
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
     if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("rdbStore is nullptr");
+        BUNDLE_ACTIVE_LOGE("remove for data fail, rdbStore is nullptr");
         return;
     }
     int32_t deletedRows = BUNDLE_ACTIVE_FAIL;
