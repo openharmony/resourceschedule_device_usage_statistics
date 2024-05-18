@@ -502,7 +502,6 @@ void BundleActiveUsageDatabase::SupportAppTwin()
     BundleActiveAccountHelper::GetActiveUserId(activatedOsAccountIds);
     for (uint32_t i = 0; i < allTableName.size(); i++) {
         auto tableNames = allTableName.at(i);
-        BUNDLE_ACTIVE_LOGI("tableNames size %{public}lu", tableNames.size());
         shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(i);
         if (!rdbStore) {
             BUNDLE_ACTIVE_LOGI("get RdbStore fail, databaseType: %{public}u", i);
@@ -560,7 +559,7 @@ void BundleActiveUsageDatabase::UpdateOldDataUid(const shared_ptr<NativeRdb::Rdb
         queryCondition.push_back(to_string(userId));
         queryCondition.push_back(bundleName);
         valuesBucket.PutInt(BUNDLE_ACTIVE_DB_UID, uid);
-        store->update(changeRow, tableName, valuesBucket, "userId = ? and bundleName = ?", queryCondition);
+        store->Update(changeRow, tableName, valuesBucket, "userId = ? and bundleName = ?", queryCondition);
         queryCondition.clear();
         valuesBucket.Clear();
         changeRow = BUNDLE_ACTIVE_FAIL;
