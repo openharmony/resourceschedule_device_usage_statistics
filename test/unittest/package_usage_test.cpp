@@ -46,7 +46,8 @@ public:
 
 void PackageUsageTest::SetUpTestCase(void)
 {
-    std::this_thread::sleep_for(std::chrono::microseconds(3000));
+    int64_t sleepTime = 3000;
+    std::this_thread::sleep_for(std::chrono::microseconds(sleepTime));
 }
 
 void PackageUsageTest::TearDownTestCase(void)
