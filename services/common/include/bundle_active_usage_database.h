@@ -128,7 +128,7 @@ private:
 private:
     int32_t GetOldDbVersion();
     int32_t GetVersionByFileInput(const std::string& FileVersionInput);
-    void createRecordTable(const int64_t timeStamp);
+    void CreateRecordTable(const int64_t timeStamp);
     void HandleAllTableName(const uint32_t databaseType, std::vector<std::vector<std::string>>& allTableName);
     void UpgradleDatabase(const int32_t oldVersion, const int32_t curVersion);
     void UpdateOldDataUid(const std::shared_ptr<NativeRdb::RdbStore> store, const std::string& tableName,

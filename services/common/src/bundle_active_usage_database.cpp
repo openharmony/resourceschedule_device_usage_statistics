@@ -1611,7 +1611,7 @@ void BundleActiveUsageDatabase::UpdateModuleData(const int32_t userId,
         BUNDLE_ACTIVE_LOGE("update module data fail, rdbStore is nullptr");
         return;
     }
-    createRecordTable(timeStamp);
+    CreateRecordTable(timeStamp);
     int64_t moduleTableTime = ParseStartTime(moduleRecordsTableName_);
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;

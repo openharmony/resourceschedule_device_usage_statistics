@@ -1377,5 +1377,70 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_onSt
 {
     EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->SubscribeAppState(), true);
 }
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_001
+ * @tc.desc: onstart
+ * @tc.type: FUNC
+ * @tc.require: 
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_001,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    int userId = 100;
+    auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
+    int appIndex = 1;
+    std::vector<std::shared_ptr<BundleActivePeriodStats>> curStats;
+    std::shared_ptr<BundleActivePeriodStats> stats = std::make_shared<BundleActivePeriodStats>();
+    stats->bundleStats_["test0"] = std::make_shared<BundleActivePackageStats>();
+    stats->bundleStats_["test1"] = std::make_shared<BundleActivePackageStats>();
+    stats->bundleStats_["test2"] = std::make_shared<BundleActivePackageStats>();
+    curStats.push_back(stats);
+    userService->currentStats_ = curStats;
+    userService->DeleteUninstalledBundleStats("test", 100, appIndex);
+    int appIndex = 0;
+    userService->DeleteUninstalledBundleStats("test", 100, appIndex);
+}
+
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_001
+ * @tc.desc: onstart
+ * @tc.type: FUNC
+ * @tc.require: 
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_002,
+    Function | MediumTest | Level0)
+{
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    int userId = 100;
+    auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
+    int appIndex = 1;
+    std::vector<std::shared_ptr<BundleActivePeriodStats>> curStats;
+    std::shared_ptr<BundleActivePeriodStats> stats = std::make_shared<BundleActivePeriodStats>();
+    stats->bundleStats_["test0"] = std::make_shared<BundleActivePackageStats>();
+    stats->bundleStats_["test1"] = std::make_shared<BundleActivePackageStats>();
+    stats->bundleStats_["test2"] = std::make_shared<BundleActivePackageStats>();
+
+    curStats.push_back(stats);
+    BundleActiveEvent event;
+    event.bundleName_ = "test";
+    event.uid_ = 0;
+    curStats->events.insert(event);
+    BundleActiveEvent event2;
+    event.bundleName_ = "test";
+    event.uid_ = 1;
+    curStats->events.insert(event);
+    userService->moduleRecords_["test0"] = std::make_shared<BundleActiveModuleRecord>();
+    userService->moduleRecords_["test1"] = std::make_shared<BundleActiveModuleRecord>();
+    userService->moduleRecords_["test2"] = std::make_shared<BundleActiveModuleRecord>();
+    userService->currentStats_ = curStats;
+    userService->DeleteUninstalledBundleStats("test", 100, appIndex);
+    int appIndex = 0;
+    userService->DeleteUninstalledBundleStats("test", 100, appIndex);
+}
+
+
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

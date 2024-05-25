@@ -66,7 +66,7 @@ void BundleActiveUserService::DeleteMemUsageStats(const std::shared_ptr<BundleAc
 {
     std::string bundleStatsKey = bundleName + std::to_string(deletedUid);
     if (appIndex != 0) {
-        if (currentStats->bundleStats_.find(bundleName) != currentStats->bundleStats_.end()) {
+        if (currentStats->bundleStats_.find(bundleStatsKey) != currentStats->bundleStats_.end()) {
             currentStats->bundleStats_.erase(bundleStatsKey);
         }
         return;
@@ -82,7 +82,6 @@ void BundleActiveUserService::DeleteMemUsageStats(const std::shared_ptr<BundleAc
 void BundleActiveUserService::DeleteMemEvent(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
     const std::string& bundleName, const int32_t deletedUid, int32_t appIndex)
 {
-    std::string bundleStatsKey = bundleName + std::to_string(deletedUid);
     if (appIndex != 0) {
         for (auto eventIter = currentStats->events_.events_.begin();
             eventIter != currentStats->events_.events_.end();) {
