@@ -30,7 +30,7 @@ BundleActiveEvent::BundleActiveEvent()
     formDimension_ = 0;
     timeStamp_ = 0;
     eventId_ = DEFAULT_EVENT_ID;
-    uid_ = 0;
+    uid_ = DEFAULT_UID_ID;
 }
 
 BundleActiveEvent::BundleActiveEvent (const BundleActiveEvent& orig)
@@ -60,7 +60,7 @@ BundleActiveEvent::BundleActiveEvent(int32_t eventId, int64_t timeStamp)
     formId_ = 0;
     timeStamp_ = timeStamp;
     eventId_ = eventId;
-    uid_ = 0;
+    uid_ = DEFAULT_UID_ID;
 }
 
 BundleActiveEvent::BundleActiveEvent(const int32_t eventId, const std::string bundleName, const int32_t uid)
@@ -192,7 +192,7 @@ std::shared_ptr<BundleActiveEvent> BundleActiveEvent::UnMarshalling(Parcel &parc
 
 std::string BundleActiveEvent::ToString()
 {
-    return "bundle name is " + this->bundleName_ + "uid is " + std::to_string(this->uid_)+ ", event is " +
+    return "bundle name is " + this->bundleName_ + ", uid is " + std::to_string(this->uid_)+ ", event is " +
         std::to_string(this->eventId_) + ", timestamp is " + std::to_string(this->timeStamp_) + "\n";
 }
 

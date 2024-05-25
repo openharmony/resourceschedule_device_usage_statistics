@@ -35,6 +35,7 @@ public:
     static const int32_t USER_INTERACTIVE = 8;
     // internal events
     static const int32_t DEFAULT_EVENT_ID = 0;
+    static const int32_t DEFAULT_UID_ID = -1;
     static const int32_t END_OF_THE_DAY = 9;
     static const int32_t SHUTDOWN = 10;
     static const int32_t STARTUP = 11;

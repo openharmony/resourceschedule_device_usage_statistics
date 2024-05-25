@@ -289,17 +289,13 @@ void BundleActiveUsageDatabase::HandleAllTableName(const uint32_t databaseType,
     }
     int32_t tableNameIndex;
     bundleActiveResult->GetColumnIndex(SQLITE_MASTER_NAME, tableNameIndex);
-    if (databaseType >= 0 && databaseType < sortedTableArray_.size()) {
-        if (!allTableName.at(databaseType).empty()) {
-            allTableName.at(databaseType).clear();
-        }
-        for (int32_t i = 0; i < tableNumber; i++) {
-            string tableName;
-            bundleActiveResult->GoToRow(i);
-            bundleActiveResult->GetString(tableNameIndex, tableName);
-            allTableName.at(databaseType).push_back(tableName);
-        }
+    for (int32_t i = 0; i < tableNumber; i++) {
+        string tableName;
+        bundleActiveResult->GoToRow(i);
+        bundleActiveResult->GetString(tableNameIndex, tableName);
+        allTableName.at(databaseType).push_back(tableName);
     }
+
 }
 
 void BundleActiveUsageDatabase::DeleteExcessiveTableData(uint32_t databaseType)
@@ -524,7 +520,7 @@ void BundleActiveUsageDatabase::AddRdbColumn(const shared_ptr<NativeRdb::RdbStor
 {
     string sqlStr = "";
     if (columnType == RDB_STORE_COLUMN_TYPE_INT) {
-        sqlStr = "ALTER TABLE" + tableName + " ADD " + columnName + " " + columnType + " NOT NULL DEFAULT 0";
+        sqlStr = "ALTER TABLE " + tableName + " ADD " + columnName + " " + columnType + " NOT NULL DEFAULT -1";
     }
     store->ExecuteSql(sqlStr);
 }
@@ -635,7 +631,7 @@ int32_t BundleActiveUsageDatabase::CreateEventLogTable(uint32_t databaseType, in
                                            + BUNDLE_ACTIVE_DB_EVENT_ID + " INTEGER NOT NULL, "
                                            + BUNDLE_ACTIVE_DB_TIME_STAMP + " INTEGER NOT NULL, "
                                            + BUNDLE_ACTIVE_DB_ABILITY_ID + " TEXT NOT NULL, "
-                                           + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT 0);";
+                                           + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1);";
     int32_t createEventTable = rdbStore->ExecuteSql(createEventTableSql);
     if (createEventTable != NativeRdb::E_OK) {
         BUNDLE_ACTIVE_LOGE("create event table failed, rdb error number: %{public}d", createEventTable);
@@ -668,7 +664,7 @@ int32_t BundleActiveUsageDatabase::CreatePackageLogTable(uint32_t databaseType, 
                                         + BUNDLE_ACTIVE_DB_LAST_TIME_CONTINUOUS_TASK + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_TOTAL_TIME + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_TOTAL_TIME_CONTINUOUS_TASK + " INTEGER NOT NULL "
-                                        + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT 0);";
+                                        + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1);";
     int32_t createPackageTable = rdbStore->ExecuteSql(createPackageTableSql);
     if (createPackageTable != NativeRdb::E_OK) {
         BUNDLE_ACTIVE_LOGE("create packageLog table failed, rdb error number: %{public}d", createPackageTable);
@@ -700,7 +696,7 @@ int32_t BundleActiveUsageDatabase::CreateModuleRecordTable(uint32_t databaseType
                                         + BUNDLE_ACTIVE_DB_MODULE_NAME + " TEXT NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_MODULE_LAUNCHED_COUNT + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_LAST_TIME + " INTEGER NOT NULL "
-                                        + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT 0);";
+                                        + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1);";
     int32_t createModuleRecordTable = rdbStore->ExecuteSql(createModuleRecordTableSql);
     if (createModuleRecordTable != NativeRdb::E_OK) {
         BUNDLE_ACTIVE_LOGE("create ModuleRecord table failed, rdb error number: %{public}d", createModuleRecordTable);
@@ -735,7 +731,7 @@ int32_t BundleActiveUsageDatabase::CreateFormRecordTable(uint32_t databaseType, 
                                         + BUNDLE_ACTIVE_DB_FORM_ID + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_FORM_TOUCH_COUNT + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_LAST_TIME + " INTEGER NOT NULL "
-                                        + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT 0);";
+                                        + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1);";
     int32_t createFormRecordTable = rdbStore->ExecuteSql(createFormRecordTableSql);
     if (createFormRecordTable != NativeRdb::E_OK) {
         BUNDLE_ACTIVE_LOGE("create ModuleRecord table failed, rdb error number: %{public}d", createFormRecordTable);
@@ -788,7 +784,7 @@ int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(uint32_t databaseTyp
                                         + BUNDLE_ACTIVE_DB_REASON_IN_GROUP + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_BUNDLE_ALIVE_TIMEOUT_TIME + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_BUNDLE_DAILY_TIMEOUT_TIME + " INTEGER NOT NULL "
-                                        + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT 0);";
+                                        + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1);";
     int32_t createBundleHistoryTable = rdbStore->ExecuteSql(createBundleHistoryTableSql);
     if (createBundleHistoryTable != NativeRdb::E_OK) {
         BUNDLE_ACTIVE_LOGE("create bundleHistory table failed, rdb error number: %{public}d", createBundleHistoryTable);
