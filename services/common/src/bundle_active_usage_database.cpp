@@ -1645,7 +1645,7 @@ void BundleActiveUsageDatabase::UpdateModuleData(const int32_t userId,
     }
 }
 
-void BundleActiveUsageDatabase::createRecordTable(const int64_t timeStamp)
+void BundleActiveUsageDatabase::CreateRecordTable(const int64_t timeStamp)
 {
     if (moduleRecordsTableName_ == UNKNOWN_TABLE_NAME) {
         CreateModuleRecordTable(APP_GROUP_DATABASE_INDEX, timeStamp);

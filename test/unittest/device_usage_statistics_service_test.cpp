@@ -1382,7 +1382,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_onSt
  * @tc.name: DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_001
  * @tc.desc: onstart
  * @tc.type: FUNC
- * @tc.require: 
+ * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_001,
     Function | MediumTest | Level0)
@@ -1399,7 +1399,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
     curStats.push_back(stats);
     userService->currentStats_ = curStats;
     userService->DeleteUninstalledBundleStats("test", 100, appIndex);
-    int appIndex = 0;
+    appIndex = 0;
     userService->DeleteUninstalledBundleStats("test", 100, appIndex);
 }
 
@@ -1408,7 +1408,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
  * @tc.name: DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_001
  * @tc.desc: onstart
  * @tc.type: FUNC
- * @tc.require: 
+ * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_002,
     Function | MediumTest | Level0)
@@ -1423,21 +1423,21 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
     stats->bundleStats_["test1"] = std::make_shared<BundleActivePackageStats>();
     stats->bundleStats_["test2"] = std::make_shared<BundleActivePackageStats>();
 
-    curStats.push_back(stats);
     BundleActiveEvent event;
     event.bundleName_ = "test";
     event.uid_ = 0;
-    curStats->events.insert(event);
+    stats->events_.Insert(event);
     BundleActiveEvent event2;
     event.bundleName_ = "test";
     event.uid_ = 1;
-    curStats->events.insert(event);
+    stats->events_.Insert(event);
+    curStats.push_back(stats);
     userService->moduleRecords_["test0"] = std::make_shared<BundleActiveModuleRecord>();
     userService->moduleRecords_["test1"] = std::make_shared<BundleActiveModuleRecord>();
     userService->moduleRecords_["test2"] = std::make_shared<BundleActiveModuleRecord>();
     userService->currentStats_ = curStats;
     userService->DeleteUninstalledBundleStats("test", 100, appIndex);
-    int appIndex = 0;
+    appIndex = 0;
     userService->DeleteUninstalledBundleStats("test", 100, appIndex);
 }
 
