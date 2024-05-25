@@ -295,7 +295,6 @@ void BundleActiveUsageDatabase::HandleAllTableName(const uint32_t databaseType,
         bundleActiveResult->GetString(tableNameIndex, tableName);
         allTableName.at(databaseType).push_back(tableName);
     }
-
 }
 
 void BundleActiveUsageDatabase::DeleteExcessiveTableData(uint32_t databaseType)
