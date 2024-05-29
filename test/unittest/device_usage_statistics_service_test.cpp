@@ -80,7 +80,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetS
     EXPECT_NE(systemAbilityManager, nullptr);
 
     sptr<IRemoteObject> remoteObject =
-        systemAbilityManager->GetSystemAbility(DEVICE_USAGE_STATISTICS_SYS_ABILITY_ID);
+        systemAbilityManager->GetSystemAbility(BACKGROUND_TASK_MANAGER_SERVICE_ID);
     EXPECT_NE(remoteObject, nullptr);
 }
 
