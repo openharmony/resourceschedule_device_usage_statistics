@@ -46,7 +46,6 @@ public:
 
 void PackageUsageTest::SetUpTestCase(void)
 {
-
 }
 
 void PackageUsageTest::TearDownTestCase(void)
