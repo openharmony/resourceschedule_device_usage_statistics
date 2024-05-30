@@ -14,6 +14,8 @@
  */
 
 #include <string>
+#include <chrono>
+#include <thread>
 
 #include <gtest/gtest.h>
 #include "system_ability_definition.h"
@@ -48,6 +50,8 @@ void PackageUsageTest::SetUpTestCase(void)
 
 void PackageUsageTest::TearDownTestCase(void)
 {
+    int64_t sleepTime = 3;
+    std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
 }
 
 void PackageUsageTest::SetUp(void)
