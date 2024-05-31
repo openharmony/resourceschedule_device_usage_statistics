@@ -316,11 +316,11 @@ ErrCode BundleActiveGroupController::SetAppGroup(const std::string& bundleName, 
     if (!IsBundleInstalled(bundleName, userId)) {
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
-    auto inter = bundleUserHistory_->userHistory_.find(userId);
+    auto iter = bundleUserHistory_->userHistory_.find(userId);
     if (iter == bundleUserHistory_->userHistory_.end()) {
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
-    auto packageHistoryMap = inter->second;
+    auto packageHistoryMap = iter->second;
     int32_t result = 0;
     int32_t tempResult = 0;
     for (auto packageHistoryIter : *packageHistoryMap) {
@@ -349,11 +349,11 @@ int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName,
         return -1;
     }
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    auto inter = bundleUserHistory_->userHistory_.find(userId);
+    auto iter = bundleUserHistory_->userHistory_.find(userId);
     if (iter == bundleUserHistory_->userHistory_.end()) {
         return -1;
     }
-    auto packageHistoryMap = inter->second;
+    auto packageHistoryMap = iter->second;
     int32_t IsBundleIdle = 1;
     for (auto packageHistoryIter : *packageHistoryMap) {
         if (packageHistoryIter.first.find(bundleName) == string::npos || packageHistoryIter.second == nullptr) {
@@ -385,11 +385,11 @@ ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
         return ERR_APPLICATION_IS_NOT_INSTALLED;
     }
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    auto inter = bundleUserHistory_->userHistory_.find(userId);
+    auto iter = bundleUserHistory_->userHistory_.find(userId);
     if (iter == bundleUserHistory_->userHistory_.end()) {
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
-    auto packageHistoryMap = inter->second;
+    auto packageHistoryMap = iter->second;
     for (auto packageHistoryIter : *packageHistoryMap) {
         if (packageHistoryIter.first.find(bundleName) == string::npos || packageHistoryIter.second == nullptr) {
             return;

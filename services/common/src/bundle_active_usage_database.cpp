@@ -865,7 +865,7 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
     vector<string> queryCondition;
     queryCondition.push_back(to_string(userId));
     auto bundleActiveResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX,
-        queryHistoryDataSql, queryCondition);q
+        queryHistoryDataSql, queryCondition);
     if (bundleActiveResult == nullptr) {
         return nullptr;
     }
@@ -1789,7 +1789,7 @@ void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std:
         int64_t relativeLastTime = 0;
         formRecordResult->GetLong(FORM_LAST_TIME_COLUMN_INDEX, relativeLastTime);
         oneFormRecord.formLastUsedTime_ = relativeLastTime != -1 ? relativeLastTime + baseTime : -1;
-        auto it = moduleRecords.find(bundleName + " " to_string(oneFormRecord->uid_) + " " + moduleName);
+        auto it = moduleRecords.find(bundleName + " " + to_string(oneFormRecord->uid_) + " " + moduleName);
         if (it != moduleRecords.end() && it->second) {
             it->second->formRecords_.emplace_back(oneFormRecord);
         }
