@@ -324,8 +324,8 @@ ErrCode BundleActiveGroupController::SetAppGroup(const std::string& bundleName, 
     int32_t result = 0;
     int32_t tempResult = 0;
     for (auto packageHistoryIter : *packageHistoryMap) {
-        if (packageHistoryIter.first.find(bundleName) == string::npos || packageHistoryIter.second == nullptr) {
-            return;
+        if (packageHistoryIter.first.find(bundleName) == std::string::npos || packageHistoryIter.second == nullptr) {
+            continue;
         }
         auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName,
             userId, bootBasedTimeStamp, true, packageHistoryIter.second->uid_);
@@ -356,8 +356,8 @@ int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName,
     auto packageHistoryMap = iter->second;
     int32_t IsBundleIdle = 1;
     for (auto packageHistoryIter : *packageHistoryMap) {
-        if (packageHistoryIter.first.find(bundleName) == string::npos || packageHistoryIter.second == nullptr) {
-            return;
+        if (packageHistoryIter.first.find(bundleName) == std::string::npos || packageHistoryIter.second == nullptr) {
+            continue;
         }
         auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName,
             userId, bootBasedTimeStamp, false, packageHistoryIter.second->uid_);
@@ -391,8 +391,8 @@ ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
     }
     auto packageHistoryMap = iter->second;
     for (auto packageHistoryIter : *packageHistoryMap) {
-        if (packageHistoryIter.first.find(bundleName) == string::npos || packageHistoryIter.second == nullptr) {
-            return;
+        if (packageHistoryIter.first.find(bundleName) == std::string::npos || packageHistoryIter.second == nullptr) {
+            continue;
         }
         auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName,
             userId, bootBasedTimeStamp, false, packageHistoryIter.second->uid_);

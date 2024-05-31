@@ -161,8 +161,8 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpgradleDa
     int32_t oldVersion = 1;
     int32_t curVersion = 2;
     database->UpgradleDatabase(oldVersion, curVersion);
-    int32_t oldVersion = 2;
-    int32_t curVersion = 2;
+    oldVersion = 2;
+    curVersion = 2;
     database->UpgradleDatabase(oldVersion, curVersion);
     EXPECT_NE(database, nullptr);
 }
@@ -177,7 +177,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_AddRdbColu
     Function | MediumTest | Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
-    shared_ptr<NativeRdb::RdbStore> store = database->GetBundleActiveRdbStore(0);
+    std::shared_ptr<NativeRdb::RdbStore> store = database->GetBundleActiveRdbStore(0);
     database->AddRdbColumn(store, "test", "testColumn", "INTERGER");
     EXPECT_NE(database, nullptr);
 }
@@ -195,7 +195,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpdateOldD
     bundleNameUidMap["111"] = 111;
     bundleNameUidMap["222"] = 222;
     auto database = std::make_shared<BundleActiveUsageDatabase>();
-    shared_ptr<NativeRdb::RdbStore> store = database->GetBundleActiveRdbStore(0);
+    std::shared_ptr<NativeRdb::RdbStore> store = database->GetBundleActiveRdbStore(0);
     database->UpdateOldDataUid(store, "test", 100, bundleNameUidMap);
     EXPECT_NE(database, nullptr);
 }

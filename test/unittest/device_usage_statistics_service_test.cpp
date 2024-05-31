@@ -815,7 +815,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_005,
     coreObject->InitBundleGroupController();
     int userId = 100;
     int64_t timeStamp = 20000000000000;
-    coreObject->bundleGroupController_->CheckAndUpdateGroup("test", 0, userId, timeStamp);
+    coreObject->bundleGroupController_->CheckAndUpdateGroup("test", userId, 0, timeStamp);
 }
 
 /*
