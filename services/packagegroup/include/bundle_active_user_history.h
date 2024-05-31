@@ -32,7 +32,6 @@ class BundleActiveCore;
 class BundleActiveUserHistory {
 public:
     std::map<int, std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>> userHistory_;
-    std::map<std::string, std::set<int32_t>> packageContainUid_;
     int64_t bootBasedTimeStamp_;
     int64_t bootBasedDuration_;
     int64_t screenOnTimeStamp_;

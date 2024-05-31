@@ -143,7 +143,7 @@ shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryI
         return nullptr;
     }
     std::string userHistoryKey = bundleName + std::to_string(uid);
-    auto it = oneUserHistory->find(bundleName);
+    auto it = oneUserHistory->find(userHistoryKey);
     if ((it == oneUserHistory->end()) && create) {
         shared_ptr<BundleActivePackageHistory> usageHistoryInserted =
             make_shared<BundleActivePackageHistory>();

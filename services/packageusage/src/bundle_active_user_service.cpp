@@ -114,7 +114,6 @@ void BundleActiveUserService::DeleteMemRecords(const std::shared_ptr<BundleActiv
             std::string moduleKey = bundleName + " " + std::to_string(deletedUid);
             if (it.first.find(moduleKey) != std::string::npos) {
                 moduleRecords_.erase(it.first);
-                break;
             }
         }
         return;
@@ -191,7 +190,8 @@ void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
                 it->Update(event.bundleName_, event.continuousTaskAbilityName_, event.timeStamp_, event.eventId_,
                     event.abilityId_, event.uid_);
                 if (incrementBundleLaunch) {
-                    it->bundleStats_[event.bundleName_]->IncrementBundleLaunchedCount();
+                    std::string bundleStatsKey = event.bundleName_ + std::to_string(event.uid_);
+                    it->bundleStats_[bundleStatsKey]->IncrementBundleLaunchedCount();
                 }
                 break;
         }

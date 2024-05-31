@@ -60,8 +60,8 @@ public:
     void SetHandlerAndCreateUserHistory(const std::shared_ptr<BundleActiveGroupHandler>& groupHandler,
         const int64_t bootFromTimeStamp, const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
     void ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp, const int32_t userId);
-    void CheckAndUpdateGroup(const std::string& bundleName, const int32_t uid,
-        int32_t userId, const int64_t bootBasedTimeStamp);
+    void CheckAndUpdateGroup(const std::string& bundleName, int32_t userId,
+        const int32_t uid, const int64_t bootBasedTimeStamp);
     bool CheckEachBundleState(const int32_t userId);
     void CheckIdleStatsOneTime();
     void PeriodCheckBundleState(const int32_t userId);

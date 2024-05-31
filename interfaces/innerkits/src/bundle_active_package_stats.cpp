@@ -238,6 +238,7 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePackageStats::UnMarshallin
 std::string BundleActivePackageStats::ToString()
 {
     return "bundle name is " + this->bundleName_ +
+            ", uid is " + std::to_string(this->uid_) +
             ", last used time stamp is " + std::to_string(this->lastTimeUsed_) +
             ", total time in front is " + std::to_string(this->totalInFrontTime_) +
             ", last continuous task used time is " + std::to_string(this->lastContiniousTaskUsed_) +

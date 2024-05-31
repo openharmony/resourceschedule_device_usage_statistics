@@ -662,7 +662,7 @@ int32_t BundleActiveUsageDatabase::CreatePackageLogTable(uint32_t databaseType, 
                                         + BUNDLE_ACTIVE_DB_LAST_TIME + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_LAST_TIME_CONTINUOUS_TASK + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_TOTAL_TIME + " INTEGER NOT NULL, "
-                                        + BUNDLE_ACTIVE_DB_TOTAL_TIME_CONTINUOUS_TASK + " INTEGER NOT NULL "
+                                        + BUNDLE_ACTIVE_DB_TOTAL_TIME_CONTINUOUS_TASK + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1);";
     int32_t createPackageTable = rdbStore->ExecuteSql(createPackageTableSql);
     if (createPackageTable != NativeRdb::E_OK) {
@@ -694,7 +694,7 @@ int32_t BundleActiveUsageDatabase::CreateModuleRecordTable(uint32_t databaseType
                                         + BUNDLE_ACTIVE_DB_BUNDLE_NAME + " TEXT NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_MODULE_NAME + " TEXT NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_MODULE_LAUNCHED_COUNT + " INTEGER NOT NULL, "
-                                        + BUNDLE_ACTIVE_DB_LAST_TIME + " INTEGER NOT NULL "
+                                        + BUNDLE_ACTIVE_DB_LAST_TIME + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1);";
     int32_t createModuleRecordTable = rdbStore->ExecuteSql(createModuleRecordTableSql);
     if (createModuleRecordTable != NativeRdb::E_OK) {
@@ -729,7 +729,7 @@ int32_t BundleActiveUsageDatabase::CreateFormRecordTable(uint32_t databaseType, 
                                         + BUNDLE_ACTIVE_DB_FORM_DIMENSION + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_FORM_ID + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_FORM_TOUCH_COUNT + " INTEGER NOT NULL, "
-                                        + BUNDLE_ACTIVE_DB_LAST_TIME + " INTEGER NOT NULL "
+                                        + BUNDLE_ACTIVE_DB_LAST_TIME + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1);";
     int32_t createFormRecordTable = rdbStore->ExecuteSql(createFormRecordTableSql);
     if (createFormRecordTable != NativeRdb::E_OK) {
@@ -782,7 +782,7 @@ int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(uint32_t databaseTyp
                                         + BUNDLE_ACTIVE_DB_CURRENT_GROUP + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_REASON_IN_GROUP + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_BUNDLE_ALIVE_TIMEOUT_TIME + " INTEGER NOT NULL, "
-                                        + BUNDLE_ACTIVE_DB_BUNDLE_DAILY_TIMEOUT_TIME + " INTEGER NOT NULL "
+                                        + BUNDLE_ACTIVE_DB_BUNDLE_DAILY_TIMEOUT_TIME + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1);";
     int32_t createBundleHistoryTable = rdbStore->ExecuteSql(createBundleHistoryTableSql);
     if (createBundleHistoryTable != NativeRdb::E_OK) {
@@ -865,7 +865,7 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
     vector<string> queryCondition;
     queryCondition.push_back(to_string(userId));
     auto bundleActiveResult = QueryStatsInfoByStep(APP_GROUP_DATABASE_INDEX,
-        queryHistoryDataSql, queryCondition);
+        queryHistoryDataSql, queryCondition);q
     if (bundleActiveResult == nullptr) {
         return nullptr;
     }
@@ -1034,7 +1034,9 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
             relativeLastTimeFrontServiceUsed + currentPackageTime;
         bundleActiveResult->GetLong(TOTAL_TIME_COLUMN_INDEX, usageStats->totalInFrontTime_);
         bundleActiveResult->GetLong(TOTAL_TIME_CONTINUOUS_TASK_COLUMN_INDEX, usageStats->totalContiniousTaskUsedTime_);
-        bundleStats.insert(pair<string, shared_ptr<BundleActivePackageStats>>(usageStats->bundleName_, usageStats));
+        bundleActiveResult->GetInt(PACKAGE_LOG_UID_COLUMN_INDEX, usageStats->uid_);
+        string bundleStatsKey = usageStats->bundleName_ + std::to_string(usageStats->uid_);
+        bundleStats.insert(pair<string, shared_ptr<BundleActivePackageStats>>(bundleStatsKey, usageStats));
     }
     intervalStats->bundleStats_ = bundleStats;
     if (databaseType == DAILY_DATABASE_INDEX) {
@@ -1521,6 +1523,7 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
         bundleActiveResult->GetString(TIME_STAMP_COLUMN_INDEX, relativeTimeStamp);
         event.timeStamp_ = atoll(relativeTimeStamp.c_str()) + eventTableTime;
         bundleActiveResult->GetString(ABILITY_ID_COLUMN_INDEX, event.abilityId_);
+        bundleActiveResult->GetInt(EVENT_UID_COLUMN_INDEX, event.uid_);
         databaseEvents.push_back(event);
     }
     return databaseEvents;
@@ -1749,7 +1752,8 @@ void BundleActiveUsageDatabase::LoadModuleData(const int32_t userId, std::map<st
         int64_t relativeLastTime = 0;
         moduleRecordResult->GetLong(MODULE_LAST_TIME_COLUMN_INDEX, relativeLastTime);
         oneModuleRecord->lastModuleUsedTime_ =  relativeLastTime != -1 ? relativeLastTime + baseTime : -1;
-        string combinedInfo = oneModuleRecord->bundleName_ + " " + oneModuleRecord->moduleName_;
+        string combinedInfo = oneModuleRecord->bundleName_
+            + " " + to_string(oneModuleRecord->uid_) + " " + oneModuleRecord->moduleName_;
         moduleRecords[combinedInfo] = oneModuleRecord;
     }
 }
@@ -1781,10 +1785,11 @@ void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std:
         formRecordResult->GetInt(FORM_DIMENSION_COLUMN_INDEX, oneFormRecord.formDimension_);
         formRecordResult->GetLong(FORM_ID_COLUMN_INDEX, oneFormRecord.formId_);
         formRecordResult->GetInt(FORM_COUNT_COLUMN_INDEX, oneFormRecord.count_);
+        formRecordResult->GetInt(FORM_UID_COLUMN_INDEX, oneFormRecord.uid_);
         int64_t relativeLastTime = 0;
         formRecordResult->GetLong(FORM_LAST_TIME_COLUMN_INDEX, relativeLastTime);
         oneFormRecord.formLastUsedTime_ = relativeLastTime != -1 ? relativeLastTime + baseTime : -1;
-        auto it = moduleRecords.find(bundleName + " " + moduleName);
+        auto it = moduleRecords.find(bundleName + " " to_string(oneFormRecord->uid_) + " " + moduleName);
         if (it != moduleRecords.end() && it->second) {
             it->second->formRecords_.emplace_back(oneFormRecord);
         }
