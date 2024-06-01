@@ -19,6 +19,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+    const int32_t MAIN_APP_INDEX = 0;
 void BundleActiveUserService::Init(const int64_t timeStamp)
 {
     database_.InitDatabaseTableInfo(timeStamp);
@@ -45,24 +46,78 @@ void BundleActiveUserService::Init(const int64_t timeStamp)
 
 void BundleActiveUserService::OnUserRemoved()
 {
-    database_.OnPackageUninstalled(userId_, "");
+    database_.OnPackageUninstalled(userId_, "", 0, 0);
 }
 
-void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bundleName)
+void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bundleName, const int32_t uid,
+    const int32_t appIndex)
 {
     for (auto it : currentStats_) {
         if (it != nullptr) {
-            if (it->bundleStats_.find(bundleName) != it->bundleStats_.end()) {
-                it->bundleStats_.erase(bundleName);
-            }
-            for (auto eventIter = it->events_.events_.begin(); eventIter != it->events_.events_.end();) {
-                if (eventIter->bundleName_ == bundleName) {
-                    it->events_.events_.erase(eventIter);
-                } else {
-                    eventIter++;
-                }
+            DeleteMemUsageStats(it, bundleName, uid, appIndex);
+            DeleteMemEvent(it, bundleName, uid, appIndex);
+            DeleteMemRecords(it, bundleName, uid, appIndex);
+        }
+    }
+    database_.OnPackageUninstalled(userId_, bundleName, uid, appIndex);
+}
+
+void BundleActiveUserService::DeleteMemUsageStats(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
+    const std::string& bundleName, const int32_t deletedUid, int32_t appIndex)
+{
+    std::string bundleStatsKey = bundleName + std::to_string(deletedUid);
+    if (appIndex == MAIN_APP_INDEX) {
+        if (currentStats->bundleStats_.find(bundleStatsKey) != currentStats->bundleStats_.end()) {
+            currentStats->bundleStats_.erase(bundleStatsKey);
+        }
+        return;
+    }
+    if (currentStats->packageContainUid_.find(bundleName) != currentStats->packageContainUid_.end()) {
+        for (auto it: currentStats->packageContainUid_.find(bundleName)->second) {
+            bundleStatsKey = bundleName + std::to_string(it);
+            currentStats->bundleStats_.erase(bundleStatsKey);
+        }
+    }
+}
+
+void BundleActiveUserService::DeleteMemEvent(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
+    const std::string& bundleName, const int32_t deletedUid, int32_t appIndex)
+{
+    if (appIndex == MAIN_APP_INDEX) {
+        for (auto eventIter = currentStats->events_.events_.begin();
+            eventIter != currentStats->events_.events_.end();) {
+            if (eventIter->bundleName_ == bundleName && eventIter->uid_ == deletedUid) {
+                currentStats->events_.events_.erase(eventIter);
+            } else {
+                eventIter++;
             }
         }
+        return;
+    }
+    if (currentStats->packageContainUid_.find(bundleName) != currentStats->packageContainUid_.end()) {
+        auto uidSet = currentStats->packageContainUid_.find(bundleName)->second;
+        for (auto eventIter = currentStats->events_.events_.begin();
+            eventIter != currentStats->events_.events_.end();) {
+            if (eventIter->bundleName_ == bundleName && uidSet.find(eventIter->uid_) != uidSet.end()) {
+                currentStats->events_.events_.erase(eventIter);
+            } else {
+                eventIter++;
+            }
+        }
+    }
+}
+
+void BundleActiveUserService::DeleteMemRecords(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
+    const std::string& bundleName, const int32_t deletedUid, int32_t appIndex)
+{
+    if (appIndex == MAIN_APP_INDEX) {
+        for (auto it : moduleRecords_) {
+            std::string moduleKey = bundleName + " " + std::to_string(deletedUid);
+            if (it.first.find(moduleKey) != std::string::npos) {
+                moduleRecords_.erase(it.first);
+            }
+        }
+        return;
     }
     for (auto it : moduleRecords_) {
         if (it.first.find(bundleName) != std::string::npos) {
@@ -70,7 +125,7 @@ void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bu
             break;
         }
     }
-    database_.OnPackageUninstalled(userId_, bundleName);
+    currentStats->packageContainUid_.erase(bundleName);
 }
 
 void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)
@@ -134,9 +189,10 @@ void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
                 break;
             default:
                 it->Update(event.bundleName_, event.continuousTaskAbilityName_, event.timeStamp_, event.eventId_,
-                    event.abilityId_);
+                    event.abilityId_, event.uid_);
                 if (incrementBundleLaunch) {
-                    it->bundleStats_[event.bundleName_]->IncrementBundleLaunchedCount();
+                    std::string bundleStatsKey = event.bundleName_ + std::to_string(event.uid_);
+                    it->bundleStats_[bundleStatsKey]->IncrementBundleLaunchedCount();
                 }
                 break;
         }
@@ -159,7 +215,7 @@ void BundleActiveUserService::ReportForShutdown(const BundleActiveEvent& event)
     }
     for (auto it : currentStats_) {
         it->Update(event.bundleName_, event.continuousTaskAbilityName_, event.timeStamp_, event.eventId_,
-            event.abilityId_);
+            event.abilityId_, event.uid_);
     }
     BUNDLE_ACTIVE_LOGI("ReportForShutdown called notify");
     NotifyStatsChanged();
@@ -265,16 +321,17 @@ void BundleActiveUserService::FlushDataInMem(std::set<std::string> &continueBund
                 continue;
             }
             BundleActivePackageStats bundleUsageStats(*(bundleUsageStatsPair.second));
+            std::string bundleStatsKey = bundleUsageStats.bundleName_ + std::to_string(bundleUsageStats.uid_);
             if (!bundleUsageStats.abilities_.empty()) {
-                continueAbilities[bundleUsageStats.bundleName_] = bundleUsageStats.abilities_;
+                continueAbilities[bundleStatsKey] = bundleUsageStats.abilities_;
             }
             if (!bundleUsageStats.longTimeTasks_.empty()) {
-                continueServices[bundleUsageStats.bundleName_] = bundleUsageStats.longTimeTasks_;
+                continueServices[bundleStatsKey] = bundleUsageStats.longTimeTasks_;
             }
             (*it)->Update(bundleUsageStats.bundleName_, "", dailyExpiryDate_.GetMilliseconds() - 1,
-                BundleActiveEvent::END_OF_THE_DAY, "");
+                BundleActiveEvent::END_OF_THE_DAY, "", bundleUsageStats.uid_);
 
-            continueBundles.insert(bundleUsageStats.bundleName_);
+            continueBundles.insert(bundleStatsKey);
             NotifyStatsChanged();
         }
         (*it)->CommitTime(dailyExpiryDate_.GetMilliseconds() - 1);
@@ -285,15 +342,26 @@ void BundleActiveUserService::UpdateContinueAbilitiesMemory(const int64_t& begin
     const std::map<std::string, std::map<std::string, int>>& continueAbilities, const std::string& continueBundleName,
     const std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator& itInterval)
 {
+    auto iter = (*itInterval)->packageContainUid_.find(continueBundleName);
+    if (iter == (*itInterval)->packageContainUid_.end()) {
+        return;
+    }
     auto ability = continueAbilities.find(continueBundleName);
     if (ability == continueAbilities.end()) {
         return;
     }
-    for (auto it = ability->second.begin(); it != ability->second.end(); ++it) {
-        if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
-            continue;
+    for (auto uid: iter->second) {
+        std::string continueAbilitiesKey = continueBundleName + std::to_string(uid);
+        auto ability = continueAbilities.find(continueBundleName);
+        if (ability == continueAbilities.end()) {
+            return;
         }
-        (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first);
+        for (auto it = ability->second.begin(); it != ability->second.end(); ++it) {
+            if (it->second == BundleActiveEvent::ABILITY_BACKGROUND) {
+                continue;
+            }
+            (*itInterval)->Update(continueBundleName, "", beginTime, it->second, it->first, uid);
+        }
     }
 }
 
@@ -301,13 +369,20 @@ void BundleActiveUserService::UpdateContinueServicesMemory(const int64_t& beginT
     const std::map<std::string, std::map<std::string, int>>& continueServices, const std::string& continueBundleName,
     const std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator& itInterval)
 {
-    auto service = continueServices.find(continueBundleName);
-    if (service == continueServices.end()) {
+    auto iter = (*itInterval)->packageContainUid_.find(continueBundleName);
+    if (iter == (*itInterval)->packageContainUid_.end()) {
         return;
     }
 
-    for (auto it = service->second.begin(); it != service->second.end(); ++it) {
-        (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "");
+    for (auto uid: iter->second) {
+        std::string continueServicesKey = continueBundleName + std::to_string(uid);
+        auto service = continueServices.find(continueServicesKey);
+        if (service == continueServices.end()) {
+            return;
+        }
+        for (auto it = service->second.begin(); it != service->second.end(); ++it) {
+            (*itInterval)->Update(continueBundleName, it->first, beginTime, it->second, "", uid);
+        }
     }
 }
 
@@ -324,10 +399,6 @@ void BundleActiveUserService::RenewStatsInMemory(const int64_t timeStamp)
     LoadActiveStats(timeStamp, false, false);
     // update timestamps of events in memory
     for (std::string continueBundleName : continueBundles) {
-        if (continueAbilities.find(continueBundleName) == continueAbilities.end() &&
-        continueServices.find(continueBundleName) == continueServices.end()) {
-            continue;
-        }
         int64_t beginTime = currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_;
         for (std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator itInterval = currentStats_.begin();
             itInterval != currentStats_.end(); ++itInterval) {
@@ -567,10 +638,11 @@ void BundleActiveUserService::PrintInMemPackageStats(const int32_t idx, const bo
         int64_t totalUsedTime = it.second->totalInFrontTime_;
         int64_t lastTimeContinuousTaskUsed = it.second->lastContiniousTaskUsed_;
         int64_t totalTimeContinuousTaskUsed = it.second->totalContiniousTaskUsedTime_;
+        int32_t uid = it.second->uid_;
         BUNDLE_ACTIVE_LOGI("bundle stat is, totaltime is %{public}lld, lastTimeUsed is %{public}lld"
-            "total continuous task is %{public}lld, lastTimeContinuousTaskUsed is %{public}lld",
+            "total continuous task is %{public}lld, lastTimeContinuousTaskUsed is %{public}lld uid is %{public}d",
             (long long)totalUsedTime, (long long)lastTimeUsed,
-            (long long)totalTimeContinuousTaskUsed, (long long)lastTimeContinuousTaskUsed);
+            (long long)totalTimeContinuousTaskUsed, (long long)lastTimeContinuousTaskUsed, uid);
     }
 }
 
@@ -588,9 +660,10 @@ void BundleActiveUserService::PrintInMemEventStats(const bool debug)
         std::string bundlename = currentStats_[idx]->events_.events_[i].bundleName_;
         int32_t eventid = currentStats_[idx]->events_.events_[i].eventId_;
         int64_t timestamp = currentStats_[idx]->events_.events_[i].timeStamp_;
+        int32_t uid = currentStats_[idx]->events_.events_[i].uid_;
         BUNDLE_ACTIVE_LOGI("In mem, event stat is, abilityid is %{public}s, abilityname is %{public}s, "
-            "bundlename is %{public}s, eventid is %{public}d, timestamp is %{public}lld",
-            abilityId.c_str(), abilityname.c_str(), bundlename.c_str(), eventid, (long long)timestamp);
+            "bundlename is %{public}s, eventid is %{public}d, timestamp is %{public}lld, uid is %{public}d",
+            abilityId.c_str(), abilityname.c_str(), bundlename.c_str(), eventid, (long long)timestamp, uid);
     }
 }
 
@@ -602,9 +675,9 @@ void BundleActiveUserService::PrintInMemFormStats(const bool debug, const bool p
     for (const auto& oneModule : moduleRecords_) {
         if (oneModule.second) {
         BUNDLE_ACTIVE_LOGI("bundle name is %{public}s, module name is %{public}s, "
-            "lastusedtime is %{public}lld, launchcount is %{public}d", oneModule.second->bundleName_.c_str(),
-            oneModule.second->moduleName_.c_str(),
-            (long long)oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_);
+            "lastusedtime is %{public}lld, launchcount is %{public}d, uid is %{public}d",
+            oneModule.second->bundleName_.c_str(), oneModule.second->moduleName_.c_str(),
+            (long long)oneModule.second->lastModuleUsedTime_, oneModule.second->launchedCount_, oneModule.second->uid_);
         BUNDLE_ACTIVE_LOGI("combined info is %{public}s", oneModule.first.c_str());
             if (printform) {
                 for (const auto& oneForm : oneModule.second->formRecords_) {
@@ -636,12 +709,13 @@ void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
     BUNDLE_ACTIVE_LOGI("ReportFormEvent called");
     auto moduleRecord = GetOrCreateModuleRecord(event);
     if (event.eventId_ == BundleActiveEvent::FORM_IS_CLICKED && moduleRecord) {
-        moduleRecord->AddOrUpdateOneFormRecord(event.formName_, event.formDimension_, event.formId_, event.timeStamp_);
+        moduleRecord->AddOrUpdateOneFormRecord(event.formName_, event.formDimension_, event.formId_,
+            event.timeStamp_, event.uid_);
         NotifyStatsChanged();
     } else if (event.eventId_ == BundleActiveEvent::FORM_IS_REMOVED && moduleRecord) {
         moduleRecord->RemoveOneFormRecord(event.formName_, event.formDimension_, event.formId_);
         database_.RemoveFormData(userId_, event.bundleName_, event.moduleName_, event.formName_, event.formDimension_,
-            event.formId_);
+            event.formId_, event.uid_);
     }
     PrintInMemFormStats(debugUserService_, true);
 }
@@ -650,13 +724,14 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateMo
     const BundleActiveEvent& event)
 {
     BUNDLE_ACTIVE_LOGI("GetOrCreateModuleRecord called");
-    std::string combinedInfo = event.bundleName_ + " " + event.moduleName_;
+    std::string combinedInfo = event.bundleName_ + " " + std::to_string(event.uid_) + " " + event.moduleName_;
     auto it = moduleRecords_.find(combinedInfo);
     if (it == moduleRecords_.end()) {
         auto moduleRecordInserted = std::make_shared<BundleActiveModuleRecord>();
         moduleRecordInserted->bundleName_ = event.bundleName_;
         moduleRecordInserted->moduleName_ = event.moduleName_;
         moduleRecordInserted->userId_ = userId_;
+        moduleRecordInserted->uid_ = event.uid_;
         moduleRecords_[combinedInfo] = moduleRecordInserted;
     }
     return moduleRecords_[combinedInfo];

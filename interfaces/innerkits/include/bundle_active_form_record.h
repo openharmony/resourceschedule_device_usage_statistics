@@ -31,6 +31,7 @@ public:
     int64_t formLastUsedTime_;
     int32_t count_;
     int32_t userId_;
+    int32_t uid_;
 
 public:
     /*
@@ -47,7 +48,7 @@ public:
     * parameters: formName, formDimension, formId, timeStamp, userId
     */
     BundleActiveFormRecord(const std::string formName, const int32_t formDimension, const int64_t formId,
-        const int64_t timeStamp, const int32_t userId);
+        const int64_t timeStamp, const int32_t userId, const int32_t uid);
     /*
     * function: ~BundleActiveFormRecord, default destructor.
     */

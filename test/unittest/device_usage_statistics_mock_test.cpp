@@ -305,8 +305,9 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_CheckTimeC
     
     BundleActiveEvent eventTemp;
     EXPECT_NE(bundleActiveCore->ReportEventToAllUserId(eventTemp), ERR_OK);
-
-    bundleActiveCore->OnBundleUninstalled(g_defaultUserId, g_defaultBundleName);
+    int32_t uid = 0;
+    int32_t appIndex = 0;
+    bundleActiveCore->OnBundleUninstalled(g_defaultUserId, g_defaultBundleName, uid, appIndex);
 
     EXPECT_NE(bundleActiveCore->QueryNotificationEventStats(0, g_largeNum, eventStats, g_commonUserid), ERR_OK);
     EXPECT_NE(bundleActiveCore->QueryDeviceEventStats(0, g_largeNum, eventStats, g_commonUserid), ERR_OK);
@@ -319,7 +320,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_CheckTimeC
         g_intervalType, 0, g_largeNum, g_defaultBundleName);
     EXPECT_NE(code, ERR_OK);
     
-    bundleActiveCore->OnBundleUninstalled(g_commonUserid, g_defaultBundleName);
+    bundleActiveCore->OnBundleUninstalled(g_commonUserid, g_defaultBundleName, uid, appIndex);
 }
 
 /*
@@ -333,10 +334,12 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_getUserHis
 {
     auto groupController = std::make_shared<BundleActiveGroupController>(false);
     const int64_t timeStamp = g_largeNum;
+    int32_t uid = 0;
+    int32_t appIndex = 0;
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     groupController->bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(timeStamp, bundleActiveCore);
 
-    groupController->OnBundleUninstalled(0, g_defaultBundleName);
+    groupController->OnBundleUninstalled(0, g_defaultBundleName, uid, appIndex);
     EXPECT_NE(groupController, nullptr);
 }
 
@@ -443,7 +446,9 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     database->RenameTableName(databaseType, 0, 0);
     std::string bundleName = "defaultBundleName";
     std::string tableName = "defaultTableName";
-    database->DeleteUninstalledInfo(userId, bundleName, tableName, databaseType);
+    int32_t uid = 0;
+    int32_t appIndex = 0;
+    database->DeleteUninstalledInfo(userId, bundleName, uid, tableName, databaseType, appIndex);
 
     auto moduleRecords = std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>();
     int64_t timeStamp = 20000000000;
@@ -451,7 +456,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
 
     std::string moduleName = "defaultMoudleName";
     std::string formName = "defaultFormName";
-    database->RemoveFormData(userId, bundleName, moduleName, formName, 0, 0);
+    database->RemoveFormData(userId, bundleName, moduleName, formName, 0, 0, uid);
 }
 
 /*

@@ -102,5 +102,120 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_NearIndexO
     database->NearIndexOnOrBeforeCurrentTime(currentTime, sortedTableArray);
     EXPECT_NE(database, nullptr);
 }
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_CheckDatabaseVersion_001
+ * @tc.desc: CheckDatabaseVersion
+ * @tc.type: FUNC
+ * @tc.require: issuesI9Q9ZJ
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CheckDatabaseVersion_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    database->CheckDatabaseVersion();
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_GetOldDbVersion_001
+ * @tc.desc: GetOldDbVersion
+ * @tc.type: FUNC
+ * @tc.require: issuesI9Q9ZJ
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetOldDbVersion_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    database->GetOldDbVersion();
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_GetVersionByFileInput_001
+ * @tc.desc: GetVersionByFileInput
+ * @tc.type: FUNC
+ * @tc.require: issuesI9Q9ZJ
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetVersionByFileInput_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    std::string fileInput = "";
+    database->GetVersionByFileInput(fileInput);
+    fileInput = "aa123";
+    int32_t result = database->GetVersionByFileInput(fileInput);
+    EXPECT_EQ(result, 123);
+}
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_UpgradleDatabase_001
+ * @tc.desc: UpgradleDatabase
+ * @tc.type: FUNC
+ * @tc.require: issuesI9Q9ZJ
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpgradleDatabase_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    int32_t oldVersion = 1;
+    int32_t curVersion = 2;
+    database->UpgradleDatabase(oldVersion, curVersion);
+    oldVersion = 2;
+    curVersion = 2;
+    database->UpgradleDatabase(oldVersion, curVersion);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_AddRdbColumn_001
+ * @tc.desc: AddRdbColumn
+ * @tc.type: FUNC
+ * @tc.require: issuesI9Q9ZJ
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_AddRdbColumn_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    std::shared_ptr<NativeRdb::RdbStore> store = database->GetBundleActiveRdbStore(0);
+    database->AddRdbColumn(store, "test", "testColumn", "INTERGER");
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_UpdateOldDataUid_001
+ * @tc.desc: UpdateOldDataUid
+ * @tc.type: FUNC
+ * @tc.require: issuesI9Q9ZJ
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpdateOldDataUid_001,
+    Function | MediumTest | Level0)
+{
+    std::map<std::string, int32_t> bundleNameUidMap;
+    bundleNameUidMap["111"] = 111;
+    bundleNameUidMap["222"] = 222;
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    std::shared_ptr<NativeRdb::RdbStore> store = database->GetBundleActiveRdbStore(0);
+    database->UpdateOldDataUid(store, "test", 100, bundleNameUidMap);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_CreateRecordTable_001
+ * @tc.desc: CreateRecordTable
+ * @tc.type: FUNC
+ * @tc.require: issuesI9Q9ZJ
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CreateRecordTable_001,
+    Function | MediumTest | Level0)
+{
+    int64_t timeStamp = 10000;
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    database->moduleRecordsTableName_ = "unknownTableName";
+    database->formRecordsTableName_ = "unknownTableName";
+    database->CreateRecordTable(timeStamp);;
+    EXPECT_NE(database, nullptr);
+}
+
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

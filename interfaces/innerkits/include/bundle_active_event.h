@@ -35,6 +35,7 @@ public:
     static const int32_t USER_INTERACTIVE = 8;
     // internal events
     static const int32_t DEFAULT_EVENT_ID = 0;
+    static const int32_t DEFAULT_UID_ID = -1;
     static const int32_t END_OF_THE_DAY = 9;
     static const int32_t SHUTDOWN = 10;
     static const int32_t STARTUP = 11;
@@ -61,6 +62,7 @@ public:
     int64_t formId_;
     int64_t timeStamp_;
     int32_t eventId_;
+    int32_t uid_;
 
 public:
     /*
@@ -81,24 +83,26 @@ public:
     * function: BundleActiveEvent, constructor using event Id, time stamp.
     * parameters: eventId, bundleName.
     */
-    BundleActiveEvent(const int32_t eventId, const std::string bundleName);
+    BundleActiveEvent(const int32_t eventId, const std::string bundleName, const int32_t uid = DEFAULT_UID_ID);
     /*
     * function: BundleActiveEvent, constructor of continuous task event.
     * parameters: bundleName, continuousTaskAbilityName
     */
-    BundleActiveEvent(const std::string bundleName, const std::string continuousTaskAbilityName);
+    BundleActiveEvent(const std::string bundleName, const std::string continuousTaskAbilityName,
+        const int32_t uid = 0);
     /*
     * function: BundleActiveEvent, constructor of app ability event.
     * parameters: bundleName, abilityName, abilityId
     */
     BundleActiveEvent(const std::string bundleName, const std::string abilityName, const std::string abilityId,
-        const std::string moduleName);
+        const std::string moduleName, const int32_t uid = DEFAULT_UID_ID);
     /*
     * function: BundleActiveEvent, constructor of form event.
     * parameters: bundleName, moduleName, formName, formDimension, formId, eventId
     */
     BundleActiveEvent(const std::string bundleName, const std::string moduleName,
-        const std::string formName, const int32_t formDimension, const int64_t formId, const int32_t eventId);
+        const std::string formName, const int32_t formDimension, const int64_t formId, const int32_t eventId,
+        const int32_t uid = DEFAULT_UID_ID);
     void PrintEvent(const bool debug) const;
     /*
     * function: operator=, override operator =.

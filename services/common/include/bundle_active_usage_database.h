@@ -63,13 +63,14 @@ public:
         std::shared_ptr<BundleActivePackageHistory>>> userHistory);
     std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>
         GetBundleHistoryData(int32_t userId);
-    void OnPackageUninstalled(const int32_t userId, const std::string& bundleName);
+    void OnPackageUninstalled(const int32_t userId, const std::string& bundleName,
+        const int32_t uid, const int32_t appIndex);
     void ChangeToDebug();
     void UpdateModuleData(const int32_t userId,
         std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords, const int64_t timeStamp);
     void RemoveFormData(const int32_t userId, const std::string bundleName,
         const std::string moduleName, const std::string formName, const int32_t formDimension,
-        const int64_t formId);
+        const int64_t formId, const int32_t uid);
     void LoadModuleData(const int32_t userId, std::map<std::string,
         std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords);
     void LoadFormData(const int32_t userId, std::map<std::string,
@@ -105,8 +106,8 @@ private:
     int32_t CreateFormRecordTable(uint32_t databaseType, int64_t timeStamp);
     std::shared_ptr<NativeRdb::ResultSet> QueryStatsInfoByStep(uint32_t databaseType,
         const std::string &sql, const std::vector<std::string> &selectionArgs);
-    void DeleteUninstalledInfo(const int32_t userId, const std::string& bundleName, const std::string& tableName,
-        uint32_t databaseType);
+    void DeleteUninstalledInfo(const int32_t userId, const std::string& bundleName, const int32_t uid,
+        const std::string& tableName, uint32_t databaseType, const int32_t appIndex);
     int32_t CreateDatabasePath();
     int64_t GetSystemTimeMs();
     void CheckDatabaseFile(uint32_t databaseType);
@@ -125,6 +126,16 @@ private:
         const int32_t databaseType, int32_t &startIndex, int32_t &endIndex);
 
 private:
+    int32_t GetOldDbVersion();
+    int32_t GetVersionByFileInput(const std::string& FileVersionInput);
+    void CreateRecordTable(const int64_t timeStamp);
+    void HandleAllTableName(const uint32_t databaseType, std::vector<std::vector<std::string>>& allTableName);
+    void UpgradleDatabase(const int32_t oldVersion, const int32_t curVersion);
+    void UpdateOldDataUid(const std::shared_ptr<NativeRdb::RdbStore> store, const std::string& tableName,
+        const int32_t userId, std::map<std::string, int32_t>& bundleNameUidMap);
+    void SupportAppTwin();
+    void AddRdbColumn(const std::shared_ptr<NativeRdb::RdbStore> store, const std::string& tableName,
+        const std::string& columnName, const std::string& columnType);
     std::vector<std::string> databaseFiles_;
     std::vector<std::vector<int64_t>> sortedTableArray_;
     std::map<std::string, std::shared_ptr<NativeRdb::RdbStore>> bundleActiveRdbStoreCache_;

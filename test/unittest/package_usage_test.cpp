@@ -75,31 +75,32 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_Update_001, Function | MediumTest | 
     int64_t timeStamp = 20000000000000;
     int32_t eventId = BundleActiveEvent::ABILITY_FOREGROUND;
     std::string abilityId = "defaultAbilityId";
-    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+    int32_t uid = 0;
+    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId, uid);
 
     eventId = BundleActiveEvent::ABILITY_BACKGROUND;
-    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId, uid);
 
     eventId = BundleActiveEvent::ABILITY_STOP;
-    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId, uid);
 
     eventId = BundleActiveEvent::END_OF_THE_DAY;
-    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId, uid);
 
     eventId = BundleActiveEvent::LONG_TIME_TASK_STARTTED;
-    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId, uid);
 
     eventId = BundleActiveEvent::LONG_TIME_TASK_ENDED;
-    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId, uid);
 
     eventId = BundleActiveEvent::SHUTDOWN;
-    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId, uid);
     
     eventId = BundleActiveEvent::FLUSH;
-    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId, uid);
 
     eventId = BundleActiveEvent::SYSTEM_LOCK;
-    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+    packageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId, uid);
     EXPECT_NE(packageStats, nullptr);
 }
 
@@ -185,8 +186,9 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveModuleRecord_001, Functi
     int32_t formDimension = 1;
     int64_t formId = 1;
     int64_t timeStamp = 20000000000000;
-    moduleRecord->AddOrUpdateOneFormRecord(forName, formDimension, formId, timeStamp);
-    moduleRecord->AddOrUpdateOneFormRecord(forName, formDimension, formId, timeStamp*10);
+    int32_t uid = 0;
+    moduleRecord->AddOrUpdateOneFormRecord(forName, formDimension, formId, timeStamp, uid);
+    moduleRecord->AddOrUpdateOneFormRecord(forName, formDimension, formId, timeStamp*10, uid);
     moduleRecord->lastModuleUsedTime_ = timeStamp;
     moduleRecord->UpdateModuleRecord(timeStamp);
     moduleRecord->RemoveOneFormRecord(forName, formDimension, formId);

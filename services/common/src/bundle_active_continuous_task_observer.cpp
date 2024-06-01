@@ -96,7 +96,7 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
     OHOS::ErrCode ret = BundleActiveAccountHelper::GetUserId(uid, userId);
     if (ret == ERR_OK && userId != -1 && !bundleName.empty()) {
         BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-        BundleActiveEvent event(bundleName, continuousTaskAbilityName_);
+        BundleActiveEvent event(bundleName, continuousTaskAbilityName_, uid);
         sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
         tmpHandlerObject.event_ = event;
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();

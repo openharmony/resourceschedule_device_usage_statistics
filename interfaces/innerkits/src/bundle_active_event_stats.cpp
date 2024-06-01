@@ -17,6 +17,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+    static const int32_t DEFAULT_UID_ID = -1;
 BundleActiveEventStats::BundleActiveEventStats()
 {
     eventId_ = 0;
@@ -25,6 +26,7 @@ BundleActiveEventStats::BundleActiveEventStats()
     lastEventTime_ = 0;
     totalTime_ = 0;
     count_ = 0;
+    uid_ = DEFAULT_UID_ID;
     name_.clear();
 }
 
@@ -37,6 +39,7 @@ BundleActiveEventStats::BundleActiveEventStats(const BundleActiveEventStats& ori
     totalTime_ = orig.totalTime_;
     count_ = orig.count_;
     name_ = orig.name_;
+    uid_ = orig.uid_;
 }
 
 int32_t BundleActiveEventStats::GetEventId()
@@ -92,7 +95,8 @@ bool BundleActiveEventStats::Marshalling(Parcel &parcel) const
         parcel.WriteInt64(lastEventTime_) &&
         parcel.WriteInt64(totalTime_) &&
         parcel.WriteInt32(count_) &&
-        parcel.WriteString(name_)) {
+        parcel.WriteString(name_) &&
+        parcel.WriteInt32(uid_)) {
         return true;
     }
     return false;
@@ -108,6 +112,7 @@ std::shared_ptr<BundleActiveEventStats> BundleActiveEventStats::UnMarshalling(Pa
     result->totalTime_ = parcel.ReadInt64();
     result->count_ = parcel.ReadInt32();
     result->name_ = parcel.ReadString();
+    result->uid_ = parcel.ReadInt32();
     return result;
 }
 }  // namespace DeviceUsageStats

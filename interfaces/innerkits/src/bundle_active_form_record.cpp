@@ -25,10 +25,11 @@ BundleActiveFormRecord::BundleActiveFormRecord()
     formLastUsedTime_ = -1;
     count_ = 0;
     userId_ = -1;
+    uid_ = 0;
 }
 
 BundleActiveFormRecord::BundleActiveFormRecord(const std::string formName, const int32_t formDimension,
-    const int64_t formId, const int64_t timeStamp, const int32_t userId)
+    const int64_t formId, const int64_t timeStamp, const int32_t userId, const int32_t uid)
 {
     formName_ = formName;
     formDimension_ = formDimension;
@@ -36,6 +37,7 @@ BundleActiveFormRecord::BundleActiveFormRecord(const std::string formName, const
     formLastUsedTime_ = timeStamp;
     count_ = 1;
     userId_ = userId;
+    uid_ = uid;
 }
 
 BundleActiveFormRecord::BundleActiveFormRecord(const BundleActiveFormRecord& orig)
@@ -90,6 +92,7 @@ std::string BundleActiveFormRecord::ToString()
     return "form name is " + this->formName_ +
         ", form dimension is " + std::to_string(this->formDimension_) +
         ", form id is " + std::to_string(this->formId_) +
+        ", uid id is " + std::to_string(this->uid_) +
         ", last used time stamp is" + std::to_string(this->formLastUsedTime_) +
         ", touch count is " + std::to_string(this->count_) + "\n";
 }

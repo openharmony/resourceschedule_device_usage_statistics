@@ -41,32 +41,34 @@ BundleActivePeriodStats::BundleActivePeriodStats(int32_t userId, int64_t beginTi
 }
 
 std::shared_ptr<BundleActivePackageStats> BundleActivePeriodStats::GetOrCreateUsageStats(
-    const std::string& bundleName)
+    const std::string& bundleName, const int32_t uid)
 {
-    std::map<std::string, std::shared_ptr<BundleActivePackageStats>>::iterator it = bundleStats_.find(bundleName);
+    std::string bundleStatsKey = bundleName + std::to_string(uid);
+    std::map<std::string, std::shared_ptr<BundleActivePackageStats>>::iterator it = bundleStats_.find(bundleStatsKey);
     if (it == bundleStats_.end()) {
         std::shared_ptr<BundleActivePackageStats> insertedStats = std::make_shared<BundleActivePackageStats>();
         insertedStats->endTimeStamp_ = endTime_;
         insertedStats->bundleName_ = GetCachedString(bundleName);
-        bundleStats_[insertedStats->bundleName_] = insertedStats;
+        insertedStats->uid_ = uid;
+        bundleStats_[bundleStatsKey] = insertedStats;
     }
-    return bundleStats_[bundleName];
+    return bundleStats_[bundleStatsKey];
 }
 
 void BundleActivePeriodStats::Update(const std::string bundleName, const std::string longTimeTaskName,
-    const int64_t timeStamp, const int32_t eventId, const std::string abilityId)
+    const int64_t timeStamp, const int32_t eventId, const std::string abilityId, const int32_t uid)
 {
     if (eventId == BundleActiveEvent::SHUTDOWN || eventId == BundleActiveEvent::FLUSH) {
         for (std::map<std::string, std::shared_ptr<BundleActivePackageStats>>::iterator it = bundleStats_.begin();
             it != bundleStats_.end(); ++it) {
             std::shared_ptr<BundleActivePackageStats> tmpUsageStats = it->second;
             if (tmpUsageStats != nullptr) {
-                tmpUsageStats->Update("", timeStamp, eventId, abilityId);
+                tmpUsageStats->Update("", timeStamp, eventId, abilityId, uid);
             }
         }
     } else if (BundleActiveEvent::IsBundleEvent(eventId)) {
-        auto usageStats = GetOrCreateUsageStats(bundleName);
-        usageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId);
+        auto usageStats = GetOrCreateUsageStats(bundleName, uid);
+        usageStats->Update(longTimeTaskName, timeStamp, eventId, abilityId, uid);
     }
     if (timeStamp > endTime_) {
         endTime_ = timeStamp;

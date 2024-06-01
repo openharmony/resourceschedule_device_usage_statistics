@@ -47,6 +47,8 @@ BundleActiveReportHandlerObject::BundleActiveReportHandlerObject(const BundleAct
     event_ = orig.event_;
     userId_ = orig.userId_;
     bundleName_ = orig.bundleName_;
+    uid_ = orig.uid_;
+    appIndex_ = orig.appIndex_;
 }
 
 BundleActiveCore::BundleActiveCore()
@@ -105,6 +107,8 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
             action.c_str(), userId, bundleName.c_str());
         if (!bundleActiveReportHandler_.expired()) {
             BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
+            tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
+            tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
             auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
@@ -232,7 +236,8 @@ std::shared_ptr<BundleActiveUserService> WEAK_FUNC BundleActiveCore::GetUserData
     return it->second;
 }
 
-void BundleActiveCore::OnBundleUninstalled(const int32_t userId, const std::string& bundleName)
+void BundleActiveCore::OnBundleUninstalled(const int32_t userId, const std::string& bundleName,
+    const int32_t uid, const int32_t appIndex)
 {
     BUNDLE_ACTIVE_LOGD("OnBundleUninstalled CALLED");
     std::lock_guard<std::mutex> lock(mutex_);
@@ -244,8 +249,8 @@ void BundleActiveCore::OnBundleUninstalled(const int32_t userId, const std::stri
     if (service == nullptr) {
         return;
     }
-    service->DeleteUninstalledBundleStats(bundleName);
-    bundleGroupController_->OnBundleUninstalled(userId, bundleName);
+    service->DeleteUninstalledBundleStats(bundleName, uid, appIndex);
+    bundleGroupController_->OnBundleUninstalled(userId, bundleName, uid, appIndex);
 }
 
 void BundleActiveCore::OnStatsChanged(const int32_t userId)

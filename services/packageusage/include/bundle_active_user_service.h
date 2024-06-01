@@ -63,7 +63,7 @@ public:
     void RenewStatsInMemory(const int64_t timeStamp);
     void RenewTableTime(int64_t oldTime, int64_t newTime);
     void OnUserRemoved();
-    void DeleteUninstalledBundleStats(const std::string& bundleName);
+    void DeleteUninstalledBundleStats(const std::string& bundleName, const int32_t uid, const int32_t appIndex);
     int32_t userId_;
     BundleActiveCalendar dailyExpiryDate_;
     ErrCode QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& PackageStats, int32_t intervalType,
@@ -107,6 +107,12 @@ private:
     void FlushDataInMem(std::set<std::string> &continueBundles,
         std::map<std::string, std::map<std::string, int>> &continueAbilities,
         std::map<std::string, std::map<std::string, int>> &continueServices);
+    void DeleteMemUsageStats(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
+        const std::string& bundleName, const int32_t deletedUid, int32_t appIndex);
+    void DeleteMemEvent(const std::shared_ptr<BundleActivePeriodStats>& currentStats, const std::string& bundleName,
+        const int32_t deletedUid, int32_t appIndex);
+    void DeleteMemRecords(const std::shared_ptr<BundleActivePeriodStats>& currentStats, const std::string& bundleName,
+        const int32_t deletedUid, int32_t appIndex);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

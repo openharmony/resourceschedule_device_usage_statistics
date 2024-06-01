@@ -23,7 +23,7 @@ namespace DeviceUsageStats {
 class BundleActiveModuleRecord : public Parcelable {
 public:
     void AddOrUpdateOneFormRecord(const std::string formName, const int32_t formDimension,
-        const int64_t formId, const int64_t timeStamp);
+        const int64_t formId, const int64_t timeStamp, const int32_t uid);
     void RemoveOneFormRecord(const std::string formName, const int32_t formDimension,
         const int64_t formId);
     void UpdateModuleRecord(int64_t timeStamp);
@@ -48,6 +48,7 @@ public:
     int32_t launchedCount_;
     int64_t lastModuleUsedTime_;
     int32_t userId_;
+    int32_t uid_;
     bool removed_;
     bool installFreeSupported_;
     bool isNewAdded_;
