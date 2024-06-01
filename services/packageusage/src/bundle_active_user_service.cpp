@@ -19,6 +19,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+    const int32_t MAIN_APP_INDEX = 0;
 void BundleActiveUserService::Init(const int64_t timeStamp)
 {
     database_.InitDatabaseTableInfo(timeStamp);
@@ -65,7 +66,7 @@ void BundleActiveUserService::DeleteMemUsageStats(const std::shared_ptr<BundleAc
     const std::string& bundleName, const int32_t deletedUid, int32_t appIndex)
 {
     std::string bundleStatsKey = bundleName + std::to_string(deletedUid);
-    if (appIndex != 0) {
+    if (appIndex == MAIN_APP_INDEX) {
         if (currentStats->bundleStats_.find(bundleStatsKey) != currentStats->bundleStats_.end()) {
             currentStats->bundleStats_.erase(bundleStatsKey);
         }
@@ -82,7 +83,7 @@ void BundleActiveUserService::DeleteMemUsageStats(const std::shared_ptr<BundleAc
 void BundleActiveUserService::DeleteMemEvent(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
     const std::string& bundleName, const int32_t deletedUid, int32_t appIndex)
 {
-    if (appIndex != 0) {
+    if (appIndex == MAIN_APP_INDEX) {
         for (auto eventIter = currentStats->events_.events_.begin();
             eventIter != currentStats->events_.events_.end();) {
             if (eventIter->bundleName_ == bundleName && eventIter->uid_ == deletedUid) {
@@ -109,7 +110,7 @@ void BundleActiveUserService::DeleteMemEvent(const std::shared_ptr<BundleActiveP
 void BundleActiveUserService::DeleteMemRecords(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
     const std::string& bundleName, const int32_t deletedUid, int32_t appIndex)
 {
-    if (appIndex != 0) {
+    if (appIndex == MAIN_APP_INDEX) {
         for (auto it : moduleRecords_) {
             std::string moduleKey = bundleName + " " + std::to_string(deletedUid);
             if (it.first.find(moduleKey) != std::string::npos) {
