@@ -83,7 +83,7 @@ public:
     * function: BundleActiveEvent, constructor using event Id, time stamp.
     * parameters: eventId, bundleName.
     */
-    BundleActiveEvent(const int32_t eventId, const std::string bundleName, const int32_t uid = 0);
+    BundleActiveEvent(const int32_t eventId, const std::string bundleName, const int32_t uid = DEFAULT_UID_ID);
     /*
     * function: BundleActiveEvent, constructor of continuous task event.
     * parameters: bundleName, continuousTaskAbilityName
@@ -95,14 +95,14 @@ public:
     * parameters: bundleName, abilityName, abilityId
     */
     BundleActiveEvent(const std::string bundleName, const std::string abilityName, const std::string abilityId,
-        const std::string moduleName, const int32_t uid = 0);
+        const std::string moduleName, const int32_t uid = DEFAULT_UID_ID);
     /*
     * function: BundleActiveEvent, constructor of form event.
     * parameters: bundleName, moduleName, formName, formDimension, formId, eventId
     */
     BundleActiveEvent(const std::string bundleName, const std::string moduleName,
         const std::string formName, const int32_t formDimension, const int64_t formId, const int32_t eventId,
-        const int32_t uid = 0);
+        const int32_t uid = DEFAULT_UID_ID);
     void PrintEvent(const bool debug) const;
     /*
     * function: operator=, override operator =.

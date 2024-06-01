@@ -107,7 +107,7 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
             action.c_str(), userId, bundleName.c_str());
         if (!bundleActiveReportHandler_.expired()) {
             BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
-            tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", 0);
+            tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
             tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);

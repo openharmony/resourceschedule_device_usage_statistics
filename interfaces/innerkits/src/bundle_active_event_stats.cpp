@@ -17,6 +17,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+    static const int32_t DEFAULT_UID_ID = -1;
 BundleActiveEventStats::BundleActiveEventStats()
 {
     eventId_ = 0;
@@ -25,7 +26,7 @@ BundleActiveEventStats::BundleActiveEventStats()
     lastEventTime_ = 0;
     totalTime_ = 0;
     count_ = 0;
-    uid_ = 0;
+    uid_ = DEFAULT_UID_ID;
     name_.clear();
 }
 
