@@ -136,7 +136,7 @@ void BundleActiveUserService::DeleteMemPackageUidSet(const std::shared_ptr<Bundl
 {
     if (appIndex != MAIN_APP_INDEX) {
         if (currentStats->packageContainUid_.find(bundleName) != currentStats->packageContainUid_.end()) {
-            currentStats->packageContainUid_[bundleName].erase(uid);
+            currentStats->packageContainUid_[bundleName].erase(deletedUid);
             if (currentStats->packageContainUid_[bundleName].size() == 0) {
                 currentStats->packageContainUid_.erase(bundleName);
             }
@@ -144,7 +144,6 @@ void BundleActiveUserService::DeleteMemPackageUidSet(const std::shared_ptr<Bundl
         return;
     }
     currentStats->packageContainUid_.erase(bundleName);
-
 }
 
 void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)

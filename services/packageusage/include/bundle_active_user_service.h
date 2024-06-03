@@ -113,8 +113,8 @@ private:
         const int32_t deletedUid, const int32_t appIndex);
     void DeleteMemRecords(const std::shared_ptr<BundleActivePeriodStats>& currentStats, const std::string& bundleName,
         const int32_t deletedUid, const int32_t appIndex);
-    void DeleteMemPackageUidSet(const std::shared_ptr<BundleActivePeriodStats>& currentStats, const std::string& bundleName,
-        const int32_t deletedUid, const int32_t appIndex);
+    void DeleteMemPackageUidSet(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
+        const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
