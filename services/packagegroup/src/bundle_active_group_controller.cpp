@@ -389,6 +389,7 @@ ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
     if (iter == bundleUserHistory_->userHistory_.end()) {
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
+    appGroup = ACTIVE_GROUP_NEVER;
     auto packageHistoryMap = iter->second;
     for (auto packageHistoryIter : *packageHistoryMap) {
         if (packageHistoryIter.first.find(bundleName) == std::string::npos || packageHistoryIter.second == nullptr) {
@@ -398,9 +399,6 @@ ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
             userId, bootBasedTimeStamp, false, packageHistoryIter.second->uid_);
         if (!oneBundleHistory) {
             continue;
-        }
-        if (appGroup == -1) {
-            appGroup = oneBundleHistory->currentGroup_;
         }
         BUNDLE_ACTIVE_LOGI("QueryAppGroup group is %{public}d", oneBundleHistory->currentGroup_);
         appGroup = std::min(oneBundleHistory->currentGroup_, appGroup);

@@ -108,11 +108,13 @@ private:
         std::map<std::string, std::map<std::string, int>> &continueAbilities,
         std::map<std::string, std::map<std::string, int>> &continueServices);
     void DeleteMemUsageStats(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
-        const std::string& bundleName, const int32_t deletedUid, int32_t appIndex);
+        const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex);
     void DeleteMemEvent(const std::shared_ptr<BundleActivePeriodStats>& currentStats, const std::string& bundleName,
-        const int32_t deletedUid, int32_t appIndex);
+        const int32_t deletedUid, const int32_t appIndex);
     void DeleteMemRecords(const std::shared_ptr<BundleActivePeriodStats>& currentStats, const std::string& bundleName,
-        const int32_t deletedUid, int32_t appIndex);
+        const int32_t deletedUid, const int32_t appIndex);
+    void DeleteMemPackageUidSet(const std::shared_ptr<BundleActivePeriodStats>& currentStats, const std::string& bundleName,
+        const int32_t deletedUid, const int32_t appIndex);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
