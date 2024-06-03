@@ -135,9 +135,10 @@ void BundleActiveUserService::DeleteMemPackageUidSet(const std::shared_ptr<Bundl
     const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex)
 {
     if (appIndex != MAIN_APP_INDEX) {
-        if (currentStats->packageContainUid_.find(bundleName) != currentStats->packageContainUid_.end()) {
-            currentStats->packageContainUid_[bundleName].erase(deletedUid);
-            if (currentStats->packageContainUid_[bundleName].size() == 0) {
+        auto iter = currentStats->packageContainUid_.find(bundleName);
+        if (iter != currentStats->packageContainUid_.end()) {
+            iter->second.erase(deletedUid);
+            if (iter->second.size() == 0) {
                 currentStats->packageContainUid_.erase(bundleName);
             }
         }
