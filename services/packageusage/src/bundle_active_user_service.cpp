@@ -129,7 +129,6 @@ void BundleActiveUserService::DeleteMemRecords(const std::shared_ptr<BundleActiv
             it++;
         }
     }
-    currentStats->packageContainUid_.erase(bundleName);
 }
 
 void BundleActiveUserService::DeleteMemPackageUidSet(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
