@@ -25,7 +25,7 @@ BundleActiveFormRecord::BundleActiveFormRecord()
     formLastUsedTime_ = -1;
     count_ = 0;
     userId_ = -1;
-    uid_ = 0;
+    uid_ = -1;
 }
 
 BundleActiveFormRecord::BundleActiveFormRecord(const std::string formName, const int32_t formDimension,
@@ -48,6 +48,7 @@ BundleActiveFormRecord::BundleActiveFormRecord(const BundleActiveFormRecord& ori
     formLastUsedTime_ = orig.formLastUsedTime_;
     count_ = orig.count_;
     userId_ = orig.userId_;
+    uid_ = orig.uid_;
 }
 
 void BundleActiveFormRecord::UpdateFormRecord(const int64_t timeStamp)

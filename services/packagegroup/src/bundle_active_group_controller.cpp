@@ -28,6 +28,7 @@ BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject()
 {
         bundleName_ = "";
         userId_ = -1;
+        uid_ = -1;
 }
 
 
