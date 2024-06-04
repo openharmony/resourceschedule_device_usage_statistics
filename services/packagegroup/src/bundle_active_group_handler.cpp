@@ -29,6 +29,7 @@ BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject(const BundleActiv
 {
     bundleName_ = orig.bundleName_;
     userId_ = orig.userId_;
+    uid_ = orig.uid_;
 }
 
 BundleActiveGroupHandler::BundleActiveGroupHandler
