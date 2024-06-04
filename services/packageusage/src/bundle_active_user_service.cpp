@@ -57,16 +57,17 @@ void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bu
             DeleteMemUsageStats(it, bundleName, uid, appIndex);
             DeleteMemEvent(it, bundleName, uid, appIndex);
             DeleteMemRecords(it, bundleName, uid, appIndex);
+            DeleteMemPackageUidSet(it, bundleName, uid, appIndex);
         }
     }
     database_.OnPackageUninstalled(userId_, bundleName, uid, appIndex);
 }
 
 void BundleActiveUserService::DeleteMemUsageStats(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
-    const std::string& bundleName, const int32_t deletedUid, int32_t appIndex)
+    const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex)
 {
     std::string bundleStatsKey = bundleName + std::to_string(deletedUid);
-    if (appIndex == MAIN_APP_INDEX) {
+    if (appIndex != MAIN_APP_INDEX) {
         if (currentStats->bundleStats_.find(bundleStatsKey) != currentStats->bundleStats_.end()) {
             currentStats->bundleStats_.erase(bundleStatsKey);
         }
@@ -81,13 +82,13 @@ void BundleActiveUserService::DeleteMemUsageStats(const std::shared_ptr<BundleAc
 }
 
 void BundleActiveUserService::DeleteMemEvent(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
-    const std::string& bundleName, const int32_t deletedUid, int32_t appIndex)
+    const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex)
 {
-    if (appIndex == MAIN_APP_INDEX) {
+    if (appIndex != MAIN_APP_INDEX) {
         for (auto eventIter = currentStats->events_.events_.begin();
             eventIter != currentStats->events_.events_.end();) {
             if (eventIter->bundleName_ == bundleName && eventIter->uid_ == deletedUid) {
-                currentStats->events_.events_.erase(eventIter);
+                eventIter = currentStats->events_.events_.erase(eventIter);
             } else {
                 eventIter++;
             }
@@ -99,7 +100,7 @@ void BundleActiveUserService::DeleteMemEvent(const std::shared_ptr<BundleActiveP
         for (auto eventIter = currentStats->events_.events_.begin();
             eventIter != currentStats->events_.events_.end();) {
             if (eventIter->bundleName_ == bundleName && uidSet.find(eventIter->uid_) != uidSet.end()) {
-                currentStats->events_.events_.erase(eventIter);
+                eventIter = currentStats->events_.events_.erase(eventIter);
             } else {
                 eventIter++;
             }
@@ -108,22 +109,40 @@ void BundleActiveUserService::DeleteMemEvent(const std::shared_ptr<BundleActiveP
 }
 
 void BundleActiveUserService::DeleteMemRecords(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
-    const std::string& bundleName, const int32_t deletedUid, int32_t appIndex)
+    const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex)
 {
-    if (appIndex == MAIN_APP_INDEX) {
-        for (auto it : moduleRecords_) {
+    if (appIndex != MAIN_APP_INDEX) {
+        for (auto it = moduleRecords_.begin(); it != moduleRecords_.end();) {
             std::string moduleKey = bundleName + " " + std::to_string(deletedUid);
-            if (it.first.find(moduleKey) != std::string::npos) {
-                moduleRecords_.erase(it.first);
+            if (it->first.find(moduleKey) != std::string::npos) {
+                it = moduleRecords_.erase(it);
+            } else {
+                it++;
             }
         }
         return;
     }
-    for (auto it : moduleRecords_) {
-        if (it.first.find(bundleName) != std::string::npos) {
-            moduleRecords_.erase(it.first);
-            break;
+    for (auto it = moduleRecords_.begin(); it != moduleRecords_.end();) {
+        if (it->first.find(bundleName) != std::string::npos) {
+            it = moduleRecords_.erase(it);
+        } else {
+            it++;
         }
+    }
+}
+
+void BundleActiveUserService::DeleteMemPackageUidSet(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
+    const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex)
+{
+    if (appIndex != MAIN_APP_INDEX) {
+        auto iter = currentStats->packageContainUid_.find(bundleName);
+        if (iter != currentStats->packageContainUid_.end()) {
+            iter->second.erase(deletedUid);
+            if (iter->second.size() == 0) {
+                currentStats->packageContainUid_.erase(bundleName);
+            }
+        }
+        return;
     }
     currentStats->packageContainUid_.erase(bundleName);
 }
