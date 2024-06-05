@@ -533,7 +533,7 @@ ErrCode BundleActiveService::CheckNativePermission(OHOS::Security::AccessToken::
 {
     int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, "ohos.permission.DUMP");
     if (ret == Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
-        RESSCHED_LOGD("check native permission success, request from dump");
+        BUNDLE_ACTIVE_LOGD("check native permission success, request from dump");
         return ERR_OK;
     }
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
