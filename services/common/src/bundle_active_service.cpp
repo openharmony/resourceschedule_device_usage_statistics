@@ -531,6 +531,16 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
 
 ErrCode BundleActiveService::CheckNativePermission(OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
+    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, "ohos.permission.DUMP");
+    if (ret == Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
+        BUNDLE_ACTIVE_LOGD("check native permission success, request from dump");
+        return ERR_OK;
+    }
+    int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
+    if (bundleHasPermission != 0) {
+        BUNDLE_ACTIVE_LOGE("check native permission not have permission");
+        return ERR_PERMISSION_DENIED;
+    }
     auto tokenFlag = AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
     if (tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
         return ERR_OK;
