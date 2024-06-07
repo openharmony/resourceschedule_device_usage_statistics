@@ -166,7 +166,7 @@ void BundleActiveService::InitService()
 #endif
     InitAppStateSubscriber(reportHandler_);
     InitContinuousSubscriber(reportHandler_);
-    bundleActiveCore_->InitBundleGroupController();
+    bundleActiveCore_->InitBundleGroupController(runner);
     SubscribeAppState();
     SubscribeContinuousTask();
 }
