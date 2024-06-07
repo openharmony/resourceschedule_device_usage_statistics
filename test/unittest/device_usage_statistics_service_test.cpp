@@ -202,7 +202,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_OnUs
     int userId = 100;
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
     coreObject->RestoreToDatabase(userId);
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
     coreObject->userStatServices_[userId] = userService;
@@ -226,7 +227,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rest
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
 
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
@@ -636,7 +638,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Repo
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->Init();
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
 
     BundleActiveEvent event;
     int32_t userId = 0;
@@ -664,7 +667,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Init
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
 }
 
 /*
@@ -686,7 +690,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Repo
     coreObject->ReportEventToAllUserId(event);
 
     coreObject->Init();
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
     coreObject->ReportEventToAllUserId(event);
     EXPECT_NE(coreObject, nullptr);
 }
@@ -702,7 +707,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rest
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
 
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
@@ -727,7 +733,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_001,
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
 
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
@@ -748,7 +755,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_002,
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
 
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
@@ -769,7 +777,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_003,
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
 
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
@@ -790,7 +799,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_004,
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
     int userId = 100;
     BundleActiveEvent event;
     int64_t timeStamp = 20000000000000;
@@ -812,7 +822,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_005,
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
     int userId = 100;
     int64_t timeStamp = 20000000000000;
     coreObject->bundleGroupController_->CheckAndUpdateGroup("test", userId, 0, timeStamp);
@@ -829,7 +840,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_006,
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
     int userId = 100;
     int64_t timeStamp = 20000000000000;
     coreObject->bundleGroupController_->SetAppGroup("test", userId, 0, 0, timeStamp, true);
@@ -847,7 +859,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_007,
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
     int userId = 100;
     coreObject->bundleGroupController_->IsBundleIdle("test", userId);
 }
@@ -863,7 +876,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
     int userId = 100;
     coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
     coreObject->bundleGroupController_->sptrBundleMgr_ = nullptr;
@@ -881,7 +895,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_010,
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
     int userId = 100;
     int64_t timeStamp = 20000000000000;
     coreObject->bundleGroupController_->ShutDown(timeStamp, userId);
@@ -986,7 +1001,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Shut
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->Init();
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
     coreObject->ShutDown();
     EXPECT_NE(coreObject, nullptr);
 }
@@ -1004,7 +1020,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Chec
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->OnUserRemoved(100);
     coreObject->Init();
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
     coreObject->userStatServices_[userId] = userService;
 
@@ -1044,7 +1061,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Cont
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->Init();
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
 
     int64_t bootBasedTimeStamp = 20000000000000;
     BundleActiveEvent event;
@@ -1075,7 +1093,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Chec
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->Init();
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
 
     std::string bundleName = "com.ohos.camera";
     int32_t userId = 100;
@@ -1108,7 +1127,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Pres
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->Init();
-    coreObject->InitBundleGroupController();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    coreObject->InitBundleGroupController(runner);
 
     int32_t eventId = BundleActiveEvent::ABILITY_FOREGROUND;
     coreObject->PreservePowerStateInfo(eventId);

@@ -48,6 +48,7 @@ static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
 const int32_t PACKAGE_USAGE_PARAM = 6;
 const int32_t MODULE_USAGE_PARAM = 4;
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
+const std::string DEVICE_USAGE_INIT_QUEUE = "DeviceUsageStatsInitQueue";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const bool REGISTER_RESULT =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<BundleActiveService>::GetInstance().get());
@@ -67,18 +68,12 @@ void BundleActiveService::OnStart()
         BUNDLE_ACTIVE_LOGI("service is ready. nothing to do.");
         return;
     }
-    runner_ = AppExecFwk::EventRunner::Create("device_usage_stats_init_handler");
-    if (runner_ == nullptr) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveService runner create failed!");
-        return;
-    }
-    handler_ = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner_);
-    if (handler_ == nullptr) {
-        BUNDLE_ACTIVE_LOGI("BundleActiveService handler create failed!");
-        return;
-    }
-    auto registerTask = [this]() { this->InitNecessaryState(); };
-    handler_->PostSyncTask(registerTask);
+    ffrtQueue_ = std::make_shared<ffrt::queue>(DEVICE_USAGE_INIT_QUEUE.c_str(),
+        ffrt::queue_attr().qos(ffrt::qos_user_initiated));
+    std::shared_ptr<BundleActiveService> service = shared_from_this();
+    ffrtQueue_->submit([service]() {
+        service->InitNecessaryState();
+    });
 }
 
 void BundleActiveService::InitNecessaryState()
@@ -91,16 +86,20 @@ void BundleActiveService::InitNecessaryState()
         = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityManager == nullptr) {
         BUNDLE_ACTIVE_LOGI("GetSystemAbilityManager fail!");
-        auto task = [this]() { this->InitNecessaryState(); };
-        handler_->PostTask(task, DELAY_TIME);
+        std::shared_ptr<BundleActiveService> service = shared_from_this();
+        ffrtQueue_->submit([service]() {
+            service->InitNecessaryState();
+        });
         return;
     }
     for (const auto& serviceItem : serviceIdSets) {
         auto checkResult = systemAbilityManager->CheckSystemAbility(serviceItem);
         if (!checkResult) {
             BUNDLE_ACTIVE_LOGI("request system service is not ready yet!");
-            auto task = [this]() { this->InitNecessaryState(); };
-            handler_->PostTask(task, DELAY_TIME);
+            std::shared_ptr<BundleActiveService> service = shared_from_this();
+            ffrtQueue_->submit([service]() {
+                service->InitNecessaryState();
+            });
             return;
         }
     }
@@ -109,8 +108,10 @@ void BundleActiveService::InitNecessaryState()
         auto getAbility = systemAbilityManager->GetSystemAbility(serviceItem);
         if (!getAbility) {
             BUNDLE_ACTIVE_LOGI("request system service object is not ready yet!");
-            auto task = [this]() { this->InitNecessaryState(); };
-            handler_->PostTask(task, DELAY_TIME);
+            std::shared_ptr<BundleActiveService> service = shared_from_this();
+            ffrtQueue_->submit([service]() {
+                service->InitNecessaryState();
+            });
             return;
         }
     }
@@ -130,9 +131,10 @@ void BundleActiveService::InitService()
         bundleActiveCore_ = std::make_shared<BundleActiveCore>();
         bundleActiveCore_->Init();
     }
+    std::shared_ptr<AppExecFwk::EventRunner> runner;
     if (reportHandler_ == nullptr) {
-        std::string threadName = "bundle_active_report_handler";
-        auto runner = AppExecFwk::EventRunner::Create(threadName);
+        std::string threadName = "device_usage_handler";
+        runner = AppExecFwk::EventRunner::Create(threadName);
         if (runner == nullptr) {
             BUNDLE_ACTIVE_LOGE("report handler is null");
             return;
@@ -146,6 +148,7 @@ void BundleActiveService::InitService()
     if (reportHandler_ != nullptr && bundleActiveCore_ != nullptr) {
         BUNDLE_ACTIVE_LOGI("core and handler is not null");
         bundleActiveCore_->SetHandler(reportHandler_);
+        runner = reportHandler_->GetEventRunner();
     } else {
         return;
     }

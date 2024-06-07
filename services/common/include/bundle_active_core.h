@@ -123,7 +123,7 @@ public:
     * set its handler and subscribe needed common event.
     * create bundleGroupController_ object.
     */
-    void InitBundleGroupController();
+    void InitBundleGroupController(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
 
     /*
     * function: SetHandler, BundleActiveService call it to set event report handler

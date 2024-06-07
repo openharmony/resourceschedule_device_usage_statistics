@@ -184,8 +184,6 @@ void BundleActiveCore::Init()
 void BundleActiveCore::InitBundleGroupController()
 {
     BUNDLE_ACTIVE_LOGD("InitBundleGroupController called");
-    std::string threadName = "bundle_active_group_handler";
-    auto runner = AppExecFwk::EventRunner::Create(threadName);
     if (runner == nullptr) {
         BUNDLE_ACTIVE_LOGE("report handler is null");
         return;
@@ -800,8 +798,10 @@ void BundleActiveCore::OnObserverDied(const wptr<IRemoteObject> &remote)
         BUNDLE_ACTIVE_LOGE("remote object is null.");
         return;
     }
-
-    bundleGroupHandler_->PostSyncTask([this, &remote]() { this->OnObserverDiedInner(remote); });
+    std::shared_ptr<BundleActiveCore> bundleActiveCore = shared_from_this();
+    bundleGroupHandler_->SubmitTask([bundleActiveCore, &remote]() {
+        bundleActiveCore->OnObserverDiedInner(remote);
+    });
 }
 
 void BundleActiveCore::OnObserverDiedInner(const wptr<IRemoteObject> &remote)
