@@ -33,6 +33,7 @@
 #include "file_ex.h"
 #include "string_ex.h"
 #include "system_ability.h"
+#include "ffrt.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -220,8 +221,7 @@ private:
     sptr<PowerMgr::IAsyncShutdownCallback> shutdownCallback_;
     sptr<BundleActivePowerStateCallbackService> powerStateCallback_;
 #endif
-    std::shared_ptr<AppExecFwk::EventRunner> runner_;
-    std::shared_ptr<AppExecFwk::EventHandler> handler_;
+    std::shared_ptr<ffrt::queue> ffrtQueue_;
     bool ready_ {false};
     int32_t ConvertIntervalType(const int32_t intervalType);
     void InitNecessaryState();
