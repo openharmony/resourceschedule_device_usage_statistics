@@ -69,7 +69,7 @@ void BundleActiveService::OnStart()
         return;
     }
     ffrtQueue_ = std::make_shared<ffrt::queue>(DEVICE_USAGE_INIT_QUEUE.c_str(),
-        ffrt::queue_attr().qos(ffrt::qos_user_initiated));
+        ffrt::queue_attr().qos(ffrt::qos_default));
     std::shared_ptr<BundleActiveService> service = shared_from_this();
     ffrtQueue_->submit([service]() {
         service->InitNecessaryState();
