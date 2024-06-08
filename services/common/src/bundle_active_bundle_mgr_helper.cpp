@@ -15,8 +15,7 @@
 
 #include "bundle_active_bundle_mgr_helper.h"
 
-#include "device_usage_oobe_manager.h"
-#include "device_usage_data_share_utils.h"
+#include "bundle_active_constant.h"
 #include "bundle_active_log.h"
 #include "accesstoken_kit.h"
 #include "application_info.h"
@@ -69,13 +68,13 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfo(const std::string &appName,
 bool BundleActiveBundleMgrHelper::GetApplicationInfos(const AppExecFwk::ApplicationFlag flag,
     const int userId, std::vector<AppExecFwk::ApplicationInfo> &appInfos)
 {
-    BUNDLE_ACTIVE_LOGD("start get application infos");
+    BUNDLE_ACTIVE_LOGI("start get application infos");
     std::lock_guard<std::mutex> lock(connectionMutex_);
 
     if (!Connect()) {
         return false;
     }
-    BUNDLE_ACTIVE_LOGD("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
+    BUNDLE_ACTIVE_LOGI("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
     if (bundleMgr_ != nullptr && bundleMgr_->GetApplicationInfos(flag, userId, appInfos)) {
         return true;
     }
@@ -143,8 +142,9 @@ bool BundleActiveBundleMgrHelper::IsLauncherApp(const std::string &bundleName, c
 
 void BundleActiveBundleMgrHelper::InitLauncherAppMap()
 {
+    BUNDLE_ACTIVE_LOGI("init laucherAppMap");
     isInitLauncherAppMap_ = true;
-    BUNDLE_ACTIVE_LOGI("agree obtain app list, init laucherAppMap");
+    InitSystemEvent();
     std::vector<AppExecFwk::ApplicationInfo> appInfos;
     bool result = GetApplicationInfos(AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
         AppExecFwk::Constants::ALL_USERID, appInfos);
@@ -155,5 +155,15 @@ void BundleActiveBundleMgrHelper::InitLauncherAppMap()
         launcherAppMap_[appInfo.bundleName] = appInfo.isLauncherApp;
     }
 }
+
+void BundleActiveBundleMgrHelper::InitSystemEvent()
+{
+    launcherAppMap_[OPERATION_SYSTEM_LOCK] = false;
+    launcherAppMap_[OPERATION_SYSTEM_UNLOCK] = false;
+    launcherAppMap_[OPERATION_SYSTEM_SLEEP] = false;
+    launcherAppMap_[OPERATION_SYSTEM_WAKEUP] = false;
+    launcherAppMap_[OPERATION_SYSTEM_WAKEUP] = false;
+}
+
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
