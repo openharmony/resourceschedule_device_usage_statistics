@@ -67,7 +67,7 @@ public:
 
 private:
     bool Connect();
-    InitSystemEvent();
+    void InitSystemEvent();
 
 private:
     std::map<std::string, bool> launcherAppMap_;
