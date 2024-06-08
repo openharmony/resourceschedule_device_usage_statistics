@@ -181,7 +181,7 @@ void BundleActiveCore::Init()
     BUNDLE_ACTIVE_LOGD("system time shot is %{public}lld", (long long)systemTimeShot_);
 }
 
-void BundleActiveCore::InitBundleGroupController()
+void BundleActiveCore::InitBundleGroupController(const std::shared_ptr<AppExecFwk::EventRunner> &runner)
 {
     BUNDLE_ACTIVE_LOGD("InitBundleGroupController called");
     if (runner == nullptr) {
@@ -799,7 +799,7 @@ void BundleActiveCore::OnObserverDied(const wptr<IRemoteObject> &remote)
         return;
     }
     std::shared_ptr<BundleActiveCore> bundleActiveCore = shared_from_this();
-    bundleGroupHandler_->SubmitTask([bundleActiveCore, &remote]() {
+    bundleGroupHandler_->PostSyncTask([bundleActiveCore, &remote]() {
         bundleActiveCore->OnObserverDiedInner(remote);
     });
 }
