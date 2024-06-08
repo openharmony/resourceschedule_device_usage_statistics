@@ -77,7 +77,7 @@ void BundleActiveService::OnStart()
     std::shared_ptr<BundleActiveService> service = shared_from_this();
     ffrtQueue_->submit([service]() {
         service->InitNecessaryState();
-    });
+        });
 }
 
 void BundleActiveService::InitNecessaryState()
@@ -93,7 +93,7 @@ void BundleActiveService::InitNecessaryState()
         std::shared_ptr<BundleActiveService> service = shared_from_this();
         ffrtQueue_->submit([service]() {
             service->InitNecessaryState();
-        }, ffrt::task_attr().delay(DELAY_TIME));
+            }, ffrt::task_attr().delay(DELAY_TIME));
         return;
     }
     for (const auto& serviceItem : serviceIdSets) {
@@ -103,7 +103,7 @@ void BundleActiveService::InitNecessaryState()
             std::shared_ptr<BundleActiveService> service = shared_from_this();
             ffrtQueue_->submit([service]() {
                 service->InitNecessaryState();
-            }, ffrt::task_attr().delay(DELAY_TIME));
+                }, ffrt::task_attr().delay(DELAY_TIME));
             return;
         }
     }
@@ -115,7 +115,7 @@ void BundleActiveService::InitNecessaryState()
             std::shared_ptr<BundleActiveService> service = shared_from_this();
             ffrtQueue_->submit([service]() {
                 service->InitNecessaryState();
-            }, ffrt::task_attr().delay(DELAY_TIME));
+                }, ffrt::task_attr().delay(DELAY_TIME));
             return;
         }
     }
