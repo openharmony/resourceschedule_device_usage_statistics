@@ -68,8 +68,6 @@ public:
 private:
     bool Connect();
     void InitSystemEvent();
-
-private:
     std::map<std::string, bool> launcherAppMap_;
     bool isInitLauncherAppMap_ = false;
     sptr<AppExecFwk::IBundleMgr> bundleMgr_ = nullptr;

@@ -129,8 +129,8 @@ bool BundleActiveBundleMgrHelper::IsLauncherApp(const std::string &bundleName, c
         return launcherAppMap_[bundleName];
     }
     AppExecFwk::ApplicationInfo appInfo;
-    if (GetApplicationInfo(bundleName,
-    AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, userId, appInfo) != ERR_OK) {
+    if (!GetApplicationInfo(bundleName,
+    AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, userId, appInfo)) {
         BUNDLE_ACTIVE_LOGE("get applicationInfo failed.");
         return false;
     }
@@ -146,9 +146,9 @@ void BundleActiveBundleMgrHelper::InitLauncherAppMap()
     isInitLauncherAppMap_ = true;
     InitSystemEvent();
     std::vector<AppExecFwk::ApplicationInfo> appInfos;
-    bool result = GetApplicationInfos(AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
-        AppExecFwk::Constants::ALL_USERID, appInfos);
-    if (result != ERR_OK) {
+    if (!GetApplicationInfos(AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
+        AppExecFwk::Constants::ALL_USERID, appInfos)) {
+            BUNDLE_ACTIVE_LOGE("Init Launcher App Map by BMS failed");
         return;
     }
     for (auto appInfo : appInfos) {
