@@ -70,6 +70,10 @@ void BundleActiveService::OnStart()
     }
     ffrtQueue_ = std::make_shared<ffrt::queue>(DEVICE_USAGE_INIT_QUEUE.c_str(),
         ffrt::queue_attr().qos(ffrt::qos_default));
+    if (ffrtQueue_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("BundleActiveService ffrtQueue create failed!");
+        return;
+    }
     std::shared_ptr<BundleActiveService> service = shared_from_this();
     ffrtQueue_->submit([service]() {
         service->InitNecessaryState();
