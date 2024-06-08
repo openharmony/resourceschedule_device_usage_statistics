@@ -57,14 +57,19 @@ public:
      */
     bool GetApplicationInfo(const std::string &appName, const AppExecFwk::ApplicationFlag flag,
         const int userId, AppExecFwk::ApplicationInfo &appInfo);
+    
+    bool GetApplicationInfos(const AppExecFwk::ApplicationFlag flag,
+        const int userId, std::vector<AppExecFwk::ApplicationInfo> &appInfos);
 
     bool IsLauncherApp(const std::string &bundleName, const int32_t userId);
 
-private:
-    bool Connect();
+    void InitLauncherAppMap();
 
 private:
-    std::unordered_set<std::string> launcherAppSet_;
+    bool Connect();
+    void InitSystemEvent();
+    std::map<std::string, bool> launcherAppMap_;
+    bool isInitLauncherAppMap_ = false;
     sptr<AppExecFwk::IBundleMgr> bundleMgr_ = nullptr;
     std::mutex connectionMutex_;
     DECLARE_DELAYED_SINGLETON(BundleActiveBundleMgrHelper);
