@@ -15,6 +15,8 @@
 
 #include "bundle_active_bundle_mgr_helper.h"
 
+#include "device_usage_oobe_manager.h"
+#include "device_usage_data_share_utils.h"
 #include "bundle_active_log.h"
 #include "accesstoken_kit.h"
 #include "application_info.h"
@@ -32,6 +34,7 @@ BundleActiveBundleMgrHelper::BundleActiveBundleMgrHelper()
 
 BundleActiveBundleMgrHelper::~BundleActiveBundleMgrHelper()
 {
+    launcherAppMap_.clear();
 }
 
 void BundleActiveBundleMgrHelper::GetNameForUid(int32_t uid, std::string& bundleName)
@@ -58,6 +61,22 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfo(const std::string &appName,
     }
     BUNDLE_ACTIVE_LOGD("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
     if (bundleMgr_ != nullptr && bundleMgr_->GetApplicationInfo(appName, flag, userId, appInfo)) {
+        return true;
+    }
+    return false;
+}
+
+bool BundleActiveBundleMgrHelper::GetApplicationInfos(const AppExecFwk::ApplicationFlag flag,
+    const int userId, std::vector<AppExecFwk::ApplicationInfo> &appInfos)
+{
+    BUNDLE_ACTIVE_LOGD("start get application infos");
+    std::lock_guard<std::mutex> lock(connectionMutex_);
+
+    if (!Connect()) {
+        return false;
+    }
+    BUNDLE_ACTIVE_LOGD("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
+    if (bundleMgr_ != nullptr && bundleMgr_->GetApplicationInfos(flag, userId, appInfos)) {
         return true;
     }
     return false;
@@ -102,8 +121,13 @@ bool BundleActiveBundleMgrHelper::Connect()
 
 bool BundleActiveBundleMgrHelper::IsLauncherApp(const std::string &bundleName, const int32_t userId)
 {
-    if (launcherAppSet_.find(bundleName) != launcherAppSet_.end()) {
-        return true;
+    if (!isInitLauncherAppMap_) {
+        InitLauncherAppMap();
+    }
+    if (launcherAppMap_.find(bundleName) != launcherAppMap_.end()) {
+        BUNDLE_ACTIVE_LOGD("launcherAppMap cache, bundleName:%{public}s isLauncherApp:%{public}d",
+            bundleName.c_str(), launcherAppMap_[bundleName]);
+        return launcherAppMap_[bundleName];
     }
     AppExecFwk::ApplicationInfo appInfo;
     if (GetApplicationInfo(bundleName,
@@ -111,11 +135,25 @@ bool BundleActiveBundleMgrHelper::IsLauncherApp(const std::string &bundleName, c
         BUNDLE_ACTIVE_LOGE("get applicationInfo failed.");
         return false;
     }
-    if (appInfo.isLauncherApp) {
-        launcherAppSet_.insert(bundleName);
-        return true;
+    launcherAppMap_[bundleName] = appInfo.isLauncherApp;
+    BUNDLE_ACTIVE_LOGD("insert launcherAppMap, bundleName:%{public}s isLauncherApp:%{public}d",
+        bundleName.c_str(), launcherAppMap_[bundleName]);
+    return appInfo.isLauncherApp;
+}
+
+void BundleActiveBundleMgrHelper::InitLauncherAppMap()
+{
+    isInitLauncherAppMap_ = true;
+    BUNDLE_ACTIVE_LOGI("agree obtain app list, init laucherAppMap");
+    std::vector<AppExecFwk::ApplicationInfo> appInfos;
+    bool result = GetApplicationInfos(AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
+        AppExecFwk::Constants::ALL_USERID, appInfos);
+    if (result != ERR_OK) {
+        return;
     }
-    return false;
+    for (auto appInfo : appInfos) {
+        launcherAppMap_[appInfo.bundleName] = appInfo.isLauncherApp;
+    }
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

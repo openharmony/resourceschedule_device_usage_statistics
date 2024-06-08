@@ -135,6 +135,35 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_001, Function | 
 }
 
 /*
+ * @tc.name: BundleActiveBundleMgrHelperTest_002
+ * @tc.desc: test GetApplicationInfos
+ * @tc.type: FUNC
+ * @tc.require: issuesI9SQ6G
+ */
+HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_002, Function | MediumTest | Level0)
+{
+    AppExecFwk::ApplicationFlag flag = AppExecFwk::GET_BASIC_APPLICATION_INFO;
+    std::vector<AppExecFwk::ApplicationInfo> appInfos;
+    BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfos(flag, 0, appInfos);
+    SUCCEED();
+}
+
+/*
+ * @tc.name: BundleActiveBundleMgrHelperTest_003
+ * @tc.desc: test is launcherApp
+ * @tc.type: FUNC
+ * @tc.require: issuesI9SQ6G
+ */
+HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | MediumTest | Level0)
+{
+    BundleActiveBundleMgrHelper::GetInstance()->InitLauncherAppMap();
+    BundleActiveBundleMgrHelper::GetInstance()->IsLauncherApp("test", 0);
+    BundleActiveBundleMgrHelper::GetInstance()->launcherAppMap_["test"] = false;
+    BundleActiveBundleMgrHelper::GetInstance()->IsLauncherApp("test", 0);
+    SUCCEED();
+}
+
+/*
  * @tc.name: BundleActiveAppStateObserverTest_001
  * @tc.desc: test the interface of bundle_active_app_state_observer
  * @tc.type: FUNC
