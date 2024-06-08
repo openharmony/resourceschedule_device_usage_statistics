@@ -162,7 +162,6 @@ void BundleActiveBundleMgrHelper::InitSystemEvent()
     launcherAppMap_[OPERATION_SYSTEM_UNLOCK] = false;
     launcherAppMap_[OPERATION_SYSTEM_SLEEP] = false;
     launcherAppMap_[OPERATION_SYSTEM_WAKEUP] = false;
-    launcherAppMap_[OPERATION_SYSTEM_WAKEUP] = false;
 }
 
 }  // namespace DeviceUsageStats
