@@ -24,6 +24,7 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
+    const int32_t MAIN_APP_INDEX = 0;
 BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject()
 {
         bundleName_ = "";
@@ -105,7 +106,7 @@ void BundleActiveGroupController::SetHandlerAndCreateUserHistory(
     activeGroupHandler_ = groupHandler;
 }
 
-void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, const std::string bundleName,
+void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, const std::string& bundleName,
     const int32_t uid, const int32_t appIndex)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -115,8 +116,25 @@ void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, cons
     if (oneUserHistory == nullptr) {
         return;
     }
-    oneUserHistory->erase(bundleName);
+    DeleteMemoryUsageGroup(oneUserHistory, bundleName, uid, appIndex);
     bundleUserHistory_->OnBundleUninstalled(userId, bundleName, uid, appIndex);
+}
+
+void BundleActiveGroupController::DeleteMemoryUsageGroup(
+    const std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>& userHostory,
+        const std::string& bundleName, const int32_t uid, const int32_t appIndex)
+{
+    if (appIndex != MAIN_APP_INDEX) {
+        std::string moduleKey = bundleName + std::to_string(uid);
+        userHostory->erase(moduleKey);
+    }
+    for (auto it = userHostory->begin(); it != userHostory->end();) {
+        if (it->first.find(bundleName) != std::string::npos) {
+            it = userHostory->erase(it);
+        } else {
+            it++;
+        }
+    }
 }
 
 bool BundleActiveGroupController::GetBundleMgrProxy()

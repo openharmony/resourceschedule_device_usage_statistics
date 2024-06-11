@@ -31,6 +31,7 @@
 #include "bundle_active_stats_combiner.h"
 #include "bundle_active_report_handler.h"
 #include "bundle_active_log.h"
+#include "bundle_active_group_controller.h"
 
 using namespace testing::ext;
 
@@ -771,5 +772,34 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumT
     bundleActiveReportHandler->ProcessEvent(pointer);
     bundleActiveReportHandler->ProcessEvent(pointer);
 }
+
+/*
+ * @tc.name: BundleActiveGroupController_001
+ * @tc.desc: DeleteMemoryUsageGroup
+ * @tc.type: FUNC
+ * @tc.require: IA4GZ0
+ */
+HWTEST_F(PackageUsageTest, BundleActiveGroupController_001, Function | MediumTest | Level0)
+{
+    auto groupController = std::make_shared<BundleActiveGroupController>(false);
+    auto userHistory = std::make_shared<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>();
+    int32_t uid = 0;
+    int32_t appIndex = 1;
+    std::string bundleName = "test";
+    userHistory[bundleName + std::to_string(uid)] = std::make_shared<BundleActivePackageHistory>();
+    uid = 100;
+    userHistory[bundleName + std::to_string(uid)] = std::make_shared<BundleActivePackageHistory>();
+    uid = 200;
+    userHistory[bundleName + std::to_string(uid)] = std::make_shared<BundleActivePackageHistory>();
+    groupController->DeleteMemoryUsageGroup(userHistory, bundleName, uid, appIndex);
+    bool result = userHistory->find(bundleName + std::to_string(uid));
+    EXPECT_NE(result, true);
+    int32_t appIndex = 0;
+    groupController->DeleteMemoryUsageGroup(userHistory, bundleName, uid, appIndex);
+    uid = 0;
+    bool result = userHistory->find(bundleName + std::to_string(uid));
+    EXPECT_NE(result, true);
+}
+
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
