@@ -786,19 +786,19 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupController_001, Function | MediumTes
     int32_t uid = 0;
     int32_t appIndex = 1;
     std::string bundleName = "test";
-    userHistory[bundleName + std::to_string(uid)] = std::make_shared<BundleActivePackageHistory>();
+    userHistory->emplace(bundleName + std::to_string(uid), std::make_shared<BundleActivePackageHistory>());
     uid = 100;
-    userHistory[bundleName + std::to_string(uid)] = std::make_shared<BundleActivePackageHistory>();
+    userHistory->emplace(bundleName + std::to_string(uid), std::make_shared<BundleActivePackageHistory>());
     uid = 200;
-    userHistory[bundleName + std::to_string(uid)] = std::make_shared<BundleActivePackageHistory>();
+    userHistory->emplace(bundleName + std::to_string(uid), std::make_shared<BundleActivePackageHistory>());
     groupController->DeleteMemoryUsageGroup(userHistory, bundleName, uid, appIndex);
-    bool result = userHistory->find(bundleName + std::to_string(uid));
-    EXPECT_NE(result, true);
-    int32_t appIndex = 0;
+    auto it = userHistory->find(bundleName + std::to_string(uid));
+    EXPECT_EQ(it, userHistory->end());
+    appIndex = 0;
     groupController->DeleteMemoryUsageGroup(userHistory, bundleName, uid, appIndex);
     uid = 0;
-    bool result = userHistory->find(bundleName + std::to_string(uid));
-    EXPECT_NE(result, true);
+    it = userHistory->find(bundleName + std::to_string(uid));
+    EXPECT_EQ(it, userHistory->end());
 }
 
 }  // namespace DeviceUsageStats

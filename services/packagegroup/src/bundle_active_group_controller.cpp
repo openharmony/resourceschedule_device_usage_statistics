@@ -122,7 +122,7 @@ void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, cons
 
 void BundleActiveGroupController::DeleteMemoryUsageGroup(
     const std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>& userHostory,
-        const std::string& bundleName, const int32_t uid, const int32_t appIndex)
+    const std::string& bundleName, const int32_t uid, const int32_t appIndex)
 {
     if (appIndex != MAIN_APP_INDEX) {
         std::string moduleKey = bundleName + std::to_string(uid);
