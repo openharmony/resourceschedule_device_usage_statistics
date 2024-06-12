@@ -59,7 +59,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_OnPackageU
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t userId = 0;
-    std::string bundleName = "defaultBundleName";std::vector<std::vector<int64_t>>
+    std::string bundleName = "defaultBundleName";
     database->sortedTableArray_ = {{1}};
     database->eventTableName_ = "defaultBundleName";
     database->bundleHistoryTableName_ = "defaultBundleName";
@@ -97,8 +97,8 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_NearIndexO
     Function | MediumTest | Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
-    int64_t currentTime = 0,
-    vector<int64_t> sortedTableArray {0};
+    int64_t currentTime = 0；
+    vector<int64_t> sortedTableArray = {0};
     database->NearIndexOnOrBeforeCurrentTime(currentTime, sortedTableArray);
     EXPECT_NE(database, nullptr);
 }

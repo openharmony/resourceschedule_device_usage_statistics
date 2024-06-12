@@ -738,11 +738,16 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_RenewStatsInMemory_001, Function | M
     bundleUserService->Init(timeStamp);
 
     auto packageStat = std::make_shared<BundleActivePackageStats>();
-    bundleUserService->currentStats_[0]->bundleStats_.emplace("normal", packageStat);
+    packageStat->uid_ = 0;
+    packageStat->bundleName_ = "normal";
+    std::string bundleStatsKey = packageStat->bundleName_ + std::to_string(packageStat->uid_);
+    bundleUserService->currentStats_[0]->bundleStats_.emplace(bundleStatsKey, packageStat);
 
     packageStat->abilities_.emplace("normal", 123);
     packageStat->longTimeTasks_.emplace("normal", 123);
-    bundleUserService->currentStats_[0]->bundleStats_.emplace("normal", packageStat);
+    bundleUserService->currentStats_[0]->bundleStats_.emplace(bundleStatsKey, packageStat);
+    bundleUserService->RenewStatsInMemory(timeStamp);
+    bundleUserService->currentStats_[0]->packageContainUid_[packageStat->bundleName_].insert(packageStat->uid_);
     packageStat = nullptr;
     bundleUserService->currentStats_[0]->bundleStats_.emplace("default", packageStat);
     bundleUserService->RenewStatsInMemory(timeStamp);
