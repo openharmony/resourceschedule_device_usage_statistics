@@ -36,8 +36,8 @@ ohos_unittest("BundleActiveTotalTest") {
   ]
 
   sources = [
-    "bundle_active_usage_database_test.cpp",
     "bundle_active_total_test.cpp",
+    "bundle_active_usage_database_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
