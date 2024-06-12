@@ -350,7 +350,7 @@ void BundleActiveUserService::FlushDataInMem(std::set<std::string> &continueBund
             (*it)->Update(bundleUsageStats.bundleName_, "", dailyExpiryDate_.GetMilliseconds() - 1,
                 BundleActiveEvent::END_OF_THE_DAY, "", bundleUsageStats.uid_);
 
-            continueBundles.insert(bundleStatsKey);
+            continueBundles.insert(bundleUsageStats.bundleName_);
             NotifyStatsChanged();
         }
         (*it)->CommitTime(dailyExpiryDate_.GetMilliseconds() - 1);
