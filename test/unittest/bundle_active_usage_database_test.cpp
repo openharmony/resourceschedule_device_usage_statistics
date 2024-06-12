@@ -66,7 +66,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_OnPackageU
     database->moduleRecordsTableName_ = "defaultBundleName";
     database->formRecordsTableName_ = "defaultBundleName";
 
-    database->OnPackageUninstalled(userId, bundleName);
+    database->OnPackageUninstalled(userId, bundleName, 0, 0);
     EXPECT_NE(database, nullptr);
 }
 
@@ -97,7 +97,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_NearIndexO
     Function | MediumTest | Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
-    int64_t currentTime = 0；
+    int64_t currentTime = 0;
     vector<int64_t> sortedTableArray = {0};
     database->NearIndexOnOrBeforeCurrentTime(currentTime, sortedTableArray);
     EXPECT_NE(database, nullptr);
