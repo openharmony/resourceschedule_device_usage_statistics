@@ -1420,7 +1420,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
     stats->packageContainUid_["test"].insert(1);
     stats->packageContainUid_["test"].insert(2);
     curStats.push_back(stats);
-    userService->currentStats_ = curStats;z
+    userService->currentStats_ = curStats;
     userService->DeleteUninstalledBundleStats("test", 0, appIndex);
     appIndex = 0;
     userService->DeleteUninstalledBundleStats("test", 0, appIndex);
