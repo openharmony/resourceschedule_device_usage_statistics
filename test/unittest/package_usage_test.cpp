@@ -796,11 +796,11 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupController_001, Function | MediumTes
     userHistory->emplace(bundleName + std::to_string(uid), std::make_shared<BundleActivePackageHistory>());
     uid = 200;
     userHistory->emplace(bundleName + std::to_string(uid), std::make_shared<BundleActivePackageHistory>());
-    groupController->DeleteMemoryUsageGroup(userHistory, bundleName, uid, appIndex);
+    groupController->DeleteUsageGroupCache(userHistory, bundleName, uid, appIndex);
     auto it = userHistory->find(bundleName + std::to_string(uid));
     EXPECT_EQ(it, userHistory->end());
     appIndex = 0;
-    groupController->DeleteMemoryUsageGroup(userHistory, bundleName, uid, appIndex);
+    groupController->DeleteUsageGroupCache(userHistory, bundleName, uid, appIndex);
     uid = 0;
     it = userHistory->find(bundleName + std::to_string(uid));
     EXPECT_EQ(it, userHistory->end());
