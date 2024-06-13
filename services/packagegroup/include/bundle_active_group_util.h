@@ -25,7 +25,7 @@ public:
     ~BundleActiveUtil() = delete;
 
     static std::string GetBundleUsageKey(const std::string& bundleName, const int32_t uid);
-}
+};
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_GROUP_UTIL_H
