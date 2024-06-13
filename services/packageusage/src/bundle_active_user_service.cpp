@@ -16,6 +16,7 @@
 #include "bundle_active_user_service.h"
 #include "bundle_active_core.h"
 #include "bundle_active_log.h"
+#include "bundle_active_group_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -66,7 +67,7 @@ void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bu
 void BundleActiveUserService::DeleteMemUsageStats(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
     const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex)
 {
-    std::string bundleStatsKey = bundleName + std::to_string(deletedUid);
+    std::string bundleStatsKey = BundleActiveUtil::GetBundleUsageKey(bundleName, deletedUid);
     if (appIndex != MAIN_APP_INDEX) {
         if (currentStats->bundleStats_.find(bundleStatsKey) != currentStats->bundleStats_.end()) {
             currentStats->bundleStats_.erase(bundleStatsKey);
@@ -75,7 +76,7 @@ void BundleActiveUserService::DeleteMemUsageStats(const std::shared_ptr<BundleAc
     }
     if (currentStats->packageContainUid_.find(bundleName) != currentStats->packageContainUid_.end()) {
         for (auto it: currentStats->packageContainUid_.find(bundleName)->second) {
-            bundleStatsKey = bundleName + std::to_string(it);
+            bundleStatsKey = BundleActiveUtil::GetBundleUsageKey(bundleName, it);
             currentStats->bundleStats_.erase(bundleStatsKey);
         }
     }
@@ -366,7 +367,7 @@ void BundleActiveUserService::UpdateContinueAbilitiesMemory(const int64_t& begin
         return;
     }
     for (auto uid: iter->second) {
-        std::string continueAbilitiesKey = continueBundleName + std::to_string(uid);
+        std::string continueAbilitiesKey = BundleActiveUtil::GetBundleUsageKey(continueBundleName, uid);
         auto ability = continueAbilities.find(continueBundleName);
         if (ability == continueAbilities.end()) {
             return;
@@ -390,7 +391,7 @@ void BundleActiveUserService::UpdateContinueServicesMemory(const int64_t& beginT
     }
 
     for (auto uid: iter->second) {
-        std::string continueServicesKey = continueBundleName + std::to_string(uid);
+        std::string continueServicesKey = BundleActiveUtil::GetBundleUsageKey(continueBundleName, uid);
         auto service = continueServices.find(continueServicesKey);
         if (service == continueServices.end()) {
             return;

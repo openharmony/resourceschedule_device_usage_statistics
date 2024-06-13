@@ -68,7 +68,7 @@ public:
     void OnUserRemoved(const int32_t userId);
     void OnBundleUninstalled(const int32_t userId, const std::string& bundleName, const int32_t uid,
         const int32_t appIndex);
-    void DeleteMemoryUsageGroup(
+    void DeleteUsageGroupCache(
         const std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>& userHostory,
         const std::string& bundleName, const int32_t uid, const int32_t appIndex);
     void OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp);

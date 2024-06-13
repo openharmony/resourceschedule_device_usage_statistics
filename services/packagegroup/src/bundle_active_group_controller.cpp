@@ -20,6 +20,7 @@
 #include "bundle_active_group_handler.h"
 #include "ibundle_active_service.h"
 #include "bundle_active_group_controller.h"
+#include "bundle_active_group_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -116,16 +117,16 @@ void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, cons
     if (oneUserHistory == nullptr) {
         return;
     }
-    DeleteMemoryUsageGroup(oneUserHistory, bundleName, uid, appIndex);
+    DeleteUsageGroupCache(oneUserHistory, bundleName, uid, appIndex);
     bundleUserHistory_->OnBundleUninstalled(userId, bundleName, uid, appIndex);
 }
 
-void BundleActiveGroupController::DeleteMemoryUsageGroup(
+void BundleActiveGroupController::DeleteUsageGroupCache(
     const std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>& userHostory,
     const std::string& bundleName, const int32_t uid, const int32_t appIndex)
 {
     if (appIndex != MAIN_APP_INDEX) {
-        std::string moduleKey = bundleName + std::to_string(uid);
+        std::string moduleKey = BundleActiveUtil::GetBundleUsageKey(bundleName, uid);
         userHostory->erase(moduleKey);
     }
     for (auto it = userHostory->begin(); it != userHostory->end();) {
