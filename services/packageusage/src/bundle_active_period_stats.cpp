@@ -15,6 +15,7 @@
 
 #include "bundle_active_period_stats.h"
 #include "bundle_active_event.h"
+#include "bundle_active_group_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -43,7 +44,7 @@ BundleActivePeriodStats::BundleActivePeriodStats(int32_t userId, int64_t beginTi
 std::shared_ptr<BundleActivePackageStats> BundleActivePeriodStats::GetOrCreateUsageStats(
     const std::string& bundleName, const int32_t uid)
 {
-    std::string bundleStatsKey = bundleName + std::to_string(uid);
+    std::string bundleStatsKey = BundleActiveUtil::GetBundleUsageKey(bundleName, uid);
     std::map<std::string, std::shared_ptr<BundleActivePackageStats>>::iterator it = bundleStats_.find(bundleStatsKey);
     if (it == bundleStats_.end()) {
         std::shared_ptr<BundleActivePackageStats> insertedStats = std::make_shared<BundleActivePackageStats>();

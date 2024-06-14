@@ -16,6 +16,7 @@
 #include "app_group_callback_info.h"
 #include "bundle_active_user_history.h"
 #include "bundle_active_log.h"
+#include "bundle_active_group_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -142,7 +143,7 @@ shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryI
     if (!oneUserHistory) {
         return nullptr;
     }
-    std::string userHistoryKey = bundleName + std::to_string(uid);
+    std::string userHistoryKey = BundleActiveUtil::GetBundleUsageKey(bundleName, uid);
     auto it = oneUserHistory->find(userHistoryKey);
     if ((it == oneUserHistory->end()) && create) {
         shared_ptr<BundleActivePackageHistory> usageHistoryInserted =

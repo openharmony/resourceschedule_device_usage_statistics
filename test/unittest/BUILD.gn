@@ -35,7 +35,10 @@ ohos_unittest("BundleActiveTotalTest") {
     "-Dprotected=public",
   ]
 
-  sources = [ "bundle_active_total_test.cpp" ]
+  sources = [
+    "bundle_active_total_test.cpp",
+    "bundle_active_usage_database_test.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 

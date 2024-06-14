@@ -31,6 +31,7 @@
 #include "bundle_active_stats_combiner.h"
 #include "bundle_active_report_handler.h"
 #include "bundle_active_log.h"
+#include "bundle_active_group_controller.h"
 
 using namespace testing::ext;
 
@@ -737,11 +738,16 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_RenewStatsInMemory_001, Function | M
     bundleUserService->Init(timeStamp);
 
     auto packageStat = std::make_shared<BundleActivePackageStats>();
-    bundleUserService->currentStats_[0]->bundleStats_.emplace("normal", packageStat);
+    packageStat->uid_ = 0;
+    packageStat->bundleName_ = "normal";
+    std::string bundleStatsKey = packageStat->bundleName_ + std::to_string(packageStat->uid_);
+    bundleUserService->currentStats_[0]->bundleStats_.emplace(bundleStatsKey, packageStat);
 
     packageStat->abilities_.emplace("normal", 123);
     packageStat->longTimeTasks_.emplace("normal", 123);
-    bundleUserService->currentStats_[0]->bundleStats_.emplace("normal", packageStat);
+    bundleUserService->currentStats_[0]->bundleStats_.emplace(bundleStatsKey, packageStat);
+    bundleUserService->RenewStatsInMemory(timeStamp);
+    bundleUserService->currentStats_[0]->packageContainUid_[packageStat->bundleName_].insert(packageStat->uid_);
     packageStat = nullptr;
     bundleUserService->currentStats_[0]->bundleStats_.emplace("default", packageStat);
     bundleUserService->RenewStatsInMemory(timeStamp);
@@ -771,5 +777,34 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumT
     bundleActiveReportHandler->ProcessEvent(pointer);
     bundleActiveReportHandler->ProcessEvent(pointer);
 }
+
+/*
+ * @tc.name: BundleActiveGroupController_001
+ * @tc.desc: DeleteMemoryUsageGroup
+ * @tc.type: FUNC
+ * @tc.require: IA4GZ0
+ */
+HWTEST_F(PackageUsageTest, BundleActiveGroupController_001, Function | MediumTest | Level0)
+{
+    auto groupController = std::make_shared<BundleActiveGroupController>(false);
+    auto userHistory = std::make_shared<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>();
+    int32_t uid = 0;
+    int32_t appIndex = 1;
+    std::string bundleName = "test";
+    userHistory->emplace(bundleName + std::to_string(uid), std::make_shared<BundleActivePackageHistory>());
+    uid = 100;
+    userHistory->emplace(bundleName + std::to_string(uid), std::make_shared<BundleActivePackageHistory>());
+    uid = 200;
+    userHistory->emplace(bundleName + std::to_string(uid), std::make_shared<BundleActivePackageHistory>());
+    groupController->DeleteUsageGroupCache(userHistory, bundleName, uid, appIndex);
+    auto it = userHistory->find(bundleName + std::to_string(uid));
+    EXPECT_EQ(it, userHistory->end());
+    appIndex = 0;
+    groupController->DeleteUsageGroupCache(userHistory, bundleName, uid, appIndex);
+    uid = 0;
+    it = userHistory->find(bundleName + std::to_string(uid));
+    EXPECT_EQ(it, userHistory->end());
+}
+
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
