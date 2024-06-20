@@ -40,7 +40,7 @@ using namespace OHOS::Security;
 static const int32_t PERIOD_BEST_JS = 0;
 static const int32_t PERIOD_YEARLY_JS = 4;
 static const int32_t PERIOD_BEST_SERVICE = 4;
-static const int32_t DELAY_TIME = 2000;
+static const int32_t DELAY_TIME = 2000 * 1000;
 static const std::string PERMITTED_PROCESS_NAME = "foundation";
 static const int32_t MAXNUM_UP_LIMIT = 1000;
 const int32_t EVENTS_PARAM = 5;
