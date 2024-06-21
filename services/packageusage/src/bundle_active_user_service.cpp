@@ -368,7 +368,7 @@ void BundleActiveUserService::UpdateContinueAbilitiesMemory(const int64_t& begin
     }
     for (auto uid: iter->second) {
         std::string continueAbilitiesKey = BundleActiveUtil::GetBundleUsageKey(continueBundleName, uid);
-        auto ability = continueAbilities.find(continueBundleName);
+        auto ability = continueAbilities.find(continueAbilitiesKey);
         if (ability == continueAbilities.end()) {
             return;
         }

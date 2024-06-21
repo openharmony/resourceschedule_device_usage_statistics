@@ -875,7 +875,6 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
     if (tableRowNumber == TABLE_ROW_ZERO) {
         return nullptr;
     }
-    string bundleName;
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userUsageHistory =
         make_shared<map<string, shared_ptr<BundleActivePackageHistory>>>();
     int32_t currentBundleGroupReason = 0;
