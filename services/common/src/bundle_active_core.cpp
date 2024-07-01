@@ -698,13 +698,13 @@ void BundleActiveCore::OnAppGroupChanged(const AppGroupCallbackInfo& callbackInf
 {
     std::shared_ptr<BundleActiveCore> bundleActiveCore = shared_from_this();
     AccessToken::HapTokenInfo tokenInfo = AccessToken::HapTokenInfo();
-    bundleGroupController_->PostTask([bundleActiveCore, callbackInfo, tokenInfo]() {
+    bundleGroupHandler_->PostTask([bundleActiveCore, callbackInfo, tokenInfo]() {
         bundleActiveCore->NotifOberserverGroupChanged(callbackInfo, tokenInfo);
     });
 }
 
 void BundleActiveCore::NotifOberserverGroupChanged(const AppGroupCallbackInfo& callbackInfo,
-    AccessToken::HapTokenInfo& tokenInfo)
+    AccessToken::HapTokenInfo tokenInfo)
 {
     std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
     for (const auto &item : groupChangeObservers_) {

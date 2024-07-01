@@ -34,7 +34,7 @@ namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
 
 class BundleActiveGroupHandler;
-class BundleActiveGroupController : public std::enable_shared_from_this<BundleActiveGroupController>{
+class BundleActiveGroupController : public std::enable_shared_from_this<BundleActiveGroupController> {
 public:
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     using PowerMgrClient = OHOS::PowerMgr::PowerMgrClient;
