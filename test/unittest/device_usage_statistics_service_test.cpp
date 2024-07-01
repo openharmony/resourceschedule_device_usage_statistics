@@ -909,7 +909,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
 }
 
 /*
- * @tc.name: BundleActiveGroupControllerTest_010
+ * @tc.name: BundleActiveGroupControllerTest_011
  * @tc.desc: test the interface
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
