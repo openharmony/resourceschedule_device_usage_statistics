@@ -191,6 +191,30 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppG
 }
 
 /*
+ * @tc.name: DeviceUsageStatisticsServiceTest_AppGroupCallback_002
+ * @tc.desc: AppGroupCallback
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppGroupCallback_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    bundleActiveCore->InitBundleGroupController(runner);
+    sptr<TestServiceAppGroupChangeCallback> observer = new (std::nothrow) TestServiceAppGroupChangeCallback();
+    Security::AccessToken::AccessTokenID tokenId {};
+    bundleActiveCore->groupChangeObservers_[tokenId] = observer;
+    int32_t userId = 100;
+    int32_t newGroup = 10;
+    int32_t oldGroup = 60;
+    int32_t reasonInGroup = 0;
+    AppGroupCallbackInfo appGroupCallbackInfo(userId, newGroup, oldGroup, reasonInGroup, "test");
+    bundleActiveCore->OnAppGroupChanged(appGroupCallbackInfo);
+    SUCCEED();
+}
+
+/*
  * @tc.name: DeviceUsageStatisticsServiceTest_OnUserRemoved_001
  * @tc.desc: OnUserRemoved
  * @tc.type: FUNC
@@ -903,6 +927,25 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_010,
 }
 
 /*
+ * @tc.name: BundleActiveGroupControllerTest_010
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: IssuesIA9M7I
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_011,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
+    auto runner = AppExecFwk::EventRunner::Create("test");
+    bundleActiveCore->InitBundleGroupController(runner);
+    bool isScreenOn = true;
+    int64_t timeStamp = 0;
+    bundleActiveCore->bundleGroupController_->OnScreenChanged(isScreenOn, timeStamp);
+    SUCCEED();
+}
+
+/*
  * @tc.name: BundleActiveUserHistoryTest_001
  * @tc.desc: test the interface
  * @tc.type: FUNC
@@ -1427,7 +1470,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_001
+ * @tc.name: DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_002
  * @tc.desc: onstart
  * @tc.type: FUNC
  * @tc.require: issuesI9Q9ZJ

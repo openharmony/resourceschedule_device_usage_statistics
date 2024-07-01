@@ -90,8 +90,15 @@ void BundleActiveGroupController::OnUserSwitched(const int32_t userId, const int
 
 void BundleActiveGroupController::OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    bundleUserHistory_->UpdateBootBasedAndScreenTime(isScreenOn, bootFromTimeStamp);
+    std::shared_ptr<BundleActiveCore> bundleActiveGroupController = shared_from_this();
+    if (!activeGroupHandler_.expired()) {
+        std::shared_ptr<BundleActiveCore> bundleActiveGroupController = shared_from_this();
+        activeGroupHandler_.lock()->PostTask([bundleActiveGroupController, isScreenOn, bootFromTimeStamp]() {
+            std::lock_guard<std::mutex> lock(mutex_);
+            bundleActiveGroupController->bundleUserHistory_->UpdateBootBasedAndScreenTime(isScreenOn,
+                bootFromTimeStamp);
+        });
+    }
 }
 
 void BundleActiveGroupController::SetHandlerAndCreateUserHistory(

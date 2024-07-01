@@ -243,6 +243,7 @@ public:
     void OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo);
 
 private:
+    void NotifOberserverGroupChanged(const AppGroupCallbackInfo& callbackInfo, AccessToken::HapTokenInfo& tokenInfo)
     void AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer);
     void RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer);
     void OnObserverDied(const wptr<IRemoteObject> &remote);
