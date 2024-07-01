@@ -93,7 +93,7 @@ void BundleActiveGroupController::OnScreenChanged(const bool& isScreenOn, const 
     if (!activeGroupHandler_.expired()) {
         std::shared_ptr<BundleActiveGroupController> bundleActiveGroupController = shared_from_this();
         activeGroupHandler_.lock()->PostTask([bundleActiveGroupController, isScreenOn, bootFromTimeStamp]() {
-            std::lock_guard<std::mutex> lock(BundleActiveGroupController->mutex_);
+            std::lock_guard<std::mutex> lock(bundleActiveGroupController->mutex_);
             bundleActiveGroupController->bundleUserHistory_->UpdateBootBasedAndScreenTime(isScreenOn,
                 bootFromTimeStamp);
         });
