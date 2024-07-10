@@ -279,23 +279,29 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
                 timeUntilNextCheck = timeoutForDirectlyUse_;
                 break;
         }
-        BundleActiveGroupHandlerObject tmpGroupHandlerObj;
-        tmpGroupHandlerObj.userId_ = userId;
-        tmpGroupHandlerObj.bundleName_ = event.bundleName_;
-        tmpGroupHandlerObj.uid_ = event.uid_;
-        std::hash<std::string> hasher;
-        int32_t bundleNameHash = hasher(tmpGroupHandlerObj.bundleName_);
-        int64_t msgKey = (int64_t)bundleNameHash << 32 | (int64_t)userId << 16 | (int64_t)event.uid_;
-        std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
-            std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
-        auto handlerEvent = AppExecFwk::InnerEvent::Get(checkBundleMsgEventId, handlerobjToPtr, msgKey);
-        auto activeGroupHandler = activeGroupHandler_.lock();
-        if (activeGroupHandler) {
-            if (activeGroupHandler->HasInnerEvent(msgKey) == true) {
-                activeGroupHandler->RemoveEvent(checkBundleMsgEventId, msgKey);
-            }
-            activeGroupHandler->SendEvent(handlerEvent, timeUntilNextCheck);
+        SendCheckBundleMsg(event, userId, timeUntilNextCheck, checkBundleMsgEventId);
+    }
+}
+
+void BundleActiveGroupController::SendCheckBundleMsg(const BundleActiveEvent& event, const int32_t& userId,
+    const int64_t& timeUntilNextCheck, const int64_t& checkBundleMsgEventId)
+{
+    BundleActiveGroupHandlerObject tmpGroupHandlerObj;
+    tmpGroupHandlerObj.userId_ = userId;
+    tmpGroupHandlerObj.bundleName_ = event.bundleName_;
+    tmpGroupHandlerObj.uid_ = event.uid_;
+    std::hash<std::string> hasher;
+    int32_t bundleNameHash = hasher(tmpGroupHandlerObj.bundleName_);
+    int64_t msgKey = ((int64_t)bundleNameHash << 32 | (int64_t)userId << 16) | (int64_t)event.uid_;
+    std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
+        std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
+    auto handlerEvent = AppExecFwk::InnerEvent::Get(checkBundleMsgEventId, handlerobjToPtr, msgKey);
+    auto activeGroupHandler = activeGroupHandler_.lock();
+    if (activeGroupHandler) {
+        if (activeGroupHandler->HasInnerEvent(msgKey) == true) {
+            activeGroupHandler->RemoveEvent(checkBundleMsgEventId, msgKey);
         }
+        activeGroupHandler->SendEvent(handlerEvent, timeUntilNextCheck);
     }
 }
 
