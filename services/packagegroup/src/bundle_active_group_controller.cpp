@@ -83,7 +83,9 @@ void BundleActiveGroupController::OnUserSwitched(const int32_t userId, const int
     auto activeGroupHandler = activeGroupHandler_.lock();
     if (activeGroupHandler) {
         activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
-        activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_BUNDLE_STATE);
+        activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE);
+        activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE);
+        activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE);
     }
     PeriodCheckBundleState(userId);
 }
@@ -257,16 +259,19 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
         }
         int64_t timeUntilNextCheck;
         uint32_t eventReason = item->second;
+        int32_t checkBundleMsgEventId = BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE;
         switch (eventId) {
             case BundleActiveEvent::NOTIFICATION_SEEN:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_DAILY,
                     eventReason, 0, bootBasedTimeStamp + timeoutForNotifySeen_, userId, event.uid_);
                 timeUntilNextCheck = timeoutForNotifySeen_;
+                checkBundleMsgEventId = BundleActiveGroupHandler::MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE;
                 break;
             case BundleActiveEvent::SYSTEM_INTERACTIVE:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_ALIVE,
                     eventReason, 0, bootBasedTimeStamp + timeoutForSystemInteraction_, userId, event.uid_);
                 timeUntilNextCheck = timeoutForSystemInteraction_;
+                checkBundleMsgEventId = BundleActiveGroupHandler::MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE;
                 break;
             default:
                 bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_ALIVE,
@@ -278,12 +283,17 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
         tmpGroupHandlerObj.userId_ = userId;
         tmpGroupHandlerObj.bundleName_ = event.bundleName_;
         tmpGroupHandlerObj.uid_ = event.uid_;
+        std::hash<std::string> hasher;
+        int32_t bundleNameHash = hasher(tmpGroupHandlerObj.bundleName_);
+        int64_t msgKey = (int64_t)bundleNameHash << 32 | (int64_t)userId << 16 | (int64_t)event.uid_;
         std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
-        auto handlerEvent = AppExecFwk::InnerEvent::Get(BundleActiveGroupHandler::MSG_CHECK_BUNDLE_STATE,
-            handlerobjToPtr);
+        auto handlerEvent = AppExecFwk::InnerEvent::Get(checkBundleMsgEventId, handlerobjToPtr, msgKey);
         auto activeGroupHandler = activeGroupHandler_.lock();
         if (activeGroupHandler) {
+            if (activeGroupHandler->HasInnerEvent(msgKey) == true) {
+                activeGroupHandler->RemoveEvent(checkBundleMsgEventId, msgKey);
+            }
             activeGroupHandler->SendEvent(handlerEvent, timeUntilNextCheck);
         }
     }

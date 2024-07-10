@@ -46,9 +46,11 @@ public:
      */
     void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
     void Init(const std::shared_ptr<BundleActiveGroupController>& bundleActiveController);
-    static const int32_t MSG_CHECK_BUNDLE_STATE = 0;
+    static const int32_t MSG_CHECK_DEFAULT_BUNDLE_STATE = 0;
     static const int32_t MSG_ONE_TIME_CHECK_BUNDLE_STATE = 1;
     static const int32_t MSG_CHECK_IDLE_STATE = 2;
+    static const int32_t MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE = 3;
+    static const int32_t MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE = 4;
     int64_t checkIdleInterval_;
 
 private:

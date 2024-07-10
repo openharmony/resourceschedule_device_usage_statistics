@@ -58,7 +58,9 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
         return;
     }
     switch (event->GetInnerEventId()) {
-        case MSG_CHECK_BUNDLE_STATE: {
+        case MSG_CHECK_DEFAULT_BUNDLE_STATE:
+        case MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE:
+        case MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE: {
             auto ptrToHandlerobj = event->GetSharedObject<BundleActiveGroupHandlerObject>();
             BundleActiveGroupHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
