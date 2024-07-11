@@ -292,7 +292,10 @@ void BundleActiveGroupController::SendCheckBundleMsg(const BundleActiveEvent& ev
     tmpGroupHandlerObj.uid_ = event.uid_;
     std::hash<std::string> hasher;
     int32_t bundleNameHash = hasher(tmpGroupHandlerObj.bundleName_);
-    int64_t msgKey = ((int64_t)bundleNameHash << 32 | (int64_t)userId << 16) | (int64_t)event.uid_;
+    int64_t msgKeyHighBit = (int64_t)bundleNameHash << 32;
+    int64_t msgKeyMediumBit = (int64_t)userId << 16;
+    int64_t msgKeyLowBit = (int64_t)event.uid_;
+    int64_t msgKey = msgKeyHighBit | msgKeyMediumBit | msgKeyLowBit;
     std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
         std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
     auto handlerEvent = AppExecFwk::InnerEvent::Get(checkBundleMsgEventId, handlerobjToPtr, msgKey);
