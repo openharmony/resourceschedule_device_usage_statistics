@@ -97,6 +97,9 @@ private:
         const int64_t bootBasedTimeStamp);
     int32_t GetNewGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
         const int32_t uid);
+    void SendCheckBundleMsg(const BundleActiveEvent& event, const int32_t& userId,
+        const int64_t& timeUntilNextCheck, const int64_t& checkBundleMsgEventId);
+    int64_t GetMsgKey(const BundleActiveEvent& event, const int32_t& userId);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

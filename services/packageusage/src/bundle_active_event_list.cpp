@@ -29,6 +29,7 @@ int32_t BundleActiveEventList::Size()
 void BundleActiveEventList::Clear()
 {
     events_.clear();
+    std::vector<BundleActiveEvent>().swap(events_);
 }
 
 void BundleActiveEventList::Insert(BundleActiveEvent event)
