@@ -27,7 +27,6 @@ namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
     const int32_t MAIN_APP_INDEX = 0;
     const int32_t MSG_KEY_HIGH_BIT = 32;
-    const int32_t MSG_KEY_MEDIUM_BIT = 16;
 BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject()
 {
         bundleName_ = "";
@@ -292,12 +291,7 @@ void BundleActiveGroupController::SendCheckBundleMsg(const BundleActiveEvent& ev
     tmpGroupHandlerObj.userId_ = userId;
     tmpGroupHandlerObj.bundleName_ = event.bundleName_;
     tmpGroupHandlerObj.uid_ = event.uid_;
-    std::hash<std::string> hasher;
-    int32_t bundleNameHash = hasher(tmpGroupHandlerObj.bundleName_);
-    int64_t msgKeyHighBit = (int64_t)bundleNameHash << MSG_KEY_HIGH_BIT;
-    int64_t msgKeyMediumBit = (int64_t)userId << MSG_KEY_MEDIUM_BIT;
-    int64_t msgKeyLowBit = (int64_t)event.uid_;
-    int64_t msgKey = msgKeyHighBit | msgKeyMediumBit | msgKeyLowBit;
+    int64_t msgKey = GetMsgKey(event, userId);
     std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
         std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
     auto handlerEvent = AppExecFwk::InnerEvent::Get(checkBundleMsgEventId, handlerobjToPtr, msgKey);
@@ -308,6 +302,18 @@ void BundleActiveGroupController::SendCheckBundleMsg(const BundleActiveEvent& ev
         }
         activeGroupHandler->SendEvent(handlerEvent, timeUntilNextCheck);
     }
+}
+
+int64_t BundleActiveGroupController::GetMsgKey(const BundleActiveEvent& event, const int32_t& userId)
+{
+    std::hash<std::string> hasher;
+    int32_t bundleNameHash = hasher(event.bundleName_);
+    int64_t msgKeyHighBit = (int64_t)bundleNameHash << MSG_KEY_HIGH_BIT;
+    std::string msgLowHashString = hasher(std::to_string(userId) +
+        std::to_string(bundleNameHash) + std::to_string(event.uid_));
+    int64_t msgKeyLowBit = hasher(msgLowHashString);
+    int64_t msgKey = msgKeyHighBit | (uint32_t)msgKeyLowBit;
+    return msgKey;
 }
 
 void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleName, const int32_t userId,
