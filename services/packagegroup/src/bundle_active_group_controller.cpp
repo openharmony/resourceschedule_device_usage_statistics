@@ -307,12 +307,12 @@ void BundleActiveGroupController::SendCheckBundleMsg(const BundleActiveEvent& ev
 int64_t BundleActiveGroupController::GetMsgKey(const BundleActiveEvent& event, const int32_t& userId)
 {
     std::hash<std::string> hasher;
-    int32_t bundleNameHash = hasher(event.bundleName_);
-    int64_t msgKeyHighBit = (int64_t)bundleNameHash << MSG_KEY_HIGH_BIT;
+    uint32_t bundleNameHash = hasher(event.bundleName_);
+    uint64_t msgKeyHighBit = (uint64_t)bundleNameHash << MSG_KEY_HIGH_BIT;
     std::string msgLowHashStr = std::to_string(userId) + std::to_string(bundleNameHash) + std::to_string(event.uid_);
-    int64_t msgKeyLowBit = hasher(msgLowHashStr);
-    int64_t msgKey = msgKeyHighBit | (uint32_t)msgKeyLowBit;
-    return msgKey;
+    uint32_t msgKeyLowBit = hasher(msgLowHashStr);
+    uint64_t msgKey = msgKeyHighBit | msgKeyLowBit;
+    return static_cast<int64_t>(msgKey);
 }
 
 void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleName, const int32_t userId,
