@@ -33,6 +33,7 @@
 #include "rdb_store_config.h"
 #include "result_set.h"
 #include "values_bucket.h"
+#include "ffrt.h"
 
 #include "bundle_active_period_stats.h"
 #include "bundle_active_calendar.h"
@@ -147,7 +148,7 @@ private:
     std::string formRecordsTableName_;
     std::string versionFile_;
     uint32_t currentVersion_;
-    std::mutex databaseMutex_;
+    ffrt::mutex databaseMutex_;
     std::int64_t eventBeginTime_;
     bool debugDatabase_;
 };

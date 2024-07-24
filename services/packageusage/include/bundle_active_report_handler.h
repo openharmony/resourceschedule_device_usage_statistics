@@ -16,24 +16,30 @@
 #ifndef BUNDLE_ACTIVE_REPORT_HANDLER_H
 #define BUNDLE_ACTIVE_REPORT_HANDLER_H
 
-#include "event_handler.h"
-#include "event_runner.h"
+#include "ffrt.h"
+#include <map>
 
 #include "ibundle_active_service.h"
 #include "bundle_active_core.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveReportHandler : public AppExecFwk::EventHandler {
+class BundleActiveReportHandler : public std::enable_shared_from_this<BundleActiveReportHandler> {
 public:
-    explicit BundleActiveReportHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
+    BundleActiveReportHandler() = default;
     ~BundleActiveReportHandler() = default;
         /**
      * Process the event. Developers should override this method.
      *
-     * @param event The event should be processed.
+     * @param eventId The event id
+     * @param handlerobj The eventobj
      */
-    void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+    void ProcessEvent(int32_t eventId, std::shared_ptr<BundleActiveReportHandlerObject> handlerobj);
+    void SendEvent(int32_t eventId,
+        std::shared_ptr<BundleActiveReportHandlerObject> handlerobj, const int32_t& delayTime = 0);
+    void RemoveEvent(const int32_t& eventId);
+    bool HasEvent(const int32_t& eventId);
+
     void Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
     static const int32_t MSG_REPORT_EVENT = 0;
     static const int32_t MSG_FLUSH_TO_DISK = 1;
@@ -42,6 +48,9 @@ public:
     static const int32_t MSG_SWITCH_USER = 4;
 
 private:
+    bool isInited_ = false;
+    std::shared_ptr<ffrt::queue> ffrtQueue_;
+    std::map<int32_t, ffrt::task_handle> taskHandlerMap_;
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;
 };
 }  // namespace DeviceUsageStats

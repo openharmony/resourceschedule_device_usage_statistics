@@ -221,7 +221,6 @@ private:
     sptr<PowerMgr::IAsyncShutdownCallback> shutdownCallback_;
     sptr<BundleActivePowerStateCallbackService> powerStateCallback_;
 #endif
-    std::shared_ptr<ffrt::queue> ffrtQueue_;
     bool ready_ {false};
     int32_t ConvertIntervalType(const int32_t intervalType);
     void InitNecessaryState();

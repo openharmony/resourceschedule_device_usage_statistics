@@ -43,10 +43,14 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
+    static std::shared_ptr<BundleActiveCore> bundleActiveCore_ = nullptr;
 };
 
 void PackageUsageTest::SetUpTestCase(void)
 {
+    bundleActiveCore_ = std::make_shared<BundleActiveCore>;
+    bundleActiveCore_->Init();
+    bundleActiveCore_->InitBundleGroupController();
 }
 
 void PackageUsageTest::TearDownTestCase(void)
@@ -276,10 +280,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveEventStats_001, Function
 HWTEST_F(PackageUsageTest, PackageUsageTest_ReportForShutdown_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), false);
     BundleActiveEvent event;
     event.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
@@ -303,7 +304,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_ReportForShutdown_001, Function | Me
 HWTEST_F(PackageUsageTest, PackageUsageTest_ReportFormEvent_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+     auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     BundleActiveEvent event;
     event.bundleName_ = "defaultBundleName";
@@ -325,7 +326,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_ReportFormEvent_001, Function | Medi
 HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemFormStats_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+     auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     BundleActiveEvent event;
     event.bundleName_ = "defaultBundleName";
@@ -346,10 +347,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemFormStats_001, Function | 
 HWTEST_F(PackageUsageTest, PackageUsageTest_QueryDeviceEventStats_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+     auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -380,10 +378,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryDeviceEventStats_001, Function 
 HWTEST_F(PackageUsageTest, PackageUsageTest_QueryNotificationEventStats_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+     auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -419,10 +414,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryNotificationEventStats_001, Fun
 HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleEvents_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+     auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -460,10 +452,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleEvents_001, Function | Me
 HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemPackageStats_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+     auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -484,10 +473,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemPackageStats_001, Function
 HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+     auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -532,10 +518,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_001, Function 
 HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_002, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+     auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -589,10 +572,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_002, Function 
 HWTEST_F(PackageUsageTest, PackageUsageTest_RestoreStats_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -622,10 +602,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_RestoreStats_001, Function | MediumT
 HWTEST_F(PackageUsageTest, PackageUsageTest_LoadActiveStats_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -689,10 +666,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_combine_001, Function | MediumTest |
 HWTEST_F(PackageUsageTest, PackageUsageTest_ReportEvent_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000;
     bundleUserService->Init(timeStamp);
@@ -729,10 +703,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_ReportEvent_001, Function | MediumTe
 HWTEST_F(PackageUsageTest, PackageUsageTest_RenewStatsInMemory_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
-    bundleActiveCore->Init();
-    auto runner = AppExecFwk::EventRunner::Create("test");
-    bundleActiveCore->InitBundleGroupController(runner);
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000;
     bundleUserService->Init(timeStamp);
@@ -762,18 +733,10 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_RenewStatsInMemory_001, Function | M
  */
 HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumTest | Level0)
 {
-    std::string threadName = "bundle_active_report_handler";
-    auto runner = AppExecFwk::EventRunner::Create(threadName);
-    if (runner == nullptr) {
-        BUNDLE_ACTIVE_LOGE("report handler is null");
-        return;
-    }
     std::shared_ptr<BundleActiveReportHandler> bundleActiveReportHandler;
-    std::shared_ptr<BundleActiveCore> bundleActiveCore;
-    AppExecFwk::InnerEvent::Pointer pointer = AppExecFwk::InnerEvent::Get(0);
     pointer.release();
-    bundleActiveReportHandler = std::make_shared<BundleActiveReportHandler>(runner);
-    bundleActiveReportHandler->Init(bundleActiveCore);
+    bundleActiveReportHandler = std::make_shared<BundleActiveReportHandler>();
+    bundleActiveReportHandler->Init(bundleActiveCore_);
     bundleActiveReportHandler->ProcessEvent(pointer);
     bundleActiveReportHandler->ProcessEvent(pointer);
 }

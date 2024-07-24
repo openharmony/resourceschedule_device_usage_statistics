@@ -20,6 +20,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+const std::string DEVICE_GROUP_HANDLE_QUEUE = "DeviceUsageGroupHandleQueue";
 #ifndef OS_ACCOUNT_PART_ENABLED
 namespace {
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
@@ -32,8 +33,7 @@ BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject(const BundleActiv
     uid_ = orig.uid_;
 }
 
-BundleActiveGroupHandler::BundleActiveGroupHandler
-    (const std::shared_ptr<AppExecFwk::EventRunner> &runner, const bool debug) : AppExecFwk::EventHandler(runner)
+BundleActiveGroupHandler::BundleActiveGroupHandler(const bool debug)
 {
     if (debug) {
         checkIdleInterval_ = ONE_MINUTE;
@@ -50,19 +50,116 @@ void BundleActiveGroupHandler::Init(const std::shared_ptr<BundleActiveGroupContr
         return;
     }
     bundleActiveGroupController_ = bundleActiveController;
-}
-
-void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    if (event == nullptr) {
+    ffrtQueue_ = std::make_shared<ffrt::queue>(DEVICE_GROUP_HANDLE_QUEUE.c_str(),
+        ffrt::queue_attr().qos(ffrt::qos_default));
+    if (ffrtQueue_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("Init failed ffrtQueue is null");
         return;
     }
-    switch (event->GetInnerEventId()) {
+    isInited_ = true;
+}
+
+void BundleActiveGroupHandler::SendCheckBundleMsg(const int32_t& eventId,
+    const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int32_t& delayTime)
+{
+    if (!isInited_) {
+        BUNDLE_ACTIVE_LOGE("init failed");
+        return;
+    }
+    std::string msgKey = GetMsgKey(eventId, handlerobj, delayTime);
+    if (checkBundleTaskMap_.find(msgKey) != checkBundleTaskMap_.end()) {
+        RemoveCheckBundleMsg(msgKey);
+    }
+    auto groupHandler = shared_from_this();
+    checkBundleTaskMap_[msgKey] = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj, msgKey]() {
+        groupHandler->ProcessEvent(eventId, handlerobj);
+        groupHandler->checkBundleTaskMap_.erase(msgKey);
+    }, ffrt::task_attr().delay(delayTime);
+}
+
+void BundleActiveGroupHandler::RemoveCheckBundleMsg(const std::string& msgKey)
+{
+    if (!isInited_) {
+        BUNDLE_ACTIVE_LOGE("init failed");
+        return;
+    }
+    if (checkBundleTaskMap_.find(msgKey) == checkBundleTaskMap_.end()) {
+        return;
+    }
+    ffrtQueue_->cancel(checkBundleTaskMap_[msgKey]);
+    checkBundleTaskMap_.erase(msgKey);
+}
+
+std::string BundleActiveGroupHandler::GetMsgKey(const int32_t& eventId,
+    const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int32_t& delayTime)
+{
+    BundleActiveGroupHandlerObject tmpHandlerobj = *handlerobj;
+    if (tmpHandlerobj == nullptr) {
+       BUNDLE_ACTIVE_LOGE("tmpHandlerobj is null, GetMsgKey failed");
+        return; 
+    }
+    return std::to_string(eventId) + "_" + std::to_string(tmpHandlerobj.userId_) + "_" +
+        std::to_string(tmpHandlerobj.uid_) + "_" + tmpHandlerobj.bundleName_ + "_" + std::to_string(delayTime);
+
+}
+
+void BundleActiveGroupHandler::SendEvent(const int32_t& eventId,
+    const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int32_t& delayTime)
+{
+    if (!isInited_) {
+        BUNDLE_ACTIVE_LOGE("init failed");
+        return;
+    }
+    auto groupHandler = shared_from_this();
+    taskHandlerMap_[eventId] = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj]() {
+        groupHandler->ProcessEvent(eventId, handlerobj);
+        groupHandler->checkBundleTaskMap_.erase(eventId);
+    }, ffrt::task_attr().delay(delayTime);
+}
+
+void BundleActiveGroupHandler::RemoveEvent(const int32_t& eventId)
+{
+    if (!isInited_) {
+        BUNDLE_ACTIVE_LOGE("init failed");
+        return;
+    }
+    if (taskHandlerMap_.find(eventId) == taskHandlerMap_.end()) {
+        return;
+    }
+    ffrtQueue_->cancel(taskHandlerMap_[eventId]);
+    taskHandlerMap_.erase(eventId);
+}
+
+void BundleActiveGroupHandler::PostSyncTask(const std::function<void()>& fuc)
+{
+    if (!isInited_) {
+        BUNDLE_ACTIVE_LOGE("init failed");
+        return;
+    }
+    auto taskHandle = ffrtQueue_->submit_h(fuc);
+    ffrtQueue_->wait(taskHandle);
+}
+
+void BundleActiveGroupHandler::PostTask(const std::function<void()>& fuc)
+{
+    if (!isInited_) {
+        BUNDLE_ACTIVE_LOGE("init failed");
+        return;
+    }
+    ffrtQueue_->submit(fuc);
+}
+
+void BundleActiveGroupHandler::ProcessEvent(int32_t eventId, std::shared_ptr<BundleActiveGroupHandlerObject> handlerobj)
+{
+    BundleActiveGroupHandlerObject tmpHandlerobj = *ptrToHandlerobj;
+    switch (eventId) {
         case MSG_CHECK_DEFAULT_BUNDLE_STATE:
         case MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE:
         case MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE: {
-            auto ptrToHandlerobj = event->GetSharedObject<BundleActiveGroupHandlerObject>();
             BundleActiveGroupHandlerObject tmpHandlerobj = *ptrToHandlerobj;
+            if (tmpHandlerobj == nullptr) {
+                return;
+            }
             sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
             int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
             bundleActiveGroupController_->CheckAndUpdateGroup(
@@ -81,18 +178,18 @@ void BundleActiveGroupHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointe
             break;
         }
         case MSG_CHECK_IDLE_STATE: {
-            auto ptrToHandlerobj = event->GetSharedObject<BundleActiveGroupHandlerObject>();
             BundleActiveGroupHandlerObject tmpHandlerobj = *ptrToHandlerobj;
+            if (tmpHandlerobj == nullptr) {
+                return;
+            }
             if (bundleActiveGroupController_->CheckEachBundleState(tmpHandlerobj.userId_) &&
                 bundleActiveGroupController_->bundleGroupEnable_) {
                 BundleActiveGroupHandlerObject GroupHandlerObj;
                 GroupHandlerObj.userId_ = tmpHandlerobj.userId_;
                 std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
                     std::make_shared<BundleActiveGroupHandlerObject>(GroupHandlerObj);
-                auto handlerEvent = AppExecFwk::InnerEvent::Get(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE,
-                    handlerobjToPtr);
                 bundleActiveGroupController_->RestoreToDatabase(GroupHandlerObj.userId_);
-                SendEvent(handlerEvent, checkIdleInterval_);
+                SendEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE, handlerobjToPtr, checkIdleInterval_);
             }
             break;
         }

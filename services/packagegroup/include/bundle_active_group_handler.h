@@ -18,7 +18,8 @@
 
 #include "event_handler.h"
 #include "event_runner.h"
-
+#include "ffrt.h"
+#include <map>
 #include "ibundle_active_service.h"
 #include "bundle_active_group_controller.h"
 #include "bundle_active_group_common.h"
@@ -35,16 +36,26 @@ public:
     ~BundleActiveGroupHandlerObject() {}
 };
 
-class BundleActiveGroupHandler : public AppExecFwk::EventHandler {
+class BundleActiveGroupHandler : public std::enable_shared_from_this<BundleActiveGroupHandler> {
 public:
-    explicit BundleActiveGroupHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner, const bool debug);
+    explicit BundleActiveGroupHandler(const bool debug);
     ~BundleActiveGroupHandler() = default;
         /**
      * Process the event. Developers should override this method.
      *
      * @param event The event should be processed.
      */
-    void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+    void ProcessEvent(int32_t eventId, std::shared_ptr<BundleActiveGroupHandlerObject> handlerobj);
+    void SendEvent(const int32_t& eventId, const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj,
+        const int32_t& delayTime = 0);
+    void SendCheckBundleMsg(const int32_t& eventId, const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj,
+        const int32_t& delayTime = 0);
+    std::string GetMsgKey(const int32_t& eventId, const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj,
+        const int32_t& delayTime);
+    void RemoveEvent(const int32_t& eventId);
+    void RemoveCheckBundleMsg(const std::string& msgKey);
+    void PostSyncTask(const std::function<void()>& fuc);
+    void PostTask(const std::function<void()>& fuc);
     void Init(const std::shared_ptr<BundleActiveGroupController>& bundleActiveController);
     static const int32_t MSG_CHECK_DEFAULT_BUNDLE_STATE = 0;
     static const int32_t MSG_ONE_TIME_CHECK_BUNDLE_STATE = 1;
@@ -54,6 +65,10 @@ public:
     int64_t checkIdleInterval_;
 
 private:
+    bool isInited_ = false;
+    std::shared_ptr<ffrt::queue> ffrtQueue_;
+    std::map<int32_t, ffrt::task_handle> taskHandlerMap_;
+    std::map<std::string, ffrt::task_handle> checkBundleTaskMap_;
     std::shared_ptr<BundleActiveGroupController> bundleActiveGroupController_;
 };
 }  // namespace DeviceUsageStats

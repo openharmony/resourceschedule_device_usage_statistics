@@ -20,6 +20,7 @@
 #include <memory>
 #include <string>
 
+#include "ffrt.h"
 #include "bundle_active_package_history.h"
 #include "bundle_active_group_common.h"
 #include "bundle_active_usage_database.h"
@@ -64,7 +65,7 @@ public:
         const int32_t appIndex);
 
 private:
-    std::mutex setGroupMutex_;
+    ffrt::mutex setGroupMutex_;
     bool isScreenOn_;
     std::weak_ptr<BundleActiveCore> bundleActiveCore_;
 };

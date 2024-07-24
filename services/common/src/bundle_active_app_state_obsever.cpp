@@ -74,8 +74,7 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         if (reportHandler_ != nullptr) {
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            auto getEvent = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
-            reportHandler_->SendEvent(getEvent);
+            reportHandler_->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
         }
     }
     return;

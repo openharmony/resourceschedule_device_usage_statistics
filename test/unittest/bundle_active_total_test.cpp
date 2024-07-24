@@ -172,8 +172,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | 
 HWTEST_F(BundleActiveTotalTest, BundleActiveAppStateObserverTest_001, Function | MediumTest | Level0)
 {
     AbilityStateData abilityStateData;
-    std::shared_ptr<AppExecFwk::EventRunner> runner;
-    auto reportHandler = std::make_shared<BundleActiveReportHandler>(runner);
+    auto reportHandler = std::make_shared<BundleActiveReportHandler>();
     BundleActiveAppStateObserver test;
     test.Init(reportHandler);
     test.OnAbilityStateChanged(abilityStateData);

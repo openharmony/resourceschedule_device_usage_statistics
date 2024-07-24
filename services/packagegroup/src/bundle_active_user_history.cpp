@@ -223,7 +223,7 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
 int32_t BundleActiveUserHistory::SetAppGroup(const string& bundleName, const int32_t userId, const int32_t uid,
     const int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason, const bool isFlush)
 {
-    std::lock_guard<std::mutex> lock(setGroupMutex_);
+    std::lock_guard<ffrt::mutex> lock(setGroupMutex_);
     BUNDLE_ACTIVE_LOGI("set %{public}s to group %{public}d, reason is %{public}d, userId is %{public}d",
         bundleName.c_str(), newGroup, groupReason, userId);
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userBundleHistory = GetUserHistory(userId, false);

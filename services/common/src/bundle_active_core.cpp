@@ -71,7 +71,7 @@ BundleActiveCore::~BundleActiveCore()
 
 void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     std::string action = data.GetWant().GetAction();
     if (action == CommonEventSupport::COMMON_EVENT_SCREEN_OFF ||
         action == CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
@@ -88,8 +88,7 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
             BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REMOVE_USER, handlerobjToPtr);
-            bundleActiveReportHandler_.lock()->SendEvent(event);
+            bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_REMOVE_USER, handlerobjToPtr);
         }
     } else if (action == CommonEventSupport::COMMON_EVENT_USER_SWITCHED) {
         int32_t userId = data.GetCode();
@@ -97,8 +96,7 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
         BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
         std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_SWITCH_USER, handlerobjToPtr);
-        bundleActiveReportHandler_.lock()->SendEvent(event);
+        bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_SWITCH_USER, handlerobjToPtr);
     } else if (action == CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED ||
         action == CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED) {
         int32_t userId = data.GetWant().GetIntParam("userId", 0);
@@ -111,9 +109,7 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
             tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
-                handlerobjToPtr);
-            bundleActiveReportHandler_.lock()->SendEvent(event);
+            bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED, handlerobjToPtr);
         }
     } else if (action == COMMON_EVENT_UNLOCK_SCREEN || action == COMMON_EVENT_LOCK_SCREEN) {
         int32_t userId = data.GetWant().GetIntParam("userId", 0);
@@ -181,14 +177,10 @@ void BundleActiveCore::Init()
     BUNDLE_ACTIVE_LOGD("system time shot is %{public}lld", (long long)systemTimeShot_);
 }
 
-void BundleActiveCore::InitBundleGroupController(const std::shared_ptr<AppExecFwk::EventRunner> &runner)
+void BundleActiveCore::InitBundleGroupController()
 {
     BUNDLE_ACTIVE_LOGD("InitBundleGroupController called");
-    if (runner == nullptr) {
-        BUNDLE_ACTIVE_LOGE("report handler is null");
-        return;
-    }
-    bundleGroupHandler_ = std::make_shared<BundleActiveGroupHandler>(runner, debugCore_);
+    bundleGroupHandler_ = std::make_shared<BundleActiveGroupHandler>(debugCore_);
     if (bundleGroupHandler_ == nullptr) {
         return;
     }
@@ -238,7 +230,7 @@ void BundleActiveCore::OnBundleUninstalled(const int32_t userId, const std::stri
     const int32_t uid, const int32_t appIndex)
 {
     BUNDLE_ACTIVE_LOGD("OnBundleUninstalled CALLED");
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == ERR_TIME_OPERATION_FAILED) {
         return;
@@ -258,10 +250,9 @@ void BundleActiveCore::OnStatsChanged(const int32_t userId)
         tmpHandlerObject.userId_ = userId;
         std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, handlerobjToPtr);
-        if (handler_.lock()->HasInnerEvent(static_cast<int64_t>(userId)) == false) {
+        if (handler_.lock()->HasEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK) == false) {
             BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event for user %{public}d", userId);
-            handler_.lock()->SendEvent(event, flushInterval_);
+            handler_.lock()->SendEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, handlerobjToPtr, flushInterval_);
         }
     }
 }
@@ -343,7 +334,7 @@ void BundleActiveCore::PreservePowerStateInfo(const int32_t eventId)
 
 void BundleActiveCore::ShutDown()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     BUNDLE_ACTIVE_LOGD("ShutDown called");
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t timeStamp = timer->GetBootTimeMs();
@@ -419,7 +410,7 @@ void BundleActiveCore::ConvertToSystemTimeLocked(BundleActiveEvent& event)
 void BundleActiveCore::OnUserRemoved(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGD("OnUserRemoved called");
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     auto it = userStatServices_.find(userId);
     if (it == userStatServices_.end()) {
         return;
@@ -463,7 +454,7 @@ int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, int32_t userId)
     BUNDLE_ACTIVE_LOGD("FLUSH interval is %{public}lld, debug is %{public}d", (long long)flushInterval_, debugCore_);
     ObtainSystemEventName(event);
     event.PrintEvent(debugCore_);
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     if (userId == 0 || userId == -1) {
         return -1;
     }
@@ -552,7 +543,7 @@ ErrCode BundleActiveCore::QueryBundleStatsInfos(std::vector<BundleActivePackageS
     std::string bundleName)
 {
     BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos called");
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == ERR_TIME_OPERATION_FAILED) {
         return ERR_TIME_OPERATION_FAILED;
@@ -577,7 +568,7 @@ ErrCode BundleActiveCore::QueryBundleEvents(std::vector<BundleActiveEvent>& bund
     const int64_t beginTime, const int64_t endTime, std::string bundleName)
 {
     BUNDLE_ACTIVE_LOGD("QueryBundleEvents called");
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == ERR_TIME_OPERATION_FAILED) {
         return ERR_TIME_OPERATION_FAILED;
@@ -596,7 +587,7 @@ ErrCode BundleActiveCore::QueryBundleEvents(std::vector<BundleActiveEvent>& bund
 ErrCode BundleActiveCore::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
     int32_t userId)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == ERR_TIME_OPERATION_FAILED) {
         return ERR_TIME_OPERATION_FAILED;
@@ -611,7 +602,7 @@ ErrCode BundleActiveCore::QueryModuleUsageRecords(int32_t maxNum, std::vector<Bu
 ErrCode BundleActiveCore::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == ERR_TIME_OPERATION_FAILED) {
         return ERR_TIME_OPERATION_FAILED;
@@ -626,7 +617,7 @@ ErrCode BundleActiveCore::QueryDeviceEventStats(int64_t beginTime, int64_t endTi
 ErrCode BundleActiveCore::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
     if (timeNow == ERR_TIME_OPERATION_FAILED) {
         return ERR_TIME_OPERATION_FAILED;
@@ -706,7 +697,7 @@ void BundleActiveCore::OnAppGroupChanged(const AppGroupCallbackInfo& callbackInf
 void BundleActiveCore::NotifOberserverGroupChanged(const AppGroupCallbackInfo& callbackInfo,
     AccessToken::HapTokenInfo tokenInfo)
 {
-    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(callbackMutex_);
     for (const auto &item : groupChangeObservers_) {
         auto observer = item.second;
         if (!observer) {
@@ -730,7 +721,7 @@ void BundleActiveCore::NotifOberserverGroupChanged(const AppGroupCallbackInfo& c
 ErrCode BundleActiveCore::RegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
     const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(callbackMutex_);
     if (!observer) {
         return ERR_MEMORY_OPERATION_FAILED;
     }
@@ -747,7 +738,7 @@ ErrCode BundleActiveCore::RegisterAppGroupCallBack(const AccessToken::AccessToke
 ErrCode BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTokenID& tokenId,
     const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(callbackMutex_);
     auto item = groupChangeObservers_.find(tokenId);
     if (item == groupChangeObservers_.end()) {
         BUNDLE_ACTIVE_LOGI("UnRegisterAppGroupCallBack observer is not exist, return");
@@ -760,7 +751,7 @@ ErrCode BundleActiveCore::UnRegisterAppGroupCallBack(const AccessToken::AccessTo
 
 void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(callbackMutex_);
     if (!observer) {
         BUNDLE_ACTIVE_LOGI("observer nullptr.");
         return;
@@ -786,7 +777,7 @@ void BundleActiveCore::AddObserverDeathRecipient(const sptr<IAppGroupCallback> &
 }
 void BundleActiveCore::RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(callbackMutex_);
     if (!observer) {
         return;
     }
@@ -820,7 +811,7 @@ void BundleActiveCore::OnObserverDiedInner(const wptr<IRemoteObject> &remote)
         BUNDLE_ACTIVE_LOGE("get remote object failed");
         return;
     }
-    std::lock_guard<std::recursive_mutex> lock(callbackMutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(callbackMutex_);
     for (const auto& item : groupChangeObservers_) {
         if (!(item.second)) {
             continue;

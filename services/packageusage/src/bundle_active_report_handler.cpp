@@ -19,33 +19,63 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-BundleActiveReportHandler::BundleActiveReportHandler
-    (const std::shared_ptr<AppExecFwk::EventRunner> &runner) : AppExecFwk::EventHandler(runner)
-{
-}
+const std::string DEVICE_USAGE_REPORT_HANDLE_QUEUE = "DeviceUsageReportHandleQueue";
 
 void BundleActiveReportHandler::Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore)
 {
     bundleActiveCore_ = bundleActiveCore;
-}
-
-void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    if (event == nullptr) {
-        BUNDLE_ACTIVE_LOGE("event is null, exit ProcessEvent");
+    ffrtQueue_ = std::make_shared<ffrt:queue>(DEVICE_USAGE_REPORT_HANDLE_QUEUE.c_str(),
+        ffrt::queue_attr().qos(ffrt::qos_default));
+    if (ffrtQueue_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("BundleActiveReportHandler, ffrtQueue create failed");
         return;
     }
-    auto ptrToHandlerobj = event->GetSharedObject<BundleActiveReportHandlerObject>();
-    switch (event->GetInnerEventId()) {
+    isInited_ = true;
+}
+
+void BundleActiveReportHandler::SendEvent(int32_t eventId,
+    std::shared_ptr<BundleActiveReportHandlerObject> handlerobj, const int32_t& delayTime)
+{
+    if (!isInited_) {
+        BUNDLE_ACTIVE_LOGE("init failed");
+        return;
+    }
+    auto reportHandler = shared_from_this();
+    taskHandlerMap_[eventId] = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj]() {
+        reportHandler->ProcessEvent(eventId, handlerobj);
+        reportHandler->checkBundleTaskMap_.erase(eventId);
+    }, ffrt::task_attr().delay(delayTime);
+}
+
+void BundleActiveReportHandler::RemoveEvent(const int32_t& eventId)
+{
+    if (!isInited_) {
+        BUNDLE_ACTIVE_LOGE("init failed");
+        return;
+    }
+    if (taskHandlerMap_.find(eventId) == taskHandlerMap_.end()) {
+        return;
+    }
+    ffrtQueue_->cancel(taskHandlerMap_[eventId]);
+    taskHandlerMap_.erase(eventId);
+}
+
+void BundleActiveReportHandler::ProcessEvent(int32_t eventId,
+    std::shared_ptr<BundleActiveReportHandlerObject> handlerobj)
+{
+    BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
+    if (tmpHandlerobj == nullptr) {
+        BUNDLE_ACTIVE_LOGE("tmpHandlerobj is null, exit ProcessEvent");
+        return;
+    }
+    switch (eventId) {
         case MSG_REPORT_EVENT: {
             BUNDLE_ACTIVE_LOGD("MSG_REPORT_EVENT CALLED");
-            BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->ReportEvent(tmpHandlerobj.event_, tmpHandlerobj.userId_);
             break;
         }
         case MSG_FLUSH_TO_DISK: {
             BUNDLE_ACTIVE_LOGI("FLUSH TO DISK HANDLE");
-            BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             if (tmpHandlerobj.userId_ != bundleActiveCore_->currentUsedUser_) {
                 BUNDLE_ACTIVE_LOGE("flush user is %{public}d, not last user %{public}d, return",
                     tmpHandlerobj.userId_, bundleActiveCore_->currentUsedUser_);
@@ -56,20 +86,17 @@ void BundleActiveReportHandler::ProcessEvent(const AppExecFwk::InnerEvent::Point
             break;
         }
         case MSG_REMOVE_USER: {
-            BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->OnUserRemoved(tmpHandlerobj.userId_);
             break;
         }
         case MSG_BUNDLE_UNINSTALLED: {
             BUNDLE_ACTIVE_LOGI("MSG_BUNDLE_UNINSTALLED CALLED");
-            BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->OnBundleUninstalled(tmpHandlerobj.userId_, tmpHandlerobj.bundleName_,
                 tmpHandlerobj.uid_, tmpHandlerobj.appIndex_);
             break;
         }
         case MSG_SWITCH_USER: {
             BUNDLE_ACTIVE_LOGI("MSG_SWITCH_USER CALLED");
-            BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             bundleActiveCore_->OnUserSwitched(tmpHandlerobj.userId_);
             break;
         }
