@@ -34,18 +34,17 @@ public:
      * @param eventId The event id
      * @param handlerobj The eventobj
      */
-    void ProcessEvent(int32_t eventId, std::shared_ptr<BundleActiveReportHandlerObject> handlerobj);
-    void SendEvent(int32_t eventId,
-        std::shared_ptr<BundleActiveReportHandlerObject> handlerobj, const int32_t& delayTime = 0);
+    void ProcessEvent(const int32_t& eventId, const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj);
+    void SendEvent(const int32_t& eventId,
+        const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj, const int32_t& delayTime = 0);
     void RemoveEvent(const int32_t& eventId);
     bool HasEvent(const int32_t& eventId);
-
     void Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
-    static const int32_t MSG_REPORT_EVENT = 0;
-    static const int32_t MSG_FLUSH_TO_DISK = 1;
-    static const int32_t MSG_REMOVE_USER = 2;
-    static const int32_t MSG_BUNDLE_UNINSTALLED = 3;
-    static const int32_t MSG_SWITCH_USER = 4;
+    static const int32_t MSG_REPORT_EVENT;
+    static const int32_t MSG_FLUSH_TO_DISK;
+    static const int32_t MSG_REMOVE_USER;
+    static const int32_t MSG_BUNDLE_UNINSTALLED;
+    static const int32_t MSG_SWITCH_USER;
 
 private:
     bool isInited_ = false;

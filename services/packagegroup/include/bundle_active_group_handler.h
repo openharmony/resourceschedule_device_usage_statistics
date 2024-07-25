@@ -45,7 +45,7 @@ public:
      *
      * @param event The event should be processed.
      */
-    void ProcessEvent(int32_t eventId, std::shared_ptr<BundleActiveGroupHandlerObject> handlerobj);
+    void ProcessEvent(const int32_t& eventId, const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj);
     void SendEvent(const int32_t& eventId, const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj,
         const int32_t& delayTime = 0);
     void SendCheckBundleMsg(const int32_t& eventId, const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj,
@@ -57,11 +57,11 @@ public:
     void PostSyncTask(const std::function<void()>& fuc);
     void PostTask(const std::function<void()>& fuc);
     void Init(const std::shared_ptr<BundleActiveGroupController>& bundleActiveController);
-    static const int32_t MSG_CHECK_DEFAULT_BUNDLE_STATE = 0;
-    static const int32_t MSG_ONE_TIME_CHECK_BUNDLE_STATE = 1;
-    static const int32_t MSG_CHECK_IDLE_STATE = 2;
-    static const int32_t MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE = 3;
-    static const int32_t MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE = 4;
+    static const int32_t MSG_CHECK_DEFAULT_BUNDLE_STATE;
+    static const int32_t MSG_ONE_TIME_CHECK_BUNDLE_STATE;
+    static const int32_t MSG_CHECK_IDLE_STATE;
+    static const int32_t MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE;
+    static const int32_t MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE;
     int64_t checkIdleInterval_;
 
 private:

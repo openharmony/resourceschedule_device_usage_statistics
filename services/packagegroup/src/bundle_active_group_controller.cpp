@@ -96,7 +96,7 @@ void BundleActiveGroupController::OnScreenChanged(const bool& isScreenOn, const 
     if (!activeGroupHandler_.expired()) {
         std::shared_ptr<BundleActiveGroupController> bundleActiveGroupController = shared_from_this();
         activeGroupHandler_.lock()->PostTask([bundleActiveGroupController, isScreenOn, bootFromTimeStamp]() {
-            std::lock_guard<std::mutex> lock(bundleActiveGroupController->mutex_);
+            std::lock_guard<ffrt::mutex> lock(bundleActiveGroupController->mutex_);
             bundleActiveGroupController->bundleUserHistory_->UpdateBootBasedAndScreenTime(isScreenOn,
                 bootFromTimeStamp);
         });
@@ -296,17 +296,8 @@ void BundleActiveGroupController::SendCheckBundleMsg(const BundleActiveEvent& ev
     std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
         std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
     if (!activeGroupHandler_.expired()) {
-        activeGroupHandler_->lock()->SendEvent(checkBundleMsgEventId, handlerobjToPtr, timeUntilNextCheck);
+        activeGroupHandler_.lock()->SendEvent(checkBundleMsgEventId, handlerobjToPtr, timeUntilNextCheck);
     }
-}
-
-int64_t BundleActiveGroupController::GetMsgKey(const BundleActiveEvent& event, const int32_t& userId)
-{
-    std::hash<std::string> hasher;
-    uint64_t bundleNameHash = hasher(event.bundleName_);
-    std::string msgHashStr = std::to_string(userId) + std::to_string(bundleNameHash) + std::to_string(event.uid_);
-    uint64_t msgKey = hasher(msgHashStr);
-    return static_cast<int64_t>(msgKey);
 }
 
 void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleName, const int32_t userId,

@@ -43,12 +43,14 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-    static std::shared_ptr<BundleActiveCore> bundleActiveCore_ = nullptr;
+    static std::shared_ptr<BundleActiveCore> bundleActiveCore_;
 };
+
+std::shared_ptr<BundleActiveCore> DeviceUsageStatisticsServiceTest::bundleActiveCore_ = nullptr;
 
 void PackageUsageTest::SetUpTestCase(void)
 {
-    bundleActiveCore_ = std::make_shared<BundleActiveCore>;
+    bundleActiveCore_ = std::make_shared<BundleActiveCore>();
     bundleActiveCore_->Init();
     bundleActiveCore_->InitBundleGroupController();
 }
@@ -734,11 +736,12 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_RenewStatsInMemory_001, Function | M
 HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumTest | Level0)
 {
     std::shared_ptr<BundleActiveReportHandler> bundleActiveReportHandler;
-    pointer.release();
+    BundleActiveReportHandlerObject tmpObject;
+    auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
     bundleActiveReportHandler = std::make_shared<BundleActiveReportHandler>();
     bundleActiveReportHandler->Init(bundleActiveCore_);
-    bundleActiveReportHandler->ProcessEvent(pointer);
-    bundleActiveReportHandler->ProcessEvent(pointer);
+    bundleActiveReportHandler->ProcessEvent(0, handlerObject);
+    bundleActiveReportHandler->ProcessEvent(0, handlerObject);
 }
 
 /*

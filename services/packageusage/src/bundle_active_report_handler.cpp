@@ -20,11 +20,16 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 const std::string DEVICE_USAGE_REPORT_HANDLE_QUEUE = "DeviceUsageReportHandleQueue";
+const int32_t MSG_REPORT_EVENT = 0;
+const int32_t MSG_FLUSH_TO_DISK = 1;
+const int32_t MSG_REMOVE_USER = 2;
+const int32_t MSG_BUNDLE_UNINSTALLED = 3;
+const int32_t MSG_SWITCH_USER = 4;
 
 void BundleActiveReportHandler::Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore)
 {
     bundleActiveCore_ = bundleActiveCore;
-    ffrtQueue_ = std::make_shared<ffrt:queue>(DEVICE_USAGE_REPORT_HANDLE_QUEUE.c_str(),
+    ffrtQueue_ = std::make_shared<ffrt::queue>(DEVICE_USAGE_REPORT_HANDLE_QUEUE.c_str(),
         ffrt::queue_attr().qos(ffrt::qos_default));
     if (ffrtQueue_ == nullptr) {
         BUNDLE_ACTIVE_LOGE("BundleActiveReportHandler, ffrtQueue create failed");
@@ -33,18 +38,18 @@ void BundleActiveReportHandler::Init(const std::shared_ptr<BundleActiveCore>& bu
     isInited_ = true;
 }
 
-void BundleActiveReportHandler::SendEvent(int32_t eventId,
-    std::shared_ptr<BundleActiveReportHandlerObject> handlerobj, const int32_t& delayTime)
+void BundleActiveReportHandler::SendEvent(const int32_t& eventId,
+    const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj, const int32_t& delayTime)
 {
     if (!isInited_) {
         BUNDLE_ACTIVE_LOGE("init failed");
         return;
     }
     auto reportHandler = shared_from_this();
-    taskHandlerMap_[eventId] = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj]() {
+    taskHandlerMap_[eventId] = ffrtQueue_->submit_h([reportHandler, eventId, handlerobj]() {
         reportHandler->ProcessEvent(eventId, handlerobj);
-        reportHandler->checkBundleTaskMap_.erase(eventId);
-    }, ffrt::task_attr().delay(delayTime);
+        reportHandler->taskHandlerMap_.erase(eventId);
+    }, ffrt::task_attr().delay(delayTime));
 }
 
 void BundleActiveReportHandler::RemoveEvent(const int32_t& eventId)
@@ -60,10 +65,22 @@ void BundleActiveReportHandler::RemoveEvent(const int32_t& eventId)
     taskHandlerMap_.erase(eventId);
 }
 
-void BundleActiveReportHandler::ProcessEvent(int32_t eventId,
-    std::shared_ptr<BundleActiveReportHandlerObject> handlerobj)
+bool BundleActiveReportHandler::HasEvent(const int32_t& eventId)
 {
-    BundleActiveReportHandlerObject tmpHandlerobj = *ptrToHandlerobj;
+    if (!isInited_) {
+        BUNDLE_ACTIVE_LOGE("init failed");
+        return false;
+    }
+    if (taskHandlerMap_.find(eventId) != taskHandlerMap_.end()) {
+        return true;
+    }
+    return false;
+}
+
+void BundleActiveReportHandler::ProcessEvent(const int32_t& eventId,
+    const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj)
+{
+    BundleActiveReportHandlerObject tmpHandlerobj = *handlerobj;
     if (tmpHandlerobj == nullptr) {
         BUNDLE_ACTIVE_LOGE("tmpHandlerobj is null, exit ProcessEvent");
         return;
@@ -79,7 +96,7 @@ void BundleActiveReportHandler::ProcessEvent(int32_t eventId,
             if (tmpHandlerobj.userId_ != bundleActiveCore_->currentUsedUser_) {
                 BUNDLE_ACTIVE_LOGE("flush user is %{public}d, not last user %{public}d, return",
                     tmpHandlerobj.userId_, bundleActiveCore_->currentUsedUser_);
-                RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, tmpHandlerobj.userId_);
+                RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
                 return;
             }
             bundleActiveCore_->RestoreToDatabase(tmpHandlerobj.userId_);

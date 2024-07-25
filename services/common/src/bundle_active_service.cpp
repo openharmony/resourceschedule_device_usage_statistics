@@ -128,7 +128,6 @@ void BundleActiveService::InitService()
         bundleActiveCore_ = std::make_shared<BundleActiveCore>();
         bundleActiveCore_->Init();
     }
-    std::shared_ptr<AppExecFwk::EventRunner> runner;
     if (reportHandler_ == nullptr) {
         reportHandler_ = std::make_shared<BundleActiveReportHandler>();
         if (reportHandler_ == nullptr) {
@@ -139,7 +138,6 @@ void BundleActiveService::InitService()
     if (reportHandler_ != nullptr && bundleActiveCore_ != nullptr) {
         BUNDLE_ACTIVE_LOGI("core and handler is not null");
         bundleActiveCore_->SetHandler(reportHandler_);
-        runner = reportHandler_->GetEventRunner();
     } else {
         return;
     }

@@ -71,7 +71,7 @@ BundleActiveCore::~BundleActiveCore()
 
 void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    std::lock_guard<ffrt::mutex> lock(mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     std::string action = data.GetWant().GetAction();
     if (action == CommonEventSupport::COMMON_EVENT_SCREEN_OFF ||
         action == CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
@@ -135,9 +135,7 @@ void BundleActiveCommonEventSubscriber::HandleLockEvent(const std::string& actio
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
     auto handlerobjToPtr = std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-    auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT,
-        handlerobjToPtr);
-    bundleActiveReportHandler_.lock()->SendEvent(event);
+    bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
 }
 
 void BundleActiveCore::RegisterSubscriber()
@@ -327,8 +325,7 @@ void BundleActiveCore::PreservePowerStateInfo(const int32_t eventId)
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
         std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
-        handler_.lock()->SendEvent(event);
+        handler_.lock()->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
     }
 }
 

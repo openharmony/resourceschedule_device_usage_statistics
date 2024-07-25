@@ -21,6 +21,11 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 const std::string DEVICE_GROUP_HANDLE_QUEUE = "DeviceUsageGroupHandleQueue";
+const int32_t MSG_CHECK_DEFAULT_BUNDLE_STATE = 0;
+const int32_t MSG_ONE_TIME_CHECK_BUNDLE_STATE = 1;
+const int32_t MSG_CHECK_IDLE_STATE = 2;
+const int32_t MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE = 3;
+const int32_t MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE = 4;
 #ifndef OS_ACCOUNT_PART_ENABLED
 namespace {
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
@@ -67,6 +72,9 @@ void BundleActiveGroupHandler::SendCheckBundleMsg(const int32_t& eventId,
         return;
     }
     std::string msgKey = GetMsgKey(eventId, handlerobj, delayTime);
+    if (msgKey == "") {
+        return;
+    }
     if (checkBundleTaskMap_.find(msgKey) != checkBundleTaskMap_.end()) {
         RemoveCheckBundleMsg(msgKey);
     }
@@ -74,7 +82,7 @@ void BundleActiveGroupHandler::SendCheckBundleMsg(const int32_t& eventId,
     checkBundleTaskMap_[msgKey] = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj, msgKey]() {
         groupHandler->ProcessEvent(eventId, handlerobj);
         groupHandler->checkBundleTaskMap_.erase(msgKey);
-    }, ffrt::task_attr().delay(delayTime);
+    }, ffrt::task_attr().delay(delayTime));
 }
 
 void BundleActiveGroupHandler::RemoveCheckBundleMsg(const std::string& msgKey)
@@ -93,11 +101,11 @@ void BundleActiveGroupHandler::RemoveCheckBundleMsg(const std::string& msgKey)
 std::string BundleActiveGroupHandler::GetMsgKey(const int32_t& eventId,
     const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int32_t& delayTime)
 {
-    BundleActiveGroupHandlerObject tmpHandlerobj = *handlerobj;
-    if (tmpHandlerobj == nullptr) {
-       BUNDLE_ACTIVE_LOGE("tmpHandlerobj is null, GetMsgKey failed");
-        return; 
+    if (handlerobj == nullptr) {
+       BUNDLE_ACTIVE_LOGE("handlerobj is null, GetMsgKey failed");
+        return ""; 
     }
+    BundleActiveGroupHandlerObject tmpHandlerobj = *handlerobj;
     return std::to_string(eventId) + "_" + std::to_string(tmpHandlerobj.userId_) + "_" +
         std::to_string(tmpHandlerobj.uid_) + "_" + tmpHandlerobj.bundleName_ + "_" + std::to_string(delayTime);
 
@@ -113,8 +121,8 @@ void BundleActiveGroupHandler::SendEvent(const int32_t& eventId,
     auto groupHandler = shared_from_this();
     taskHandlerMap_[eventId] = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj]() {
         groupHandler->ProcessEvent(eventId, handlerobj);
-        groupHandler->checkBundleTaskMap_.erase(eventId);
-    }, ffrt::task_attr().delay(delayTime);
+        groupHandler->taskHandlerMap_.erase(eventId);
+    }, ffrt::task_attr().delay(delayTime));
 }
 
 void BundleActiveGroupHandler::RemoveEvent(const int32_t& eventId)
@@ -149,17 +157,17 @@ void BundleActiveGroupHandler::PostTask(const std::function<void()>& fuc)
     ffrtQueue_->submit(fuc);
 }
 
-void BundleActiveGroupHandler::ProcessEvent(int32_t eventId, std::shared_ptr<BundleActiveGroupHandlerObject> handlerobj)
+void BundleActiveGroupHandler::ProcessEvent(const int32_t& eventId,
+    const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj)
 {
-    BundleActiveGroupHandlerObject tmpHandlerobj = *ptrToHandlerobj;
     switch (eventId) {
         case MSG_CHECK_DEFAULT_BUNDLE_STATE:
         case MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE:
         case MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE: {
-            BundleActiveGroupHandlerObject tmpHandlerobj = *ptrToHandlerobj;
-            if (tmpHandlerobj == nullptr) {
+            if (handlerobj == nullptr) {
                 return;
             }
+            BundleActiveGroupHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
             int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
             bundleActiveGroupController_->CheckAndUpdateGroup(
@@ -178,10 +186,10 @@ void BundleActiveGroupHandler::ProcessEvent(int32_t eventId, std::shared_ptr<Bun
             break;
         }
         case MSG_CHECK_IDLE_STATE: {
-            BundleActiveGroupHandlerObject tmpHandlerobj = *ptrToHandlerobj;
-            if (tmpHandlerobj == nullptr) {
+            if (handlerobj == nullptr) {
                 return;
             }
+            BundleActiveGroupHandlerObject tmpHandlerobj = *ptrToHandlerobj;
             if (bundleActiveGroupController_->CheckEachBundleState(tmpHandlerobj.userId_) &&
                 bundleActiveGroupController_->bundleGroupEnable_) {
                 BundleActiveGroupHandlerObject GroupHandlerObj;

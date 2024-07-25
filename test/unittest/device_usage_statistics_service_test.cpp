@@ -39,18 +39,21 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-    static std::shared_ptr<BundleActiveCore> bundleActiveCore_ = nullptr;
+    static std::shared_ptr<BundleActiveCore> bundleActiveCore_;
 };
+
+std::shared_ptr<BundleActiveCore> DeviceUsageStatisticsServiceTest::bundleActiveCore_ = nullptr;
 
 void DeviceUsageStatisticsServiceTest::SetUpTestCase(void)
 {
-    bundleActiveCore_ = std::make_shared<BundleActiveCore>;
+    bundleActiveCore_ = std::make_shared<BundleActiveCore>();
     bundleActiveCore_->Init();
     bundleActiveCore_->InitBundleGroupController();
 }
 
 void DeviceUsageStatisticsServiceTest::TearDownTestCase(void)
 {
+    bundleActiveCore_->bundleGroupHandler->ffrtQueue.reset();
     int64_t sleepTime = 10;
     std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
 }
@@ -61,6 +64,8 @@ void DeviceUsageStatisticsServiceTest::SetUp(void)
 
 void DeviceUsageStatisticsServiceTest::TearDown(void)
 {
+    int64_t sleepTime = 300;
+    std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
 }
 
 class TestServiceAppGroupChangeCallback : public AppGroupCallbackStub {
@@ -214,7 +219,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppG
     int32_t oldGroup = 60;
     int32_t reasonInGroup = 0;
     AppGroupCallbackInfo appGroupCallbackInfo(userId, newGroup, oldGroup, reasonInGroup, "test");
-    bundleActiveCore->OnAppGroupChanged(appGroupCallbackInfo);
+    bundleActiveCore_->OnAppGroupChanged(appGroupCallbackInfo);
     SUCCEED();
 }
 
@@ -656,21 +661,23 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetS
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ReportEvent_001,
     Function | MediumTest | Level0)
 {
-    auto coreObject = bundleActiveCore_;
+    bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    bundleActiveCore_->Init();
+    bundleActiveCore_->InitBundleGroupController();
     BundleActiveEvent event;
     int32_t userId = 0;
-    EXPECT_NE(coreObject->ReportEvent(event, userId), ERR_OK);
+    EXPECT_NE(bundleActiveCore_->ReportEvent(event, userId), ERR_OK);
 
     userId = 101;
     event.bundleName_ = "com.ohos.launcher";
-    EXPECT_EQ(coreObject->ReportEvent(event, userId), ERR_OK);
+    EXPECT_EQ(bundleActiveCore_->ReportEvent(event, userId), ERR_OK);
 
     event.bundleName_ = "com.ohos.settings";
     event.eventId_ = 15;
-    EXPECT_EQ(coreObject->ReportEvent(event, userId), ERR_OK);
+    EXPECT_EQ(bundleActiveCore_->ReportEvent(event, userId), ERR_OK);
 
     event.eventId_ = 16;
-    EXPECT_EQ(coreObject->ReportEvent(event, userId), ERR_OK);
+    EXPECT_EQ(bundleActiveCore_->ReportEvent(event, userId), ERR_OK);
 }
 
 /*
@@ -862,7 +869,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_007,
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
     Function | MediumTest | Level0)
 {
-    auto coreObject = bundleActiveCore_;
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(treu);
+    coreObject->InitBundleGroupController();
     int userId = 100;
     coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
     coreObject->bundleGroupController_->sptrBundleMgr_ = nullptr;
@@ -893,10 +902,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_010,
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_011,
     Function | MediumTest | Level0)
 {
-    auto coreObject = bundleActiveCore_;
     bool isScreenOn = true;
     int64_t timeStamp = 0;
-    bundleActiveCore->bundleGroupController_->OnScreenChanged(isScreenOn, timeStamp);
+    bundleActiveCore_->bundleGroupController_->OnScreenChanged(isScreenOn, timeStamp);
     SUCCEED();
 }
 
@@ -1026,7 +1034,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Chec
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryAppGroup_001,
     Function | MediumTest | Level0)
 {
-    auto groupController = bundleActiveCore_->bundleGroupHandler_;
+    auto groupController = bundleActiveCore_->bundleGroupController_;
     int32_t appGroup = 10;
     std::string bundleName = "";
     int32_t userId = 100;
@@ -1047,7 +1055,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Cont
     Function | MediumTest | Level0)
 {
     auto coreObject = bundleActiveCore_;
-    coreObject->Init();
 
     int64_t bootBasedTimeStamp = 20000000000000;
     BundleActiveEvent event;
