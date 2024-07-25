@@ -349,7 +349,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemFormStats_001, Function | 
 HWTEST_F(PackageUsageTest, PackageUsageTest_QueryDeviceEventStats_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-     auto bundleActiveCore = bundleActiveCore_;
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -380,7 +380,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryDeviceEventStats_001, Function 
 HWTEST_F(PackageUsageTest, PackageUsageTest_QueryNotificationEventStats_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-     auto bundleActiveCore = bundleActiveCore_;
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -416,7 +416,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryNotificationEventStats_001, Fun
 HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleEvents_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-     auto bundleActiveCore = bundleActiveCore_;
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -454,7 +454,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleEvents_001, Function | Me
 HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemPackageStats_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-     auto bundleActiveCore = bundleActiveCore_;
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -475,7 +475,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemPackageStats_001, Function
 HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-     auto bundleActiveCore = bundleActiveCore_;
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
@@ -520,7 +520,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_001, Function 
 HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_002, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-     auto bundleActiveCore = bundleActiveCore_;
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     int64_t timeStamp = 20000000000000;
     bundleUserService->Init(timeStamp);
