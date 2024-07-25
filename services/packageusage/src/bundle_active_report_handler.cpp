@@ -80,11 +80,11 @@ bool BundleActiveReportHandler::HasEvent(const int32_t& eventId)
 void BundleActiveReportHandler::ProcessEvent(const int32_t& eventId,
     const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj)
 {
-    BundleActiveReportHandlerObject tmpHandlerobj = *handlerobj;
-    if (tmpHandlerobj == nullptr) {
-        BUNDLE_ACTIVE_LOGE("tmpHandlerobj is null, exit ProcessEvent");
+    if (handlerobj == nullptr) {
+        BUNDLE_ACTIVE_LOGE("handlerobj is null, exit ProcessEvent");
         return;
     }
+    BundleActiveReportHandlerObject tmpHandlerobj = *handlerobj;
     switch (eventId) {
         case MSG_REPORT_EVENT: {
             BUNDLE_ACTIVE_LOGD("MSG_REPORT_EVENT CALLED");

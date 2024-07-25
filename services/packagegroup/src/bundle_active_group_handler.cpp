@@ -102,13 +102,12 @@ std::string BundleActiveGroupHandler::GetMsgKey(const int32_t& eventId,
     const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int32_t& delayTime)
 {
     if (handlerobj == nullptr) {
-       BUNDLE_ACTIVE_LOGE("handlerobj is null, GetMsgKey failed");
+        BUNDLE_ACTIVE_LOGE("handlerobj is null, GetMsgKey failed");
         return ""; 
     }
     BundleActiveGroupHandlerObject tmpHandlerobj = *handlerobj;
     return std::to_string(eventId) + "_" + std::to_string(tmpHandlerobj.userId_) + "_" +
         std::to_string(tmpHandlerobj.uid_) + "_" + tmpHandlerobj.bundleName_ + "_" + std::to_string(delayTime);
-
 }
 
 void BundleActiveGroupHandler::SendEvent(const int32_t& eventId,

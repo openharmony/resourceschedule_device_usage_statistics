@@ -109,7 +109,8 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
             tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED, handlerobjToPtr);
+            bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
+                handlerobjToPtr);
         }
     } else if (action == COMMON_EVENT_UNLOCK_SCREEN || action == COMMON_EVENT_LOCK_SCREEN) {
         int32_t userId = data.GetWant().GetIntParam("userId", 0);

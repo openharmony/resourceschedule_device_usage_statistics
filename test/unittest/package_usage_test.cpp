@@ -306,7 +306,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_ReportForShutdown_001, Function | Me
 HWTEST_F(PackageUsageTest, PackageUsageTest_ReportFormEvent_001, Function | MediumTest | Level0)
 {
     int32_t userId = 100;
-     auto bundleActiveCore = bundleActiveCore_;
+    auto bundleActiveCore = bundleActiveCore_;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), true);
     BundleActiveEvent event;
     event.bundleName_ = "defaultBundleName";
