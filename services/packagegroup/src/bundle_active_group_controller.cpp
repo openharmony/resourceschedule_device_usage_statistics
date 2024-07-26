@@ -184,7 +184,7 @@ void BundleActiveGroupController::PeriodCheckBundleState(const int32_t userId)
         tmpGroupHandlerObj.userId_ = userId;
         std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
-        activeGroupHandler->SendEvent(handlerBundleActiveGroupHandler::MSG_CHECK_IDLE_STATEEvent,
+        activeGroupHandler->SendEvent(BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE,
             handlerobjToPtr, FIVE_SECOND);
     }
 }
