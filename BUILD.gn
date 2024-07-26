@@ -323,7 +323,7 @@ ohos_static_library("usagestatservice_static") {
 }
 
 ohos_shared_library("usagestatsutils") {
-  sources = [ 
+  sources = [
     "utils/src/bundle_active_log.cpp",
     "utils/src/bundle_active_util.cpp",
   ]
