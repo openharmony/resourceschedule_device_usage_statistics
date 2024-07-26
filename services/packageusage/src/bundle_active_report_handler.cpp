@@ -16,6 +16,7 @@
 #include "bundle_active_log.h"
 #include "bundle_active_report_handler.h"
 #include "bundle_active_event.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -39,17 +40,25 @@ void BundleActiveReportHandler::Init(const std::shared_ptr<BundleActiveCore>& bu
 }
 
 void BundleActiveReportHandler::SendEvent(const int32_t& eventId,
-    const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj, const int32_t& delayTime)
+    const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj, const int64_t& delayTime)
 {
     if (!isInited_) {
         BUNDLE_ACTIVE_LOGE("init failed");
         return;
     }
     auto reportHandler = shared_from_this();
-    taskHandlerMap_[eventId] = ffrtQueue_->submit_h([reportHandler, eventId, handlerobj]() {
+    int64_t ffrtDelayTime = BundleActiveUtil::GetFFRTDelayTime(delayTime);
+    std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
+    if (taskHandlerMap_.find(eventId) == taskHandlerMap_.end()) {
+        std::queue<ffrt::task_handle> queue;
+        taskHandlerMap_[eventId] = queue;
+    }
+    auto taskHandle = ffrtQueue_->submit_h([reportHandler, eventId, handlerobj]() {
         reportHandler->ProcessEvent(eventId, handlerobj);
-        reportHandler->taskHandlerMap_.erase(eventId);
-    }, ffrt::task_attr().delay(delayTime));
+        std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
+        reportHandler->taskHandlerMap_[eventId].pop();
+    }, ffrt::task_attr().delay(ffrtDelayTime));
+    taskHandlerMap_[eventId].push(taskHandle);
 }
 
 void BundleActiveReportHandler::RemoveEvent(const int32_t& eventId)
@@ -58,10 +67,15 @@ void BundleActiveReportHandler::RemoveEvent(const int32_t& eventId)
         BUNDLE_ACTIVE_LOGE("init failed");
         return;
     }
+    std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
     if (taskHandlerMap_.find(eventId) == taskHandlerMap_.end()) {
         return;
     }
-    ffrtQueue_->cancel(taskHandlerMap_[eventId]);
+    while (!taskHandlerMap_[eventId].empty()) {
+        auto task = taskHandlerMap_[eventId].front();
+        ffrtQueue_->cancel(task);
+        taskHandlerMap_[eventId].pop();
+    }
     taskHandlerMap_.erase(eventId);
 }
 
@@ -71,6 +85,7 @@ bool BundleActiveReportHandler::HasEvent(const int32_t& eventId)
         BUNDLE_ACTIVE_LOGE("init failed");
         return false;
     }
+    std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
     if (taskHandlerMap_.find(eventId) != taskHandlerMap_.end()) {
         return true;
     }

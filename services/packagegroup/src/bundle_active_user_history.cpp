@@ -16,7 +16,7 @@
 #include "app_group_callback_info.h"
 #include "bundle_active_user_history.h"
 #include "bundle_active_log.h"
-#include "bundle_active_group_util.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

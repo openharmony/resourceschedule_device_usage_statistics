@@ -18,6 +18,7 @@
 
 #include "ffrt.h"
 #include <map>
+#include <queue>
 
 #include "ibundle_active_service.h"
 #include "bundle_active_core.h"
@@ -36,7 +37,7 @@ public:
      */
     void ProcessEvent(const int32_t& eventId, const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj);
     void SendEvent(const int32_t& eventId,
-        const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj, const int32_t& delayTime = 0);
+        const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj, const int32_t& int64_t = 0);
     void RemoveEvent(const int32_t& eventId);
     bool HasEvent(const int32_t& eventId);
     void Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
@@ -48,8 +49,9 @@ public:
 
 private:
     bool isInited_ = false;
+    ffrt::mutex taskHandlerMutex_;
     std::shared_ptr<ffrt::queue> ffrtQueue_;
-    std::map<int32_t, ffrt::task_handle> taskHandlerMap_;
+    std::map<int32_t, std::queue<ffrt::task_handle>> taskHandlerMap_;
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;
 };
 }  // namespace DeviceUsageStats

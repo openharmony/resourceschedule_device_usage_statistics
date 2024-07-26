@@ -17,6 +17,7 @@
 #include "bundle_active_account_helper.h"
 #include "bundle_active_group_handler.h"
 #include "bundle_active_log.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -65,7 +66,7 @@ void BundleActiveGroupHandler::Init(const std::shared_ptr<BundleActiveGroupContr
 }
 
 void BundleActiveGroupHandler::SendCheckBundleMsg(const int32_t& eventId,
-    const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int32_t& delayTime)
+    const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int64_t& delayTime)
 {
     if (!isInited_) {
         BUNDLE_ACTIVE_LOGE("init failed");
@@ -75,14 +76,17 @@ void BundleActiveGroupHandler::SendCheckBundleMsg(const int32_t& eventId,
     if (msgKey == "") {
         return;
     }
+    int64_t ffrtDelayTime = BundleActiveUtil::GetFFRTDelayTime(delayTime);
+    std::lock_guard<ffrt::mutex> lock(CheckBundleTaskMutex_);
     if (checkBundleTaskMap_.find(msgKey) != checkBundleTaskMap_.end()) {
         RemoveCheckBundleMsg(msgKey);
     }
     auto groupHandler = shared_from_this();
     checkBundleTaskMap_[msgKey] = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj, msgKey]() {
         groupHandler->ProcessEvent(eventId, handlerobj);
+        std::lock_guard<ffrt::mutex> lock(CheckBundleTaskMutex_);
         groupHandler->checkBundleTaskMap_.erase(msgKey);
-    }, ffrt::task_attr().delay(delayTime));
+    }, ffrt::task_attr().delay(ffrtDelayTime));
 }
 
 void BundleActiveGroupHandler::RemoveCheckBundleMsg(const std::string& msgKey)
@@ -99,7 +103,7 @@ void BundleActiveGroupHandler::RemoveCheckBundleMsg(const std::string& msgKey)
 }
 
 std::string BundleActiveGroupHandler::GetMsgKey(const int32_t& eventId,
-    const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int32_t& delayTime)
+    const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int64_t& delayTime)
 {
     if (handlerobj == nullptr) {
         BUNDLE_ACTIVE_LOGE("handlerobj is null, GetMsgKey failed");
@@ -111,17 +115,25 @@ std::string BundleActiveGroupHandler::GetMsgKey(const int32_t& eventId,
 }
 
 void BundleActiveGroupHandler::SendEvent(const int32_t& eventId,
-    const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int32_t& delayTime)
+    const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj, const int64_t& delayTime)
 {
     if (!isInited_) {
         BUNDLE_ACTIVE_LOGE("init failed");
         return;
     }
     auto groupHandler = shared_from_this();
-    taskHandlerMap_[eventId] = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj]() {
+    int64_t ffrtDelayTime = BundleActiveUtil::GetFFRTDelayTime(delayTime);
+    std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
+    if (taskHandlerMap_.find(eventId) == taskHandlerMap_.end()) {
+        std::queue<ffrt::task_handle> queue;
+        taskHandlerMap_[eventId] = queue;
+    }
+    auto taskHandle = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj]() {
         groupHandler->ProcessEvent(eventId, handlerobj);
-        groupHandler->taskHandlerMap_.erase(eventId);
-    }, ffrt::task_attr().delay(delayTime));
+        std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
+        groupHandler->taskHandlerMap_[eventId].pop();
+    }, ffrt::task_attr().delay(ffrtDelayTime));
+    taskHandlerMap_[eventId].push(taskHandle);
 }
 
 void BundleActiveGroupHandler::RemoveEvent(const int32_t& eventId)
@@ -130,10 +142,15 @@ void BundleActiveGroupHandler::RemoveEvent(const int32_t& eventId)
         BUNDLE_ACTIVE_LOGE("init failed");
         return;
     }
+    std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
     if (taskHandlerMap_.find(eventId) == taskHandlerMap_.end()) {
         return;
     }
-    ffrtQueue_->cancel(taskHandlerMap_[eventId]);
+    while (!taskHandlerMap_[eventId].empty()) {
+        auto task = taskHandlerMap_[eventId].front();
+        ffrtQueue_->cancel(task);
+        taskHandlerMap_[eventId].pop();
+    }
     taskHandlerMap_.erase(eventId);
 }
 

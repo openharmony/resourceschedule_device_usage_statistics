@@ -16,7 +16,7 @@
 #include "bundle_active_user_service.h"
 #include "bundle_active_core.h"
 #include "bundle_active_log.h"
-#include "bundle_active_group_util.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

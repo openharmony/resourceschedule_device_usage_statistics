@@ -20,6 +20,7 @@
 #include "event_runner.h"
 #include "ffrt.h"
 #include <map>
+#include <queue>
 #include "ibundle_active_service.h"
 #include "bundle_active_group_controller.h"
 #include "bundle_active_group_common.h"
@@ -47,11 +48,11 @@ public:
      */
     void ProcessEvent(const int32_t& eventId, const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj);
     void SendEvent(const int32_t& eventId, const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj,
-        const int32_t& delayTime = 0);
+        const int64_t& delayTime = 0);
     void SendCheckBundleMsg(const int32_t& eventId, const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj,
-        const int32_t& delayTime = 0);
+        const int64_t& delayTime = 0);
     std::string GetMsgKey(const int32_t& eventId, const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj,
-        const int32_t& delayTime);
+        const int64_t& delayTime);
     void RemoveEvent(const int32_t& eventId);
     void RemoveCheckBundleMsg(const std::string& msgKey);
     void PostSyncTask(const std::function<void()>& fuc);
@@ -66,8 +67,10 @@ public:
 
 private:
     bool isInited_ = false;
+    ffrt::mutex taskHandlerMutex_;
+    ffrt::mutex CheckBundleTaskMutex_;
     std::shared_ptr<ffrt::queue> ffrtQueue_;
-    std::map<int32_t, ffrt::task_handle> taskHandlerMap_;
+    std::map<int32_t, std::queue<ffrt::task_handle>> taskHandlerMap_;
     std::map<std::string, ffrt::task_handle> checkBundleTaskMap_;
     std::shared_ptr<BundleActiveGroupController> bundleActiveGroupController_;
 };

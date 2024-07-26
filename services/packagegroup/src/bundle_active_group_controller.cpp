@@ -20,7 +20,7 @@
 #include "bundle_active_group_handler.h"
 #include "ibundle_active_service.h"
 #include "bundle_active_group_controller.h"
-#include "bundle_active_group_util.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -296,7 +296,7 @@ void BundleActiveGroupController::SendCheckBundleMsg(const BundleActiveEvent& ev
     std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
         std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
     if (!activeGroupHandler_.expired()) {
-        activeGroupHandler_.lock()->SendEvent(checkBundleMsgEventId, handlerobjToPtr, timeUntilNextCheck);
+        activeGroupHandler_.lock()->SendCheckBundleMsg(checkBundleMsgEventId, handlerobjToPtr, timeUntilNextCheck);
     }
 }
 
