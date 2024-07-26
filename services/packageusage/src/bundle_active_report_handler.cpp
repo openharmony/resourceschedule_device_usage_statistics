@@ -50,15 +50,14 @@ void BundleActiveReportHandler::SendEvent(const int32_t& eventId,
     int64_t ffrtDelayTime = BundleActiveUtil::GetFFRTDelayTime(delayTime);
     std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
     if (taskHandlerMap_.find(eventId) == taskHandlerMap_.end()) {
-        std::queue<ffrt::task_handle> queue;
-        taskHandlerMap_[eventId] = queue;
+        taskHandlerMap_[eventId] = std::queue<ffrt::task_handle>();
     }
-    auto taskHandle = ffrtQueue_->submit_h([reportHandler, eventId, handlerobj]() {
+    ffrt::task_handle taskHandle = ffrtQueue_->submit_h([reportHandler, eventId, handlerobj]() {
         reportHandler->ProcessEvent(eventId, handlerobj);
-        std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
+        std::lock_guard<ffrt::mutex> lock(reportHandler->taskHandlerMutex_);
         reportHandler->taskHandlerMap_[eventId].pop();
     }, ffrt::task_attr().delay(ffrtDelayTime));
-    taskHandlerMap_[eventId].push(taskHandle);
+    taskHandlerMap_[eventId].push(std::move(taskHandle));
 }
 
 void BundleActiveReportHandler::RemoveEvent(const int32_t& eventId)
@@ -72,8 +71,7 @@ void BundleActiveReportHandler::RemoveEvent(const int32_t& eventId)
         return;
     }
     while (!taskHandlerMap_[eventId].empty()) {
-        auto task = taskHandlerMap_[eventId].front();
-        ffrtQueue_->cancel(task);
+        ffrtQueue_->cancel(taskHandlerMap_[eventId].front());
         taskHandlerMap_[eventId].pop();
     }
     taskHandlerMap_.erase(eventId);

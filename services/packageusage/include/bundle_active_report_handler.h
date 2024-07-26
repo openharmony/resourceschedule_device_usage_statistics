@@ -37,7 +37,7 @@ public:
      */
     void ProcessEvent(const int32_t& eventId, const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj);
     void SendEvent(const int32_t& eventId,
-        const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj, const int32_t& int64_t = 0);
+        const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj, const int32_t& delayTime = 0);
     void RemoveEvent(const int32_t& eventId);
     bool HasEvent(const int32_t& eventId);
     void Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore);

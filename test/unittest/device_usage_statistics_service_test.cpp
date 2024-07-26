@@ -53,7 +53,7 @@ void DeviceUsageStatisticsServiceTest::SetUpTestCase(void)
 
 void DeviceUsageStatisticsServiceTest::TearDownTestCase(void)
 {
-    bundleActiveCore_->bundleGroupHandler->ffrtQueue.reset();
+    bundleActiveCore_->bundleGroupHandler_->ffrtQueue_.reset();
     int64_t sleepTime = 10;
     std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
 }
@@ -785,8 +785,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_003,
     Function | MediumTest | Level0)
 {
     auto coreObject = bundleActiveCore_;
-    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
-    coreObject->InitBundleGroupController();
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
     int64_t timeStamp = 20000000000000;

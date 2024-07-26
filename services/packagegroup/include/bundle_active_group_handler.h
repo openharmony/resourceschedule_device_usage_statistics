@@ -68,7 +68,7 @@ public:
 private:
     bool isInited_ = false;
     ffrt::mutex taskHandlerMutex_;
-    ffrt::mutex CheckBundleTaskMutex_;
+    ffrt::mutex checkBundleTaskMutex_;
     std::shared_ptr<ffrt::queue> ffrtQueue_;
     std::map<int32_t, std::queue<ffrt::task_handle>> taskHandlerMap_;
     std::map<std::string, ffrt::task_handle> checkBundleTaskMap_;
