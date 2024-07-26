@@ -20,11 +20,11 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 const std::string DEVICE_USAGE_REPORT_HANDLE_QUEUE = "DeviceUsageReportHandleQueue";
-const int32_t MSG_REPORT_EVENT = 0;
-const int32_t MSG_FLUSH_TO_DISK = 1;
-const int32_t MSG_REMOVE_USER = 2;
-const int32_t MSG_BUNDLE_UNINSTALLED = 3;
-const int32_t MSG_SWITCH_USER = 4;
+const int32_t BundleActiveReportHandler::MSG_REPORT_EVENT = 0;
+const int32_t BundleActiveReportHandler::MSG_FLUSH_TO_DISK = 1;
+const int32_t BundleActiveReportHandler::MSG_REMOVE_USER = 2;
+const int32_t BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED = 3;
+const int32_t BundleActiveReportHandler::MSG_SWITCH_USER = 4;
 
 void BundleActiveReportHandler::Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore)
 {

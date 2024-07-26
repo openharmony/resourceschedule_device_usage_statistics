@@ -21,11 +21,11 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 const std::string DEVICE_GROUP_HANDLE_QUEUE = "DeviceUsageGroupHandleQueue";
-const int32_t MSG_CHECK_DEFAULT_BUNDLE_STATE = 0;
-const int32_t MSG_ONE_TIME_CHECK_BUNDLE_STATE = 1;
-const int32_t MSG_CHECK_IDLE_STATE = 2;
-const int32_t MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE = 3;
-const int32_t MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE = 4;
+const int32_t BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE = 0;
+const int32_t BundleActiveGroupHandler::MSG_ONE_TIME_CHECK_BUNDLE_STATE = 1;
+const int32_t BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE = 2;
+const int32_t BundleActiveGroupHandler::MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE = 3;
+const int32_t BundleActiveGroupHandler::MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE = 4;
 #ifndef OS_ACCOUNT_PART_ENABLED
 namespace {
 constexpr int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
