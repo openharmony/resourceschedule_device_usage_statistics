@@ -868,7 +868,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
     Function | MediumTest | Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
-    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(treu);
+    coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
     coreObject->InitBundleGroupController();
     int userId = 100;
     coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
