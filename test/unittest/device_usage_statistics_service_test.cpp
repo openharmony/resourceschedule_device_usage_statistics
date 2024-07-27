@@ -65,7 +65,7 @@ void DeviceUsageStatisticsServiceTest::SetUp(void)
 void DeviceUsageStatisticsServiceTest::TearDown(void)
 {
     int64_t sleepTime = 300;
-    std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
+    std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
 }
 
 class TestServiceAppGroupChangeCallback : public AppGroupCallbackStub {
