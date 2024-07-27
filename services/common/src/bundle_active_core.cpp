@@ -71,7 +71,7 @@ BundleActiveCore::~BundleActiveCore()
 
 void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     std::string action = data.GetWant().GetAction();
     if (action == CommonEventSupport::COMMON_EVENT_SCREEN_OFF ||
         action == CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
