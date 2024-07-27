@@ -1447,6 +1447,5 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
     userService->DeleteUninstalledBundleStats("test", 100, appIndex);
 }
 
-
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
