@@ -137,6 +137,7 @@ ohos_shared_library("usagestatistics") {
 
   external_deps = [
     "c_utils:utils",
+    "ffrt:libffrt",
     "hilog:libhilog",
     "ipc:ipc_single",
     "napi:ace_napi",
