@@ -57,6 +57,7 @@ void PackageUsageTest::SetUpTestCase(void)
 
 void PackageUsageTest::TearDownTestCase(void)
 {
+    bundleActiveCore_->bundleGroupHandler_->ffrtQueue_.reset();
     int64_t sleepTime = 3;
     std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
 }
@@ -822,7 +823,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_001, Function | MediumTest |
 {
     BundleActiveGroupHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveGroupHandlerObject>(tmpObject);
-    auto bundleActiveGroupHandler = std::make_shared<bundleActiveGroupHandler>();
+    auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
     bundleActiveGroupHandler->SendEvent(0, handlerObject);
     EXPECT_EQ(bundleActiveGroupHandler->taskHandlerMap_.size(), 0);
     bundleActiveGroupHandler->SendCheckBundleMsg(0, handlerObject);
@@ -839,14 +840,14 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_002, Function | MediumTest |
 {
     BundleActiveGroupHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveGroupHandlerObject>(tmpObject);
-    auto bundleActiveGroupHandler = std::make_shared<bundleActiveGroupHandler>();
-    bundleActiveGroupHandler->Init(bundleActiveCore_->bundleGroupHandler_);
-    bundleActiveReportHandler->SendEvent(0, handlerObject);
-    bundleActiveReportHandler->SendEvent(0, handlerObject, 10);
-    EXPECT_NE(bundleActiveReportHandler->taskHandlerMap_.size(), 0);
-    bundleActiveReportHandler->RemoveEvent(0);
-    bundleActiveReportHandler->RemoveEvent(0);
-    EXPECT_EQ(bundleActiveReportHandler->taskHandlerMap_.size(), 0);
+    auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
+    bundleActiveGroupHandler->Init(bundleActiveCore_->bundleGroupController_);
+    bundleActiveGroupHandler->SendEvent(0, handlerObject);
+    bundleActiveGroupHandler->SendEvent(0, handlerObject, 10);
+    EXPECT_NE(bundleActiveGroupHandler->taskHandlerMap_.size(), 0);
+    bundleActiveGroupHandler->RemoveEvent(0);
+    bundleActiveGroupHandler->RemoveEvent(0);
+    EXPECT_EQ(bundleActiveGroupHandler->taskHandlerMap_.size(), 0);
 }
 
 /*
@@ -862,15 +863,17 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_003, Function | MediumTest |
     tmpObject.uid_ = 10000;
     tmpObject.userId_ = 100;
     auto handlerObject = std::make_shared<BundleActiveGroupHandlerObject>(tmpObject);
-    auto bundleActiveGroupHandler = std::make_shared<bundleActiveGroupHandler>();
-    bundleActiveGroupHandler->Init(bundleActiveCore_->bundleGroupHandler_);
-    bundleActiveReportHandler->SendCheckBundleMsg(0, handlerObject);
-    bundleActiveReportHandler->SendCheckBundleMsg(0, handlerObject, 10);
-    auto msgKey = bundleActiveReportHandler->GetMsgKey(0, handlerObject, 10);
-    EXPECT_NE(bundleActiveReportHandler->checkBundleTaskMap_.size(), 0);
-    bundleActiveReportHandler->RemoveCheckBundleMsg(msgKey);
-    bundleActiveReportHandler->RemoveCheckBundleMsg(msgKey);
-    EXPECT_EQ(bundleActiveReportHandler->checkBundleTaskMap_.size(), 0);
+    auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
+    bundleActiveGroupHandler->Init(bundleActiveCore_->bundleGroupController_);
+    bundleActiveGroupHandler->SendCheckBundleMsg(0, handlerObject);
+    bundleActiveGroupHandler->SendCheckBundleMsg(0, handlerObject, 10);
+    auto msgKey = bundleActiveGroupHandler->GetMsgKey(0, handlerObject, 10);
+    EXPECT_NE(bundleActiveGroupHandler->checkBundleTaskMap_.size(), 0);
+    bundleActiveGroupHandler->RemoveCheckBundleMsg(msgKey);
+    bundleActiveGroupHandler->RemoveCheckBundleMsg(msgKey);
+    msgKey = bundleActiveGroupHandler->GetMsgKey(0, handlerObject, 0);
+    bundleActiveGroupHandler->RemoveCheckBundleMsg(msgKey);
+    EXPECT_EQ(bundleActiveGroupHandler->checkBundleTaskMap_.size(), 0);
 }
 
 /*
@@ -886,10 +889,10 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_004, Function | MediumTest |
     tmpObject.uid_ = 10000;
     tmpObject.userId_ = 100;
     auto handlerObject = std::make_shared<BundleActiveGroupHandlerObject>(tmpObject);
-    auto bundleActiveGroupHandler = std::make_shared<bundleActiveGroupHandler>();
-    auo msgkey = bundleActiveReportHandler->GetMsgKey(0, nullptr, 10);
+    auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
+    auto msgkey = bundleActiveGroupHandler->GetMsgKey(0, nullptr, 10);
     EXPECT_EQ(msgkey, "");
-    bundleActiveReportHandler->GetMsgKey(0, handlerObject, 10);
+    msgkey = bundleActiveGroupHandler->GetMsgKey(0, handlerObject, 10);
     EXPECT_NE(msgkey, "");
 }
 
@@ -903,14 +906,14 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_005, Function | MediumTest |
 {
     BundleActiveGroupHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveGroupHandlerObject>(tmpObject);
-    auto bundleActiveGroupHandler = std::make_shared<bundleActiveGroupHandler>();
+    auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
         bundleActiveGroupHandler->PostTask([]() {
         SUCCEED();
     });
     bundleActiveGroupHandler->PostSyncTask([]() {
         SUCCEED();
     });
-    bundleActiveGroupHandler->Init(bundleActiveCore_->bundleGroupHandler_);
+    bundleActiveGroupHandler->Init(bundleActiveCore_->bundleGroupController_);
     bundleActiveGroupHandler->PostTask([]() {
         SUCCEED();
     });
