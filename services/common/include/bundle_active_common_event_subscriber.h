@@ -24,6 +24,7 @@
 #include "time_service_client.h"
 
 #include "ibundle_active_service.h"
+#include "ffrt.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -49,7 +50,7 @@ public:
     void HandleLockEvent(const std::string& action, const int32_t userId);
 
 private:
-    std::mutex mutex_;
+    ffrt::mutex mutex_;
     std::weak_ptr<BundleActiveGroupController> activeGroupController_;
     std::weak_ptr<BundleActiveReportHandler> bundleActiveReportHandler_;
 };

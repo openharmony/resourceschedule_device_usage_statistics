@@ -13,14 +13,19 @@
  * limitations under the License.
  */
 
-#include "bundle_active_group_util.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-
+const int32_t MILLISECOND_TO_MICROSECOND = 1000;
 std::string BundleActiveUtil::GetBundleUsageKey(const std::string &bundleName, const int32_t uid)
 {
     return bundleName + std::to_string(uid);
+}
+
+int64_t BundleActiveUtil::GetFFRTDelayTime(const int64_t& delayTime)
+{
+    return delayTime * MILLISECOND_TO_MICROSECOND;
 }
 
 } // namespace DeviceUsageStats
