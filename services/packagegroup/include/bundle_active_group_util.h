@@ -25,7 +25,6 @@ public:
     ~BundleActiveUtil() = delete;
 
     static std::string GetBundleUsageKey(const std::string& bundleName, const int32_t uid);
-    static int64_t GetFFRTDelayTime(const int64_t& delayTime);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
