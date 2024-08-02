@@ -15,6 +15,7 @@
 
 #include "bundle_active_calendar.h"
 #include "bundle_active_period_stats.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -29,22 +30,22 @@ BundleActiveCalendar::BundleActiveCalendar(const int64_t timeStamp)
 
 void BundleActiveCalendar::TruncateToDay()
 {
-    time_ -= time_ % dayMilliseconds_;
+    time_ = BundleActiveUtil::GetDayStartTime(time_);
 }
 
 void BundleActiveCalendar::TruncateToWeek()
 {
-    time_ -= time_ % weekMilliseconds_;
+    time_ = BundleActiveUtil::GetWeekStartTime(time_);
 }
 
 void BundleActiveCalendar::TruncateToMonth()
 {
-    time_ -= time_ % monthMilliseconds_;
+    time_ = BundleActiveUtil::GetMonthStartTime(time_);
 }
 
 void BundleActiveCalendar::TruncateToYear()
 {
-    time_ -= time_ % yearMilliseconds_;
+    time_ = BundleActiveUtil::GetYearStartTime(time_);
 }
 
 void BundleActiveCalendar::IncreaseDays(const int64_t val)
@@ -106,4 +107,3 @@ void BundleActiveCalendar::TruncateTo(int32_t intervalType)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-

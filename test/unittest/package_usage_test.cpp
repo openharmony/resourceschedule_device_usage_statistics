@@ -20,6 +20,7 @@
 #include <gtest/gtest.h>
 #include "system_ability_definition.h"
 
+#include "bundle_active_calendar.h"
 #include "bundle_active_module_record.h"
 #include "bundle_active_event_tracker.h"
 #include "bundle_active_package_stats.h"
@@ -922,5 +923,27 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_005, Function | MediumTest |
     });
 }
 
+/*
+ * @tc.name: BundleActiveCalendar_001
+ * @tc.desc: BundleActiveCalendar 
+ * @tc.type: FUNC
+ * @tc.require: IAHDJW
+ */
+HWTEST_F(PackageUsageTest, BundleActiveCalendar_001, Function | MediumTest | Level0)
+{
+    int64_t nowTime = bundleActiveCore_->GetSystemTimeMs();
+    BundleActiveCalendar testCalendar(nowTime);
+    testCalendar.TruncateToDay();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar2(nowTime);
+    testCalendar.TruncateToWeek();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar3(nowTime);
+    testCalendar.TruncateToMonth();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar4(nowTime);
+    testCalendar.TruncateToYear();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
