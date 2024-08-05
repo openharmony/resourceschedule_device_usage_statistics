@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@
 #include <memory>
 #include <string>
 
+#include "ffrt.h"
 #include "bundle_active_package_history.h"
 #include "bundle_active_group_common.h"
 #include "bundle_active_usage_database.h"
@@ -64,7 +65,7 @@ public:
         const int32_t appIndex);
 
 private:
-    std::mutex setGroupMutex_;
+    ffrt::mutex setGroupMutex_;
     bool isScreenOn_;
     std::weak_ptr<BundleActiveCore> bundleActiveCore_;
 };

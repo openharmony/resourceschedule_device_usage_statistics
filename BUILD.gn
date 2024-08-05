@@ -137,6 +137,7 @@ ohos_shared_library("usagestatistics") {
 
   external_deps = [
     "c_utils:utils",
+    "ffrt:libffrt",
     "hilog:libhilog",
     "ipc:ipc_single",
     "napi:ace_napi",
@@ -177,7 +178,6 @@ ohos_shared_library("usagestatservice") {
     "services/common/src/bundle_active_usage_database.cpp",
     "services/packagegroup/src/bundle_active_group_controller.cpp",
     "services/packagegroup/src/bundle_active_group_handler.cpp",
-    "services/packagegroup/src/bundle_active_group_util.cpp",
     "services/packagegroup/src/bundle_active_user_history.cpp",
     "services/packageusage/src/bundle_active_calendar.cpp",
     "services/packageusage/src/bundle_active_event_list.cpp",
@@ -261,7 +261,6 @@ ohos_static_library("usagestatservice_static") {
     "services/common/src/bundle_active_usage_database.cpp",
     "services/packagegroup/src/bundle_active_group_controller.cpp",
     "services/packagegroup/src/bundle_active_group_handler.cpp",
-    "services/packagegroup/src/bundle_active_group_util.cpp",
     "services/packagegroup/src/bundle_active_user_history.cpp",
     "services/packageusage/src/bundle_active_calendar.cpp",
     "services/packageusage/src/bundle_active_event_list.cpp",
@@ -325,7 +324,10 @@ ohos_static_library("usagestatservice_static") {
 }
 
 ohos_shared_library("usagestatsutils") {
-  sources = [ "utils/src/bundle_active_log.cpp" ]
+  sources = [
+    "utils/src/bundle_active_log.cpp",
+    "utils/src/bundle_active_util.cpp",
+  ]
   public_configs = [ ":usagestatsutils_config" ]
 
   external_deps = [
