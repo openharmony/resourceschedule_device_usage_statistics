@@ -85,6 +85,9 @@ void BundleActiveGroupHandler::SendCheckBundleMsg(const int32_t& eventId,
     checkBundleTaskMap_[msgKey] = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj, msgKey]() {
         groupHandler->ProcessEvent(eventId, handlerobj);
         std::lock_guard<ffrt::mutex> lock(groupHandler->checkBundleTaskMutex_);
+        if (groupHandler->checkBundleTaskMap_.find(msgKey) == groupHandler->checkBundleTaskMap_.end()) {
+            return;
+        }
         groupHandler->checkBundleTaskMap_.erase(msgKey);
     }, ffrt::task_attr().delay(ffrtDelayTime));
 }
@@ -130,6 +133,9 @@ void BundleActiveGroupHandler::SendEvent(const int32_t& eventId,
     ffrt::task_handle taskHandle = ffrtQueue_->submit_h([groupHandler, eventId, handlerobj]() {
         groupHandler->ProcessEvent(eventId, handlerobj);
         std::lock_guard<ffrt::mutex> lock(groupHandler->taskHandlerMutex_);
+        if (groupHandler->taskHandlerMap_.find(eventId) == groupHandler->taskHandlerMap_.end()) {
+            return;
+        }
         if (!groupHandler->taskHandlerMap_[eventId].empty()) {
             groupHandler->taskHandlerMap_[eventId].pop();
         }

@@ -55,7 +55,12 @@ void BundleActiveReportHandler::SendEvent(const int32_t& eventId,
     ffrt::task_handle taskHandle = ffrtQueue_->submit_h([reportHandler, eventId, handlerobj]() {
         reportHandler->ProcessEvent(eventId, handlerobj);
         std::lock_guard<ffrt::mutex> lock(reportHandler->taskHandlerMutex_);
-        reportHandler->taskHandlerMap_[eventId].pop();
+        if (reportHandler->taskHandlerMap_.find(eventId) == reportHandler->taskHandlerMap_.end()) {
+            return;
+        }
+        if (!reportHandler->taskHandlerMap_[eventId].empty()) {
+            reportHandler->taskHandlerMap_[eventId].pop();
+        }
     }, ffrt::task_attr().delay(ffrtDelayTime));
     taskHandlerMap_[eventId].push(std::move(taskHandle));
 }
