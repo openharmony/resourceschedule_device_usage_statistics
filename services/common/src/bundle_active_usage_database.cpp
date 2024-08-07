@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -76,7 +76,7 @@ void BundleActiveUsageDatabase::ChangeToDebug()
 
 void BundleActiveUsageDatabase::InitUsageGroupDatabase(const int32_t databaseType, const bool forModuleRecords)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     if (CreateDatabasePath() == BUNDLE_ACTIVE_FAIL) {
         BUNDLE_ACTIVE_LOGE("database path is not exist");
         return;
@@ -136,7 +136,7 @@ int32_t BundleActiveUsageDatabase::CreateDatabasePath()
 
 void BundleActiveUsageDatabase::InitDatabaseTableInfo(int64_t currentTime)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     if (CreateDatabasePath() == BUNDLE_ACTIVE_FAIL) {
         BUNDLE_ACTIVE_LOGE("database path is not exist");
         return;
@@ -803,7 +803,7 @@ int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(uint32_t databaseTyp
 void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userHistory)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     if (userHistory == nullptr) {
         return;
     }
@@ -858,7 +858,7 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
 shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsageDatabase::GetBundleHistoryData(
     int32_t userId)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     if (bundleHistoryTableName_ == UNKNOWN_TABLE_NAME) {
         return nullptr;
     }
@@ -901,7 +901,7 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
 
 void BundleActiveUsageDatabase::PutDurationData(int64_t bootBasedDuration, int64_t screenOnDuration)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     CheckDatabaseFile(APP_GROUP_DATABASE_INDEX);
     if (durationTableName_ == UNKNOWN_TABLE_NAME) {
         CreateDurationTable(APP_GROUP_DATABASE_INDEX);
@@ -924,7 +924,7 @@ void BundleActiveUsageDatabase::PutDurationData(int64_t bootBasedDuration, int64
 
 pair<int64_t, int64_t> BundleActiveUsageDatabase::GetDurationData()
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     pair<int64_t, int64_t> durationData;
     if (durationTableName_ == UNKNOWN_TABLE_NAME) {
         return durationData;
@@ -994,7 +994,7 @@ void BundleActiveUsageDatabase::FlushPackageInfo(uint32_t databaseType, const Bu
 shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageData(int32_t databaseType,
     int32_t userId)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     if (databaseType < 0 || databaseType >= static_cast<int32_t>(sortedTableArray_.size())) {
         return nullptr;
     }
@@ -1219,7 +1219,7 @@ int32_t BundleActiveUsageDatabase::ExecuteRenameTableName(std::string tablePrefi
 
 int32_t BundleActiveUsageDatabase::GetOptimalIntervalType(int64_t beginTime, int64_t endTime)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     int32_t optimalIntervalType = -1;
     int64_t leastTimeDiff = numeric_limits<int64_t>::max();
     for (int32_t i = static_cast<int32_t>(sortedTableArray_.size() - 1); i >= 0; i--) {
@@ -1239,7 +1239,7 @@ int32_t BundleActiveUsageDatabase::GetOptimalIntervalType(int64_t beginTime, int
 
 void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     calendar_->SetMilliseconds(currentTime);
     calendar_->IncreaseYears(-1 * MAX_FILES_EVERY_INTERVAL_TYPE[YEARLY_DATABASE_INDEX]);
     std::unique_ptr<std::vector<int64_t>> overdueYearsTableCreateTime = GetOverdueTableCreateTime(YEARLY_DATABASE_INDEX,
@@ -1284,7 +1284,7 @@ void BundleActiveUsageDatabase::RemoveOldData(int64_t currentTime)
 
 void BundleActiveUsageDatabase::RenewTableTime(int64_t timeDiffMillis)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     for (uint32_t i = 0; i < sortedTableArray_.size(); i++) {
         if (sortedTableArray_.at(i).empty()) {
             continue;
@@ -1331,7 +1331,7 @@ void BundleActiveUsageDatabase::RenewTableTime(int64_t timeDiffMillis)
 
 void BundleActiveUsageDatabase::UpdateEventData(int32_t databaseType, BundleActivePeriodStats &stats)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     CheckDatabaseFile(databaseType);
     if (databaseType != DAILY_DATABASE_INDEX) {
         return;
@@ -1344,7 +1344,7 @@ void BundleActiveUsageDatabase::UpdateEventData(int32_t databaseType, BundleActi
 
 void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, BundleActivePeriodStats &stats)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     if (databaseType < 0 || databaseType >= EVENT_DATABASE_INDEX) {
         BUNDLE_ACTIVE_LOGE("databaseType is invalid : %{public}d", databaseType);
         return;
@@ -1436,7 +1436,7 @@ void BundleActiveUsageDatabase::GetQuerySqlCommand(const int64_t beginTime,
 vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageStats(int32_t databaseType,
     int64_t beginTime, int64_t endTime, int32_t userId)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     vector<BundleActivePackageStats> databaseUsageStats;
     int32_t startIndex = 0;
     int32_t endIndex = 0;
@@ -1485,7 +1485,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
 vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t beginTime, int64_t endTime,
     int32_t userId, string bundleName)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     vector<BundleActiveEvent> databaseEvents;
     int64_t eventTableTime = ParseStartTime(eventTableName_);
     if (JudgeQueryCondition(beginTime, endTime, eventTableTime) == QUERY_CONDITION_INVALID) {
@@ -1533,7 +1533,7 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
 void BundleActiveUsageDatabase::OnPackageUninstalled(const int32_t userId, const string& bundleName,
     const int32_t uid, const int32_t appIndex)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     for (uint32_t i = 0; i < sortedTableArray_.size(); i++) {
         if (sortedTableArray_.at(i).empty()) {
             continue;
@@ -1603,7 +1603,7 @@ int64_t BundleActiveUsageDatabase::GetSystemTimeMs()
 void BundleActiveUsageDatabase::UpdateModuleData(const int32_t userId,
     std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords, const int64_t timeStamp)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     CheckDatabaseFile(APP_GROUP_DATABASE_INDEX);
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
     if (rdbStore == nullptr) {
@@ -1702,7 +1702,7 @@ void BundleActiveUsageDatabase::RemoveFormData(const int32_t userId, const std::
     const std::string moduleName, const std::string formName, const int32_t formDimension,
     const int64_t formId, const int32_t uid)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
     if (rdbStore == nullptr) {
         BUNDLE_ACTIVE_LOGE("remove for data fail, rdbStore is nullptr");
@@ -1730,7 +1730,7 @@ void BundleActiveUsageDatabase::RemoveFormData(const int32_t userId, const std::
 void BundleActiveUsageDatabase::LoadModuleData(const int32_t userId, std::map<std::string,
     std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     string queryModuleSql = "select * from " + moduleRecordsTableName_ + " where userId = ?";
     vector<string> queryCondition;
     queryCondition.emplace_back(to_string(userId));
@@ -1762,7 +1762,7 @@ void BundleActiveUsageDatabase::LoadModuleData(const int32_t userId, std::map<st
 void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std::string,
     std::shared_ptr<BundleActiveModuleRecord>>& moduleRecords)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     string queryFormSql = "select * from " + formRecordsTableName_ + " where userId = ?";
     vector<string> queryCondition;
     queryCondition.emplace_back(to_string(userId));
@@ -1800,7 +1800,7 @@ void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std:
 void BundleActiveUsageDatabase::QueryDeviceEventStats(int32_t eventId, int64_t beginTime,
     int64_t endTime, std::map<std::string, BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     int64_t eventTableTime = ParseStartTime(eventTableName_);
     if (JudgeQueryCondition(beginTime, endTime, eventTableTime) == QUERY_CONDITION_INVALID) {
         return;
@@ -1859,7 +1859,7 @@ std::string BundleActiveUsageDatabase::GetSystemEventName(const int32_t userId)
 void BundleActiveUsageDatabase::QueryNotificationEventStats(int32_t eventId, int64_t beginTime,
     int64_t endTime, std::map<std::string, BundleActiveEventStats>& notificationEventStats, int32_t userId)
 {
-    lock_guard<mutex> lock(databaseMutex_);
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     int64_t eventTableTime = ParseStartTime(eventTableName_);
     if (JudgeQueryCondition(beginTime, endTime, eventTableTime) == QUERY_CONDITION_INVALID) {
         return;

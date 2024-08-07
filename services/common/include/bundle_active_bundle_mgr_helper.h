@@ -23,6 +23,7 @@
 #include "iremote_object.h"
 #include "singleton.h"
 #include <unordered_set>
+#include "ffrt.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -71,7 +72,7 @@ private:
     std::map<std::string, bool> launcherAppMap_;
     bool isInitLauncherAppMap_ = false;
     sptr<AppExecFwk::IBundleMgr> bundleMgr_ = nullptr;
-    std::mutex connectionMutex_;
+    ffrt::mutex connectionMutex_;
     DECLARE_DELAYED_SINGLETON(BundleActiveBundleMgrHelper);
 };
 }  // namespace DeviceUsageStats

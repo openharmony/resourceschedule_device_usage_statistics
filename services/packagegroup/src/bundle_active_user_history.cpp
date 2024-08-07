@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 #include "app_group_callback_info.h"
 #include "bundle_active_user_history.h"
 #include "bundle_active_log.h"
-#include "bundle_active_group_util.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -223,7 +223,7 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
 int32_t BundleActiveUserHistory::SetAppGroup(const string& bundleName, const int32_t userId, const int32_t uid,
     const int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason, const bool isFlush)
 {
-    std::lock_guard<std::mutex> lock(setGroupMutex_);
+    std::lock_guard<ffrt::mutex> lock(setGroupMutex_);
     BUNDLE_ACTIVE_LOGI("set %{public}s to group %{public}d, reason is %{public}d, userId is %{public}d",
         bundleName.c_str(), newGroup, groupReason, userId);
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userBundleHistory = GetUserHistory(userId, false);

@@ -15,7 +15,7 @@
 
 #include "bundle_active_period_stats.h"
 #include "bundle_active_event.h"
-#include "bundle_active_group_util.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {

@@ -38,7 +38,7 @@ BundleActiveBundleMgrHelper::~BundleActiveBundleMgrHelper()
 
 void BundleActiveBundleMgrHelper::GetNameForUid(int32_t uid, std::string& bundleName)
 {
-    std::lock_guard<std::mutex> lock(connectionMutex_);
+    std::lock_guard<ffrt::mutex> lock(connectionMutex_);
     if (!Connect()) {
         return;
     }
@@ -53,7 +53,7 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfo(const std::string &appName,
     const int userId, AppExecFwk::ApplicationInfo &appInfo)
 {
     BUNDLE_ACTIVE_LOGD("start get application info");
-    std::lock_guard<std::mutex> lock(connectionMutex_);
+    std::lock_guard<ffrt::mutex> lock(connectionMutex_);
 
     if (!Connect()) {
         return false;
@@ -69,7 +69,7 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfos(const AppExecFwk::Applicat
     const int userId, std::vector<AppExecFwk::ApplicationInfo> &appInfos)
 {
     BUNDLE_ACTIVE_LOGI("start get application infos");
-    std::lock_guard<std::mutex> lock(connectionMutex_);
+    std::lock_guard<ffrt::mutex> lock(connectionMutex_);
 
     if (!Connect()) {
         return false;
@@ -84,7 +84,7 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfos(const AppExecFwk::Applicat
 bool BundleActiveBundleMgrHelper::GetBundleInfo(const std::string &bundleName, const AppExecFwk::BundleFlag flag,
     AppExecFwk::BundleInfo &bundleInfo, int32_t userId)
 {
-    std::lock_guard<std::mutex> lock(connectionMutex_);
+    std::lock_guard<ffrt::mutex> lock(connectionMutex_);
 
     if (!Connect()) {
         return false;
