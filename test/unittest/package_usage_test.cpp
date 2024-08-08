@@ -925,7 +925,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_005, Function | MediumTest |
 
 /*
  * @tc.name: BundleActiveCalendar_001
- * @tc.desc: BundleActiveCalendar 
+ * @tc.desc: BundleActiveCalendar
  * @tc.type: FUNC
  * @tc.require: IAHDJW
  */

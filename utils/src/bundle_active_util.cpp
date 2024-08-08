@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
+#include <ctime>
 #include "bundle_active_util.h"
-#include<ctime>
 
 namespace OHOS {
 namespace DeviceUsageStats {
