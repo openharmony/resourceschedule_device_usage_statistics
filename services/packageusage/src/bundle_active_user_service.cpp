@@ -296,6 +296,8 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
             }
         }
         if (currentStats_[intervalType] != nullptr) {
+            currentStats_[intervalType]->beginTime_ = tmpCalendar.GetMilliseconds();
+            currentStats_[intervalType]->endTime_ = timeStamp;
             continue;
         }
         BUNDLE_ACTIVE_LOGI("LoadActiveStats [Server]create new interval stats!");
