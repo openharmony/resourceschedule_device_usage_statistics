@@ -22,6 +22,10 @@ const int32_t MILLISECOND_TO_MICROSECOND = 1000;
 const int32_t MILLISECOND_TO_SECOND = 1000;
 const int32_t SECOND_TO_MILLISECOND = 1000;
 const int64_t ONE_DAY_TIME = 24 * 60 * 60 *1000LL;
+const int32_t PERIOD_DAILY = 0;
+const int32_t PERIOD_WEEKLY = 1;
+const int32_t PERIOD_MONTHLY = 2;
+const int32_t PERIOD_YEARLY = 4;
 std::string BundleActiveUtil::GetBundleUsageKey(const std::string &bundleName, const int32_t uid)
 {
     return bundleName + std::to_string(uid);
@@ -32,16 +36,37 @@ int64_t BundleActiveUtil::GetFFRTDelayTime(const int64_t& delayTime)
     return delayTime * MILLISECOND_TO_MICROSECOND;
 }
 
-int64_t BundleActiveUtil::GetYearStartTime(const int64_t& timeStamp)
+int64_t BundleActiveUtil::GetIntervalTypeStartTime(const int64_t& timeStamp, const int32_t& intervalType)
 {
+    int64_t startTime = 0;
     time_t time = timeStamp / MILLISECOND_TO_SECOND;
     std::tm* tm_time = std::localtime(&time);
-    tm_time->tm_mon = 0;
-    tm_time->tm_mday = 1;
     tm_time->tm_hour = 0;
     tm_time->tm_min = 0;
     tm_time->tm_sec = 0;
-    return mktime(tm_time) * SECOND_TO_MILLISECOND;
+    switch (intervalType) {
+        case PERIOD_YEARLY:
+            tm_time->tm_mon = 0;
+            tm_time->tm_mday = 1;
+            startTime = mktime(tm_time) * SECOND_TO_MILLISECOND;
+            break;
+        case PERIOD_MONTHLY:
+            tm_time->tm_mday = 1;
+            startTime = mktime(tm_time) * SECOND_TO_MILLISECOND;
+            break;
+        case PERIOD_WEEKLY:
+            int64_t weekday = tm_time->tm_wday;
+            time_t startOfDay = mktime(tm_time) * SECOND_TO_MILLISECOND;
+            time_t weekDayTime = (weekday -1) * ONE_DAY_TIME;
+            startTime = startOfDay - weekDayTime;
+            break;
+        case PERIOD_DAILY:
+            startTime = mktime(tm_time) * SECOND_TO_MILLISECOND;
+            break;
+        default:
+            break;
+    }
+    return startTime;
 }
 
 int64_t BundleActiveUtil::GetMonthStartTime(const int64_t& timeStamp)

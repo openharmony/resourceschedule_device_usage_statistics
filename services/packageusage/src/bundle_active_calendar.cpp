@@ -30,22 +30,38 @@ BundleActiveCalendar::BundleActiveCalendar(const int64_t timeStamp)
 
 void BundleActiveCalendar::TruncateToDay()
 {
-    time_ = BundleActiveUtil::GetDayStartTime(time_);
+    if (debug_) {
+        time_ -= time_ % dayMilliseconds_;
+        return;
+    }
+    time_ = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActivePeriodStats::PERIOD_DAILY);
 }
 
 void BundleActiveCalendar::TruncateToWeek()
 {
-    time_ = BundleActiveUtil::GetWeekStartTime(time_);
+    if (debug_) {
+        time_ -= time_ % weekMilliseconds_;
+        return;
+    }
+    time_ = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActivePeriodStats::PERIOD_WEEKLY);
 }
 
 void BundleActiveCalendar::TruncateToMonth()
 {
-    time_ = BundleActiveUtil::GetMonthStartTime(time_);
+    if (debug_) {
+        time_ -= time_ % monthMilliseconds_;
+        return;
+    }
+    time_ = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActivePeriodStats::PERIOD_MONTHLY);
 }
 
 void BundleActiveCalendar::TruncateToYear()
 {
-    time_ = BundleActiveUtil::GetYearStartTime(time_);
+    if (debug_) {
+        time_ -= time_ % yearMilliseconds_;
+        return;
+    }
+    time_ = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActivePeriodStats::PERIOD_YEARLY);
 }
 
 void BundleActiveCalendar::IncreaseDays(const int64_t val)
@@ -80,10 +96,11 @@ int64_t BundleActiveCalendar::GetMilliseconds()
 
 void BundleActiveCalendar::ChangeToDebug()
 {
-        dayMilliseconds_ = ONE_DAY_TIME_DEBUG;
-        weekMilliseconds_ = ONE_WEEK_TIME_DEBUG;
-        monthMilliseconds_ = ONE_MONTH_TIME_DEBUG;
-        yearMilliseconds_ = ONE_YEAR_TIME_DEBUG;
+    debug_ = true;
+    dayMilliseconds_ = ONE_DAY_TIME_DEBUG;
+    weekMilliseconds_ = ONE_WEEK_TIME_DEBUG;
+    monthMilliseconds_ = ONE_MONTH_TIME_DEBUG;
+    yearMilliseconds_ = ONE_YEAR_TIME_DEBUG;
 }
 
 void BundleActiveCalendar::TruncateTo(int32_t intervalType)
