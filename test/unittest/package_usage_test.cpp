@@ -945,5 +945,32 @@ HWTEST_F(PackageUsageTest, BundleActiveCalendar_001, Function | MediumTest | Lev
     testCalendar.TruncateToYear();
     EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
 }
+
+/*
+ * @tc.name: BundleActiveCalendar_002
+ * @tc.desc: BundleActiveCalendar debug
+ * @tc.type: FUNC
+ * @tc.require: IAHDJW
+ */
+HWTEST_F(PackageUsageTest, BundleActiveCalendar_002, Function | MediumTest | Level0)
+{
+    int64_t nowTime = bundleActiveCore_->GetSystemTimeMs();
+    BundleActiveCalendar testCalendar(nowTime);
+    testCalendar.ChangeToDebug();
+    testCalendar.TruncateToDay();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar2(nowTime);
+    testCalendar.ChangeToDebug();
+    testCalendar.TruncateToWeek();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar3(nowTime);
+    testCalendar.ChangeToDebug();
+    testCalendar.TruncateToMonth();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar4(nowTime);
+    testCalendar.ChangeToDebug();
+    testCalendar.TruncateToYear();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
