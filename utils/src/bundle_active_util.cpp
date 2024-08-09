@@ -24,10 +24,6 @@ const int32_t SECOND_TO_MILLISECOND = 1000;
 const int64_t ONE_DAY_TIME = 24 * 60 * 60 *1000LL;
 const int64_t WEEK_OFFSET = 6LL;
 const int64_t DAYS_OF_WEEK = 7LL;
-const int32_t PERIOD_DAILY = 0;
-const int32_t PERIOD_WEEKLY = 1;
-const int32_t PERIOD_MONTHLY = 2;
-const int32_t PERIOD_YEARLY = 4;
 std::string BundleActiveUtil::GetBundleUsageKey(const std::string &bundleName, const int32_t uid)
 {
     return bundleName + std::to_string(uid);
