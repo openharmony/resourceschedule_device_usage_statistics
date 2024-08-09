@@ -66,40 +66,6 @@ int64_t BundleActiveUtil::GetIntervalTypeStartTime(const int64_t& timeStamp, con
     }
     return mktime(tm_time) * SECOND_TO_MILLISECOND;
 }
-
-int64_t BundleActiveUtil::GetMonthStartTime(const int64_t& timeStamp)
-{
-    time_t time = timeStamp / MILLISECOND_TO_SECOND;
-    std::tm* tm_time = std::localtime(&time);
-    tm_time->tm_mday = 1;
-    tm_time->tm_hour = 0;
-    tm_time->tm_min = 0;
-    tm_time->tm_sec = 0;
-    return mktime(tm_time) * SECOND_TO_MILLISECOND;
-}
-
-int64_t BundleActiveUtil::GetWeekStartTime(const int64_t& timeStamp)
-{
-    time_t time = timeStamp / MILLISECOND_TO_SECOND;
-    std::tm* tm_time = std::localtime(&time);
-    int64_t weekday = tm_time->tm_wday;
-    tm_time->tm_hour = 0;
-    tm_time->tm_min = 0;
-    tm_time->tm_sec = 0;
-    time_t startOfDay = mktime(tm_time) * SECOND_TO_MILLISECOND;
-    time_t weekDayTime = (weekday -1) * ONE_DAY_TIME;
-    return startOfDay - weekDayTime;
-}
-
-int64_t BundleActiveUtil::GetDayStartTime(const int64_t& timeStamp)
-{
-    time_t time = timeStamp / MILLISECOND_TO_SECOND;
-    std::tm* tm_time = std::localtime(&time);
-    tm_time->tm_hour = 0;
-    tm_time->tm_min = 0;
-    tm_time->tm_sec = 0;
-    return mktime(tm_time) * SECOND_TO_MILLISECOND;
-}
 } // namespace DeviceUsageStats
 }  // namespace OHOS
 

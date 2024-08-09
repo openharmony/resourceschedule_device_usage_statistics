@@ -27,10 +27,6 @@ public:
     static std::string GetBundleUsageKey(const std::string& bundleName, const int32_t uid);
     static int64_t GetFFRTDelayTime(const int64_t& delayTime);
     static int64_t GetIntervalTypeStartTime(const int64_t& timeStamp, const int32_t& intervalType);
-    static int64_t GetYearStartTime(const int64_t& timeStamp);
-    static int64_t GetMonthStartTime(const int64_t& timeStamp);
-    static int64_t GetWeekStartTime(const int64_t& timeStamp);
-    static int64_t GetDayStartTime(const int64_t& timeStamp);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
