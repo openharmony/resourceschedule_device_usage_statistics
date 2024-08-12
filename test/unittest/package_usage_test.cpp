@@ -20,6 +20,7 @@
 #include <gtest/gtest.h>
 #include "system_ability_definition.h"
 
+#include "bundle_active_calendar.h"
 #include "bundle_active_module_record.h"
 #include "bundle_active_event_tracker.h"
 #include "bundle_active_package_stats.h"
@@ -1122,6 +1123,56 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_005, Function | MediumTest |
     packageStats->longTimeTasks_[taskName] = BundleActiveEvent::LONG_TIME_TASK_ENDED;
     packageStats->UpdateAbility(timeStamp, eventId, abilityId);
     EXPECT_EQ(packageStats->totalContiniousTaskUsedTime_, 0);
+}
+
+/*
+ * @tc.name: BundleActiveCalendar_001
+ * @tc.desc: BundleActiveCalendar
+ * @tc.type: FUNC
+ * @tc.require: IAHDJW
+ */
+HWTEST_F(PackageUsageTest, BundleActiveCalendar_001, Function | MediumTest | Level0)
+{
+    int64_t nowTime = bundleActiveCore_->GetSystemTimeMs();
+    BundleActiveCalendar testCalendar(nowTime);
+    testCalendar.TruncateToDay();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar2(nowTime);
+    testCalendar.TruncateToWeek();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar3(nowTime);
+    testCalendar.TruncateToMonth();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar4(nowTime);
+    testCalendar.TruncateToYear();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+}
+
+/*
+ * @tc.name: BundleActiveCalendar_002
+ * @tc.desc: BundleActiveCalendar debug
+ * @tc.type: FUNC
+ * @tc.require: IAHDJW
+ */
+HWTEST_F(PackageUsageTest, BundleActiveCalendar_002, Function | MediumTest | Level0)
+{
+    int64_t nowTime = bundleActiveCore_->GetSystemTimeMs();
+    BundleActiveCalendar testCalendar(nowTime);
+    testCalendar.ChangeToDebug();
+    testCalendar.TruncateToDay();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar2(nowTime);
+    testCalendar.ChangeToDebug();
+    testCalendar.TruncateToWeek();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar3(nowTime);
+    testCalendar.ChangeToDebug();
+    testCalendar.TruncateToMonth();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
+    BundleActiveCalendar testCalendar4(nowTime);
+    testCalendar.ChangeToDebug();
+    testCalendar.TruncateToYear();
+    EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
 }
 
 }  // namespace DeviceUsageStats

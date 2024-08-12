@@ -15,6 +15,7 @@
 
 #include "bundle_active_calendar.h"
 #include "bundle_active_period_stats.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -29,22 +30,38 @@ BundleActiveCalendar::BundleActiveCalendar(const int64_t timeStamp)
 
 void BundleActiveCalendar::TruncateToDay()
 {
-    time_ -= time_ % dayMilliseconds_;
+    if (debug_) {
+        time_ -= time_ % dayMilliseconds_;
+        return;
+    }
+    time_ = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_DAILY);
 }
 
 void BundleActiveCalendar::TruncateToWeek()
 {
-    time_ -= time_ % weekMilliseconds_;
+    if (debug_) {
+        time_ -= time_ % weekMilliseconds_;
+        return;
+    }
+    time_ = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_WEEKLY);
 }
 
 void BundleActiveCalendar::TruncateToMonth()
 {
-    time_ -= time_ % monthMilliseconds_;
+    if (debug_) {
+        time_ -= time_ % monthMilliseconds_;
+        return;
+    }
+    time_ = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_MONTHLY);
 }
 
 void BundleActiveCalendar::TruncateToYear()
 {
-    time_ -= time_ % yearMilliseconds_;
+    if (debug_) {
+        time_ -= time_ % yearMilliseconds_;
+        return;
+    }
+    time_ = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_YEARLY);
 }
 
 void BundleActiveCalendar::IncreaseDays(const int64_t val)
@@ -79,10 +96,11 @@ int64_t BundleActiveCalendar::GetMilliseconds()
 
 void BundleActiveCalendar::ChangeToDebug()
 {
-        dayMilliseconds_ = ONE_DAY_TIME_DEBUG;
-        weekMilliseconds_ = ONE_WEEK_TIME_DEBUG;
-        monthMilliseconds_ = ONE_MONTH_TIME_DEBUG;
-        yearMilliseconds_ = ONE_YEAR_TIME_DEBUG;
+    debug_ = true;
+    dayMilliseconds_ = ONE_DAY_TIME_DEBUG;
+    weekMilliseconds_ = ONE_WEEK_TIME_DEBUG;
+    monthMilliseconds_ = ONE_MONTH_TIME_DEBUG;
+    yearMilliseconds_ = ONE_YEAR_TIME_DEBUG;
 }
 
 void BundleActiveCalendar::TruncateTo(int32_t intervalType)
@@ -106,4 +124,3 @@ void BundleActiveCalendar::TruncateTo(int32_t intervalType)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-

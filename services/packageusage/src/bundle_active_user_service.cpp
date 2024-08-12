@@ -296,6 +296,8 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
             }
         }
         if (currentStats_[intervalType] != nullptr) {
+            currentStats_[intervalType]->beginTime_ = tmpCalendar.GetMilliseconds();
+            currentStats_[intervalType]->endTime_ = timeStamp;
             continue;
         }
         BUNDLE_ACTIVE_LOGI("LoadActiveStats [Server]create new interval stats!");
@@ -305,6 +307,16 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
         currentStats_[intervalType]->endTime_ = timeStamp;
     }
     statsChanged_ = false;
+    UpdateExpiryDate(timeChanged, tmpCalendar, timeStamp);
+    listener_.OnStatsReload();
+    BUNDLE_ACTIVE_LOGI("LoadActiveStats current expire time is %{public}lld, "
+        "begin time is %{public}lld", (long long)dailyExpiryDate_.GetMilliseconds(),
+        (long long)tmpCalendar.GetMilliseconds());
+}
+
+void BundleActiveUserService::UpdateExpiryDate(const bool timeChanged,
+    BundleActiveCalendar& tmpCalendar, const int64_t timeStamp)
+{
     // 延长统计时间到第二天0点
     if (timeChanged) {
         dailyExpiryDate_.SetMilliseconds(currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->beginTime_);
@@ -315,10 +327,6 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
     if (!timeChanged) {
         dailyExpiryDate_.TruncateToDay();
     }
-    listener_.OnStatsReload();
-    BUNDLE_ACTIVE_LOGI("LoadActiveStats current expire time is %{public}lld, "
-        "begin time is %{public}lld", (long long)dailyExpiryDate_.GetMilliseconds(),
-        (long long)tmpCalendar.GetMilliseconds());
 }
 
 void BundleActiveUserService::LoadModuleAndFormStats()
