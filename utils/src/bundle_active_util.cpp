@@ -24,6 +24,11 @@ const int32_t SECOND_TO_MILLISECOND = 1000;
 const int64_t ONE_DAY_TIME = 24 * 60 * 60 *1000LL;
 const int64_t WEEK_OFFSET = 6LL;
 const int64_t DAYS_OF_WEEK = 7LL;
+const int64_t HOUR_OF_MIDNIGHT = 0;
+const int64_t MIN_OF_MIDNIGHT = 0;
+const int64_t SECOND_TO_MIDNIGHT = 0;
+const int64_t STATR_DAY_OF_MON = 1;
+const int64_t STATR_MON_OF_YEAR = 0;
 std::string BundleActiveUtil::GetBundleUsageKey(const std::string &bundleName, const int32_t uid)
 {
     return bundleName + std::to_string(uid);
@@ -38,9 +43,9 @@ int64_t BundleActiveUtil::GetIntervalTypeStartTime(const int64_t& timeStamp, con
 {
     time_t time = timeStamp / MILLISECOND_TO_SECOND;
     std::tm* tm_time = std::localtime(&time);
-    tm_time->tm_hour = 0;
-    tm_time->tm_min = 0;
-    tm_time->tm_sec = 0;
+    tm_time->tm_hour = HOUR_OF_MIDNIGHT;
+    tm_time->tm_min = MIN_OF_MIDNIGHT;
+    tm_time->tm_sec = SECOND_TO_MIDNIGHT;
     if (intervalType == PERIOD_WEEKLY) {
         int64_t weekday = tm_time->tm_wday;
         time_t startOfDay = mktime(tm_time) * SECOND_TO_MILLISECOND;
@@ -51,11 +56,11 @@ int64_t BundleActiveUtil::GetIntervalTypeStartTime(const int64_t& timeStamp, con
         case PERIOD_DAILY:
             break;
         case PERIOD_MONTHLY:
-            tm_time->tm_mday = 1;
+            tm_time->tm_mday = STATR_DAY_OF_MON;
             break;
         case PERIOD_YEARLY:
-            tm_time->tm_mon = 0;
-            tm_time->tm_mday = 1;
+            tm_time->tm_mon = STATR_MON_OF_YEAR;
+            tm_time->tm_mday = STATR_DAY_OF_MON;
             break;
         default:
             break;
