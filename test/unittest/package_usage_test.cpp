@@ -943,6 +943,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_005, Function | MediumTest |
     });
 }
 
+/*
  * @tc.name: BundleActiveGroupHandler_006
  * @tc.desc: PostTask
  * @tc.type: FUNC
