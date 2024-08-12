@@ -1010,6 +1010,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_009, Function | MediumTest |
 HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_010, Function | MediumTest | Level0)
 {
     auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
+    bundleActiveGroupHandler->Init(bundleActiveCore_->bundleGroupController_);
     int32_t eventId = 2;
     std::shared_ptr<BundleActiveGroupHandlerObject> handlerObject = nullptr;
     bundleActiveGroupHandler->ProcessEvent(eventId, handlerObject);
@@ -1033,7 +1034,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_001, Function | MediumTest |
     std::string taskName = "test";
     int64_t timeStamp = 0;
     int32_t eventId = BundleActiveEvent::END_OF_THE_DAY;
-    std::string abilityId = 1;
+    std::string abilityId = "1";
     int32_t uid = 0;
     packageStats->Update("test", timeStamp, eventId, abilityId, uid);
     packageStats->lastTimeUsed_ = 0;
@@ -1042,7 +1043,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_001, Function | MediumTest |
     packageStats->abilities_["test"] = BundleActiveEvent::ABILITY_FOREGROUND;
     packageStats->longTimeTasks_["test"] = BundleActiveEvent::ABILITY_FOREGROUND;
     packageStats->Update("test", timeStamp, eventId, abilityId, uid);
-    EXPECT_EQ(forntTime, timeStamp);
+    EXPECT_EQ(packageStats->totalInFrontTime_, timeStamp);
 }
 
 /*
@@ -1057,7 +1058,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_002, Function | MediumTest |
     std::string taskName = "test";
     int64_t timeStamp = 0;
     int32_t eventId = BundleActiveEvent::FLUSH;
-    std::string abilityId = 1;
+    std::string abilityId = "1";
     int32_t uid = 0;
     packageStats->Update("test", timeStamp, eventId, abilityId, uid);
     packageStats->lastTimeUsed_ = 0;
@@ -1066,8 +1067,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_002, Function | MediumTest |
     packageStats->abilities_["test"] = BundleActiveEvent::ABILITY_FOREGROUND;
     packageStats->longTimeTasks_["test"] = BundleActiveEvent::ABILITY_FOREGROUND;
     packageStats->Update("test", timeStamp, eventId, abilityId, uid);
-    forntTime = packageStats->totalInFrontTime_;
-    EXPECT_EQ(forntTime, timeStamp);
+    EXPECT_EQ(packageStats->totalInFrontTime_, timeStamp);
 }
 
 /*
@@ -1081,7 +1081,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_003, Function | MediumTest |
     MessageParcel reply;
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     bool result = packageStats->Marshalling(reply);
-    EXPECT_TRUE(!result);
+    EXPECT_TRUE(result);
 }
 
 /*
@@ -1096,7 +1096,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_004, Function | MediumTest |
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     int64_t timeStamp = 0;
     int32_t eventId = BundleActiveEvent::ABILITY_FOREGROUND;
-    std::string abilityId = 1;
+    std::string abilityId = "1";
     packageStats->abilities_[abilityId] = BundleActiveEvent::ABILITY_STOP;
     packageStats->UpdateAbility(timeStamp, eventId, abilityId);
     packageStats->abilities_[abilityId] = BundleActiveEvent::ABILITY_BACKGROUND;
@@ -1116,6 +1116,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_005, Function | MediumTest |
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     std::string taskName = "test";
     int64_t timeStamp = 0;
+    std::string abilityId = "1";
     int32_t eventId = BundleActiveEvent::LONG_TIME_TASK_ENDED;
     packageStats->totalContiniousTaskUsedTime_ = 0;
     packageStats->longTimeTasks_[taskName] = BundleActiveEvent::LONG_TIME_TASK_ENDED;
