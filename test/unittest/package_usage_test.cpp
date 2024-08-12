@@ -804,6 +804,7 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_002, Function | MediumT
     auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
     auto bundleActiveReportHandler = std::make_shared<BundleActiveReportHandler>();
     bundleActiveReportHandler->SendEvent(0, handlerObject);
+    bundleActiveReportHandler->RemoveEvent(0);
     EXPECT_EQ(bundleActiveReportHandler->taskHandlerMap_.size(), 0);
     bundleActiveReportHandler->Init(bundleActiveCore_);
     bundleActiveReportHandler->SendEvent(0, handlerObject);
@@ -826,6 +827,7 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_003, Function | MediumT
     BundleActiveReportHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
     auto bundleActiveReportHandler = std::make_shared<BundleActiveReportHandler>();
+    bundleActiveReportHandler->HasEvent(0);
     bundleActiveReportHandler->Init(bundleActiveCore_);
     bundleActiveReportHandler->SendEvent(0, handlerObject, 10);
     EXPECT_EQ(bundleActiveReportHandler->HasEvent(0), true);
@@ -938,6 +940,85 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_005, Function | MediumTest |
     bundleActiveGroupHandler->PostSyncTask([]() {
         SUCCEED();
     });
+}
+
+/*
+ * @tc.name: BundleActiveGroupHandler_006
+ * @tc.desc: PostTask
+ * @tc.type: FUNC
+ * @tc.require: IA4GZ0
+ */
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_006, Function | MediumTest | Level0)
+{
+    auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
+    
+    bundleActiveGroupHandler->Init(bundleActiveCore_->bundleGroupController_);
+    int32_t eventId = 0;
+    std::shared_ptr<BundleActiveGroupHandlerObject> tmpObject = nullptr;
+    bundleActiveGroupHandler->SendCheckBundleMsg(eventId, tmpObject, 0);
+    SUCCEED();
+}
+
+/*
+ * @tc.name: BundleActiveGroupHandler_007
+ * @tc.desc: PostTask
+ * @tc.type: FUNC
+ * @tc.require: IA4GZ0
+ */
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_007, Function | MediumTest | Level0)
+{
+    auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
+    bundleActiveGroupHandler->Init(nullptr);
+    SUCCEED();
+}
+
+/*
+ * @tc.name: BundleActiveGroupHandler_008
+ * @tc.desc: PostTask
+ * @tc.type: FUNC
+ * @tc.require: IA4GZ0
+ */
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_008, Function | MediumTest | Level0)
+{
+    auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
+    int32_t eventId = 0;
+    bundleActiveGroupHandler->RemoveEvent(eventId);
+    SUCCEED();
+}
+
+/*
+ * @tc.name: BundleActiveGroupHandler_009
+ * @tc.desc: PostTask
+ * @tc.type: FUNC
+ * @tc.require: IA4GZ0
+ */
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_009, Function | MediumTest | Level0)
+{
+    auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
+    int32_t eventId = 0;
+    std::shared_ptr<BundleActiveGroupHandlerObject> tmpObject = nullptr;
+    bundleActiveGroupHandler->ProcessEvent(eventId, tmpObject);
+    SUCCEED();
+}
+
+/*
+ * @tc.name: BundleActiveGroupHandler_010
+ * @tc.desc: PostTask
+ * @tc.type: FUNC
+ * @tc.require: IA4GZ0
+ */
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_010, Function | MediumTest | Level0)
+{
+    auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
+    int32_t eventId = 2;
+    std::shared_ptr<BundleActiveGroupHandlerObject> handlerObject = nullptr;
+    bundleActiveGroupHandler->ProcessEvent(eventId, handlerObject);
+    BundleActiveGroupHandlerObject tmpObject;
+    handlerObject = std::make_shared<BundleActiveGroupHandlerObject>(tmpObject);
+    bundleActiveGroupHandler->ProcessEvent(eventId, handlerObject);
+    eventId = 100;
+    bundleActiveGroupHandler->ProcessEvent(eventId, handlerObject);
+    SUCCEED();
 }
 
 /*
