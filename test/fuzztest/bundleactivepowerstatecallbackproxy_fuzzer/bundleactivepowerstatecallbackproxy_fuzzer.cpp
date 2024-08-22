@@ -26,6 +26,7 @@
 #include "bundle_active_client.h"
 #include "bundle_active_stats_combiner.h"
 #include "bundle_active_event_list.h"
+#include "bundle_active_core.h"
 
 #ifndef errno_t
 typedef int errno_t;
@@ -89,8 +90,8 @@ namespace DeviceUsageStats {
         g_pos = 0;
         uint32_t code = GetData<uint32_t>();
         PowerMgr::PowerState state = static_cast<PowerMgr::PowerState>(code);
-        const sptr<IRemoteObject> tempImpl;
-        BundleActivePowerStateCallbackService BundleActivePowerStateCallbackService(tempImpl);
+        auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+        BundleActivePowerStateCallbackService BundleActivePowerStateCallbackService(bundleActiveCore);
         BundleActivePowerStateCallbackService.OnPowerStateChanged(state);
         return true;
     }
