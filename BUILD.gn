@@ -101,6 +101,8 @@ ohos_shared_library("bundlestate") {
     "hilog:libhilog",
     "ipc:ipc_single",
     "napi:ace_napi",
+    "samgr:samgr_proxy",
+    "eventhandler:libeventhandler",
   ]
   relative_install_dir = "module"
   part_name = "${device_usage_statistics_part_name}"
@@ -141,6 +143,8 @@ ohos_shared_library("usagestatistics") {
     "hilog:libhilog",
     "ipc:ipc_single",
     "napi:ace_napi",
+    "samgr:samgr_proxy",
+    "eventhandler:libeventhandler",
   ]
   relative_install_dir = "module/resourceschedule"
   part_name = "${device_usage_statistics_part_name}"
