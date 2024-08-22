@@ -219,7 +219,7 @@ private:
 #endif
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     sptr<PowerMgr::IAsyncShutdownCallback> shutdownCallback_;
-    sptr<BundleActivePowerStateCallbackService> powerStateCallback_;
+    sptr<PowerMgr::IPowerStateCallback> powerStateCallback_;
 #endif
     bool ready_ {false};
     int32_t ConvertIntervalType(const int32_t intervalType);

@@ -18,7 +18,7 @@
 #include "app_mgr_interface.h"
 
 #include <securec.h>
-#include "bundle_active_power_state_callback_proxy.h"
+#include "bundle_active_power_state_callback_service.h"
 #include "power_state_callback_ipc_interface_code.h"
 #include "power_state_machine_info.h"
 #include "bundle_active_open_callback.h"
@@ -90,8 +90,8 @@ namespace DeviceUsageStats {
         uint32_t code = GetData<uint32_t>();
         PowerMgr::PowerState state = static_cast<PowerMgr::PowerState>(code);
         const sptr<IRemoteObject> tempImpl;
-        BundleActivePowerStateCallbackProxy bundleActivePowerStateCallbackProxy(tempImpl);
-        bundleActivePowerStateCallbackProxy.OnPowerStateChanged(state);
+        BundleActivePowerStateCallbackService BundleActivePowerStateCallbackService(tempImpl);
+        BundleActivePowerStateCallbackService.OnPowerStateChanged(state);
         return true;
     }
 
