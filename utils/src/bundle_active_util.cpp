@@ -42,7 +42,13 @@ int64_t BundleActiveUtil::GetFFRTDelayTime(const int64_t& delayTime)
 int64_t BundleActiveUtil::GetIntervalTypeStartTime(const int64_t& timeStamp, const int32_t& intervalType)
 {
     time_t time = timeStamp / MILLISECOND_TO_SECOND;
+    if (time <= 0) {
+        return ERROR_TIME;
+    }
     std::tm* tm_time = std::localtime(&time);
+    if (tm_time == nullptr) {
+        return ERROR_TIME;
+    }
     tm_time->tm_hour = HOUR_OF_MIDNIGHT;
     tm_time->tm_min = MIN_OF_MIDNIGHT;
     tm_time->tm_sec = SECOND_TO_MIDNIGHT;
