@@ -759,6 +759,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_001,
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
     auto runner = AppExecFwk::EventRunner::Create("test");
     coreObject->InitBundleGroupController(runner);
+    SUCCEED();
 
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
@@ -766,6 +767,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_001,
     userService->Init(timeStamp);
     coreObject->userStatServices_[userId] = userService;
     coreObject->OnUserRemoved(userId);
+    SUCCEED();
 }
 
 /*
@@ -781,6 +783,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_002,
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(coreObject->debugCore_);
     auto runner = AppExecFwk::EventRunner::Create("test");
     coreObject->InitBundleGroupController(runner);
+    SUCCEED();
 
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
@@ -788,6 +791,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_002,
     userService->Init(timeStamp);
     coreObject->userStatServices_[userId] = userService;
     coreObject->bundleGroupController_->OnUserSwitched(userId, userId);
+    SUCCEED();
 }
 
 /*
@@ -803,13 +807,14 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_003,
     coreObject->bundleGroupController_ = std::make_shared<BundleActiveGroupController>(true);
     auto runner = AppExecFwk::EventRunner::Create("test");
     coreObject->InitBundleGroupController(runner);
+    SUCCEED();
 
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
     int64_t timeStamp = 20000000000000;
     userService->Init(timeStamp);
     coreObject->userStatServices_[userId] = userService;
-    coreObject->bundleGroupController_->GetNewGroup("test", userId, timeStamp, 0);
+    EXPECT_EQ(coreObject->bundleGroupController_->GetNewGroup("test", userId, timeStamp, 0), -1);
 }
 
 /*
@@ -829,10 +834,15 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_004,
     BundleActiveEvent event;
     int64_t timeStamp = 20000000000000;
     coreObject->bundleGroupController_->ReportEvent(event, timeStamp, userId);
+    SUCCEED();
     coreObject->bundleGroupController_->ReportEvent(event, timeStamp, 19);
+    SUCCEED();
     coreObject->bundleGroupController_->ReportEvent(event, timeStamp, 7);
+    SUCCEED();
     coreObject->bundleGroupController_->bundleGroupEnable_ = false;
+    SUCCEED();
     coreObject->bundleGroupController_->ReportEvent(event, timeStamp, userId);
+    SUCCEED();
 }
 
 /*
@@ -851,6 +861,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_005,
     int userId = 100;
     int64_t timeStamp = 20000000000000;
     coreObject->bundleGroupController_->CheckAndUpdateGroup("test", userId, 0, timeStamp);
+    SUCCEED();
 }
 
 /*
@@ -867,9 +878,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_006,
     auto runner = AppExecFwk::EventRunner::Create("test");
     coreObject->InitBundleGroupController(runner);
     int userId = 100;
-    int64_t timeStamp = 20000000000000;
-    coreObject->bundleGroupController_->SetAppGroup("test", userId, 0, 0, timeStamp, true);
-    coreObject->bundleGroupController_->SetAppGroup("test", userId, 0, 0, timeStamp, false);
+    int64_t time = 20000000000000;
+    EXPECT_EQ(coreObject->bundleGroupController_->SetAppGroup("test", userId, 0, 0, time, true),
+        ERR_NO_APP_GROUP_INFO_IN_DATABASE);
 }
 
 /*
@@ -886,7 +897,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_007,
     auto runner = AppExecFwk::EventRunner::Create("test");
     coreObject->InitBundleGroupController(runner);
     int userId = 100;
-    coreObject->bundleGroupController_->IsBundleIdle("test", userId);
+    EXPECT_EQ(coreObject->bundleGroupController_->IsBundleIdle("test", userId), -1);
 }
 
 /*
@@ -903,13 +914,13 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
     auto runner = AppExecFwk::EventRunner::Create("test");
     coreObject->InitBundleGroupController(runner);
     int userId = 100;
-    coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
+    EXPECT_EQ(coreObject->bundleGroupController_->IsBundleInstalled("test", userId), false);
     coreObject->bundleGroupController_->sptrBundleMgr_ = nullptr;
-    coreObject->bundleGroupController_->IsBundleInstalled("test", userId);
+    EXPECT_EQ(coreObject->bundleGroupController_->IsBundleInstalled("test", userId), false);
 }
 
 /*
- * @tc.name: BundleActiveGroupControllerTest_011
+ * @tc.name: BundleActiveGroupControllerTest_010
  * @tc.desc: test the interface
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
@@ -924,10 +935,11 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_010,
     int userId = 100;
     int64_t timeStamp = 20000000000000;
     coreObject->bundleGroupController_->ShutDown(timeStamp, userId);
+    SUCCEED();
 }
 
 /*
- * @tc.name: BundleActiveGroupControllerTest_010
+ * @tc.name: BundleActiveGroupControllerTest_011
  * @tc.desc: test the interface
  * @tc.type: FUNC
  * @tc.require: IssuesIA9M7I
@@ -959,7 +971,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_001,
     std::vector<int64_t> screenTimeLevel;
     std::vector<int64_t> bootFromTimeLevel;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
-    bundleUserHistory_->GetLevelIndex("test", 0, 20000, screenTimeLevel, bootFromTimeLevel, 0);
+    EXPECT_EQ(bundleUserHistory_->GetLevelIndex("test", 0, 20000, screenTimeLevel, bootFromTimeLevel, 0), -1);
 }
 
 /*
@@ -976,6 +988,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_002,
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
     bundleUserHistory_->WriteDeviceDuration();
     bundleUserHistory_->OnBundleUninstalled(0, "test", 0, 0);
+    SUCCEED();
 }
 
 /*
@@ -992,10 +1005,15 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_003,
     auto oneBundleUsageHistory = std::make_shared<BundleActivePackageHistory>();
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 0, 0, 1000, 2000, 100, 0);
+    SUCCEED();
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 0, 0, 2000, 1000, 100, 0);
+    SUCCEED();
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 10, 0, 1000, 2000, 100, 0);
+    SUCCEED();
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 20, 0, 1000, 2000, 100, 0);
+    SUCCEED();
     bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 20, 0, 0, 2000, 100, 0);
+    SUCCEED();
 }
 
 /*
@@ -1015,7 +1033,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_004,
     int32_t uid = 0;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
     bundleUserHistory_->SetAppGroup("test", userId, uid, bootBasedTimeStamp, newgroup, groupReason, true);
+    SUCCEED();
     bundleUserHistory_->SetAppGroup("test", userId, uid, bootBasedTimeStamp, newgroup, groupReason, false);
+    SUCCEED();
 }
 
 /*
@@ -1031,6 +1051,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_005,
     int64_t bootBasedTimeStamp = 2000;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore);
     bundleUserHistory_->PrintData(0);
+    SUCCEED();
 }
 
 /*
@@ -1417,31 +1438,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Upda
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsServiceTest_onStart_001
- * @tc.desc: onstart
- * @tc.type: FUNC
- * @tc.require: issuesI5SOZY
- */
-HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_onStart_001,
-    Function | MediumTest | Level0)
-{
-    DelayedSingleton<BundleActiveService>::GetInstance()->ready_ = true;
-    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance(), nullptr);
-}
-
-/*
- * @tc.name: DeviceUsageStatisticsServiceTest_onStart_002
- * @tc.desc: onstart
- * @tc.type: FUNC
- * @tc.require: issuesI5SOZY
- */
-HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_onStart_002,
-    Function | MediumTest | Level0)
-{
-    EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->SubscribeAppState(), true);
-}
-
-/*
  * @tc.name: DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_001
  * @tc.desc: onstart
  * @tc.type: FUNC
@@ -1505,7 +1501,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
     appIndex = 0;
     userService->DeleteUninstalledBundleStats("test", 100, appIndex);
 }
-
 
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

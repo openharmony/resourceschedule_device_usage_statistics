@@ -117,13 +117,13 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
         }
     } else if (action == COMMON_EVENT_UNLOCK_SCREEN || action == COMMON_EVENT_LOCK_SCREEN) {
         int32_t userId = data.GetWant().GetIntParam("userId", 0);
-        BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d", action.c_str(), userId);
         HandleLockEvent(action, userId);
     }
 }
 
 void BundleActiveCommonEventSubscriber::HandleLockEvent(const std::string& action, const int32_t userId)
 {
+    BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d", action.c_str(), userId);
     if (bundleActiveReportHandler_.expired()) {
         return;
     }
