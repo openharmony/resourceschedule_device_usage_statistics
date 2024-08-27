@@ -18,10 +18,9 @@
 #include <gtest/gtest.h>
 #include "system_ability_definition.h"
 
-#include "bundle_active_power_state_callback_proxy.h"
+#include "bundle_active_power_state_callback_service.h"
 #include "bundle_active_stub.h"
 #include "bundle_active_core.h"
-#include "bundle_active_power_state_callback_stub.h"
 #include "bundle_active_continuous_task_observer.h"
 #include "bundle_active_bundle_mgr_helper.h"
 #include "bundle_active_app_state_observer.h"
