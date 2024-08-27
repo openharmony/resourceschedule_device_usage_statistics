@@ -75,7 +75,7 @@ napi_value ParseQueryModuleUsageRecords(const napi_env &env, const napi_callback
             BUNDLE_ACTIVE_LOGI("get module info has only one callback param");
             GetCallBackParameters(env, argv, ZERO_ARG, params);
             if (params.errorCode != ERR_OK) {
-                return BundleStateCommon::NapiGetNull(env); 
+                return BundleStateCommon::NapiGetNull(env);
             }
             params.maxNum = MAXNUM_UP_LIMIT;
         } else if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
@@ -452,8 +452,12 @@ napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
 }
 
 napi_value GetBundleStatsInfoByIntervalCallBack(const napi_env &env, napi_value* argv,
-    AppUsageParamsByIntervalInfo &params, size_t argvLen)
+    AppUsageParamsByIntervalInfo &params, size_t argvLen = 0)
 {
+    if (argvLen <= THIRD_ARG) {
+        params.errorCode = ERR_PARAMETERS_EMPTY;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_EMPTY, "callback");
+    }
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[THIRD_ARG], &valuetype));
     if (valuetype != napi_function) {

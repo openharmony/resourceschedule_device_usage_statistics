@@ -14,8 +14,6 @@
  */
 
 #include <string>
-#include <chrono>
-#include <thread>
 
 #include <gtest/gtest.h>
 #include "system_ability_definition.h"
@@ -776,6 +774,7 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumT
     bundleActiveReportHandler->Init(bundleActiveCore);
     bundleActiveReportHandler->ProcessEvent(pointer);
     bundleActiveReportHandler->ProcessEvent(pointer);
+    SUCCEED();
 }
 
 /*

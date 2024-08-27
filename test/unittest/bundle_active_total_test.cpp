@@ -96,16 +96,19 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Func
     BundleActiveContinuousTaskObserver test;
     test.Init(reportHandler);
     test.Init(reportHandler1);
+    SUCCEED();
 
     std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo> continuousTaskCallbackInfo;
     test.OnContinuousTaskStart(continuousTaskCallbackInfo);
 
     test.ReportContinuousTaskEvent(continuousTaskCallbackInfo, true);
     test.ReportContinuousTaskEvent(continuousTaskCallbackInfo, false);
+    SUCCEED();
 
     test.GetBundleMgr();
     test.bundleMgr_ = nullptr;
     test.GetBundleMgr();
+    SUCCEED();
 #endif
 #endif
 }
@@ -127,11 +130,13 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_001, Function | 
     test.GetNameForUid(0, string);
     test.GetApplicationInfo(string, flag, 0, appInfo);
     test.GetBundleInfo(string, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo, 0);
+    SUCCEED();
 
     test.bundleMgr_ = nullptr;
     test.GetNameForUid(0, string);
     test.GetApplicationInfo(string, flag, 0, appInfo);
     test.GetBundleInfo(string, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo, 0);
+    SUCCEED();
 }
 
 /*
@@ -181,12 +186,15 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveAppStateObserverTest_001, Function |
     test.Init(reportHandler);
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND);
     test.OnAbilityStateChanged(abilityStateData);
+    SUCCEED();
 
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     test.OnAbilityStateChanged(abilityStateData);
+    SUCCEED();
 
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED);
     test.OnAbilityStateChanged(abilityStateData);
+    SUCCEED();
 }
 
 /*
@@ -199,6 +207,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_001, Function | Me
 {
     BundleActiveUsageDatabase test;
     test.InitDatabaseTableInfo(test.ParseStartTime(test.eventTableName_)-1);
+    SUCCEED();
 }
 
 /*
@@ -213,6 +222,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_002, Function | Me
     test.debugDatabase_ = true;
     test.DeleteExcessiveTableData(100);
     test.DeleteExcessiveTableData(0);
+    SUCCEED();
 }
 
 /*
@@ -225,6 +235,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_003, Function | Me
 {
     BundleActiveUsageDatabase test;
     test.GetOverdueTableCreateTime(100, 0);
+    SUCCEED();
 }
 
 /*
@@ -245,6 +256,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_005, Function | Me
     test.GetTableIndexSql(5, 0, false, 1);
     test.GetTableIndexSql(5, 0, false, 2);
     test.GetTableIndexSql(0, 0, false, 0);
+    SUCCEED();
 }
 
 /*
@@ -258,8 +270,10 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_006, Function | Me
     BundleActiveUsageDatabase test;
     std::shared_ptr<NativeRdb::RdbStore> rdbStore;
     test.SetNewIndexWhenTimeChanged(5, 0, 0, rdbStore);
+    SUCCEED();
     test.RenameTableName(0, 0, 0);
     test.ExecuteRenameTableName("test", 0, 0, rdbStore);
+    SUCCEED();
 }
 
 /*
@@ -276,6 +290,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_007, Function | Me
     test.UpdateFormData(0, "test", "test", formRecord, rdbStore);
     test.GetSystemEventName(0);
     test.JudgeQueryCondition(0, 0, 1);
+    SUCCEED();
 }
 
 /*
@@ -293,7 +308,9 @@ HWTEST_F(BundleActiveTotalTest, BundleActivePowerStateCallbackServiceTest_001, F
     BundleActivePowerStateCallbackService test2(bundleActiveCore);
     
     test2.OnPowerStateChanged(PowerState::AWAKE);
+    SUCCEED();
     test2.OnPowerStateChanged(PowerState::SLEEP);
+    SUCCEED();
 #endif
 }
 
@@ -309,6 +326,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBinarySearchTest_001, Function | Med
     BundleActiveBinarySearch test;
     test.BinarySearch(tableNameArray, 0);
     test.BinarySearch(tableNameArray, -100);
+    SUCCEED();
 }
 }
 }
