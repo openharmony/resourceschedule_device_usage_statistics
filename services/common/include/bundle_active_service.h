@@ -219,7 +219,7 @@ private:
 #endif
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     sptr<PowerMgr::IAsyncShutdownCallback> shutdownCallback_;
-    sptr<BundleActivePowerStateCallbackService> powerStateCallback_;
+    sptr<PowerMgr::IPowerStateCallback> powerStateCallback_;
 #endif
     std::shared_ptr<ffrt::queue> ffrtQueue_;
     bool ready_ {false};

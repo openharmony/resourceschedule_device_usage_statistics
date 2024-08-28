@@ -16,13 +16,13 @@
 #ifndef BUNDLE_ACTIVE_POWER_STATE_CALLBACK_SERVICE_H
 #define BUNDLE_ACTIVE_POWER_STATE_CALLBACK_SERVICE_H
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
-#include "bundle_active_power_state_callback_stub.h"
+#include "power_state_callback_stub.h"
 #include "bundle_active_core.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
 using OHOS::PowerMgr::PowerState;
-class BundleActivePowerStateCallbackService : public BundleActivePowerStateCallbackStub {
+class BundleActivePowerStateCallbackService : public PowerMgr::PowerStateCallbackStub {
 public:
     BundleActivePowerStateCallbackService(std::shared_ptr<BundleActiveCore> bundleActiveCore);
     virtual ~BundleActivePowerStateCallbackService() {}
