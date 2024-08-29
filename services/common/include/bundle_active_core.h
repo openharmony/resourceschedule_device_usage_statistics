@@ -251,7 +251,7 @@ private:
     void OnObserverDied(const wptr<IRemoteObject> &remote);
     void OnObserverDiedInner(const wptr<IRemoteObject> &remote);
     void AddbundleUninstalledUid(const int32_t uid);
-    void DelayRemovebundleUninstalledUid(const int32_t uid);
+    void DelayRemoveBundleUninstalledUid(const int32_t uid);
     int64_t flushInterval_;
     static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TWO_SECONDS;
     const int32_t DEFAULT_USER_ID = -1;
