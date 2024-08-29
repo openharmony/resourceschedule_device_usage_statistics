@@ -106,6 +106,11 @@ void BundleActiveReportHandler::ProcessEvent(const int32_t& eventId,
     switch (eventId) {
         case MSG_REPORT_EVENT: {
             BUNDLE_ACTIVE_LOGD("MSG_REPORT_EVENT CALLED");
+            if (BundleActiveEvent::IsAppStateEvent(tmpHandlerobj.event_.eventId_) &&
+                bundleActiveCore_->isUninstalledApp(tmpHandlerobj.event_.uid_)) {
+                    BUNDLE_ACTIVE_LOGE("not report uninstall app event");
+                    return;
+                }
             bundleActiveCore_->ReportEvent(tmpHandlerobj.event_, tmpHandlerobj.userId_);
             break;
         }

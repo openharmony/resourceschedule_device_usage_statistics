@@ -133,6 +133,9 @@ public:
     * @return return true if event reported by bundle usage.
     */
     static bool IsBundleEvent(const int32_t eventId);
+    
+    static bool IsAppStateEvent(const int32_t& eventId);
+
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

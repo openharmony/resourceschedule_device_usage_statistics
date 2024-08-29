@@ -835,6 +835,30 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_003, Function | MediumT
 }
 
 /*
+ * @tc.name: BundleActiveReportHandlerTest_004
+ * @tc.desc: Send Uninstalled APP Event
+ * @tc.type: FUNC
+ * @tc.require: IAHDJW
+ */
+HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_004, Function | MediumTest | Level0)
+{
+    auto bundleActiveReportHandler = std::make_shared<BundleActiveReportHandler>();
+    bundleActiveReportHandler->Init(bundleActiveCore_);
+    int32_t userId = 100;
+    std::string bundleName = "test";
+    int32_t uid = 100010;
+    int32_t appIndex = 1;
+    bundleActiveCore_->OnBundleUninstalled(userId, bundleName, uid, appIndex);
+    EXPECT_TRUE(bundleActiveCore_->isUninstalledApp(uid));
+    BundleActiveReportHandlerObject tmpObject;
+    tmpObject.event_.eventId_ = tmpObject.event_.ABILITY_STOP;
+    tmpObject.event_.uid_ = uid;
+    auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
+    bundleActiveReportHandler->SendEvent(0, handlerObject);
+    SUCCEED();
+}
+
+/*
  * @tc.name: BundleActiveGroupHandler_001
  * @tc.desc: SendEvent
  * @tc.type: FUNC

@@ -28,6 +28,7 @@ namespace OHOS {
 namespace DeviceUsageStats {
 #ifndef OS_ACCOUNT_PART_ENABLED
 const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
+const int32_t BUNDLE_UNINSTALL_DELAY_TIME = 60 * 1000 * 1000;
 #endif // OS_ACCOUNT_PART_ENABLED
 
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
@@ -238,8 +239,34 @@ void BundleActiveCore::OnBundleUninstalled(const int32_t userId, const std::stri
     if (service == nullptr) {
         return;
     }
+    AddbundleUninstalledUid(uid);
+    DelayRemovebundleUninstalledUid(uid);
     service->DeleteUninstalledBundleStats(bundleName, uid, appIndex);
     bundleGroupController_->OnBundleUninstalled(userId, bundleName, uid, appIndex);
+}
+
+void BundleActiveCore::AddUidTobundleUninstalledUidSet(const int32_t uid)
+{
+    std::lock_guard<ffrt::mutex> lock(bundleUninstalledMutex_);
+    bundleUninstalledSet_.insert(uid);
+}
+
+void BundleActiveCore::DelayRemoveUidTobundleUninstalledSet(const int32_t uid)
+{
+    auto bundleActiveCore = shared_from_this();
+    ffrt::submit([bundleActiveCore, uid]() {
+        std::lock_guard<ffrt::mutex> lock(bundleUninstalledMutex_);
+        bundleActiveCore->bundleUninstalledSet_.erase(uid);
+    }, {}, {}, ffrt::task_attr().delay(BUNDLE_UNINSTALL_DELAY_TIME));
+}
+
+bool BundleActiveCore::isUninstalledApp(const int32_t& uid)
+{
+    std::lock_guard<ffrt::mutex> lock(bundleUninstalledMutex_);
+    if (bundleUninstalledSet_.find(uid) != bundleUninstalledSet_.end()) {
+        return true;
+    }
+    return false;
 }
 
 void BundleActiveCore::OnStatsChanged(const int32_t userId)

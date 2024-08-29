@@ -242,6 +242,7 @@ public:
 
     int32_t currentUsedUser_;
     void OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo);
+    bool isUninstalledApp(const int32_t& uid);
 
 private:
     void NotifOberserverGroupChanged(const AppGroupCallbackInfo& callbackInfo, AccessToken::HapTokenInfo tokenInfo);
@@ -249,6 +250,8 @@ private:
     void RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer);
     void OnObserverDied(const wptr<IRemoteObject> &remote);
     void OnObserverDiedInner(const wptr<IRemoteObject> &remote);
+    void AddbundleUninstalledUid(const int32_t uid);
+    void DelayRemovebundleUninstalledUid(const int32_t uid);
     int64_t flushInterval_;
     static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TWO_SECONDS;
     const int32_t DEFAULT_USER_ID = -1;
@@ -269,6 +272,8 @@ private:
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> recipientMap_;
     void ObtainSystemEventName(BundleActiveEvent& event);
     bool debugCore_;
+    ffrt::mutex bundleUninstalledMutex_;
+    std::set<int32_t> bundleUninstalledSet_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
