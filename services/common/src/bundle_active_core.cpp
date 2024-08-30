@@ -260,7 +260,7 @@ void BundleActiveCore::DelayRemoveBundleUninstalledUid(const int32_t uid)
         }, {}, {}, ffrt::task_attr().delay(BUNDLE_UNINSTALL_DELAY_TIME));
 }
 
-bool BundleActiveCore::isUninstalledApp(const int32_t& uid)
+bool BundleActiveCore::isUninstalledApp(const int32_t uid)
 {
     std::lock_guard<ffrt::mutex> lock(bundleUninstalledMutex_);
     if (bundleUninstalledSet_.find(uid) != bundleUninstalledSet_.end()) {

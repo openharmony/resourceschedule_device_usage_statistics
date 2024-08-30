@@ -242,7 +242,7 @@ public:
 
     int32_t currentUsedUser_;
     void OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo);
-    bool isUninstalledApp(const int32_t& uid);
+    bool isUninstalledApp(const int32_t uid);
 
 private:
     void NotifOberserverGroupChanged(const AppGroupCallbackInfo& callbackInfo, AccessToken::HapTokenInfo tokenInfo);
