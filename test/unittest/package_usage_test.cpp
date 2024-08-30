@@ -848,13 +848,21 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_004, Function | MediumT
     std::string bundleName = "test";
     int32_t uid = 100010;
     int32_t appIndex = 1;
-    bundleActiveCore_->OnBundleUninstalled(userId, bundleName, uid, appIndex);
-    EXPECT_TRUE(bundleActiveCore_->isUninstalledApp(uid));
+    int64_t timeNow = bundleActiveCore_->CheckTimeChangeAndGetWallTime(userId);
     BundleActiveReportHandlerObject tmpObject;
     tmpObject.event_.eventId_ = tmpObject.event_.ABILITY_STOP;
     tmpObject.event_.uid_ = uid;
+    tmpObject.event_.timeStamp_ = timeNow;
     auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
     bundleActiveReportHandler->SendEvent(0, handlerObject);
+    auto service = bundleActiveCore_->GetUserDataAndInitializeIfNeeded(userId, timeNow, false);
+    EXPECT_EQ(service->currentStats_[0]->endTime_, timeNow);
+    bundleActiveCore_->OnBundleUninstalled(userId, bundleName, uid, appIndex);
+    EXPECT_TRUE(bundleActiveCore_->isUninstalledApp(uid));
+    timeNow = timeNow + 100;
+    tmpObject.event_.timeStamp_ = timeNow;
+    bundleActiveReportHandler->SendEvent(0, handlerObject);
+    EXPECT_NE(service->currentStats_[0]->endTime_, timeNow);
     SUCCEED();
 }
 
