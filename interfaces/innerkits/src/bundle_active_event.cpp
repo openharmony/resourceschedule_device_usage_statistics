@@ -208,6 +208,14 @@ bool BundleActiveEvent::IsBundleEvent(const int32_t eventId)
     }
     return false;
 }
+
+bool BundleActiveEvent::IsAppStateEvent(const int32_t eventId)
+{
+    if (eventId == ABILITY_BACKGROUND || eventId == ABILITY_FOREGROUND || eventId == ABILITY_STOP) {
+        return true;
+    }
+    return false;
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 
