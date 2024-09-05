@@ -26,7 +26,6 @@ namespace OHOS {
 namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
     const int32_t MAIN_APP_INDEX = 0;
-    const int32_t MSG_KEY_HIGH_BIT = 32;
 BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject()
 {
         bundleName_ = "";
