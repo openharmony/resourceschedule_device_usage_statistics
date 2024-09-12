@@ -76,7 +76,6 @@ ohos_fuzztest("BundleActiveObserverFuzzTest") {
     "time_service:time_client",
   ]
 
-
   defines = []
 
   if (bgtaskmgr_enable) {
