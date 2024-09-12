@@ -48,6 +48,7 @@ public:
     static const int32_t MSG_SWITCH_USER;
 
 private:
+    void ProcessOtherEvent(const int32_t& eventId, const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj);
     bool isInited_ = false;
     ffrt::mutex taskHandlerMutex_;
     std::shared_ptr<ffrt::queue> ffrtQueue_;

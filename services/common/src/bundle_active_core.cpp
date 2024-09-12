@@ -29,7 +29,7 @@ namespace DeviceUsageStats {
 #ifndef OS_ACCOUNT_PART_ENABLED
 const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 #endif // OS_ACCOUNT_PART_ENABLED
-constexpr int32_t BUNDLE_UNINSTALL_DELAY_TIME = 60 * 1000 * 1000;
+constexpr int32_t BUNDLE_UNINSTALL_DELAY_TIME = 5 * 1000 * 1000;
 
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
 {
@@ -113,10 +113,32 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
             bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
                 handlerobjToPtr);
         }
-    } else if (action == COMMON_EVENT_UNLOCK_SCREEN || action == COMMON_EVENT_LOCK_SCREEN) {
+    } else {
+        HandleOtherEvent(data);
+    }
+}
+
+void BundleActiveCommonEventSubscriber::HandleOtherEvent(const CommonEventData &data)
+{
+    std::string action = data.GetWant().GetAction();
+    if (action == COMMON_EVENT_UNLOCK_SCREEN || action == COMMON_EVENT_LOCK_SCREEN) {
         int32_t userId = data.GetWant().GetIntParam("userId", 0);
         BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d", action.c_str(), userId);
         HandleLockEvent(action, userId);
+    } else if (action == COMMON_EVENT_PACKAGE_ADDED) {
+        int32_t userId = data.GetWant().GetIntParam("userId", 0);
+        std::string bundleName = data.GetWant().GetElement().GetBundleName();
+        BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
+            action.c_str(), userId, bundleName.c_str());
+        if (!bundleActiveReportHandler_.expired()) {
+            BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
+            tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
+            tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
+            std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+            bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_INSTALLED,
+                handlerobjToPtr);
+        }
     }
 }
 
@@ -150,6 +172,7 @@ void BundleActiveCore::RegisterSubscriber()
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);
+    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED);
     matchingSkills.AddEvent(COMMON_EVENT_UNLOCK_SCREEN);
     matchingSkills.AddEvent(COMMON_EVENT_LOCK_SCREEN);
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
@@ -245,6 +268,19 @@ void BundleActiveCore::OnBundleUninstalled(const int32_t userId, const std::stri
     bundleGroupController_->OnBundleUninstalled(userId, bundleName, uid, appIndex);
 }
 
+void BundleActiveCore::OnBundleInstalled(const int32_t userId, const std::string& bundleName,
+    const int32_t uid, const int32_t appIndex)
+{
+    BUNDLE_ACTIVE_LOGD("OnBundleInstalled CALLED");
+    std::lock_guard<ffrt::mutex> lock(bundleUninstalledMutex_);
+    bundleUninstalledSet_.erase(uid);
+    if (taskMap_.find(uid) == taskMap_.end()) {
+        return;
+    }
+    ffrt::skip(taskMap_[uid]);
+    taskMap_.erase(uid);
+}
+
 void BundleActiveCore::AddbundleUninstalledUid(const int32_t uid)
 {
     std::lock_guard<ffrt::mutex> lock(bundleUninstalledMutex_);
@@ -254,10 +290,15 @@ void BundleActiveCore::AddbundleUninstalledUid(const int32_t uid)
 void BundleActiveCore::DelayRemoveBundleUninstalledUid(const int32_t uid)
 {
     auto bundleActiveCore = shared_from_this();
-    ffrt::submit([bundleActiveCore, uid]() {
+    auto task = ffrt::submit_h([bundleActiveCore, uid]() {
         std::lock_guard<ffrt::mutex> lock(bundleActiveCore->bundleUninstalledMutex_);
         bundleActiveCore->bundleUninstalledSet_.erase(uid);
+        if (taskMap_.find(uid) == taskMap_.end()) {
+            return;
+        }
+        taskMap_.erase(uid);
         }, {}, {}, ffrt::task_attr().delay(BUNDLE_UNINSTALL_DELAY_TIME));
+    taskMap_[uid] = task;
 }
 
 bool BundleActiveCore::isUninstalledApp(const int32_t uid)

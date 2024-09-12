@@ -141,6 +141,22 @@ void BundleActiveReportHandler::ProcessEvent(const int32_t& eventId,
             break;
         }
         default: {
+            ProcessOtherEvent(eventId, handlerobj);
+            break;
+        }
+    }
+}
+
+void BundleActiveReportHandler::ProcessOtherEvent(const int32_t& eventId,
+    const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj)
+{
+    switch (eventId) {
+        case MSG_BUNDLE_INSTALLED: {
+            bundleActiveCore_->OnBundleInstalled(tmpHandlerobj.userId_, tmpHandlerobj.bundleName_,
+                tmpHandlerobj.uid_, tmpHandlerobj.appIndex_);
+            break;
+        }
+        default: {
             break;
         }
     }
