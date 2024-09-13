@@ -26,6 +26,7 @@ const int32_t BundleActiveReportHandler::MSG_FLUSH_TO_DISK = 1;
 const int32_t BundleActiveReportHandler::MSG_REMOVE_USER = 2;
 const int32_t BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED = 3;
 const int32_t BundleActiveReportHandler::MSG_SWITCH_USER = 4;
+const int32_t BundleActiveReportHandler::MSG_BUNDLE_INSTALLED = 5;
 
 void BundleActiveReportHandler::Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore)
 {
@@ -148,7 +149,7 @@ void BundleActiveReportHandler::ProcessEvent(const int32_t& eventId,
 }
 
 void BundleActiveReportHandler::ProcessOtherEvent(const int32_t& eventId,
-    const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj)
+    const BundleActiveReportHandlerObject& tmpHandlerobj)
 {
     switch (eventId) {
         case MSG_BUNDLE_INSTALLED: {

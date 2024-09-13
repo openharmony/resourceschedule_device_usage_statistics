@@ -50,7 +50,7 @@ public:
     void HandleLockEvent(const std::string& action, const int32_t userId);
 
 private:
-    void HandleOtherEvent(const std::string& action, const int32_t userId);
+    void HandleOtherEvent(const CommonEventData &data);
     ffrt::mutex mutex_;
     std::weak_ptr<BundleActiveGroupController> activeGroupController_;
     std::weak_ptr<BundleActiveReportHandler> bundleActiveReportHandler_;

@@ -46,9 +46,10 @@ public:
     static const int32_t MSG_REMOVE_USER;
     static const int32_t MSG_BUNDLE_UNINSTALLED;
     static const int32_t MSG_SWITCH_USER;
+    static const int32_t MSG_BUNDLE_INSTALLED;
 
 private:
-    void ProcessOtherEvent(const int32_t& eventId, const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj);
+    void ProcessOtherEvent(const int32_t& eventId, const BundleActiveReportHandlerObject& tmpHandlerobj);
     bool isInited_ = false;
     ffrt::mutex taskHandlerMutex_;
     std::shared_ptr<ffrt::queue> ffrtQueue_;

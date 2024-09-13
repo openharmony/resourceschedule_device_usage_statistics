@@ -23,6 +23,8 @@
 #include "bundle_active_group_common.h"
 #include "bundle_active_bundle_mgr_helper.h"
 #include "bundle_active_constant.h"
+#include "ffrt_inner.h"
+
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -125,7 +127,7 @@ void BundleActiveCommonEventSubscriber::HandleOtherEvent(const CommonEventData &
         int32_t userId = data.GetWant().GetIntParam("userId", 0);
         BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d", action.c_str(), userId);
         HandleLockEvent(action, userId);
-    } else if (action == COMMON_EVENT_PACKAGE_ADDED) {
+    } else if (action == CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED) {
         int32_t userId = data.GetWant().GetIntParam("userId", 0);
         std::string bundleName = data.GetWant().GetElement().GetBundleName();
         BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
@@ -273,6 +275,9 @@ void BundleActiveCore::OnBundleInstalled(const int32_t userId, const std::string
 {
     BUNDLE_ACTIVE_LOGD("OnBundleInstalled CALLED");
     std::lock_guard<ffrt::mutex> lock(bundleUninstalledMutex_);
+    if (bundleUninstalledSet_.find(uid) == bundleUninstalledSet_.end()) {
+        return;
+    }
     bundleUninstalledSet_.erase(uid);
     if (taskMap_.find(uid) == taskMap_.end()) {
         return;
@@ -293,12 +298,12 @@ void BundleActiveCore::DelayRemoveBundleUninstalledUid(const int32_t uid)
     auto task = ffrt::submit_h([bundleActiveCore, uid]() {
         std::lock_guard<ffrt::mutex> lock(bundleActiveCore->bundleUninstalledMutex_);
         bundleActiveCore->bundleUninstalledSet_.erase(uid);
-        if (taskMap_.find(uid) == taskMap_.end()) {
+        if (bundleActiveCore->taskMap_.find(uid) == bundleActiveCore->taskMap_.end()) {
             return;
         }
-        taskMap_.erase(uid);
+        bundleActiveCore->taskMap_.erase(uid);
         }, {}, {}, ffrt::task_attr().delay(BUNDLE_UNINSTALL_DELAY_TIME));
-    taskMap_[uid] = task;
+    taskMap_[uid] = std::move(task);
 }
 
 bool BundleActiveCore::isUninstalledApp(const int32_t uid)
