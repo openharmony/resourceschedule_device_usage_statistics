@@ -69,9 +69,11 @@ ohos_fuzztest("BundleActiveOnRemoteRequestFuzzTest") {
     "time_service:time_client",
   ]
 
+  defines = []
+
   if (bgtaskmgr_enable) {
     external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
-    defines = [ "BGTASKMGR_ENABLE" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
   }
   if (os_account_part_enabled) {
     cflags_cc = [ "-DOS_ACCOUNT_PART_ENABLED" ]

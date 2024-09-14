@@ -20,8 +20,9 @@
 #include "system_ability_definition.h"
 #include "tokenid_kit.h"
 
+#ifdef BGTASKMGR_ENABLE
 #include "continuous_task_log.h"
-
+#endif
 namespace OHOS {
 namespace DeviceUsageStats {
 using OHOS::AppExecFwk::Constants::PERMISSION_GRANTED;
