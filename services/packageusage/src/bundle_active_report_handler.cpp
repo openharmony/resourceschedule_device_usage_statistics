@@ -142,7 +142,7 @@ void BundleActiveReportHandler::ProcessEvent(const int32_t& eventId,
             break;
         }
         default: {
-            ProcessOtherEvent(eventId, handlerobj);
+            ProcessOtherEvent(eventId, tmpHandlerobj);
             break;
         }
     }

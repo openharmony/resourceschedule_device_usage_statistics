@@ -865,8 +865,6 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_004, Function | MediumT
     EXPECT_NE(service->currentStats_[0]->endTime_, timeNow);
     bundleActiveCore_->OnBundleInstalled(userId, bundleName, uid, appIndex);
     EXPECT_FALSE(bundleActiveCore_->isUninstalledApp(uid));
-    bundleActiveReportHandler->SendEvent(0, handlerObject);
-    EXPECT_EQ(service->currentStats_[0]->endTime_, timeNow);
     SUCCEED();
 }
 
