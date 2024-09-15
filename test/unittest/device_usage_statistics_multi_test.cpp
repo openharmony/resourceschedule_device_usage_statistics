@@ -121,7 +121,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_IsBundle
  * @tc.name: DeviceUsageStatisticsMultiTest_ReportEvent_001
  * @tc.desc: report a mock event
  * @tc.type: FUNC
- * @tc.require: SR000GGTO7 SR000GU31B AR000GH6RJ AR000GU380
+ * @tc.require: SR000GGTO7 SR000GU31B AR000GH6PJ AR000GU380
  */
 void MultiTestReportEvent(void)
 {
@@ -261,7 +261,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryMod
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryAppGroup_001
  * @tc.desc: QueryAppGroup, no bundleName
  * @tc.type: FUNC
- * @tc.require: SR000HOHAQ AR000HOROE
+ * @tc.require: SR000H0HAQ AR000H0ROE
  */
 void MultiTestAppGroup(void)
 {
@@ -288,7 +288,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_AppGroup
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryDeviceEventStats_001
  * @tc.desc: QueryDeviceEventStats
  * @tc.type: FUNC
- * @tc.require: SR000HOH9H AR000HOROG
+ * @tc.require: SR000H0H9H AR000H0ROG
  */
 void MultiTestQueryDeviceEventStats(void)
 {
@@ -310,7 +310,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryDev
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryNotificationEventStats_001
  * @tc.desc: QueryNotificationEventStats
  * @tc.type: FUNC
- * @tc.require: SR000HOH7D AR000HORR6
+ * @tc.require: SR000H0H7D AR000H0RR6
  */
 void MultiTestQueryNotificationEventStats(void)
 {
@@ -332,7 +332,7 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryNot
  * @tc.name: DeviceUsageStatisticsMultiTest_BundleActiveGroupMap_001
  * @tc.desc: BundleActiveGroupMap
  * @tc.type: FUNC
- * @tc.require: SR000HOG4F AR000H2US8
+ * @tc.require: SR000H0G4F AR000H2US8
  */
 void MultiTestDeviceUsageStatsGroupMap(void)
 {
