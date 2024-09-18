@@ -15,7 +15,6 @@
 
 import bundleState from '@ohos.bundleState'
 import usageStatistics from '@ohos.resourceschedule.usageStatistics'
-import power from '@ohos.power'
 
 import {describe, beforeAll, beforeEach, afterEach, afterAll, it, expect} from 'deccjsunit/index'
 
@@ -276,30 +275,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
      */
     it("DeviceUsageStatisticsJsTest011", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest011---------------------------');
-        let isScreenOn_ = false;
-        power.isScreenOn((err, data) => {
-            if (typeof err === 'undefined') {
-                console.info('screen on status is ' + data);
-                isScreenOn_ = data
-            } else {
-                console.error('check screen status failed, err: ' + err);
-            }
-        })
         bundleState.queryAppUsagePriorityGroup().then( res => {
             console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup promise success.');
-            if (isScreenOn_ == true) {
-                expect(true).assertEqual(true);
-            } else {
-                expect(false).assertEqual(true);
-            }
+            expect(true).assertEqual(true);
             done();
         }).catch( err => {
             console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup promise failure.');
-            if (isScreenOn_ == true) {
-                expect(false).assertEqual(true);
-            } else {
-                expect(true).assertEqual(true);
-            }
+            expect(false).assertEqual(true);
             done();
         });
     })
@@ -312,32 +294,14 @@ describe("DeviceUsageStatisticsJsTest", function () {
      */
     it("DeviceUsageStatisticsJsTest012", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest012---------------------------');
-        let isScreenOn_ = false;
-        power.isScreenOn((err, data) => {
-            if (typeof err === 'undefined') {
-                console.info('screen on status is ' + data);
-                isScreenOn_ = data
-            } else {
-                console.error('check screen status failed, err: ' + err);
-            }
-        })
         bundleState.queryAppUsagePriorityGroup((err, res) => {
             if (err) {
                 console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup callback failure.');
-                if (isScreenOn_ == true) {
-                    expect(false).assertEqual(true);
-                } else {
-                    expect(true).assertEqual(true);
-                }
-                
+                expect(false).assertEqual(true);
                 done();
             } else {
                 console.info('BUNDLE_ACTIVE queryAppUsagePriorityGroup callback success.');
-                if (isScreenOn_ == true) {
-                    expect(true).assertEqual(true);
-                } else {
-                    expect(false).assertEqual(true);
-                }
+                expect(true).assertEqual(true);
                 done();
             }
         });
@@ -407,24 +371,14 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest015---------------------------');
         let bundleName = 'com.example.deviceUsageStatistics';
         try{
-            var isActive = power.isActive();
             usageStatistics.queryAppGroup(bundleName, (err, res) => {
                 if(err) {
                     console.info('BUNDLE_ACTIVE queryAppGroup callback failure.');
-                    if (isActive == true) {
-                        expect(false).assertEqual(true);
-                    } else {
-                        expect(true).assertEqual(true);
-                    }
-                    
+                    expect(false).assertEqual(true);
                     done();
                 } else {
                     console.info('BUNDLE_ACTIVE queryAppGroup callback success.');
-                    if (isActive == true) {
-                        expect(true).assertEqual(true);
-                    } else {
-                        expect(false).assertEqual(true);
-                    }
+                    expect(true).assertEqual(true);
                     done();
                 }
             });
@@ -445,22 +399,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
         console.info('----------------------DeviceUsageStatisticsJsTest016---------------------------');
         let bundleName = 'com.example.deviceUsageStatistics';
         try{
-            var isActive = power.isActive();
             usageStatistics.queryAppGroup(bundleName).then( res => {
                 console.info('BUNDLE_ACTIVE queryAppGroup promise success.');
-                if (isActive == true) {
-                    expect(true).assertEqual(true);
-                } else {
-                    expect(false).assertEqual(true);
-                }
+                expect(true).assertEqual(true);
                 done();
             }).catch( err => {
                 console.info('BUNDLE_ACTIVE queryAppGroup promise failure.');
-                if (isActive == true) {
-                    expect(false).assertEqual(true);
-                } else {
-                    expect(true).assertEqual(true);
-                }
+                expect(false).assertEqual(true);
                 done();
             });
         } catch (error) {
@@ -479,23 +424,14 @@ describe("DeviceUsageStatisticsJsTest", function () {
     it("DeviceUsageStatisticsJsTest017", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest017---------------------------');
         try{
-            var isActive = power.isActive();
             usageStatistics.queryAppGroup((err, res) => {
                 if(err) {
                     console.info('BUNDLE_ACTIVE queryAppGroup method callback failure.');
-                    if (isActive == true) {
-                        expect(false).assertEqual(true);
-                    } else {
-                        expect(true).assertEqual(true);
-                    }
+                    expect(false).assertEqual(true);
                     done();
                 } else {
                     console.info('BUNDLE_ACTIVE queryAppGroup method callback success.');
-                    if (isActive == true) {
-                        expect(true).assertEqual(true);
-                    } else {
-                        expect(false).assertEqual(true);
-                    }
+                    expect(true).assertEqual(true);
                     done();
                 }
             });
@@ -515,22 +451,13 @@ describe("DeviceUsageStatisticsJsTest", function () {
     it("DeviceUsageStatisticsJsTest018", 0, async function (done) {
         console.info('----------------------DeviceUsageStatisticsJsTest018---------------------------');
         try{
-            var isActive = power.isActive();
             usageStatistics.queryAppGroup().then( res => {
                 console.info('BUNDLE_ACTIVE queryAppGroup method promise success.');
-                if (isActive == true) {
-                    expect(true).assertEqual(true);
-                } else {
-                    expect(false).assertEqual(true);
-                }
+                expect(true).assertEqual(true);
                 done();
             }).catch( err => {
                 console.info('BUNDLE_ACTIVE queryAppGroup method promise failure.');
-                if (isActive == true) {
-                    expect(false).assertEqual(true);
-                } else {
-                    expect(true).assertEqual(true);
-                }
+                expect(false).assertEqual(true);
                 done();
             });
         } catch (error) {
