@@ -138,7 +138,11 @@ void BundleActiveCommonEventSubscriber::HandleOtherEvent(const CommonEventData &
             tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_INSTALLED,
+            auto reportHandler = bundleActiveReportHandler_.lock();
+            if (reportHandler == nullptr) {
+                return;
+            }
+            reportHandler->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_INSTALLED,
                 handlerobjToPtr);
         }
     }
