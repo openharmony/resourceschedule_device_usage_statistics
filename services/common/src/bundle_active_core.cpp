@@ -78,78 +78,113 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
     std::string action = data.GetWant().GetAction();
     if (action == CommonEventSupport::COMMON_EVENT_SCREEN_OFF ||
         action == CommonEventSupport::COMMON_EVENT_SCREEN_ON) {
-        if (!activeGroupController_.expired()) {
-            sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-            bool isScreenOn = activeGroupController_.lock()->IsScreenOn();
-            BUNDLE_ACTIVE_LOGI("screen state change to %{public}d", isScreenOn);
-            activeGroupController_.lock()->OnScreenChanged(isScreenOn, timer->GetBootTimeMs());
-        }
+        HandleScreenEvent();
     } else if (action == CommonEventSupport::COMMON_EVENT_USER_REMOVED) {
-        if (!bundleActiveReportHandler_.expired()) {
-            int32_t userId = data.GetCode();
-            BUNDLE_ACTIVE_LOGI("remove user id %{public}d", userId);
-            BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-            std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_REMOVE_USER, handlerobjToPtr);
-        }
+        HandleUserRemoveEvent(data);
     } else if (action == CommonEventSupport::COMMON_EVENT_USER_SWITCHED) {
+        HandleUserSwitchEvent(data);
+    } else if (action == CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED ||
+        action == CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED) {
+        HandlePackageRemoveEvent(data);
+    } else if (action == COMMON_EVENT_UNLOCK_SCREEN || action == COMMON_EVENT_LOCK_SCREEN) {
+        HandleLockEvent(data);
+    } else if (action == CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED) {
+        HandlePackageAddEvent(data);
+    }
+}
+
+void BundleActiveCommonEventSubscriber::HandleScreenEvent()
+{
+    if (!bundleActiveReportHandler_.expired()) {
+        sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+        auto groupController = activeGroupController_.lock();
+        if (groupController == nullptr) {
+            return;
+        }
+        bool isScreenOn = groupController->IsScreenOn();
+        BUNDLE_ACTIVE_LOGI("screen state change to %{public}d", isScreenOn);
+        groupController->OnScreenChanged(isScreenOn, timer->GetBootTimeMs());
+    }
+}
+
+void BundleActiveCommonEventSubscriber::HandleUserRemoveEvent(const CommonEventData &data)
+{
+    if (!bundleActiveReportHandler_.expired()) {
+        int32_t userId = data.GetCode();
+        BUNDLE_ACTIVE_LOGI("remove user id %{public}d", userId);
+        BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
+        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+        auto reportHandler = bundleActiveReportHandler_.lock();
+        if (reportHandler == nullptr) {
+            return;
+        }
+        reportHandler->SendEvent(BundleActiveReportHandler::MSG_REMOVE_USER, handlerobjToPtr);
+    }
+}
+
+void BundleActiveCommonEventSubscriber::HandleUserSwitchEvent(const CommonEventData &data)
+{
+    if (!bundleActiveReportHandler_.expired()) {
         int32_t userId = data.GetCode();
         BUNDLE_ACTIVE_LOGI("OnReceiveEvent receive switched user event, user id is %{public}d", userId);
         BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
         std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_SWITCH_USER, handlerobjToPtr);
-    } else if (action == CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED ||
-        action == CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED) {
-        int32_t userId = data.GetWant().GetIntParam("userId", 0);
-        std::string bundleName = data.GetWant().GetElement().GetBundleName();
-        BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
-            action.c_str(), userId, bundleName.c_str());
-        if (!bundleActiveReportHandler_.expired()) {
-            BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
-            tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
-            tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
-            std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
-                handlerobjToPtr);
+        auto reportHandler = bundleActiveReportHandler_.lock();
+        if (reportHandler == nullptr) {
+            return;
         }
-    } else {
-        HandleOtherEvent(data);
+        reportHandler->SendEvent(BundleActiveReportHandler::MSG_SWITCH_USER, handlerobjToPtr);
     }
 }
 
-void BundleActiveCommonEventSubscriber::HandleOtherEvent(const CommonEventData &data)
+void BundleActiveCommonEventSubscriber::HandlePackageRemoveEvent(const CommonEventData &data)
 {
-    std::string action = data.GetWant().GetAction();
-    if (action == COMMON_EVENT_UNLOCK_SCREEN || action == COMMON_EVENT_LOCK_SCREEN) {
-        int32_t userId = data.GetWant().GetIntParam("userId", 0);
-        BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d", action.c_str(), userId);
-        HandleLockEvent(action, userId);
-    } else if (action == CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED) {
-        int32_t userId = data.GetWant().GetIntParam("userId", 0);
-        std::string bundleName = data.GetWant().GetElement().GetBundleName();
-        BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
-            action.c_str(), userId, bundleName.c_str());
-        if (!bundleActiveReportHandler_.expired()) {
-            BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
-            tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
-            tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
-            std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            auto reportHandler = bundleActiveReportHandler_.lock();
-            if (reportHandler == nullptr) {
-                return;
-            }
-            reportHandler->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_INSTALLED,
-                handlerobjToPtr);
+    int32_t userId = data.GetWant().GetIntParam("userId", 0);
+    std::string bundleName = data.GetWant().GetElement().GetBundleName();
+    BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
+        action.c_str(), userId, bundleName.c_str());
+    if (!bundleActiveReportHandler_.expired()) {
+        BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
+        tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
+        tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
+        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+        auto reportHandler = bundleActiveReportHandler_.lock();
+        if (reportHandler == nullptr) {
+            return;
         }
+        reportHandler->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
+            handlerobjToPtr);
     }
 }
 
-void BundleActiveCommonEventSubscriber::HandleLockEvent(const std::string& action, const int32_t userId)
+void BundleActiveCommonEventSubscriber::HandlePackageAddEvent(const CommonEventData &data)
 {
+    int32_t userId = data.GetWant().GetIntParam("userId", 0);
+    std::string bundleName = data.GetWant().GetElement().GetBundleName();
+    BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
+        action.c_str(), userId, bundleName.c_str());
+    if (!bundleActiveReportHandler_.expired()) {
+        BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
+        tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
+        tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
+        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+        auto reportHandler = bundleActiveReportHandler_.lock();
+        if (reportHandler == nullptr) {
+            return;
+        }
+        reportHandler->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_INSTALLED,
+            handlerobjToPtr);
+    }
+}
+
+void BundleActiveCommonEventSubscriber::HandleLockEvent(const CommonEventData &data)
+{
+    int32_t userId = data.GetWant().GetIntParam("userId", 0);
+    BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d", action.c_str(), userId);
     if (bundleActiveReportHandler_.expired()) {
         return;
     }

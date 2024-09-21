@@ -50,6 +50,12 @@ public:
 
 private:
     void ProcessOtherEvent(const int32_t& eventId, const BundleActiveReportHandlerObject& tmpHandlerobj);
+    void ProcessReportEvent(const BundleActiveReportHandlerObject& tmpHandlerobj);
+    void ProcessFlushToDiskEvent(const BundleActiveReportHandlerObject& tmpHandlerobj);
+    void ProcessRmoveUserEvent(const BundleActiveReportHandlerObject& tmpHandlerobj);
+    void ProcessUserSwitchEvent(const BundleActiveReportHandlerObject& tmpHandlerobj);
+    void ProcessBundleUninstallEvent(const BundleActiveReportHandlerObject& tmpHandlerobj);
+    void ProcessBundleInstallEvent(const BundleActiveReportHandlerObject& tmpHandlerobj);
     bool isInited_ = false;
     ffrt::mutex taskHandlerMutex_;
     std::shared_ptr<ffrt::queue> ffrtQueue_;

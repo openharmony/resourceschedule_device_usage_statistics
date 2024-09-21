@@ -47,10 +47,14 @@ public:
         bundleActiveReportHandler_(bundleActiveReportHandler) {}
     ~BundleActiveCommonEventSubscriber() = default;
     void OnReceiveEvent(const CommonEventData &data) override;
-    void HandleLockEvent(const std::string& action, const int32_t userId);
 
 private:
-    void HandleOtherEvent(const CommonEventData &data);
+    void HandleScreenEvent();
+    void HandleUserRemoveEvent(const CommonEventData &data);
+    void HandleUserSwitchEvent(const CommonEventData &data);
+    void HandlePackageRemoveEvent(const CommonEventData &data);
+    void HandlePackageAddEvent(const CommonEventData &data);
+    void HandleLockEvent(const CommonEventData &data);
     ffrt::mutex mutex_;
     std::weak_ptr<BundleActiveGroupController> activeGroupController_;
     std::weak_ptr<BundleActiveReportHandler> bundleActiveReportHandler_;
