@@ -141,6 +141,7 @@ void BundleActiveCommonEventSubscriber::HandleUserSwitchEvent(const CommonEventD
 
 void BundleActiveCommonEventSubscriber::HandlePackageRemoveEvent(const CommonEventData &data)
 {
+    std::string action = data.GetWant().GetAction();
     int32_t userId = data.GetWant().GetIntParam("userId", 0);
     std::string bundleName = data.GetWant().GetElement().GetBundleName();
     BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
@@ -162,6 +163,7 @@ void BundleActiveCommonEventSubscriber::HandlePackageRemoveEvent(const CommonEve
 
 void BundleActiveCommonEventSubscriber::HandlePackageAddEvent(const CommonEventData &data)
 {
+    std::string action = data.GetWant().GetAction();
     int32_t userId = data.GetWant().GetIntParam("userId", 0);
     std::string bundleName = data.GetWant().GetElement().GetBundleName();
     BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
@@ -183,6 +185,7 @@ void BundleActiveCommonEventSubscriber::HandlePackageAddEvent(const CommonEventD
 
 void BundleActiveCommonEventSubscriber::HandleLockEvent(const CommonEventData &data)
 {
+    std::string action = data.GetWant().GetAction();
     int32_t userId = data.GetWant().GetIntParam("userId", 0);
     BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d", action.c_str(), userId);
     if (bundleActiveReportHandler_.expired()) {

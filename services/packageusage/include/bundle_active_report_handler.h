@@ -49,8 +49,7 @@ public:
     static const int32_t MSG_BUNDLE_INSTALLED;
 
 private:
-    void ProcessOtherEvent(const int32_t& eventId, const BundleActiveReportHandlerObject& tmpHandlerobj);
-    void ProcessReportEvent(const BundleActiveReportHandlerObject& tmpHandlerobj);
+    void ProcessReportEvent(BundleActiveReportHandlerObject& tmpHandlerobj);
     void ProcessFlushToDiskEvent(const BundleActiveReportHandlerObject& tmpHandlerobj);
     void ProcessRmoveUserEvent(const BundleActiveReportHandlerObject& tmpHandlerobj);
     void ProcessUserSwitchEvent(const BundleActiveReportHandlerObject& tmpHandlerobj);

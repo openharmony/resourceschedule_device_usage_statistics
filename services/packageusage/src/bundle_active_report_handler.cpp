@@ -131,11 +131,11 @@ void BundleActiveReportHandler::ProcessEvent(const int32_t& eventId,
         }
         default: {
             break;
-        } 
+        }
     }
 }
 
-void BundleActiveReportHandler::ProcessReportEvent(const BundleActiveReportHandlerObject& tmpHandlerobj)
+void BundleActiveReportHandler::ProcessReportEvent(BundleActiveReportHandlerObject& tmpHandlerobj)
 {
     BUNDLE_ACTIVE_LOGD("MSG_REPORT_EVENT CALLED");
     if (BundleActiveEvent::IsAppStateEvent(tmpHandlerobj.event_.eventId_) &&
