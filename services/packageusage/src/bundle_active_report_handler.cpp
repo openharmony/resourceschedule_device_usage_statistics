@@ -26,6 +26,7 @@ const int32_t BundleActiveReportHandler::MSG_FLUSH_TO_DISK = 1;
 const int32_t BundleActiveReportHandler::MSG_REMOVE_USER = 2;
 const int32_t BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED = 3;
 const int32_t BundleActiveReportHandler::MSG_SWITCH_USER = 4;
+const int32_t BundleActiveReportHandler::MSG_BUNDLE_INSTALLED = 5;
 
 void BundleActiveReportHandler::Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore)
 {
@@ -105,39 +106,27 @@ void BundleActiveReportHandler::ProcessEvent(const int32_t& eventId,
     BundleActiveReportHandlerObject tmpHandlerobj = *handlerobj;
     switch (eventId) {
         case MSG_REPORT_EVENT: {
-            BUNDLE_ACTIVE_LOGD("MSG_REPORT_EVENT CALLED");
-            if (BundleActiveEvent::IsAppStateEvent(tmpHandlerobj.event_.eventId_) &&
-                bundleActiveCore_->isUninstalledApp(tmpHandlerobj.event_.uid_)) {
-                    BUNDLE_ACTIVE_LOGE("not report uninstall app event");
-                    return;
-                }
-            bundleActiveCore_->ReportEvent(tmpHandlerobj.event_, tmpHandlerobj.userId_);
+            ProcessReportEvent(tmpHandlerobj);
             break;
         }
         case MSG_FLUSH_TO_DISK: {
-            BUNDLE_ACTIVE_LOGI("FLUSH TO DISK HANDLE");
-            if (tmpHandlerobj.userId_ != bundleActiveCore_->currentUsedUser_) {
-                BUNDLE_ACTIVE_LOGE("flush user is %{public}d, not last user %{public}d, return",
-                    tmpHandlerobj.userId_, bundleActiveCore_->currentUsedUser_);
-                RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
-                return;
-            }
-            bundleActiveCore_->RestoreToDatabase(tmpHandlerobj.userId_);
+            ProcessFlushToDiskEvent(tmpHandlerobj);
             break;
         }
         case MSG_REMOVE_USER: {
-            bundleActiveCore_->OnUserRemoved(tmpHandlerobj.userId_);
-            break;
-        }
-        case MSG_BUNDLE_UNINSTALLED: {
-            BUNDLE_ACTIVE_LOGI("MSG_BUNDLE_UNINSTALLED CALLED");
-            bundleActiveCore_->OnBundleUninstalled(tmpHandlerobj.userId_, tmpHandlerobj.bundleName_,
-                tmpHandlerobj.uid_, tmpHandlerobj.appIndex_);
+            ProcessRmoveUserEvent(tmpHandlerobj);
             break;
         }
         case MSG_SWITCH_USER: {
-            BUNDLE_ACTIVE_LOGI("MSG_SWITCH_USER CALLED");
-            bundleActiveCore_->OnUserSwitched(tmpHandlerobj.userId_);
+            ProcessUserSwitchEvent(tmpHandlerobj);
+            break;
+        }
+        case MSG_BUNDLE_UNINSTALLED: {
+            ProcessBundleUninstallEvent(tmpHandlerobj);
+            break;
+        }
+        case MSG_BUNDLE_INSTALLED: {
+            ProcessBundleInstallEvent(tmpHandlerobj);
             break;
         }
         default: {
@@ -145,6 +134,56 @@ void BundleActiveReportHandler::ProcessEvent(const int32_t& eventId,
         }
     }
 }
+
+void BundleActiveReportHandler::ProcessReportEvent(BundleActiveReportHandlerObject& tmpHandlerobj)
+{
+    BUNDLE_ACTIVE_LOGD("MSG_REPORT_EVENT CALLED");
+    if (BundleActiveEvent::IsAppStateEvent(tmpHandlerobj.event_.eventId_) &&
+        bundleActiveCore_->isUninstalledApp(tmpHandlerobj.event_.uid_)) {
+            BUNDLE_ACTIVE_LOGE("not report uninstall app event");
+            return;
+        }
+    bundleActiveCore_->ReportEvent(tmpHandlerobj.event_, tmpHandlerobj.userId_);
+}
+
+void BundleActiveReportHandler::ProcessFlushToDiskEvent(const BundleActiveReportHandlerObject& tmpHandlerobj)
+{
+    BUNDLE_ACTIVE_LOGI("FLUSH TO DISK HANDLE");
+    if (tmpHandlerobj.userId_ != bundleActiveCore_->currentUsedUser_) {
+        BUNDLE_ACTIVE_LOGE("flush user is %{public}d, not last user %{public}d, return",
+            tmpHandlerobj.userId_, bundleActiveCore_->currentUsedUser_);
+        RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
+        return;
+    }
+    bundleActiveCore_->RestoreToDatabase(tmpHandlerobj.userId_);
+}
+
+void BundleActiveReportHandler::ProcessRmoveUserEvent(const BundleActiveReportHandlerObject& tmpHandlerobj)
+{
+    BUNDLE_ACTIVE_LOGI("Remove user");
+    bundleActiveCore_->OnUserRemoved(tmpHandlerobj.userId_);
+}
+
+void BundleActiveReportHandler::ProcessUserSwitchEvent(const BundleActiveReportHandlerObject& tmpHandlerobj)
+{
+    BUNDLE_ACTIVE_LOGI("MSG_SWITCH_USER CALLED");
+    bundleActiveCore_->OnUserSwitched(tmpHandlerobj.userId_);
+}
+
+void BundleActiveReportHandler::ProcessBundleUninstallEvent(const BundleActiveReportHandlerObject& tmpHandlerobj)
+{
+    BUNDLE_ACTIVE_LOGI("MSG_BUNDLE_UNINSTALLED CALLED");
+    bundleActiveCore_->OnBundleUninstalled(tmpHandlerobj.userId_, tmpHandlerobj.bundleName_,
+        tmpHandlerobj.uid_, tmpHandlerobj.appIndex_);
+}
+
+void BundleActiveReportHandler::ProcessBundleInstallEvent(const BundleActiveReportHandlerObject& tmpHandlerobj)
+{
+    BUNDLE_ACTIVE_LOGI("MSG_BUNDLE_INSTALLED CALLED");
+    bundleActiveCore_->OnBundleInstalled(tmpHandlerobj.userId_, tmpHandlerobj.bundleName_,
+        tmpHandlerobj.uid_, tmpHandlerobj.appIndex_);
+}
+
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 

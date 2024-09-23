@@ -243,6 +243,8 @@ public:
     int32_t currentUsedUser_;
     void OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo);
     bool isUninstalledApp(const int32_t uid);
+    void OnBundleInstalled(const int32_t userId, const std::string& bundleName, const int32_t uid,
+        const int32_t appIndex);
 
 private:
     void NotifOberserverGroupChanged(const AppGroupCallbackInfo& callbackInfo, AccessToken::HapTokenInfo tokenInfo);
@@ -265,6 +267,7 @@ private:
     ffrt::mutex mutex_;
     ffrt::recursive_mutex callbackMutex_;
     std::map<int32_t, std::shared_ptr<BundleActiveUserService>> userStatServices_;
+    std::map<int32_t, ffrt::task_handle> taskMap_;
     void RegisterSubscriber();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
     void RestoreAllData();
