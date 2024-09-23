@@ -32,6 +32,7 @@ namespace DeviceUsageStats {
 const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 #endif // OS_ACCOUNT_PART_ENABLED
 constexpr int32_t BUNDLE_UNINSTALL_DELAY_TIME = 5 * 1000 * 1000;
+const std::string SCENE_BOARD_NAME = "com.ohos.sceneboard";
 
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
 {
@@ -209,8 +210,6 @@ void BundleActiveCommonEventSubscriber::HandleLockEvent(const CommonEventData &d
 void BundleActiveCore::RegisterSubscriber()
 {
     MatchingSkills matchingSkills;
-    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_OFF);
-    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_ON);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_USER_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
@@ -226,9 +225,22 @@ void BundleActiveCore::RegisterSubscriber()
     BUNDLE_ACTIVE_LOGD("Register for events result is %{public}d", subscribeResult);
 }
 
+void BundleActiveCore::SubscriberLockScreenCommonEvent()
+{
+    MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_OFF);
+    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_ON);
+    CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    subscriberInfo.SetPublisherBundleName(SCENE_BOARD_NAME);
+    lockScreenSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
+        bundleGroupController_, handler_);
+    CommonEventManager::SubscribeCommonEvent(lockScreenSubscriber_);
+}
+
 void BundleActiveCore::UnRegisterSubscriber()
 {
     CommonEventManager::UnSubscribeCommonEvent(commonEventSubscriber_);
+    CommonEventManager::UnSubscribeCommonEvent(lockScreenSubscriber_);
 }
 
 void BundleActiveCore::Init()

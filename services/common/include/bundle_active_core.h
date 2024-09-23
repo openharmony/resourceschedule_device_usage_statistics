@@ -269,7 +269,9 @@ private:
     std::map<int32_t, std::shared_ptr<BundleActiveUserService>> userStatServices_;
     std::map<int32_t, ffrt::task_handle> taskMap_;
     void RegisterSubscriber();
+    void SubscriberLockScreenCommonEvent();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
+    std::shared_ptr<BundleActiveCommonEventSubscriber> lockScreenSubscriber_;
     void RestoreAllData();
     std::map<AccessToken::AccessTokenID, sptr<IAppGroupCallback>> groupChangeObservers_;
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> recipientMap_;
