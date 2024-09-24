@@ -210,14 +210,14 @@ void BundleActiveCommonEventSubscriber::HandleLockEvent(const CommonEventData &d
 void BundleActiveCore::RegisterSubscriber()
 {
     MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_OFF);
+    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_ON);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_USER_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_USER_SWITCHED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED);
-    matchingSkills.AddEvent(COMMON_EVENT_UNLOCK_SCREEN);
-    matchingSkills.AddEvent(COMMON_EVENT_LOCK_SCREEN);
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     commonEventSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
         bundleGroupController_, handler_);
@@ -228,8 +228,8 @@ void BundleActiveCore::RegisterSubscriber()
 void BundleActiveCore::SubscriberLockScreenCommonEvent()
 {
     MatchingSkills matchingSkills;
-    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_OFF);
-    matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_SCREEN_ON);
+    matchingSkills.AddEvent(COMMON_EVENT_UNLOCK_SCREEN);
+    matchingSkills.AddEvent(COMMON_EVENT_LOCK_SCREEN);
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     subscriberInfo.SetPublisherBundleName(SCENE_BOARD_NAME);
     lockScreenSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
