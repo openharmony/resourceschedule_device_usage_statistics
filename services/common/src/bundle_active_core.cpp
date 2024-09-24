@@ -24,6 +24,7 @@
 #include "bundle_active_bundle_mgr_helper.h"
 #include "bundle_active_constant.h"
 #include "ffrt_inner.h"
+#include "bundle_constants.h"
 
 
 namespace OHOS {
@@ -32,7 +33,6 @@ namespace DeviceUsageStats {
 const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 #endif // OS_ACCOUNT_PART_ENABLED
 constexpr int32_t BUNDLE_UNINSTALL_DELAY_TIME = 5 * 1000 * 1000;
-const std::string SCENE_BOARD_NAME = "com.ohos.sceneboard";
 
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
 {
@@ -232,7 +232,7 @@ void BundleActiveCore::SubscriberLockScreenCommonEvent()
     matchingSkills.AddEvent(COMMON_EVENT_UNLOCK_SCREEN);
     matchingSkills.AddEvent(COMMON_EVENT_LOCK_SCREEN);
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-    subscriberInfo.SetPublisherBundleName(SCENE_BOARD_NAME);
+    subscriberInfo.SetPublisherBundleName(AppExecFwk::Constants::SCENE_BOARD_BUNDLE_NAME);
     lockScreenSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
         bundleGroupController_, handler_);
     CommonEventManager::SubscribeCommonEvent(lockScreenSubscriber_);
