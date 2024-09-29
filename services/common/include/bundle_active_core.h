@@ -262,7 +262,9 @@ private:
     std::recursive_mutex callbackMutex_;
     std::map<int32_t, std::shared_ptr<BundleActiveUserService>> userStatServices_;
     void RegisterSubscriber();
+    void SubscriberLockScreenCommonEvent();
     std::shared_ptr<BundleActiveCommonEventSubscriber> commonEventSubscriber_;
+    std::shared_ptr<BundleActiveCommonEventSubscriber> lockScreenSubscriber_;
     void RestoreAllData();
     std::map<AccessToken::AccessTokenID, sptr<IAppGroupCallback>> groupChangeObservers_;
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> recipientMap_;
