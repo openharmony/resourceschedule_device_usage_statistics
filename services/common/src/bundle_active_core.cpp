@@ -23,6 +23,7 @@
 #include "bundle_active_group_common.h"
 #include "bundle_active_bundle_mgr_helper.h"
 #include "bundle_active_constant.h"
+#include "bundle_constants.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -154,18 +155,30 @@ void BundleActiveCore::RegisterSubscriber()
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_BUNDLE_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);
-    matchingSkills.AddEvent(COMMON_EVENT_UNLOCK_SCREEN);
-    matchingSkills.AddEvent(COMMON_EVENT_LOCK_SCREEN);
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     commonEventSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
         bundleGroupController_, handler_);
+    SubscriberLockScreenCommonEvent();
     bool subscribeResult = CommonEventManager::SubscribeCommonEvent(commonEventSubscriber_);
     BUNDLE_ACTIVE_LOGD("Register for events result is %{public}d", subscribeResult);
+}
+
+void BundleActiveCore::SubscriberLockScreenCommonEvent()
+{
+    MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(COMMON_EVENT_UNLOCK_SCREEN);
+    matchingSkills.AddEvent(COMMON_EVENT_LOCK_SCREEN);
+    CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    subscriberInfo.SetPublisherBundleName(AppExecFwk::Constants::SCENE_BOARD_BUNDLE_NAME);
+    lockScreenSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
+        bundleGroupController_, handler_);
+    CommonEventManager::SubscribeCommonEvent(lockScreenSubscriber_);
 }
 
 void BundleActiveCore::UnRegisterSubscriber()
 {
     CommonEventManager::UnSubscribeCommonEvent(commonEventSubscriber_);
+    CommonEventManager::UnSubscribeCommonEvent(lockScreenSubscriber_);
 }
 
 void BundleActiveCore::Init()
