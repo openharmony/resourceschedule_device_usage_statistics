@@ -69,14 +69,11 @@ void BundleActiveTotalTest::TearDown(void)
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveAccountHelperTest_001, Function | MediumTest | Level0)
 {
-    // Given
     std::vector<int32_t> activatedOsAccountIds;
 
-    // When
     BundleActiveAccountHelper::GetActiveUserId(activatedOsAccountIds);
 
-    // Then
-    SUCCEED();
+    EXPECT_NE(activatedOsAccountIds.size(), 0);
 }
 
 /*
@@ -222,7 +219,8 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_002, Function | Me
 HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_003, Function | MediumTest | Level0)
 {
     BundleActiveUsageDatabase test;
-    test.GetOverdueTableCreateTime(100, 0);
+    auto result = test.GetOverdueTableCreateTime(100, 0);
+    EXPECT_EQ(result, nullptr);
 }
 
 /*
@@ -305,8 +303,15 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBinarySearchTest_001, Function | Med
 {
     std::vector<int64_t> tableNameArray;
     BundleActiveBinarySearch test;
-    test.BinarySearch(tableNameArray, 0);
-    test.BinarySearch(tableNameArray, -100);
+    int32_t result = test.BinarySearch(tableNameArray, 0);
+    EXPECT_EQ(result, -1);
+    result = test.BinarySearch(tableNameArray, -100);
+    EXPECT_EQ(result, -1);
+    tableNameArray.push_back(-1);
+    tableNameArray.push_back(0);
+    tableNameArray.push_back(1);
+    result = test.BinarySearch(tableNameArray, 0);
+    EXPECT_EQ(result, 1);
 }
 }
 }
