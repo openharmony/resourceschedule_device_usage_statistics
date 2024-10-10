@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,7 @@
 #include "bundle_active_group_handler.h"
 #include "ibundle_active_service.h"
 #include "bundle_active_group_controller.h"
-#include "bundle_active_group_util.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -55,19 +55,19 @@ BundleActiveGroupController::BundleActiveGroupController(const bool debug)
 
 void BundleActiveGroupController::RestoreDurationToDatabase()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     bundleUserHistory_->WriteDeviceDuration();
 }
 
 void BundleActiveGroupController::RestoreToDatabase(const int32_t userId)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     bundleUserHistory_->WriteBundleUsage(userId);
 }
 
 void BundleActiveGroupController::OnUserRemoved(const int32_t userId)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     bundleUserHistory_->userHistory_.erase(userId);
     if (!activeGroupHandler_.expired()) {
         activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
@@ -79,7 +79,7 @@ void BundleActiveGroupController::OnUserSwitched(const int32_t userId, const int
     BUNDLE_ACTIVE_LOGI("last time check for user %{public}d", currentUsedUser);
     CheckEachBundleState(currentUsedUser);
     bundleUserHistory_->WriteBundleUsage(currentUsedUser);
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     if (!activeGroupHandler_.expired()) {
         activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
         activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE);
@@ -94,7 +94,7 @@ void BundleActiveGroupController::OnScreenChanged(const bool& isScreenOn, const 
     if (!activeGroupHandler_.expired()) {
         std::shared_ptr<BundleActiveGroupController> bundleActiveGroupController = shared_from_this();
         activeGroupHandler_.lock()->PostTask([bundleActiveGroupController, isScreenOn, bootFromTimeStamp]() {
-            std::lock_guard<std::mutex> lock(bundleActiveGroupController->mutex_);
+            std::lock_guard<ffrt::mutex> lock(bundleActiveGroupController->mutex_);
             bundleActiveGroupController->bundleUserHistory_->UpdateBootBasedAndScreenTime(isScreenOn,
                 bootFromTimeStamp);
         });
@@ -117,7 +117,7 @@ void BundleActiveGroupController::SetHandlerAndCreateUserHistory(
 void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, const std::string& bundleName,
     const int32_t uid, const int32_t appIndex)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     BUNDLE_ACTIVE_LOGI("OnBundleUninstalled called, userId is %{public}d, bundlename is %{public}s",
         userId, bundleName.c_str());
     auto oneUserHistory = bundleUserHistory_->GetUserHistory(userId, false);
@@ -181,9 +181,8 @@ void BundleActiveGroupController::PeriodCheckBundleState(const int32_t userId)
         tmpGroupHandlerObj.userId_ = userId;
         std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
-        auto handlerEvent = AppExecFwk::InnerEvent::Get(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE,
-            handlerobjToPtr);
-        activeGroupHandler_.lock()->SendEvent(handlerEvent, FIVE_SECOND);
+        activeGroupHandler_.lock()->SendEvent(BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE,
+            handlerobjToPtr, FIVE_SECOND);
     }
 }
 
@@ -206,10 +205,14 @@ bool BundleActiveGroupController::CheckEachBundleState(const int32_t userId)
 
 void BundleActiveGroupController::CheckIdleStatsOneTime()
 {
+    BundleActiveGroupHandlerObject tmpGroupHandlerObj;
+    std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
+        std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
     auto handlerEvent = AppExecFwk::InnerEvent::Get(
         BundleActiveGroupHandler::MSG_ONE_TIME_CHECK_BUNDLE_STATE);
     if (!activeGroupHandler_.expired()) {
-        activeGroupHandler_.lock()->SendEvent(handlerEvent);
+        activeGroupHandler_.lock()->SendEvent(BundleActiveGroupHandler::MSG_ONE_TIME_CHECK_BUNDLE_STATE,
+            handlerobjToPtr);
     }
 }
 
@@ -241,7 +244,7 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
     if (bundleGroupEnable_ == false) {
         return;
     }
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     if (IsBundleInstalled(event.bundleName_, userId) == false) {
         BUNDLE_ACTIVE_LOGE("Report an uninstalled package event, return!");
         return;
@@ -287,32 +290,17 @@ void BundleActiveGroupController::SendCheckBundleMsg(const BundleActiveEvent& ev
     tmpGroupHandlerObj.userId_ = userId;
     tmpGroupHandlerObj.bundleName_ = event.bundleName_;
     tmpGroupHandlerObj.uid_ = event.uid_;
-    int64_t msgKey = GetMsgKey(event, userId);
     std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
         std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
-    auto handlerEvent = AppExecFwk::InnerEvent::Get(checkBundleMsgEventId, handlerobjToPtr, msgKey);
-    auto activeGroupHandler = activeGroupHandler_.lock();
-    if (activeGroupHandler) {
-        if (activeGroupHandler->HasInnerEvent(msgKey) == true) {
-            activeGroupHandler->RemoveEvent(checkBundleMsgEventId, msgKey);
-        }
-        activeGroupHandler->SendEvent(handlerEvent, timeUntilNextCheck);
+    if (!activeGroupHandler_.expired()) {
+        activeGroupHandler_.lock()->SendCheckBundleMsg(checkBundleMsgEventId, handlerobjToPtr, timeUntilNextCheck);
     }
-}
-
-int64_t BundleActiveGroupController::GetMsgKey(const BundleActiveEvent& event, const int32_t& userId)
-{
-    std::hash<std::string> hasher;
-    uint64_t bundleNameHash = hasher(event.bundleName_);
-    std::string msgHashStr = std::to_string(userId) + std::to_string(bundleNameHash) + std::to_string(event.uid_);
-    uint64_t msgKey = hasher(msgHashStr);
-    return static_cast<int64_t>(msgKey);
 }
 
 void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleName, const int32_t userId,
     const int32_t uid, const int64_t bootBasedTimeStamp)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     auto oneBundleHistory = bundleUserHistory_->GetUsageHistoryForBundle(bundleName, userId,
         bootBasedTimeStamp, true, uid);
     if (oneBundleHistory == nullptr) {
@@ -358,7 +346,7 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
 ErrCode BundleActiveGroupController::SetAppGroup(const std::string& bundleName, const int32_t userId,
     int32_t newGroup, uint32_t reason, const int64_t bootBasedTimeStamp, const bool isFlush)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     if (!IsBundleInstalled(bundleName, userId)) {
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
@@ -389,7 +377,7 @@ ErrCode BundleActiveGroupController::SetAppGroup(const std::string& bundleName, 
 
 int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, const int32_t userId)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     if (IsBundleInstalled(bundleName, userId) == false) {
         return -1;
@@ -420,7 +408,7 @@ int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName,
 ErrCode BundleActiveGroupController::QueryAppGroup(int32_t& appGroup,
     const std::string& bundleName, const int32_t userId)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     if (bundleName.empty()) {
         BUNDLE_ACTIVE_LOGE("bundleName can not get by userId");
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;

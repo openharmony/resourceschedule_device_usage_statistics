@@ -115,6 +115,7 @@ private:
         const int32_t deletedUid, const int32_t appIndex);
     void DeleteMemPackageUidSet(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
         const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex);
+    void UpdateExpiryDate(const bool timeChanged, BundleActiveCalendar& tmpCalendar, const int64_t timeStamp);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

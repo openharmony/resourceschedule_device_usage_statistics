@@ -15,6 +15,7 @@
 
 #include "bundle_active_calendar.h"
 #include "bundle_active_period_stats.h"
+#include "bundle_active_util.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -29,22 +30,54 @@ BundleActiveCalendar::BundleActiveCalendar(const int64_t timeStamp)
 
 void BundleActiveCalendar::TruncateToDay()
 {
-    time_ -= time_ % dayMilliseconds_;
+    if (debug_) {
+        time_ -= time_ % dayMilliseconds_;
+        return;
+    }
+    int64_t dayStartTime = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_DAILY);
+    if (dayStartTime == 0) {
+        return;
+    }
+    time_ = dayStartTime;
 }
 
 void BundleActiveCalendar::TruncateToWeek()
 {
-    time_ -= time_ % weekMilliseconds_;
+    if (debug_) {
+        time_ -= time_ % weekMilliseconds_;
+        return;
+    }
+    int64_t weekStartTime = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_DAILY);
+    if (weekStartTime == 0) {
+        return;
+    }
+    time_ = weekStartTime;
 }
 
 void BundleActiveCalendar::TruncateToMonth()
 {
-    time_ -= time_ % monthMilliseconds_;
+    if (debug_) {
+        time_ -= time_ % monthMilliseconds_;
+        return;
+    }
+    int64_t monthStartTime = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_DAILY);
+    if (monthStartTime == 0) {
+        return;
+    }
+    time_ = monthStartTime;
 }
 
 void BundleActiveCalendar::TruncateToYear()
 {
-    time_ -= time_ % yearMilliseconds_;
+    if (debug_) {
+        time_ -= time_ % yearMilliseconds_;
+        return;
+    }
+    int64_t yearStartTime = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_DAILY);
+    if (yearStartTime == 0) {
+        return;
+    }
+    time_ = yearStartTime;
 }
 
 void BundleActiveCalendar::IncreaseDays(const int64_t val)
@@ -79,10 +112,11 @@ int64_t BundleActiveCalendar::GetMilliseconds()
 
 void BundleActiveCalendar::ChangeToDebug()
 {
-        dayMilliseconds_ = ONE_DAY_TIME_DEBUG;
-        weekMilliseconds_ = ONE_WEEK_TIME_DEBUG;
-        monthMilliseconds_ = ONE_MONTH_TIME_DEBUG;
-        yearMilliseconds_ = ONE_YEAR_TIME_DEBUG;
+    debug_ = true;
+    dayMilliseconds_ = ONE_DAY_TIME_DEBUG;
+    weekMilliseconds_ = ONE_WEEK_TIME_DEBUG;
+    monthMilliseconds_ = ONE_MONTH_TIME_DEBUG;
+    yearMilliseconds_ = ONE_YEAR_TIME_DEBUG;
 }
 
 void BundleActiveCalendar::TruncateTo(int32_t intervalType)
@@ -106,4 +140,3 @@ void BundleActiveCalendar::TruncateTo(int32_t intervalType)
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-

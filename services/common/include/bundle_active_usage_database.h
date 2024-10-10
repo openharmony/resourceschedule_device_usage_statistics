@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +33,7 @@
 #include "rdb_store_config.h"
 #include "result_set.h"
 #include "values_bucket.h"
+#include "ffrt.h"
 
 #include "bundle_active_period_stats.h"
 #include "bundle_active_calendar.h"
@@ -136,6 +137,7 @@ private:
     void SupportAppTwin();
     void AddRdbColumn(const std::shared_ptr<NativeRdb::RdbStore> store, const std::string& tableName,
         const std::string& columnName, const std::string& columnType);
+    void CheckDatabaseFileAndTable();
     std::vector<std::string> databaseFiles_;
     std::vector<std::vector<int64_t>> sortedTableArray_;
     std::map<std::string, std::shared_ptr<NativeRdb::RdbStore>> bundleActiveRdbStoreCache_;
@@ -147,7 +149,7 @@ private:
     std::string formRecordsTableName_;
     std::string versionFile_;
     uint32_t currentVersion_;
-    std::mutex databaseMutex_;
+    ffrt::mutex databaseMutex_;
     std::int64_t eventBeginTime_;
     bool debugDatabase_;
 };
