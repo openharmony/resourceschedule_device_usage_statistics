@@ -53,6 +53,7 @@ public:
 
 private:
     int64_t time_;
+    bool debug_ = false;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
