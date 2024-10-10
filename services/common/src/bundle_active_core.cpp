@@ -153,8 +153,8 @@ void BundleActiveCore::RegisterSubscriber()
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     commonEventSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
         bundleGroupController_, handler_);
-    SubscriberLockScreenCommonEvent();
     bool subscribeResult = CommonEventManager::SubscribeCommonEvent(commonEventSubscriber_);
+    SubscriberLockScreenCommonEvent();
     BUNDLE_ACTIVE_LOGD("Register for events result is %{public}d", subscribeResult);
 }
 
