@@ -61,7 +61,7 @@ void BundleActiveCalendar::TruncateToMonth()
         return;
     }
     int64_t monthStartTime = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_DAILY);
-    if (dayStartTime == 0) {
+    if (monthStartTime == 0) {
         return;
     }
     time_ = monthStartTime;
