@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,7 +48,6 @@ static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
 const int32_t PACKAGE_USAGE_PARAM = 6;
 const int32_t MODULE_USAGE_PARAM = 4;
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
-const std::string DEVICE_USAGE_INIT_QUEUE = "DeviceUsageStatsInitQueue";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const bool REGISTER_RESULT =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<BundleActiveService>::GetInstance().get());
@@ -68,14 +67,8 @@ void BundleActiveService::OnStart()
         BUNDLE_ACTIVE_LOGI("service is ready. nothing to do.");
         return;
     }
-    ffrtQueue_ = std::make_shared<ffrt::queue>(DEVICE_USAGE_INIT_QUEUE.c_str(),
-        ffrt::queue_attr().qos(ffrt::qos_default));
-    if (ffrtQueue_ == nullptr) {
-        BUNDLE_ACTIVE_LOGE("BundleActiveService ffrtQueue create failed!");
-        return;
-    }
     std::shared_ptr<BundleActiveService> service = shared_from_this();
-    ffrtQueue_->submit([service]() {
+    ffrt::submit([service]() {
         service->InitNecessaryState();
         });
 }
@@ -91,7 +84,7 @@ void BundleActiveService::InitNecessaryState()
     if (systemAbilityManager == nullptr) {
         BUNDLE_ACTIVE_LOGI("GetSystemAbilityManager fail!");
         std::shared_ptr<BundleActiveService> service = shared_from_this();
-        ffrtQueue_->submit([service]() {
+        ffrt::submit([service]() {
             service->InitNecessaryState();
             }, ffrt::task_attr().delay(DELAY_TIME));
         return;
@@ -101,7 +94,7 @@ void BundleActiveService::InitNecessaryState()
         if (!checkResult) {
             BUNDLE_ACTIVE_LOGI("request system service is not ready yet!");
             std::shared_ptr<BundleActiveService> service = shared_from_this();
-            ffrtQueue_->submit([service]() {
+            ffrt::submit([service]() {
                 service->InitNecessaryState();
                 }, ffrt::task_attr().delay(DELAY_TIME));
             return;
@@ -113,7 +106,7 @@ void BundleActiveService::InitNecessaryState()
         if (!getAbility) {
             BUNDLE_ACTIVE_LOGI("request system service object is not ready yet!");
             std::shared_ptr<BundleActiveService> service = shared_from_this();
-            ffrtQueue_->submit([service]() {
+            ffrt::submit([service]() {
                 service->InitNecessaryState();
                 }, ffrt::task_attr().delay(DELAY_TIME));
             return;
@@ -135,15 +128,8 @@ void BundleActiveService::InitService()
         bundleActiveCore_ = std::make_shared<BundleActiveCore>();
         bundleActiveCore_->Init();
     }
-    std::shared_ptr<AppExecFwk::EventRunner> runner;
     if (reportHandler_ == nullptr) {
-        std::string threadName = "device_usage_handler";
-        runner = AppExecFwk::EventRunner::Create(threadName);
-        if (runner == nullptr) {
-            BUNDLE_ACTIVE_LOGE("report handler is null");
-            return;
-        }
-        reportHandler_ = std::make_shared<BundleActiveReportHandler>(runner);
+        reportHandler_ = std::make_shared<BundleActiveReportHandler>();
         if (reportHandler_ == nullptr) {
             return;
         }
@@ -152,7 +138,6 @@ void BundleActiveService::InitService()
     if (reportHandler_ != nullptr && bundleActiveCore_ != nullptr) {
         BUNDLE_ACTIVE_LOGI("core and handler is not null");
         bundleActiveCore_->SetHandler(reportHandler_);
-        runner = reportHandler_->GetEventRunner();
     } else {
         return;
     }
@@ -170,7 +155,7 @@ void BundleActiveService::InitService()
 #endif
     InitAppStateSubscriber(reportHandler_);
     InitContinuousSubscriber(reportHandler_);
-    bundleActiveCore_->InitBundleGroupController(runner);
+    bundleActiveCore_->InitBundleGroupController();
     SubscribeAppState();
     SubscribeContinuousTask();
 }
@@ -271,8 +256,7 @@ ErrCode BundleActiveService::ReportEvent(BundleActiveEvent& event, const int32_t
             tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            auto event = AppExecFwk::InnerEvent::Get(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
-            reportHandler_->SendEvent(event);
+            reportHandler_->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
             return ERR_OK;
         } else {
             BUNDLE_ACTIVE_LOGE("token does not belong to fms service process, return");

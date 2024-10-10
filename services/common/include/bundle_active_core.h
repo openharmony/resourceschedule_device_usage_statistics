@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +33,7 @@
 #include "ibundle_active_service.h"
 #include "remote_death_recipient.h"
 #include "iapp_group_callback.h"
+#include "ffrt.h"
 #include "bundle_active_debug_mode.h"
 #include "bundle_active_stats_update_listener.h"
 #include "bundle_state_inner_errors.h"
@@ -123,7 +124,7 @@ public:
     * set its handler and subscribe needed common event.
     * create bundleGroupController_ object.
     */
-    void InitBundleGroupController(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
+    void InitBundleGroupController();
 
     /*
     * function: SetHandler, BundleActiveService call it to set event report handler
@@ -258,8 +259,8 @@ private:
     std::shared_ptr<BundleActiveGroupHandler> bundleGroupHandler_;
     int64_t systemTimeShot_;
     int64_t realTimeShot_;
-    std::mutex mutex_;
-    std::recursive_mutex callbackMutex_;
+    ffrt::mutex mutex_;
+    ffrt::recursive_mutex callbackMutex_;
     std::map<int32_t, std::shared_ptr<BundleActiveUserService>> userStatServices_;
     void RegisterSubscriber();
     void SubscriberLockScreenCommonEvent();

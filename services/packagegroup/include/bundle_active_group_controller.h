@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +22,7 @@
 #include "power_mgr_client.h"
 #endif
 #include "application_info.h"
+#include "ffrt.h"
 
 #include "ibundle_active_service.h"
 #include "bundle_active_event.h"
@@ -84,7 +85,7 @@ public:
     void OnUserSwitched(const int32_t userId, const int32_t currentUsedUser);
 
 private:
-    std::mutex mutex_;
+    ffrt::mutex mutex_;
     bool GetBundleMgrProxy();
     std::weak_ptr<BundleActiveGroupHandler> activeGroupHandler_;
     int64_t timeoutForDirectlyUse_;
@@ -99,7 +100,6 @@ private:
         const int32_t uid);
     void SendCheckBundleMsg(const BundleActiveEvent& event, const int32_t& userId,
         const int64_t& timeUntilNextCheck, const int64_t& checkBundleMsgEventId);
-    int64_t GetMsgKey(const BundleActiveEvent& event, const int32_t& userId);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

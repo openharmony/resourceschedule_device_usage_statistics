@@ -25,6 +25,7 @@
 #include "app_group_callback_info.h"
 
 #include "bundle_active_app_group_napi.h"
+#include "ffrt.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -44,7 +45,7 @@ const uint32_t SECOND_ARG = 2;
 const std::vector<int32_t> GROUP_TYPE {10, 20, 30, 40, 50, 60};
 
 static sptr<AppGroupObserver> registerObserver = nullptr;
-std::mutex g_observerMutex_;
+ffrt::mutex g_observerMutex_;
 
 napi_value GetQueryAppGroupBundleName(const napi_env &env, napi_value* argv, QueryAppGroupParamsInfo &params,
     size_t argvLen = 0)
@@ -365,7 +366,7 @@ napi_value ParseRegisterAppGroupCallBackParameters(const napi_env &env, const na
     // arg[0] : callback
     napi_valuetype valuetype = napi_undefined;
     NAPI_CALL(env, napi_typeof(env, argv[0], &valuetype));
-    std::lock_guard<std::mutex> lock(g_observerMutex_);
+    std::lock_guard<ffrt::mutex> lock(g_observerMutex_);
     if (registerObserver) {
         BUNDLE_ACTIVE_LOGI("RegisterAppGroupCallBack repeat!");
         params.errorCode = ERR_REPEAT_REGISTER_APP_GROUP_OBSERVER;
@@ -406,7 +407,7 @@ void RegisterAppGroupCallBackAsyncCB(napi_env env, napi_status status, void *dat
     AsyncRegisterCallbackInfo *asyncCallbackInfo = (AsyncRegisterCallbackInfo *)data;
     if (asyncCallbackInfo) {
         if (asyncCallbackInfo->errorCode != ERR_OK) {
-            std::lock_guard<std::mutex> lock(g_observerMutex_);
+            std::lock_guard<ffrt::mutex> lock(g_observerMutex_);
             registerObserver = nullptr;
         }
         napi_value result = nullptr;
@@ -462,7 +463,7 @@ napi_value ParseUnRegisterAppGroupCallBackParameters(const napi_env &env, const 
         }
         napi_create_reference(env, argv[0], 1, &params.callback);
     }
-    std::lock_guard<std::mutex> lock(g_observerMutex_);
+    std::lock_guard<ffrt::mutex> lock(g_observerMutex_);
     if (!registerObserver) {
         BUNDLE_ACTIVE_LOGI("UnRegisterAppGroupCallBack observer is not exist");
         params.errorCode = ERR_APP_GROUP_OBSERVER_IS_NULLPTR;
@@ -488,7 +489,7 @@ void UnRegisterAppGroupCallBackAsyncCB(napi_env env, napi_status status, void *d
     AsyncUnRegisterCallbackInfo *asyncCallbackInfo = (AsyncUnRegisterCallbackInfo *)data;
     if (asyncCallbackInfo != nullptr) {
         if (asyncCallbackInfo->errorCode == ERR_OK) {
-            std::lock_guard<std::mutex> lock(g_observerMutex_);
+            std::lock_guard<ffrt::mutex> lock(g_observerMutex_);
             registerObserver = nullptr;
         }
         napi_value result = nullptr;

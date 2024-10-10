@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -221,7 +221,6 @@ private:
     sptr<PowerMgr::IAsyncShutdownCallback> shutdownCallback_;
     sptr<PowerMgr::IPowerStateCallback> powerStateCallback_;
 #endif
-    std::shared_ptr<ffrt::queue> ffrtQueue_;
     bool ready_ {false};
     int32_t ConvertIntervalType(const int32_t intervalType);
     void InitNecessaryState();
