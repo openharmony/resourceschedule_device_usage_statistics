@@ -68,9 +68,8 @@ void BundleActiveGroupController::OnUserRemoved(const int32_t userId)
 {
     std::lock_guard<ffrt::mutex> lock(mutex_);
     bundleUserHistory_->userHistory_.erase(userId);
-    auto activeGroupHandler = activeGroupHandler_.lock();
-    if (activeGroupHandler) {
-        activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
+    if (!activeGroupHandler_.expired()) {
+        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
     }
 }
 
@@ -177,8 +176,7 @@ bool BundleActiveGroupController::GetBundleMgrProxy()
 void BundleActiveGroupController::PeriodCheckBundleState(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("PeriodCheckBundleState called");
-    auto activeGroupHandler = activeGroupHandler_.lock();
-    if (activeGroupHandler) {
+    if (!activeGroupHandler_.expired()) {
         BundleActiveGroupHandlerObject tmpGroupHandlerObj;
         tmpGroupHandlerObj.userId_ = userId;
         std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =

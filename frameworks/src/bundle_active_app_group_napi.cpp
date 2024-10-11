@@ -48,7 +48,7 @@ static sptr<AppGroupObserver> registerObserver = nullptr;
 ffrt::mutex g_observerMutex_;
 
 napi_value GetQueryAppGroupBundleName(const napi_env &env, napi_value* argv, QueryAppGroupParamsInfo &params,
-    size_t argvLen)
+    size_t argvLen = 0)
 {
     if (argvLen == ZERO_ARG) {
         params.errorCode = ERR_PARAMETERS_EMPTY;
@@ -203,7 +203,7 @@ napi_value QueryAppGroupSync(napi_env env, napi_callback_info info)
 }
 
 napi_value GetAppGroupParameters(const napi_env &env, napi_value* argv, ParamsBundleGroupInfo &params,
-    size_t argvLen)
+    size_t argvLen = 0)
 {
     if (argvLen <= FRIST_ARG) {
         params.errorCode = ERR_PARAMETERS_EMPTY;
@@ -230,7 +230,7 @@ napi_value GetAppGroupParameters(const napi_env &env, napi_value* argv, ParamsBu
 }
 
 napi_value GetSetAppGroupBundleName(const napi_env &env, napi_value* argv, ParamsBundleGroupInfo &params,
-    size_t argvLen)
+    size_t argvLen = 0)
 {
     if (argvLen == ZERO_ARG) {
         params.errorCode = ERR_PARAMETERS_EMPTY;

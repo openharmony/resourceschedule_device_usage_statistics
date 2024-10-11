@@ -20,8 +20,7 @@ namespace OHOS {
 namespace DeviceUsageStats {
 ErrCode BundleActiveAccountHelper::GetUserId(const int32_t uid, int32_t& userId)
 {
-    userId = -1;
-    return ERR_OK;
+    return -1;
 }
 
 void BundleActiveAccountHelper::GetActiveUserId(std::vector<int32_t> &activatedOsAccountIds)
