@@ -811,11 +811,7 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
     if (userHistory == nullptr || rdbStore == nullptr) {
         return;
     }
-    CheckDatabaseFile(APP_GROUP_DATABASE_INDEX);
-    if (bundleHistoryTableName_ == UNKNOWN_TABLE_NAME) {
-        CreateBundleHistoryTable(APP_GROUP_DATABASE_INDEX);
-        bundleHistoryTableName_ = BUNDLE_HISTORY_LOG_TABLE;
-    }
+    CheckDatabaseFileAndTable();
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
     NativeRdb::ValuesBucket valuesBucket;
@@ -853,6 +849,15 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
         updatedcount++;
     }
     BUNDLE_ACTIVE_LOGI("update %{public}d bundles, keep %{public}d bundles group", updatedcount, unupdatedcount);
+}
+
+void BundleActiveUsageDatabase::CheckDatabaseFileAndTable()
+{
+    CheckDatabaseFile(APP_GROUP_DATABASE_INDEX);
+    if (bundleHistoryTableName_ == UNKNOWN_TABLE_NAME) {
+        CreateBundleHistoryTable(APP_GROUP_DATABASE_INDEX);
+        bundleHistoryTableName_ = BUNDLE_HISTORY_LOG_TABLE;
+    }
 }
 
 shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsageDatabase::GetBundleHistoryData(

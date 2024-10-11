@@ -41,8 +41,7 @@
         "power_manager",
         "time_service",
         "init",
-        "ffrt",
-        "runtime_core"
+        "ffrt"
       ],
       "third_party": []
     },

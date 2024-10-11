@@ -35,7 +35,7 @@ void BundleActiveCalendar::TruncateToDay()
         return;
     }
     int64_t dayStartTime = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_DAILY);
-    if (dayStartTime == BundleActiveUtil::ERROR_TIME) {
+    if (dayStartTime == 0) {
         return;
     }
     time_ = dayStartTime;
@@ -48,7 +48,7 @@ void BundleActiveCalendar::TruncateToWeek()
         return;
     }
     int64_t weekStartTime = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_WEEKLY);
-    if (weekStartTime == BundleActiveUtil::ERROR_TIME) {
+    if (weekStartTime == 0) {
         return;
     }
     time_ = weekStartTime;
@@ -61,7 +61,7 @@ void BundleActiveCalendar::TruncateToMonth()
         return;
     }
     int64_t monthStartTime = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_MONTHLY);
-    if (monthStartTime == BundleActiveUtil::ERROR_TIME) {
+    if (monthStartTime == 0) {
         return;
     }
     time_ = monthStartTime;
@@ -74,7 +74,7 @@ void BundleActiveCalendar::TruncateToYear()
         return;
     }
     int64_t yearStartTime = BundleActiveUtil::GetIntervalTypeStartTime(time_, BundleActiveUtil::PERIOD_YEARLY);
-    if (yearStartTime == BundleActiveUtil::ERROR_TIME) {
+    if (yearStartTime == 0) {
         return;
     }
     time_ = yearStartTime;

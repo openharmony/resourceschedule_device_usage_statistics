@@ -29,6 +29,7 @@ const int64_t MIN_OF_MIDNIGHT = 0;
 const int64_t SECOND_TO_MIDNIGHT = 0;
 const int64_t STATR_DAY_OF_MON = 1;
 const int64_t STATR_MON_OF_YEAR = 0;
+const int64_t ERROR_TIME = 0;
 std::string BundleActiveUtil::GetBundleUsageKey(const std::string &bundleName, const int32_t uid)
 {
     return bundleName + std::to_string(uid);
@@ -41,10 +42,10 @@ int64_t BundleActiveUtil::GetFFRTDelayTime(const int64_t& delayTime)
 
 int64_t BundleActiveUtil::GetIntervalTypeStartTime(const int64_t& timeStamp, const int32_t& intervalType)
 {
-    time_t time = timeStamp / MILLISECOND_TO_SECOND;
-    if (time <= 0) {
+    if (timeStamp <= 0) {
         return ERROR_TIME;
     }
+    time_t time = timeStamp / MILLISECOND_TO_SECOND;
     std::tm* tm_time = std::localtime(&time);
     if (tm_time == nullptr) {
         return ERROR_TIME;
