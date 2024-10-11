@@ -181,6 +181,7 @@ void BundleActiveCommonEventSubscriber::HandlePackageAddEvent(const CommonEventD
         }
         reportHandler->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_INSTALLED,
             handlerobjToPtr);
+    }
 }
 
 void BundleActiveCommonEventSubscriber::HandleLockEvent(const CommonEventData &data)
