@@ -19,6 +19,7 @@
 #include "system_ability_definition.h"
 
 #include "bundle_active_power_state_callback_service.h"
+#include "bundle_active_power_state_callback_service.h"
 #include "bundle_active_stub.h"
 #include "bundle_active_core.h"
 #include "bundle_active_continuous_task_observer.h"
@@ -65,7 +66,7 @@ void BundleActiveTotalTest::TearDown(void)
  * @tc.name: BundleActiveAccountHelperTest_001
  * @tc.desc: test the interface of bundle_active_account_helper
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveAccountHelperTest_001, Function | MediumTest | Level0)
 {
@@ -80,7 +81,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveAccountHelperTest_001, Function | Me
  * @tc.name: BundleActiveContinuousTaskObserverTest_001
  * @tc.desc: test the interface of bundle_active_continuous_task_observer
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Function | MediumTest | Level0)
 {
@@ -113,7 +114,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Func
  * @tc.name: BundleActiveBundleMgrHelperTest_001
  * @tc.desc: test the interface of bundle_active_bundle_mgr_helper
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_001, Function | MediumTest | Level0)
 {
@@ -168,7 +169,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | 
  * @tc.name: BundleActiveAppStateObserverTest_001
  * @tc.desc: test the interface of bundle_active_app_state_observer
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveAppStateObserverTest_001, Function | MediumTest | Level0)
 {
@@ -196,7 +197,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveAppStateObserverTest_001, Function |
  * @tc.name: BundleActiveUsageDatabaseTest_001
  * @tc.desc: test the interface of bundle_active_usage_database
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_001, Function | MediumTest | Level0)
 {
@@ -209,7 +210,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_001, Function | Me
  * @tc.name: BundleActiveUsageDatabaseTest_002
  * @tc.desc: test the interface of bundle_active_usage_database
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_002, Function | MediumTest | Level0)
 {
@@ -224,7 +225,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_002, Function | Me
  * @tc.name: BundleActiveUsageDatabaseTest_003
  * @tc.desc: test the interface of bundle_active_usage_database
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_003, Function | MediumTest | Level0)
 {
@@ -237,7 +238,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_003, Function | Me
  * @tc.name: BundleActiveUsageDatabaseTest_005
  * @tc.desc: test the interface of bundle_active_usage_database
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_005, Function | MediumTest | Level0)
 {
@@ -258,7 +259,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_005, Function | Me
  * @tc.name: BundleActiveUsageDatabaseTest_006
  * @tc.desc: test the interface of bundle_active_usage_database
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_006, Function | MediumTest | Level0)
 {
@@ -275,7 +276,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_006, Function | Me
  * @tc.name: BundleActiveUsageDatabaseTest_007
  * @tc.desc: test the interface of bundle_active_usage_database
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_007, Function | MediumTest | Level0)
 {
@@ -292,7 +293,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_007, Function | Me
  * @tc.name: BundleActivePowerStateCallbackServiceTest_001
  * @tc.desc: test the interface of bundle_active_usage_database
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActivePowerStateCallbackServiceTest_001, Function | MediumTest | Level0)
 {
@@ -313,7 +314,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActivePowerStateCallbackServiceTest_001, F
  * @tc.name: BundleActiveBinarySearchTest_001
  * @tc.desc: test the interface of bundle_active_binary_search
  * @tc.type: FUNC
- * @tc.require: issuesI9BMBP
+ * @tc.require: DTS2023121404861
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveBinarySearchTest_001, Function | MediumTest | Level0)
 {
