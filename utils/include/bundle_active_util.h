@@ -27,7 +27,6 @@ public:
     static constexpr int32_t PERIOD_WEEKLY = 1;
     static constexpr int32_t PERIOD_MONTHLY = 2;
     static constexpr int32_t PERIOD_YEARLY = 3;
-    static constexpr int64_t ERROR_TIME = 0;
     static std::string GetBundleUsageKey(const std::string& bundleName, const int32_t uid);
     static int64_t GetFFRTDelayTime(const int64_t& delayTime);
     static int64_t GetIntervalTypeStartTime(const int64_t& timeStamp, const int32_t& intervalType);

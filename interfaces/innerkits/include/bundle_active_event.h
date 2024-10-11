@@ -89,7 +89,7 @@ public:
     * parameters: bundleName, continuousTaskAbilityName
     */
     BundleActiveEvent(const std::string bundleName, const std::string continuousTaskAbilityName,
-        const int32_t uid = 0);
+        const int32_t uid = DEFAULT_UID_ID);
     /*
     * function: BundleActiveEvent, constructor of app ability event.
     * parameters: bundleName, abilityName, abilityId

@@ -68,9 +68,8 @@ void BundleActiveGroupController::OnUserRemoved(const int32_t userId)
 {
     std::lock_guard<ffrt::mutex> lock(mutex_);
     bundleUserHistory_->userHistory_.erase(userId);
-    auto activeGroupHandler = activeGroupHandler_.lock();
-    if (activeGroupHandler) {
-        activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
+    if (!activeGroupHandler_.expired()) {
+        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
     }
 }
 
@@ -81,11 +80,11 @@ void BundleActiveGroupController::OnUserSwitched(const int32_t userId, const int
     bundleUserHistory_->WriteBundleUsage(currentUsedUser);
     std::lock_guard<ffrt::mutex> lock(mutex_);
     auto activeGroupHandler = activeGroupHandler_.lock();
-    if (activeGroupHandler) {
-        activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
-        activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE);
-        activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE);
-        activeGroupHandler->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE);
+    if (!activeGroupHandler_.expired()) {
+        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
+        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE);
+        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE);
+        activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE);
     }
     PeriodCheckBundleState(userId);
 }
@@ -177,13 +176,12 @@ bool BundleActiveGroupController::GetBundleMgrProxy()
 void BundleActiveGroupController::PeriodCheckBundleState(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("PeriodCheckBundleState called");
-    auto activeGroupHandler = activeGroupHandler_.lock();
-    if (activeGroupHandler) {
+    if (!activeGroupHandler_.expired()) {
         BundleActiveGroupHandlerObject tmpGroupHandlerObj;
         tmpGroupHandlerObj.userId_ = userId;
         std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
             std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
-        activeGroupHandler->SendEvent(BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE,
+        activeGroupHandler_.lock()->SendEvent(BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE,
             handlerobjToPtr, FIVE_SECOND);
     }
 }
@@ -213,8 +211,9 @@ void BundleActiveGroupController::CheckIdleStatsOneTime()
     auto handlerEvent = AppExecFwk::InnerEvent::Get(
         BundleActiveGroupHandler::MSG_ONE_TIME_CHECK_BUNDLE_STATE);
     auto activeGroupHandler = activeGroupHandler_.lock();
-    if (activeGroupHandler) {
-        activeGroupHandler->SendEvent(BundleActiveGroupHandler::MSG_ONE_TIME_CHECK_BUNDLE_STATE, handlerobjToPtr);
+    if (!activeGroupHandler_.expired()) {
+        activeGroupHandler_.lock()->SendEvent(BundleActiveGroupHandler::MSG_ONE_TIME_CHECK_BUNDLE_STATE,
+            handlerobjToPtr);
     }
 }
 

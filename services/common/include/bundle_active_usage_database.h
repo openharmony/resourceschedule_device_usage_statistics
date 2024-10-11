@@ -141,6 +141,7 @@ private:
     std::vector<std::vector<int64_t>> sortedTableArray_;
     std::map<std::string, std::shared_ptr<NativeRdb::RdbStore>> bundleActiveRdbStoreCache_;
     std::shared_ptr<BundleActiveCalendar> calendar_;
+    void CheckDatabaseFileAndTable();
     std::string eventTableName_;
     std::string durationTableName_;
     std::string bundleHistoryTableName_;

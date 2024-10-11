@@ -14,8 +14,6 @@
  */
 
 #include <string>
-#include <chrono>
-#include <thread>
 
 #include <gtest/gtest.h>
 #include "system_ability_definition.h"

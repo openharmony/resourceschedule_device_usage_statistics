@@ -808,14 +808,10 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
         return;
     }
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
-    if (rdbStore == nullptr) {
+    if (userHistory == nullptr || rdbStore == nullptr) {
         return;
     }
-    CheckDatabaseFile(APP_GROUP_DATABASE_INDEX);
-    if (bundleHistoryTableName_ == UNKNOWN_TABLE_NAME) {
-        CreateBundleHistoryTable(APP_GROUP_DATABASE_INDEX);
-        bundleHistoryTableName_ = BUNDLE_HISTORY_LOG_TABLE;
-    }
+    CheckDatabaseFileAndTable();
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
     NativeRdb::ValuesBucket valuesBucket;
@@ -853,6 +849,15 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
         updatedcount++;
     }
     BUNDLE_ACTIVE_LOGI("update %{public}d bundles, keep %{public}d bundles group", updatedcount, unupdatedcount);
+}
+
+void BundleActiveUsageDatabase::CheckDatabaseFileAndTable()
+{
+    CheckDatabaseFile(APP_GROUP_DATABASE_INDEX);
+    if (bundleHistoryTableName_ == UNKNOWN_TABLE_NAME) {
+        CreateBundleHistoryTable(APP_GROUP_DATABASE_INDEX);
+        bundleHistoryTableName_ = BUNDLE_HISTORY_LOG_TABLE;
+    }
 }
 
 shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsageDatabase::GetBundleHistoryData(
@@ -998,20 +1003,17 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
     if (databaseType < 0 || databaseType >= static_cast<int32_t>(sortedTableArray_.size())) {
         return nullptr;
     }
-
     int32_t tableNumber = static_cast<int32_t>(sortedTableArray_.at(databaseType).size());
     if (tableNumber == TABLE_NOT_EXIST) {
         return nullptr;
     }
     int64_t currentPackageTime = sortedTableArray_.at(databaseType).at(tableNumber - 1);
-    shared_ptr<BundleActivePeriodStats> intervalStats =
-        make_shared<BundleActivePeriodStats>(userId, currentPackageTime);
+    auto intervalStats = make_shared<BundleActivePeriodStats>(userId, currentPackageTime);
     string packageTableName = PACKAGE_LOG_TABLE + to_string(currentPackageTime);
     string queryPackageSql = "select * from " + packageTableName + " where userId = ?";
     vector<string> queryCondition;
     queryCondition.push_back(to_string(userId));
-    auto bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
-        queryCondition);
+    auto bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql, queryCondition);
     if (bundleActiveResult == nullptr) {
         return nullptr;
     }
@@ -1027,8 +1029,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         bundleActiveResult->GetString(BUNDLE_NAME_COLUMN_INDEX, usageStats->bundleName_);
         bundleActiveResult->GetInt(BUNDLE_STARTED_COUNT_COLUMN_INDEX, usageStats->startCount_);
         bundleActiveResult->GetLong(LAST_TIME_COLUMN_INDEX, relativeLastTimeUsed);
-        usageStats->lastTimeUsed_ = relativeLastTimeUsed == -1 ? -1 :
-            relativeLastTimeUsed + currentPackageTime;
+        usageStats->lastTimeUsed_ = relativeLastTimeUsed == -1 ? -1 : relativeLastTimeUsed + currentPackageTime;
         bundleActiveResult->GetLong(LAST_TIME_CONTINUOUS_TASK_COLUMN_INDEX, relativeLastTimeFrontServiceUsed);
         usageStats->lastContiniousTaskUsed_ = relativeLastTimeFrontServiceUsed == -1 ? -1 :
             relativeLastTimeFrontServiceUsed + currentPackageTime;
