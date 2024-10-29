@@ -31,6 +31,7 @@
 #include "bundle_active_bundle_mgr_helper.h"
 #include "bundle_active_shutdown_callback_service.h"
 #include "tokenid_kit.h"
+#include "xcollie/watchdog.h"
 
 #include "bundle_active_service.h"
 
@@ -124,6 +125,7 @@ void BundleActiveService::InitNecessaryState()
 
 void BundleActiveService::InitService()
 {
+    HiviewDFX::Watchdog::GetInstance().InitFfrtWatchdog();
     if (bundleActiveCore_ == nullptr) {
         bundleActiveCore_ = std::make_shared<BundleActiveCore>();
         bundleActiveCore_->Init();
