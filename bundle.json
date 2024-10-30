@@ -31,6 +31,7 @@
         "ipc",
         "access_token",
         "ability_runtime",
+        "hicollie",
         "hilog",
         "samgr",
         "c_utils",
