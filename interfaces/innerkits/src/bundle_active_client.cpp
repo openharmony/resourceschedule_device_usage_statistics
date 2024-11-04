@@ -22,7 +22,7 @@ namespace OHOS {
 namespace DeviceUsageStats {
 namespace {
     static const int32_t DELAY_TIME = 5000;
-    static const int32_t SLEEP_TIME = 1000;
+    static const int32_t SLEEP_TIME = 1;
     static const int32_t MS_TO_US = 1000;
 }
 BundleActiveClient& BundleActiveClient::GetInstance()
