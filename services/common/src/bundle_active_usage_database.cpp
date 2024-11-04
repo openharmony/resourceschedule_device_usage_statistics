@@ -1037,7 +1037,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         bundleActiveResult->GetLong(TOTAL_TIME_CONTINUOUS_TASK_COLUMN_INDEX, usageStats->totalContiniousTaskUsedTime_);
         bundleActiveResult->GetInt(PACKAGE_LOG_UID_COLUMN_INDEX, usageStats->uid_);
         string bundleStatsKey = usageStats->bundleName_ + std::to_string(usageStats->uid_);
-        intervalStats->packageContainUid_[usageStats->bundleName_].insert(usageStats->uid_);
+        BundleActiveBundleMgrHelper::GetInstance().InsertPackageUid(usageStats->bundleName_, usageStats->uid_);
         bundleStats.insert(pair<string, shared_ptr<BundleActivePackageStats>>(bundleStatsKey, usageStats));
     }
     intervalStats->bundleStats_ = bundleStats;

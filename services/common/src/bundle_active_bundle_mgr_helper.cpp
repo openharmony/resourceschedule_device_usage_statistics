@@ -34,6 +34,7 @@ BundleActiveBundleMgrHelper::BundleActiveBundleMgrHelper()
 BundleActiveBundleMgrHelper::~BundleActiveBundleMgrHelper()
 {
     launcherAppMap_.clear();
+    packageContainUidMap_.clear();
 }
 
 void BundleActiveBundleMgrHelper::GetNameForUid(int32_t uid, std::string& bundleName)
@@ -168,6 +169,32 @@ void BundleActiveBundleMgrHelper::InitSystemEvent()
     launcherAppMap_[OPERATION_SYSTEM_UNLOCK] = false;
     launcherAppMap_[OPERATION_SYSTEM_SLEEP] = false;
     launcherAppMap_[OPERATION_SYSTEM_WAKEUP] = false;
+}
+
+void BundleActiveBundleMgrHelper::InsertPackageUid(const std::string &bundleName, const int32_t uid)
+{
+    packageContainUidMap_[bundleName].insert(uid);
+}
+
+void BundleActiveBundleMgrHelper::DeletePackageUid(const std::string &bundleName, const int32_t uid)
+{
+    packageContainUidMap_[bundleName].erase(uid);
+    if (packageContainUidMap_[bundleName].size() == 0) {
+        packageContainUidMap_.erase(bundleName);
+    }
+}
+
+void BundleActiveBundleMgrHelper::DeleteMemPackage(const std::string &bundleName)
+{
+    packageContainUidMap_.erase(bundleName);
+}
+
+std::set<int32_t> BundleActiveBundleMgrHelper::GetPackageUidSet(const std::string &bundleName)
+{
+    if (packageContainUidMap_.find(bundleName) == packageContainUidMap_.end()) {
+        return std::set<int32_t>();
+    }
+    return packageContainUidMap_[bundleName];
 }
 
 }  // namespace DeviceUsageStats

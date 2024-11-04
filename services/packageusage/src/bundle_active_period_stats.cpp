@@ -51,7 +51,7 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePeriodStats::GetOrCreateUs
         insertedStats->endTimeStamp_ = endTime_;
         insertedStats->bundleName_ = GetCachedString(bundleName);
         insertedStats->uid_ = uid;
-        packageContainUid_[insertedStats->bundleName_].insert(uid);
+        BundleActiveBundleMgrHelper::GetInstance().InsertPackageUid(insertedStats->bundleName_, uid);
         bundleStats_[bundleStatsKey] = insertedStats;
     }
     return bundleStats_[bundleStatsKey];

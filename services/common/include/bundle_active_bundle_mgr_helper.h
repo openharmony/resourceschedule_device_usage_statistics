@@ -64,12 +64,21 @@ public:
 
     bool IsLauncherApp(const std::string &bundleName, const int32_t userId);
 
+    void InsertPackageUid(const std::string &bundleName, const int32_t userId);
+    
+    std::set<int32_t> GetPackageUidSet(const std::string &bundleName);
+
+    void DeletePackageUid(const std::string &bundleName, const int32_t userId);
+
+    void DeleteMemPackage(const std::string &bundleName);
+
     void InitLauncherAppMap();
 
 private:
     bool Connect();
     void InitSystemEvent();
     std::map<std::string, bool> launcherAppMap_;
+    std::map<std::string, std::set<int32_t>> packageContainUidMap_;
     bool isInitLauncherAppMap_ = false;
     sptr<AppExecFwk::IBundleMgr> bundleMgr_ = nullptr;
     ffrt::mutex connectionMutex_;
