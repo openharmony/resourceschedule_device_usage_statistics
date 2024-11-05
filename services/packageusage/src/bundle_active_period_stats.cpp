@@ -16,6 +16,7 @@
 #include "bundle_active_period_stats.h"
 #include "bundle_active_event.h"
 #include "bundle_active_util.h"
+#include "bundle_active_bundle_mgr_helper.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -51,7 +52,7 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePeriodStats::GetOrCreateUs
         insertedStats->endTimeStamp_ = endTime_;
         insertedStats->bundleName_ = GetCachedString(bundleName);
         insertedStats->uid_ = uid;
-        BundleActiveBundleMgrHelper::GetInstance().InsertPackageUid(insertedStats->bundleName_, uid);
+        BundleActiveBundleMgrHelper::GetInstance()->InsertPackageUid(insertedStats->bundleName_, uid);
         bundleStats_[bundleStatsKey] = insertedStats;
     }
     return bundleStats_[bundleStatsKey];
