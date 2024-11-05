@@ -82,6 +82,7 @@ private:
     bool isInitLauncherAppMap_ = false;
     sptr<AppExecFwk::IBundleMgr> bundleMgr_ = nullptr;
     ffrt::mutex connectionMutex_;
+    ffrt::mutex packageContainUidMapMutex_;
     DECLARE_DELAYED_SINGLETON(BundleActiveBundleMgrHelper);
 };
 }  // namespace DeviceUsageStats

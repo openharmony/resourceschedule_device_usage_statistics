@@ -171,7 +171,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | 
  * @tc.type: FUNC
  * @tc.require: issuesI9SQ6G
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_004, Function | MediumTest | Level0)
 {
     BundleActiveBundleMgrHelper::GetInstance()->packageContainUidMap_.clear();
     BundleActiveBundleMgrHelper::GetInstance()->InsertPackageUid("test", 0);
@@ -181,8 +181,8 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | 
     BundleActiveBundleMgrHelper::GetInstance()->InsertPackageUid("test", 0);
     auto uidSet = BundleActiveBundleMgrHelper::GetInstance()->GetPackageUidSet("test");
     EXPECT_NE(uidSet.size(), 0);
-    BundleActiveBundleMgrHelper::GetInstance()->DeleteMemPackage("test", 0);
-    auto uidSet = BundleActiveBundleMgrHelper::GetInstance()->GetPackageUidSet("test");
+    BundleActiveBundleMgrHelper::GetInstance()->DeleteMemPackage("test");
+    uidSet = BundleActiveBundleMgrHelper::GetInstance()->GetPackageUidSet("test");
     EXPECT_EQ(uidSet.size(), 0);
 }
 
