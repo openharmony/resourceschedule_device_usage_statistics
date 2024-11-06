@@ -195,10 +195,11 @@ void BundleActiveBundleMgrHelper::DeleteMemPackage(const std::string &bundleName
 std::set<int32_t> BundleActiveBundleMgrHelper::GetPackageUidSet(const std::string &bundleName)
 {
     std::lock_guard<ffrt::mutex> lock(packageContainUidMapMutex_);
-    if (packageContainUidMap_.find(bundleName) == packageContainUidMap_.end()) {
+    auto iter = packageContainUidMap_.find(bundleName);
+    if (iter == packageContainUidMap_.end()) {
         return std::set<int32_t>();
     }
-    return packageContainUidMap_[bundleName];
+    return iter->second;
 }
 
 }  // namespace DeviceUsageStats
