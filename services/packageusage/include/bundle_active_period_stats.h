@@ -40,7 +40,6 @@ public:
     int64_t lastTimeSaved_;
     int32_t userId_;
     std::map<std::string, std::shared_ptr<BundleActivePackageStats>> bundleStats_;
-    std::map<std::string, std::set<int32_t>> packageContainUid_;
     BundleActiveEventList events_;
     std::set<std::string> packetNamesCache_;
     BundleActiveEventTracker interactiveTracker_;

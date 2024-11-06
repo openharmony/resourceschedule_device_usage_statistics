@@ -166,6 +166,27 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | 
 }
 
 /*
+ * @tc.name: BundleActiveBundleMgrHelperTest_004
+ * @tc.desc: test is packageContainUidMap
+ * @tc.type: FUNC
+ * @tc.require: issuesI9SQ6G
+ */
+HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_004, Function | MediumTest | Level0)
+{
+    BundleActiveBundleMgrHelper::GetInstance()->packageContainUidMap_.clear();
+    BundleActiveBundleMgrHelper::GetInstance()->InsertPackageUid("test", 0);
+    EXPECT_NE(BundleActiveBundleMgrHelper::GetInstance()->packageContainUidMap_.size(), 0);
+    BundleActiveBundleMgrHelper::GetInstance()->DeletePackageUid("test", 0);
+    EXPECT_EQ(BundleActiveBundleMgrHelper::GetInstance()->packageContainUidMap_.size(), 0);
+    BundleActiveBundleMgrHelper::GetInstance()->InsertPackageUid("test", 0);
+    auto uidSet = BundleActiveBundleMgrHelper::GetInstance()->GetPackageUidSet("test");
+    EXPECT_NE(uidSet.size(), 0);
+    BundleActiveBundleMgrHelper::GetInstance()->DeleteMemPackage("test");
+    uidSet = BundleActiveBundleMgrHelper::GetInstance()->GetPackageUidSet("test");
+    EXPECT_EQ(uidSet.size(), 0);
+}
+
+/*
  * @tc.name: BundleActiveAppStateObserverTest_001
  * @tc.desc: test the interface of bundle_active_app_state_observer
  * @tc.type: FUNC
