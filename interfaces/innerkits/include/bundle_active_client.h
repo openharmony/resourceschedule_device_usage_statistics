@@ -27,6 +27,7 @@
 #include "bundle_state_inner_errors.h"
 #include "event_handler.h"
 #include "event_runner.h"
+#include "ffrt.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -219,7 +220,7 @@ private:
     ~BundleActiveClient() {}
     sptr<IBundleActiveService> bundleActiveProxy_;
     sptr<BundleActiveClientDeathRecipient> recipient_;
-    std::recursive_mutex mutex_;
+    ffrt::recursive_mutex mutex_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
