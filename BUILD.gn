@@ -26,7 +26,6 @@ config("usagestats_public_config") {
     "services/common/include",
     "services/packagegroup/include",
     "services/packageusage/include",
-    "../ffrt/interfaces/kits",
   ]
 }
 
@@ -52,12 +51,11 @@ ohos_shared_library("usagestatsinner") {
   external_deps = [
     "c_utils:utils",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
     "hilog:libhilog",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
-
+  public_external_deps = [ "ffrt:libffrt" ]
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
   innerapi_tags = [ "platformsdk" ]
@@ -90,7 +88,6 @@ ohos_shared_library("bundlestate") {
     "services/common/include",
     "services/packagegroup/include",
     "services/packageusage/include",
-    "../ffrt/interfaces/kits",
   ]
 
   deps = [
@@ -101,12 +98,12 @@ ohos_shared_library("bundlestate") {
   external_deps = [
     "c_utils:utils",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
     "hilog:libhilog",
     "ipc:ipc_single",
     "napi:ace_napi",
     "samgr:samgr_proxy",
   ]
+  public_external_deps = [ "ffrt:libffrt" ]
   relative_install_dir = "module"
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
