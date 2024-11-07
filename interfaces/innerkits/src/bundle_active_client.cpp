@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 #include "unistd.h"
-#include "ffrt.h"
 
 #include "bundle_active_log.h"
 #include "bundle_active_client.h"
@@ -65,7 +64,7 @@ ErrCode BundleActiveClient::GetBundleActiveProxy()
 ErrCode BundleActiveClient::ReportEvent(BundleActiveEvent event, const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("BundleActiveClient::ReportEvent called");
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -75,7 +74,7 @@ ErrCode BundleActiveClient::ReportEvent(BundleActiveEvent event, const int32_t u
 
 ErrCode BundleActiveClient::IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -86,7 +85,7 @@ ErrCode BundleActiveClient::IsBundleIdle(bool& isBundleIdle, const std::string& 
 ErrCode BundleActiveClient::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -97,7 +96,7 @@ ErrCode BundleActiveClient::QueryBundleStatsInfoByInterval(std::vector<BundleAct
 ErrCode BundleActiveClient::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
     const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -109,7 +108,7 @@ ErrCode BundleActiveClient::QueryBundleEvents(std::vector<BundleActiveEvent>& bu
 
 ErrCode BundleActiveClient::SetAppGroup(std::string bundleName, const int32_t newGroup, int32_t userId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -120,7 +119,7 @@ ErrCode BundleActiveClient::SetAppGroup(std::string bundleName, const int32_t ne
 ErrCode BundleActiveClient::QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& bundleActivePackageStats,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -131,7 +130,7 @@ ErrCode BundleActiveClient::QueryBundleStatsInfos(std::vector<BundleActivePackag
 ErrCode BundleActiveClient::QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
     const int64_t beginTime, const int64_t endTime)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -141,7 +140,7 @@ ErrCode BundleActiveClient::QueryCurrentBundleEvents(std::vector<BundleActiveEve
 
 ErrCode BundleActiveClient::QueryAppGroup(int32_t& appGroup, std::string& bundleName, const int32_t userId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -156,7 +155,7 @@ ErrCode BundleActiveClient::QueryModuleUsageRecords(int32_t maxNum, std::vector<
         BUNDLE_ACTIVE_LOGI("maxNum is illegal, maxNum is %{public}d", maxNum);
         return ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
     }
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -166,7 +165,7 @@ ErrCode BundleActiveClient::QueryModuleUsageRecords(int32_t maxNum, std::vector<
 
 ErrCode BundleActiveClient::RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -180,7 +179,7 @@ ErrCode BundleActiveClient::RegisterAppGroupCallBack(const sptr<IAppGroupCallbac
 
 ErrCode BundleActiveClient::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -195,7 +194,7 @@ ErrCode BundleActiveClient::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallb
 ErrCode BundleActiveClient::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -206,7 +205,7 @@ ErrCode BundleActiveClient::QueryDeviceEventStats(int64_t beginTime, int64_t end
 ErrCode BundleActiveClient::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
-    std::lock_guard<std::recursive_mutex> lock(mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
@@ -216,7 +215,7 @@ ErrCode BundleActiveClient::QueryNotificationEventStats(int64_t beginTime, int64
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<std::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
     if (observer) {
         observer_ = observer;
     }
@@ -224,7 +223,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const spt
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::RemoveObserver()
 {
-    std::lock_guard<std::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
     if (observer_) {
         observer_ = nullptr;
     }
@@ -233,7 +232,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::RemoveObserver()
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &object)
 {
     (void)object;
-    std::lock_guard<std::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
     BundleActiveClient::GetInstance().bundleActiveProxy_ = nullptr;
     ffrt::submit([this]() {
         this->OnServiceDiedInner();
@@ -242,7 +241,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
 {
-    std::lock_guard<std::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
     while (BundleActiveClient::GetInstance().GetBundleActiveProxy() != ERR_OK) {
         sleep(SLEEP_TIME);
     }
