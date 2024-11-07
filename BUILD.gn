@@ -26,6 +26,7 @@ config("usagestats_public_config") {
     "services/common/include",
     "services/packagegroup/include",
     "services/packageusage/include",
+    "../ffrt/interfaces/kits"
   ]
 }
 
@@ -89,6 +90,7 @@ ohos_shared_library("bundlestate") {
     "services/common/include",
     "services/packagegroup/include",
     "services/packageusage/include",
+    "../ffrt/interfaces/kits"
   ]
 
   deps = [
