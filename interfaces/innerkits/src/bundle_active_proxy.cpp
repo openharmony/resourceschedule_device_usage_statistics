@@ -19,6 +19,10 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+    int32_t MAX_EVENT_SECOND = 4；
+    int32_t MAX_EVENT_WEEKLY = MAX_EVENT_SECOND * 60 * 60 * 24 * 7;
+    int32_t MAX_REPLY_SIZE = MAX_EVENT_WEEKLY;
+    int32_t MIN_REPLY_SIZE = 0;
 ErrCode BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int32_t userId)
 {
     MessageParcel data;
@@ -72,6 +76,9 @@ ErrCode BundleActiveProxy::QueryBundleStatsInfoByInterval(std::vector<BundleActi
         return errCode;
     }
     int32_t size = reply.ReadInt32();
+    if (MIN_REPLY_SIZE > size || size > MAX_REPLY_SIZE) {
+        return ERR_QUERY_RESULT_TOO_LARGE;
+    }
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
@@ -110,6 +117,9 @@ ErrCode BundleActiveProxy::QueryBundleEvents(std::vector<BundleActiveEvent>& bun
         return errCode;
     }
     int32_t size = reply.ReadInt32();
+    if (MIN_REPLY_SIZE > size || size > MAX_REPLY_SIZE) {
+        return ERR_QUERY_RESULT_TOO_LARGE;
+    }
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
@@ -160,6 +170,9 @@ ErrCode BundleActiveProxy::QueryBundleStatsInfos(std::vector<BundleActivePackage
         return errCode;
     }
     int32_t size = reply.ReadInt32();
+    if (MIN_REPLY_SIZE > size || size > MAX_REPLY_SIZE) {
+        return ERR_QUERY_RESULT_TOO_LARGE;
+    }
     std::shared_ptr<BundleActivePackageStats> tmp;
     for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
@@ -199,6 +212,9 @@ ErrCode BundleActiveProxy::QueryCurrentBundleEvents(std::vector<BundleActiveEven
         return errCode;
     }
     int32_t size = reply.ReadInt32();
+    if (MIN_REPLY_SIZE > size || size > MAX_REPLY_SIZE) {
+        return ERR_QUERY_RESULT_TOO_LARGE;
+    }
     std::shared_ptr<BundleActiveEvent> tmp;
     for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
@@ -251,6 +267,9 @@ ErrCode BundleActiveProxy::QueryModuleUsageRecords(int32_t maxNum, std::vector<B
         return errCode;
     }
     int32_t size = reply.ReadInt32();
+    if (MIN_REPLY_SIZE > size || size > MAX_REPLY_SIZE) {
+        return ERR_QUERY_RESULT_TOO_LARGE;
+    }
     std::shared_ptr<BundleActiveModuleRecord> tmp;
     for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
@@ -361,6 +380,9 @@ ErrCode BundleActiveProxy::IPCCommunication(int64_t beginTime, int64_t endTime,
         return errCode;
     }
     int32_t size = reply.ReadInt32();
+    if (MIN_REPLY_SIZE > size || size > MAX_REPLY_SIZE) {
+        return ERR_QUERY_RESULT_TOO_LARGE;
+    }
     std::shared_ptr<BundleActiveEventStats> tmp;
     for (int32_t i = 0; i < size; i++) {
         tmp = tmp->UnMarshalling(reply);
