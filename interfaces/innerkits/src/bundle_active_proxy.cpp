@@ -19,7 +19,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-    int32_t MAX_EVENT_SECOND = 4；
+    int32_t MAX_EVENT_SECOND = 4;
     int32_t MAX_EVENT_WEEKLY = MAX_EVENT_SECOND * 60 * 60 * 24 * 7;
     int32_t MAX_REPLY_SIZE = MAX_EVENT_WEEKLY;
     int32_t MIN_REPLY_SIZE = 0;
