@@ -21,7 +21,7 @@ namespace OHOS {
 namespace DeviceUsageStats {
 namespace {
     static const int32_t DELAY_TIME = 5000;
-    static const int32_t SLEEP_TIME = 1;
+    static const int32_t SLEEP_TIME_SECOND = 1;
     static const int32_t MS_TO_US = 1000;
 }
 BundleActiveClient& BundleActiveClient::GetInstance()
@@ -243,7 +243,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
 {
     std::lock_guard<ffrt::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
     while (BundleActiveClient::GetInstance().GetBundleActiveProxy() != ERR_OK) {
-        sleep(SLEEP_TIME);
+        sleep(SLEEP_TIME_SECOND);
     }
     if (observer_) {
         BundleActiveClient::GetInstance().RegisterAppGroupCallBack(observer_);

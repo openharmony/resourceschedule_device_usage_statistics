@@ -1393,9 +1393,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
     stats->bundleStats_["test0"] = std::make_shared<BundleActivePackageStats>();
     stats->bundleStats_["test1"] = std::make_shared<BundleActivePackageStats>();
     stats->bundleStats_["test2"] = std::make_shared<BundleActivePackageStats>();
-    stats->packageContainUid_["test"].insert(0);
-    stats->packageContainUid_["test"].insert(1);
-    stats->packageContainUid_["test"].insert(2);
     curStats.push_back(stats);
     userService->currentStats_ = curStats;
     userService->DeleteUninstalledBundleStats("test", 0, appIndex);
