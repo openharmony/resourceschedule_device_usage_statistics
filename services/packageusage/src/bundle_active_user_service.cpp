@@ -17,6 +17,7 @@
 #include "bundle_active_core.h"
 #include "bundle_active_log.h"
 #include "bundle_active_util.h"
+#include "bundle_active_bundle_mgr_helper.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -74,11 +75,10 @@ void BundleActiveUserService::DeleteMemUsageStats(const std::shared_ptr<BundleAc
         }
         return;
     }
-    if (currentStats->packageContainUid_.find(bundleName) != currentStats->packageContainUid_.end()) {
-        for (auto it: currentStats->packageContainUid_.find(bundleName)->second) {
-            bundleStatsKey = BundleActiveUtil::GetBundleUsageKey(bundleName, it);
-            currentStats->bundleStats_.erase(bundleStatsKey);
-        }
+    auto uidSet = BundleActiveBundleMgrHelper::GetInstance()->GetPackageUidSet(bundleName);
+    for (auto it: uidSet) {
+        bundleStatsKey = BundleActiveUtil::GetBundleUsageKey(bundleName, it);
+        currentStats->bundleStats_.erase(bundleStatsKey);
     }
 }
 
@@ -96,15 +96,13 @@ void BundleActiveUserService::DeleteMemEvent(const std::shared_ptr<BundleActiveP
         }
         return;
     }
-    if (currentStats->packageContainUid_.find(bundleName) != currentStats->packageContainUid_.end()) {
-        auto uidSet = currentStats->packageContainUid_.find(bundleName)->second;
-        for (auto eventIter = currentStats->events_.events_.begin();
-            eventIter != currentStats->events_.events_.end();) {
-            if (eventIter->bundleName_ == bundleName && uidSet.find(eventIter->uid_) != uidSet.end()) {
-                eventIter = currentStats->events_.events_.erase(eventIter);
-            } else {
-                eventIter++;
-            }
+    auto uidSet = BundleActiveBundleMgrHelper::GetInstance()->GetPackageUidSet(bundleName);
+    for (auto eventIter = currentStats->events_.events_.begin();
+        eventIter != currentStats->events_.events_.end();) {
+        if (eventIter->bundleName_ == bundleName && uidSet.find(eventIter->uid_) != uidSet.end()) {
+            eventIter = currentStats->events_.events_.erase(eventIter);
+        } else {
+            eventIter++;
         }
     }
 }
@@ -136,16 +134,10 @@ void BundleActiveUserService::DeleteMemPackageUidSet(const std::shared_ptr<Bundl
     const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex)
 {
     if (appIndex != MAIN_APP_INDEX) {
-        auto iter = currentStats->packageContainUid_.find(bundleName);
-        if (iter != currentStats->packageContainUid_.end()) {
-            iter->second.erase(deletedUid);
-            if (iter->second.size() == 0) {
-                currentStats->packageContainUid_.erase(bundleName);
-            }
-        }
+        BundleActiveBundleMgrHelper::GetInstance()->DeletePackageUid(bundleName, deletedUid);
         return;
     }
-    currentStats->packageContainUid_.erase(bundleName);
+    BundleActiveBundleMgrHelper::GetInstance()->DeleteMemPackage(bundleName);
 }
 
 void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)
@@ -370,11 +362,8 @@ void BundleActiveUserService::UpdateContinueAbilitiesMemory(const int64_t& begin
     const std::map<std::string, std::map<std::string, int>>& continueAbilities, const std::string& continueBundleName,
     const std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator& itInterval)
 {
-    auto iter = (*itInterval)->packageContainUid_.find(continueBundleName);
-    if (iter == (*itInterval)->packageContainUid_.end()) {
-        return;
-    }
-    for (auto uid: iter->second) {
+    auto uidSet = BundleActiveBundleMgrHelper::GetInstance()->GetPackageUidSet(continueBundleName);
+    for (auto uid: uidSet) {
         std::string continueAbilitiesKey = BundleActiveUtil::GetBundleUsageKey(continueBundleName, uid);
         auto ability = continueAbilities.find(continueAbilitiesKey);
         if (ability == continueAbilities.end()) {
@@ -393,12 +382,9 @@ void BundleActiveUserService::UpdateContinueServicesMemory(const int64_t& beginT
     const std::map<std::string, std::map<std::string, int>>& continueServices, const std::string& continueBundleName,
     const std::vector<std::shared_ptr<BundleActivePeriodStats>>::iterator& itInterval)
 {
-    auto iter = (*itInterval)->packageContainUid_.find(continueBundleName);
-    if (iter == (*itInterval)->packageContainUid_.end()) {
-        return;
-    }
+    auto uidSet = BundleActiveBundleMgrHelper::GetInstance()->GetPackageUidSet(continueBundleName);
 
-    for (auto uid: iter->second) {
+    for (auto uid: uidSet) {
         std::string continueServicesKey = BundleActiveUtil::GetBundleUsageKey(continueBundleName, uid);
         auto service = continueServices.find(continueServicesKey);
         if (service == continueServices.end()) {
