@@ -27,7 +27,7 @@ ErrCode BundleActiveProxy::ReportEvent(BundleActiveEvent& event, const int32_t u
 {
     MessageParcel data;
     MessageParcel reply;
-    MessageOption option;
+    MessageOption option = { MessageOption::TF_ASYNC };
     if (!data.WriteInterfaceToken(GetDescriptor())) {
         return ERR_PARCEL_WRITE_FALIED;
     }
