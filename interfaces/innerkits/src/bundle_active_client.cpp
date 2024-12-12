@@ -82,6 +82,16 @@ ErrCode BundleActiveClient::IsBundleIdle(bool& isBundleIdle, const std::string& 
     return bundleActiveProxy_->IsBundleIdle(isBundleIdle, bundleName, userId);
 }
 
+ErrCode BundleActiveClient::IsBundleUsePeriod(bool& IsUsePeriod, const std::string& bundleName, int32_t userId)
+{
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    return bundleActiveProxy_->IsBundleUsePeriod(IsUsePeriod, bundleName, userId);
+}
+
 ErrCode BundleActiveClient::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId)
 {

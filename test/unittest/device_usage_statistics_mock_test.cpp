@@ -80,7 +80,10 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     EXPECT_NE(BundleActiveClient::GetInstance().ReportEvent(eventA, g_defaultUserId), ERR_OK);
 
     bool isIdle = false;
+    bool isUsePeriod = false;
     EXPECT_NE(BundleActiveClient::GetInstance().IsBundleIdle(isIdle, g_defaultBundleName, g_defaultUserId), ERR_OK);
+    EXPECT_NE(BundleActiveClient::GetInstance().IsBundleUsePeriod(isUsePeriod, g_defaultBundleName, g_defaultUserId),
+        ERR_OK);
 
     std::vector<BundleActivePackageStats> packageStats;
     EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats,
@@ -121,7 +124,11 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleM
 {
     std::string bundleName;
     bool isBundleIdle = false;
+    bool IsUsePeriod = false;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(isBundleIdle, bundleName, -1);
+    EXPECT_NE(code, ERR_OK);
+    code = DelayedSingleton<BundleActiveService>::GetInstance()->
+        IsBundleUsePeriod(IsUsePeriod, bundleName, -1);
     EXPECT_NE(code, ERR_OK);
 
     code = DelayedSingleton<BundleActiveService>::GetInstance()->CheckBundleIsSystemAppAndHasPermission(100, 100000);

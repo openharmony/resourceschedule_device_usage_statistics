@@ -1447,6 +1447,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
     for (int32_t i = startIndex; i <= endIndex; i++) {
         string queryPackageSql;
         vector<string> queryCondition;
+
         GetQuerySqlCommand(beginTime, endTime, databaseType, i, startIndex,
             endIndex, userId, queryCondition, queryPackageSql);
         auto bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,

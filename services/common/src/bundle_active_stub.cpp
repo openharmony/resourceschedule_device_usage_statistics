@@ -80,6 +80,9 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_NOTIFICATION_NUMBER): {
             return HandleQueryNotificationEventStats(data, reply);
         }
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::IS_BUNDLE_USE_PERIOD): {
+            return HandleIsBundleUsePeriod(data, reply);
+        }
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
@@ -104,6 +107,16 @@ ErrCode BundleActiveStub::HandleIsBundleIdle(MessageParcel& data, MessageParcel&
     int32_t userId = data.ReadInt32();
     ErrCode errCode = IsBundleIdle(isBundleIdle, bundleName, userId);
     reply.WriteInt32(isBundleIdle);
+    return reply.WriteInt32(errCode);
+}
+
+ErrCode BundleActiveStub::HandleIsBundleUsePeriod(MessageParcel& data, MessageParcel& reply)
+{
+    bool IsUsePeriod = false;
+    std::string bundleName = data.ReadString();
+    int32_t userId = data.ReadInt32();
+    ErrCode errCode = IsBundleUsePeriod(IsUsePeriod, bundleName, userId);
+    reply.WriteInt32(IsUsePeriod);
     return reply.WriteInt32(errCode);
 }
 
