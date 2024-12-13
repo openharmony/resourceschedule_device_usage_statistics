@@ -124,11 +124,11 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleM
 {
     std::string bundleName;
     bool isBundleIdle = false;
-    bool IsUsePeriod = false;
+    bool isUsePeriod = false;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(isBundleIdle, bundleName, -1);
     EXPECT_NE(code, ERR_OK);
     code = DelayedSingleton<BundleActiveService>::GetInstance()->
-        IsBundleUsePeriod(IsUsePeriod, bundleName, -1);
+        IsBundleUsePeriod(isUsePeriod, bundleName, -1);
     EXPECT_NE(code, ERR_OK);
 
     code = DelayedSingleton<BundleActiveService>::GetInstance()->CheckBundleIsSystemAppAndHasPermission(100, 100000);
