@@ -778,20 +778,24 @@ int32_t BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int3
 
 bool BundleActiveCore::IsBundleUsePeriod(const std::string& bundleName, const int32_t userId)
 {
+    if (!bundleGroupController_->IsBundleInstalled(bundleName, userId)) {
+        BUNDLE_ACTIVE_LOGI("QueryAppGroup is not bundleInstalled");
+        return ERR_APPLICATION_IS_NOT_INSTALLED;
+    }
     int64_t currentSystemTime = GetSystemTimeMs();
     int64_t aWeekAgo = currentSystemTime - ONE_WEEK_TIME;
     int64_t startTime = BundleActiveUtil::GetIntervalTypeStartTime(aWeekAgo, BundleActiveUtil::PERIOD_DAILY);
     std::vector<BundleActivePackageStats> packageStats;
     QueryBundleStatsInfos(packageStats, userId, BundleActivePeriodStats::PERIOD_DAILY, startTime,
         currentSystemTime, bundleName);
-    int32_t useDay = 0;
+    int32_t useDayPeriod = 0;
     for (auto& item : packageStats) {
         if (item.startCount_ >= minUseTimes && item.startCount_ <= maxUseTimes)
         {
-            useDay ++;
+            useDayPeriod ++;
         }
     }
-    return useDay >= minUseDays_;
+    return useDayPeriod >= minUseDays_;
 }
 
 void BundleActiveCore::GetAllActiveUser(std::vector<int32_t>& activatedOsAccountIds)
