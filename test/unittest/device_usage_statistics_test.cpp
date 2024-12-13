@@ -205,7 +205,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleUsePeriod_
     bool result = false;
     int32_t errCode = BundleActiveClient::GetInstance().IsBundleUsePeriod(result, g_defaultBundleName, g_defaultUserId);
     EXPECT_EQ(result, false);
-    EXPECT_EQ(errCode, ERR_PERMISSION_DENIED);
+    EXPECT_EQ(errCode, 0);
 }
 
 /*
