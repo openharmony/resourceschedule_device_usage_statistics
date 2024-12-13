@@ -311,7 +311,8 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
     return ERR_OK;
 }
 
-ErrCode BundleActiveService::IsBundleUsePeriod(bool& IsUsePeriod, const std::string& bundleName, int32_t userId) {
+ErrCode BundleActiveService::IsBundleUsePeriod(bool& IsUsePeriod, const std::string& bundleName, int32_t userId)
+{
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (AccessToken::AccessTokenKit::GetTokenType(tokenId) != AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
@@ -327,12 +328,7 @@ ErrCode BundleActiveService::IsBundleUsePeriod(bool& IsUsePeriod, const std::str
             return ret;
         }
     }
-    auto result = bundleActiveCore_->IsBundleUsePeriod(bundleName, userId);
-    if (result == 0 || result == -1) {
-        IsUsePeriod = false;
-    } else {
-        IsUsePeriod = true;
-    }
+    IsUsePeriod = bundleActiveCore_->IsBundleUsePeriod(bundleName, userId);
     return ERR_OK;
 }
 

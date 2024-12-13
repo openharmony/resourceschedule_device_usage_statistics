@@ -55,7 +55,7 @@ public:
     int32_t GetOptimalIntervalType(int64_t beginTime, int64_t endTime);
     void RemoveOldData(int64_t currentTime);
     std::vector<BundleActivePackageStats> QueryDatabaseUsageStats(int32_t databaseType, int64_t beginTime,
-        int64_t endTime, int32_t userId, const std::string& bundleName);
+        int64_t endTime, int32_t userId, const std::string& bundleName = "");
     std::vector<BundleActiveEvent> QueryDatabaseEvents(int64_t beginTime, int64_t endTime, int32_t userId,
         std::string bundleName);
     void PutDurationData(int64_t bootBasedDuration, int64_t screenOnDuration);

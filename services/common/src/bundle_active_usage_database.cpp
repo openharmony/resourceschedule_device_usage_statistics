@@ -1435,7 +1435,7 @@ void BundleActiveUsageDatabase::GetQuerySqlCommand(const int64_t beginTime,
 }
 
 vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageStats(int32_t databaseType,
-    int64_t beginTime, int64_t endTime, int32_t userId, const std::string& bundleName )
+    int64_t beginTime, int64_t endTime, int32_t userId, const std::string& bundleName)
 {
     lock_guard<ffrt::mutex> lock(databaseMutex_);
     vector<BundleActivePackageStats> databaseUsageStats;
