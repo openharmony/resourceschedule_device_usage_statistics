@@ -195,6 +195,20 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleIdle_001, 
 }
 
 /*
+ * @tc.name: DeviceUsageStatisticsTest_IsBundleUsePeriod_001
+ * @tc.desc: IsBundleUsePeriod
+ * @tc.type: FUNC
+ * @tc.require: issueIBB2G4
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleUsePeriod_001, Function | MediumTest | Level0)
+{
+    bool result = false;
+    int32_t errCode = BundleActiveClient::GetInstance().IsBundleUsePeriod(result, g_defaultBundleName, g_defaultUserId);
+    EXPECT_EQ(result, false);
+    EXPECT_EQ(errCode, ERR_PERMISSION_DENIED);
+}
+
+/*
  * @tc.name: DeviceUsageStatisticsTest_QueryModuleUsageRecords_001
  * @tc.desc: QueryModuleUsageRecords
  * @tc.type: FUNC
