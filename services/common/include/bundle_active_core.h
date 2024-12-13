@@ -283,8 +283,8 @@ private:
     ffrt::mutex bundleUninstalledMutex_;
     std::set<int32_t> bundleUninstalledSet_;
     uint32_t minUseDays_ = 3;
-    uint32_t minUseTimes = 1;
-    uint32_t maxUseTimes = 10;
+    uint32_t minUseTimes_ = 1;
+    uint32_t maxUseTimes_ = 10;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

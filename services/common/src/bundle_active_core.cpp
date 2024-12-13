@@ -790,7 +790,7 @@ bool BundleActiveCore::IsBundleUsePeriod(const std::string& bundleName, const in
         currentSystemTime, bundleName);
     int32_t useDayPeriod = 0;
     for (auto& item : packageStats) {
-        if (item.startCount_ >= minUseTimes && item.startCount_ <= maxUseTimes) {
+        if (item.startCount_ >= minUseTimes_ && item.startCount_ <= maxUseTimes_) {
             useDayPeriod ++;
         }
     }
