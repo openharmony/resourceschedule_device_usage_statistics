@@ -27,6 +27,7 @@
         "relational_store",
         "safwk",
         "common_event_service",
+        "config_policy",
         "os_account",
         "ipc",
         "access_token",
@@ -44,6 +45,7 @@
         "selinux_adapter",
         "time_service",
         "init",
+        "jsoncpp",
         "ffrt"
       ],
       "third_party": []

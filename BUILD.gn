@@ -169,6 +169,7 @@ ohos_shared_library("usagestatservice") {
     "services/common/src/bundle_active_app_state_obsever.cpp",
     "services/common/src/bundle_active_binary_search.cpp",
     "services/common/src/bundle_active_bundle_mgr_helper.cpp",
+    "services/common/src/bundle_active_config_reader.cpp",
     "services/common/src/bundle_active_continuous_task_observer.cpp",
     "services/common/src/bundle_active_core.cpp",
     "services/common/src/bundle_active_debug_mode.cpp",
@@ -206,6 +207,7 @@ ohos_shared_library("usagestatservice") {
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
+    "config_policy:configpolicy_util",
     "eventhandler:libeventhandler",
     "ffrt:libffrt",
     "hicollie:libhicollie",
@@ -217,6 +219,8 @@ ohos_shared_library("usagestatservice") {
     "samgr:samgr_proxy",
     "time_service:time_client",
   ]
+
+  public_external_deps = [ "jsoncpp:jsoncpp" ]
 
   if (os_account_part_enabled) {
     cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
@@ -251,6 +255,7 @@ ohos_static_library("usagestatservice_static") {
     "services/common/src/bundle_active_app_state_obsever.cpp",
     "services/common/src/bundle_active_binary_search.cpp",
     "services/common/src/bundle_active_bundle_mgr_helper.cpp",
+    "services/common/src/bundle_active_config_reader.cpp",
     "services/common/src/bundle_active_continuous_task_observer.cpp",
     "services/common/src/bundle_active_core.cpp",
     "services/common/src/bundle_active_debug_mode.cpp",
@@ -288,6 +293,7 @@ ohos_static_library("usagestatservice_static") {
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
+    "config_policy:configpolicy_util",
     "eventhandler:libeventhandler",
     "ffrt:libffrt",
     "hicollie:libhicollie",
@@ -299,6 +305,8 @@ ohos_static_library("usagestatservice_static") {
     "samgr:samgr_proxy",
     "time_service:time_client",
   ]
+
+  public_external_deps = [ "jsoncpp:jsoncpp" ]
 
   if (os_account_part_enabled) {
     cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]

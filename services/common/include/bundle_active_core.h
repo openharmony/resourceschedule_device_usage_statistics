@@ -42,6 +42,7 @@
 #include "bundle_active_group_handler.h"
 #include "bundle_active_common_event_subscriber.h"
 #include "bundle_active_constant.h"
+#include "bundle_active_config_reader.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -282,9 +283,7 @@ private:
     bool debugCore_;
     ffrt::mutex bundleUninstalledMutex_;
     std::set<int32_t> bundleUninstalledSet_;
-    uint32_t minUseDays_ = 3;
-    uint32_t minUseTimes_ = 1;
-    uint32_t maxUseTimes_ = 10;
+    std::shared_ptr<BundleActiveConfigReader> bundleActiveConfigReader_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
