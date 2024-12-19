@@ -28,6 +28,7 @@
 #include "bundle_active_user_history.h"
 #include "bundle_active_group_controller.h"
 #include "bundle_active_log.h"
+#include "bundle_active_config_reader.h"
 
 using namespace testing::ext;
 
@@ -1435,6 +1436,71 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
     userService->DeleteUninstalledBundleStats("test", 100, appIndex);
     appIndex = 0;
     userService->DeleteUninstalledBundleStats("test", 100, appIndex);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ConfigReader_001
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: issuesIBCE1G
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ConfigReader_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    bundleActiveConfigReader->LoadConfig();
+    EXPECT_NE(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseTimes, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ConfigReader_002
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: issuesIBCE1G
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ConfigReader_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    const char *path = "test";
+    bundleActiveConfigReader->LoadApplicationUsePeriodically(path);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseTimes, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ConfigReader_003
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: issuesIBCE1G
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ConfigReader_003,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    const char *path = "test";
+    Json::Value root;
+    bool result = bundleActiveConfigReader->GetJsonFromFile(path, root);
+    EXPECT_EQ(result, false);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ConfigReader_004
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: issuesIBCE1G
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ConfigReader_004,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    std::string partialPath = "test";
+    std::string fullPath = "";
+    bool result = bundleActiveConfigReader->ConvertFullPath(partialPath, fullPath);
+    EXPECT_EQ(result, true);
 }
 
 }  // namespace DeviceUsageStats

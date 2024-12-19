@@ -329,6 +329,7 @@ ErrCode BundleActiveService::IsBundleUsePeriod(bool& IsUsePeriod, const std::str
         }
     }
     IsUsePeriod = bundleActiveCore_->IsBundleUsePeriod(bundleName, userId);
+    BUNDLE_ACTIVE_LOGI("IsBundleUsePeriod %{public}d", IsUsePeriod);
     return ERR_OK;
 }
 
