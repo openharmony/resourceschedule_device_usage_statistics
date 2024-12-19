@@ -220,9 +220,7 @@ ohos_shared_library("usagestatservice") {
     "time_service:time_client",
   ]
 
-  public_external_deps = [
-    "jsoncpp:jsoncpp",
-  ]
+  public_external_deps = [ "jsoncpp:jsoncpp" ]
 
   if (os_account_part_enabled) {
     cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
@@ -308,9 +306,7 @@ ohos_static_library("usagestatservice_static") {
     "time_service:time_client",
   ]
 
-  public_external_deps = [
-    "jsoncpp:jsoncpp",
-  ]
+  public_external_deps = [ "jsoncpp:jsoncpp" ]
 
   if (os_account_part_enabled) {
     cflags_cc += [ "-DOS_ACCOUNT_PART_ENABLED" ]
