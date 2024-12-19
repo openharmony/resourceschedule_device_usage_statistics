@@ -17,6 +17,7 @@
 #define BUNDLE_ACTIVE_CONFIG_READER_H
 #include <string>
 #include "json/json.h"
+
 namespace OHOS {
 namespace DeviceUsageStats {
 struct AppUsePeriodicallyConfig {

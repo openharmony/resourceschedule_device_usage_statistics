@@ -44,6 +44,9 @@ void BundleActiveConfigReader::LoadConfig()
     for (const auto& filePath : cfgFiles->paths) {
         LoadApplicationUsePeriodically(filePath);
     }
+    BUNDLE_ACTIVE_LOGI("appUsePeriodicallyConfig minUseTimes:%{public}d, maxUseTimes:%{public}d,"
+        "minUseDays:%{public}d", appUsePeriodicallyConfig_.minUseTimes,
+        appUsePeriodicallyConfig_.maxUseTimes, appUsePeriodicallyConfig_.minUseDays);
 };
 
 void BundleActiveConfigReader::LoadApplicationUsePeriodically(const char *filePath)
@@ -81,8 +84,6 @@ void BundleActiveConfigReader::LoadApplicationUsePeriodically(const char *filePa
     }
     int32_t minUseDays = appUsePeriodicallyRoot[MIN_USE_DAYS].asInt();
     appUsePeriodicallyConfig_ = { minUseTimes, maxUseTimes, minUseDays};
-    BUNDLE_ACTIVE_LOGI("minUseTimes:%{public}d, maxUseTimes:%{public}d, minUseDays:%{public}d",
-        minUseTimes, maxUseTimes, minUseDays);
 };
 
 bool BundleActiveConfigReader::GetJsonFromFile(const char *filePath, Json::Value &root)
