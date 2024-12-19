@@ -14,7 +14,7 @@
  */
 
 #include "bundle_active_config_reader.h"
-#include "config_policy_utils.h" 
+#include "config_policy_utils.h"
 #include "bundle_active_log.h"
 #include <fstream>
 #include <iostream>
