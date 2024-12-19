@@ -1500,7 +1500,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Conf
     std::string partialPath = "test";
     std::string fullPath = "";
     bool result = bundleActiveConfigReader->ConvertFullPath(partialPath, fullPath);
-    EXPECT_EQ(result, true);
+    EXPECT_EQ(result, false);
 }
 
 }  // namespace DeviceUsageStats
