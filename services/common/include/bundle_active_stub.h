@@ -37,6 +37,7 @@ public:
 private:
     ErrCode HandleReportEvent(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleIsBundleIdle(MessageParcel& data, MessageParcel& reply);
+    ErrCode HandleIsBundleUsePeriod(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleQueryBundleStatsInfoByInterval(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleQueryBundleEvents(MessageParcel& data, MessageParcel& reply);
     ErrCode HandleQueryBundleStatsInfos(MessageParcel& data, MessageParcel& reply);

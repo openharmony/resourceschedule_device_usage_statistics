@@ -168,6 +168,9 @@ public:
     // check the app idle state for calling user.
     int32_t IsBundleIdle(const std::string& bundleName, const int32_t userId);
 
+    // check the app use period state for calling user.
+    bool IsBundleUsePeriod(const std::string& bundleName, const int32_t userId);
+
     // query the app group for calling app.
     ErrCode QueryAppGroup(int32_t& appGroup, const std::string& bundleName, const int32_t userId);
 
@@ -271,6 +274,9 @@ private:
     std::map<sptr<IRemoteObject>, sptr<RemoteDeathRecipient>> recipientMap_;
     void ObtainSystemEventName(BundleActiveEvent& event);
     bool debugCore_;
+    uint32_t minUseDays_ = 3;
+    uint32_t minUseTimes_ = 1;
+    uint32_t maxUseTimes_ = 10;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

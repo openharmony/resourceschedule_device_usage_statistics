@@ -52,6 +52,22 @@ ErrCode BundleActiveProxy::IsBundleIdle(bool& isBundleIdle, const std::string& b
     return reply.ReadInt32();
 }
 
+ErrCode BundleActiveProxy::IsBundleUsePeriod(bool& IsUsePeriod, const std::string& bundleName, int32_t userId)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!data.WriteInterfaceToken(GetDescriptor()) ||
+        !data.WriteString(bundleName) ||
+        !data.WriteInt32(userId)) {
+        return ERR_PARCEL_WRITE_FALIED;
+    }
+    Remote() -> SendRequest(
+        static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::IS_BUNDLE_USE_PERIOD), data, reply, option);
+    IsUsePeriod = reply.ReadInt32();
+    return reply.ReadInt32();
+}
+
 ErrCode BundleActiveProxy::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId)
 {

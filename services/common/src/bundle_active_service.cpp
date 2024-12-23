@@ -311,6 +311,27 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
     return ERR_OK;
 }
 
+ErrCode BundleActiveService::IsBundleUsePeriod(bool& IsUsePeriod, const std::string& bundleName, int32_t userId)
+{
+    int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+    if (AccessToken::AccessTokenKit::GetTokenType(tokenId) != AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
+        return ERR_PERMISSION_DENIED;
+    }
+    auto ret = CheckNativePermission(tokenId);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    if (userId == -1) {
+        ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+        if (ret != ERR_OK || userId == -1) {
+            return ret;
+        }
+    }
+    IsUsePeriod = bundleActiveCore_->IsBundleUsePeriod(bundleName, userId);
+    return ERR_OK;
+}
+
 ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId)
 {

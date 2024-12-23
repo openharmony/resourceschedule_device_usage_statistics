@@ -23,6 +23,7 @@
 #include "bundle_active_group_common.h"
 #include "bundle_active_bundle_mgr_helper.h"
 #include "bundle_active_constant.h"
+#include "bundle_active_util.h"
 #include "bundle_constants.h"
 
 namespace OHOS {
@@ -658,6 +659,27 @@ ErrCode BundleActiveCore::QueryAppGroup(int32_t& appGroup, const std::string& bu
 int32_t BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int32_t userId)
 {
     return bundleGroupController_->IsBundleIdle(bundleName, userId);
+}
+
+bool BundleActiveCore::IsBundleUsePeriod(const std::string& bundleName, const int32_t userId)
+{
+    if (!bundleGroupController_->IsBundleInstalled(bundleName, userId)) {
+        BUNDLE_ACTIVE_LOGI("IsBundleUsePeriod is not bundleInstalled");
+        return false;
+    }
+    int64_t currentSystemTime = GetSystemTimeMs();
+    int64_t aWeekAgo = currentSystemTime - ONE_WEEK_TIME;
+    int64_t startTime = BundleActiveUtil::GetIntervalTypeStartTime(aWeekAgo, BundleActiveUtil::PERIOD_DAILY);
+    std::vector<BundleActivePackageStats> packageStats;
+    QueryBundleStatsInfos(packageStats, userId, BundleActivePeriodStats::PERIOD_DAILY, startTime,
+        currentSystemTime, bundleName);
+    int32_t useDayPeriod = 0;
+    for (auto& item : packageStats) {
+        if (item.startCount_ >= minUseTimes_ && item.startCount_ <= maxUseTimes_) {
+            useDayPeriod ++;
+        }
+    }
+    return useDayPeriod >= minUseDays_;
 }
 
 void BundleActiveCore::GetAllActiveUser(std::vector<int32_t>& activatedOsAccountIds)
