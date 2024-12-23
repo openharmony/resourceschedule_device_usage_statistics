@@ -71,6 +71,17 @@ public:
      */
     ErrCode IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId) override;
 
+        /**
+     * @brief IsBundleUsePeriod, used to check whether specific bundle is use period.
+     *
+     * @param IsUsePeriod The result of IsBundleIdle.
+
+     * @param bundleName the target of application's bundle name.
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
+    ErrCode IsBundleUsePeriod(bool& IsUsePeriod, const std::string& bundleName, int32_t userId) override;
+
     /**
      * @brief QueryBundleStatsInfoByInterval, query all bundle usage statistics in specific time span for calling user.
      *

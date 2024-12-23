@@ -113,6 +113,7 @@ namespace DeviceUsageStats {
         DelayedSingleton<BundleActiveClient>::GetInstance()->RegisterAppGroupCallBack(appGroupCallback);
         DelayedSingleton<BundleActiveClient>::GetInstance()->UnRegisterAppGroupCallBack(appGroupCallback);
         DelayedSingleton<BundleActiveClient>::GetInstance()->IsBundleIdle(result, inputBundleName, userId);
+        DelayedSingleton<BundleActiveClient>::GetInstance()->IsBundleUsePeriod(result, inputBundleName, userId);
         BundleActiveEvent event(g_defaultBundleName, g_defaultMoudleName, g_defaultFormName,
         DEFAULT_DIMENSION, DEFAULT_FORMID, BundleActiveEvent::FORM_IS_CLICKED);
         DelayedSingleton<BundleActiveClient>::GetInstance()->ReportEvent(event, userId);
