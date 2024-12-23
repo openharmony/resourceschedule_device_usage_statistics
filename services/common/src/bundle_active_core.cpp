@@ -188,6 +188,8 @@ void BundleActiveCore::Init()
     systemTimeShot_ = GetSystemTimeMs();
     bundleGroupController_ = std::make_shared<BundleActiveGroupController>(debugCore_);
     BUNDLE_ACTIVE_LOGD("system time shot is %{public}lld", (long long)systemTimeShot_);
+    bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveConfigReader_->LoadConfig();
 }
 
 void BundleActiveCore::InitBundleGroupController()
@@ -675,11 +677,12 @@ bool BundleActiveCore::IsBundleUsePeriod(const std::string& bundleName, const in
         currentSystemTime, bundleName);
     int32_t useDayPeriod = 0;
     for (auto& item : packageStats) {
-        if (item.startCount_ >= minUseTimes_ && item.startCount_ <= maxUseTimes_) {
+        if (item.startCount_ >= bundleActiveConfigReader_->GetApplicationUsePeriodicallyConfig().minUseTimes
+            && item.startCount_ <= bundleActiveConfigReader_->GetApplicationUsePeriodicallyConfig().maxUseTimes) {
             useDayPeriod ++;
         }
     }
-    return useDayPeriod >= minUseDays_;
+    return useDayPeriod >= bundleActiveConfigReader_->GetApplicationUsePeriodicallyConfig().minUseDays;
 }
 
 void BundleActiveCore::GetAllActiveUser(std::vector<int32_t>& activatedOsAccountIds)
