@@ -546,11 +546,6 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
 
 ErrCode BundleActiveService::CheckNativePermission(OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
-    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, "ohos.permission.DUMP");
-    if (ret == Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
-        BUNDLE_ACTIVE_LOGD("check native permission success, request from dump");
-        return ERR_OK;
-    }
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
     if (bundleHasPermission != 0) {
         BUNDLE_ACTIVE_LOGE("check native permission not have permission");
@@ -751,7 +746,7 @@ int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOptio
         int64_t beginTime = std::stoll(dumpOption[2]);
         int64_t endTime = std::stoll(dumpOption[3]);
         int32_t userId = std::stoi(dumpOption[4]);
-        this->QueryBundleEvents(eventResult, beginTime, endTime, userId);
+        bundleActiveCore_->QueryBundleEvents(eventResult, userId, beginTime, endTime, "");
         for (auto& oneEvent : eventResult) {
             dumpInfo.emplace_back(oneEvent.ToString());
         }
@@ -764,7 +759,9 @@ int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOptio
         int64_t beginTime = std::stoll(dumpOption[3]);
         int64_t endTime = std::stoll(dumpOption[4]);
         int32_t userId = std::stoi(dumpOption[5]);
-        this->QueryBundleStatsInfoByInterval(packageUsageResult, intervalType, beginTime, endTime, userId);
+        int32_t convertedIntervalType = ConvertIntervalType(intervalType);
+        bundleActiveCore_->QueryBundleStatsInfos(
+            packageUsageResult, userId, convertedIntervalType, beginTime, endTime, "");
         for (auto& onePackageRecord : packageUsageResult) {
             dumpInfo.emplace_back(onePackageRecord.ToString());
         }
@@ -776,7 +773,10 @@ int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOptio
         int32_t maxNum = std::stoi(dumpOption[2]);
         int32_t userId = std::stoi(dumpOption[3]);
         BUNDLE_ACTIVE_LOGI("M is %{public}d, u is %{public}d", maxNum, userId);
-        ret = this->QueryModuleUsageRecords(maxNum, moduleResult, userId);
+        ret = bundleActiveCore_->QueryModuleUsageRecords(maxNum, moduleResult, userId);
+        for (auto& oneResult : moduleResult) {
+            QueryModuleRecordInfos(oneResult);
+        }
         for (auto& oneModuleRecord : moduleResult) {
             dumpInfo.emplace_back(oneModuleRecord.ToString());
             for (uint32_t i = 0; i < oneModuleRecord.formRecords_.size(); i++) {
