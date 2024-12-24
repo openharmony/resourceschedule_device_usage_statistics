@@ -14,6 +14,7 @@
  */
 
 #include <ctime>
+#include <limits>
 #include "bundle_active_util.h"
 
 namespace OHOS {
@@ -73,6 +74,30 @@ int64_t BundleActiveUtil::GetIntervalTypeStartTime(const int64_t& timeStamp, con
             break;
     }
     return mktime(tm_time) * SECOND_TO_MILLISECOND;
+}
+
+int32_t BundleActiveUtil::StringToInt32(const std::string& str)
+{
+    char* pEnd = nullptr;
+    errno = 0;
+    int64_t res = std::strtol(str.c_str(), &pEnd, 10);
+    if (errno == ERANGE || pEnd == str.c_str() || *pEnd != '\0' ||
+        (res < std::numeric_limits<int32_t>::min()) ||
+        res > std::numeric_limits<int32_t>::max()) {
+        return 0;
+    }
+    return static_cast<int32_t>(res);
+}
+
+int64_t BundleActiveUtil::StringToInt64(const std::string& str)
+{
+    char* pEnd = nullptr;
+    errno = 0;
+    int64_t res = std::strtol(str.c_str(), &pEnd, 10);
+    if (errno == ERANGE || pEnd == str.c_str() || *pEnd != '\0') {
+        return 0;
+    }
+    return res;
 }
 } // namespace DeviceUsageStats
 }  // namespace OHOS
