@@ -47,6 +47,7 @@ void BundleActiveConfigReader::LoadConfig()
     BUNDLE_ACTIVE_LOGI("appUsePeriodicallyConfig minUseTimes:%{public}d, maxUseTimes:%{public}d,"
         "minUseDays:%{public}d", appUsePeriodicallyConfig_.minUseTimes,
         appUsePeriodicallyConfig_.maxUseTimes, appUsePeriodicallyConfig_.minUseDays);
+    FreeCfgFiles(cfgFiles);
 };
 
 void BundleActiveConfigReader::LoadApplicationUsePeriodically(const char *filePath)
