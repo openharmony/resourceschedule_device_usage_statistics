@@ -758,13 +758,12 @@ int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOptio
         if (static_cast<int32_t>(dumpOption.size()) != PACKAGE_USAGE_PARAM) {
             return ret;
         }
-        int32_t intervalType = std::stoi(dumpOption[2]);
+        int32_t intervalType = ConvertIntervalType(std::stoi(dumpOption[2]));
         int64_t beginTime = std::stoll(dumpOption[3]);
         int64_t endTime = std::stoll(dumpOption[4]);
         int32_t userId = std::stoi(dumpOption[5]);
-        int32_t convertedIntervalType = ConvertIntervalType(intervalType);
         bundleActiveCore_->QueryBundleStatsInfos(
-            packageUsageResult, userId, convertedIntervalType, beginTime, endTime, "");
+            packageUsageResult, userId, intervalType, beginTime, endTime, "");
         for (auto& onePackageRecord : packageUsageResult) {
             dumpInfo.emplace_back(onePackageRecord.ToString());
         }
