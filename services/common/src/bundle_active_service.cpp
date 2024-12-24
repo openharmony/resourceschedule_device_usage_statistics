@@ -32,7 +32,7 @@
 #include "bundle_active_shutdown_callback_service.h"
 #include "tokenid_kit.h"
 #include "xcollie/watchdog.h"
-#include "bundle_active_utils.h"
+#include "bundle_active_util.h"
 
 #include "bundle_active_service.h"
 
