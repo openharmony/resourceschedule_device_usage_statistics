@@ -547,7 +547,7 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
 ErrCode BundleActiveService::CheckNativePermission(OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
-    if (bundleHasPermission != 0) {
+    if (bundleHasPermission != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
         BUNDLE_ACTIVE_LOGE("check native permission not have permission");
         return ERR_PERMISSION_DENIED;
     }
@@ -738,6 +738,9 @@ int32_t BundleActiveService::Dump(int32_t fd, const std::vector<std::u16string> 
 int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     int32_t ret = -1;
+    if (!bundleActiveCore_) {
+        return ret;
+    }
     if (dumpOption[1] == "Events") {
         std::vector<BundleActiveEvent> eventResult;
         if (static_cast<int32_t>(dumpOption.size()) != EVENTS_PARAM) {
