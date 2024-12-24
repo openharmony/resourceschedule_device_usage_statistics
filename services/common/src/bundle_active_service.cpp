@@ -768,7 +768,8 @@ int32_t BundleActiveService::DumpEvents(const std::vector<std::string> &dumpOpti
     return ret;
 }
 
-int32_t BundleActiveService::DumpPackageUsage(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
+int32_t BundleActiveService::DumpPackageUsage(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
 {
     int32_t ret = -1;
     std::vector<BundleActivePackageStats> packageUsageResult;
@@ -787,7 +788,8 @@ int32_t BundleActiveService::DumpPackageUsage(const std::vector<std::string> &du
     return ret;
 }
 
-int32_t BundleActiveService::DumpModuleUsage(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
+int32_t BundleActiveService::DumpModuleUsage(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
 {
     int32_t ret = -1;
     std::vector<BundleActiveModuleRecord> moduleResult;
