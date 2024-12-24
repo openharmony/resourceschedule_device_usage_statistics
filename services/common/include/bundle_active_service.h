@@ -251,6 +251,9 @@ private:
     void DumpUsage(std::string &result);
     bool AllowDump();
     int32_t ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+    int32_t DumpEvents(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+    int32_t DumpPackageUsage(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+    int32_t DumpModuleUsage(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
