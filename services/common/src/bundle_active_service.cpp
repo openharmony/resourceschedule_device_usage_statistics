@@ -32,6 +32,7 @@
 #include "bundle_active_shutdown_callback_service.h"
 #include "tokenid_kit.h"
 #include "xcollie/watchdog.h"
+#include "bundle_active_utils.h"
 
 #include "bundle_active_service.h"
 
@@ -758,9 +759,9 @@ int32_t BundleActiveService::DumpEvents(const std::vector<std::string> &dumpOpti
     if (static_cast<int32_t>(dumpOption.size()) != EVENTS_PARAM) {
         return ret;
     }
-    int64_t beginTime = std::stoll(dumpOption[2]);
-    int64_t endTime = std::stoll(dumpOption[3]);
-    int32_t userId = std::stoi(dumpOption[4]);
+    int64_t beginTime = BundleActiveUtil::StringToInt64(dumpOption[2]);
+    int64_t endTime = BundleActiveUtil::StringToInt64(dumpOption[3]);
+    int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[4]);
     bundleActiveCore_->QueryBundleEvents(eventResult, userId, beginTime, endTime, "");
     for (auto& oneEvent : eventResult) {
         dumpInfo.emplace_back(oneEvent.ToString());
@@ -776,10 +777,10 @@ int32_t BundleActiveService::DumpPackageUsage(const std::vector<std::string> &du
     if (static_cast<int32_t>(dumpOption.size()) != PACKAGE_USAGE_PARAM) {
         return ret;
     }
-    int32_t intervalType = ConvertIntervalType(std::stoi(dumpOption[2]));
-    int64_t beginTime = std::stoll(dumpOption[3]);
-    int64_t endTime = std::stoll(dumpOption[4]);
-    int32_t userId = std::stoi(dumpOption[5]);
+    int32_t intervalType = ConvertIntervalType(BundleActiveUtil::StringToInt32(dumpOption[2]));
+    int64_t beginTime = BundleActiveUtil::StringToInt64(dumpOption[3]);
+    int64_t endTime = BundleActiveUtil::StringToInt64(dumpOption[4]);
+    int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[5]);
     bundleActiveCore_->QueryBundleStatsInfos(
         packageUsageResult, userId, intervalType, beginTime, endTime, "");
     for (auto& onePackageRecord : packageUsageResult) {
@@ -796,8 +797,8 @@ int32_t BundleActiveService::DumpModuleUsage(const std::vector<std::string> &dum
     if (static_cast<int32_t>(dumpOption.size()) != MODULE_USAGE_PARAM) {
         return ret;
     }
-    int32_t maxNum = std::stoi(dumpOption[2]);
-    int32_t userId = std::stoi(dumpOption[3]);
+    int32_t maxNum = BundleActiveUtil::StringToInt32(dumpOption[2]);
+    int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[3]);
     BUNDLE_ACTIVE_LOGI("M is %{public}d, u is %{public}d", maxNum, userId);
     ret = bundleActiveCore_->QueryModuleUsageRecords(maxNum, moduleResult, userId);
     for (auto& oneResult : moduleResult) {
