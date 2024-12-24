@@ -441,14 +441,14 @@ ErrCode BundleActiveUserService::QueryBundleStatsInfos(std::vector<BundleActiveP
         if (beginTime > currentStats->beginTime_ + periodLength_[intervalType]) {
             return ERR_QUERY_TIME_OUT_OF_RANGE;
         } else {
-            PackageStats = database_.QueryDatabaseUsageStats(intervalType, beginTime, endTime, userId);
+            PackageStats = database_.QueryDatabaseUsageStats(intervalType, beginTime, endTime, userId, bundleName);
             return ERR_OK;
         }
     } else if (beginTime >= currentStats->endTime_) {
         return ERR_QUERY_TIME_OUT_OF_RANGE;
     }
     int64_t truncatedEndTime = std::min(currentStats->beginTime_, endTime);
-    PackageStats = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId);
+    PackageStats = database_.QueryDatabaseUsageStats(intervalType, beginTime, truncatedEndTime, userId, bundleName);
     BUNDLE_ACTIVE_LOGI("Query package data in db PackageStats size is %{public}zu", PackageStats.size());
     PrintInMemPackageStats(intervalType, debugUserService_);
     // if we need a in-memory stats, combine current stats with PackageStats from database.
