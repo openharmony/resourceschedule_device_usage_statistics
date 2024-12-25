@@ -63,6 +63,13 @@ public:
     virtual ErrCode IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId) = 0;
 
     /*
+    * function: IsUsePeriod, used to check whether specific bundle is use period.
+    * parameters: bundleName, userId
+    * return: if bundle is use period, return true. if bundle is not idle, return false.
+    */
+    virtual ErrCode IsBundleUsePeriod(bool& IsUsePeriod, const std::string& bundleName, int32_t userId) = 0;
+
+    /*
     * function: QueryBundleStatsInfoByInterval, query all usage statistics in specific time span for calling user.
     * parameters: intervalType, beginTime, endTime, errCode
     * return: errCode.

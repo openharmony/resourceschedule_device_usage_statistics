@@ -41,45 +41,34 @@ int32_t BundleActiveStub::OnRemoteRequest(uint32_t code, MessageParcel& data, Me
         return -1;
     }
     switch (code) {
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::REPORT_EVENT): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::REPORT_EVENT):
             return HandleReportEvent(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::IS_BUNDLE_IDLE): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::IS_BUNDLE_IDLE):
             return HandleIsBundleIdle(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_STATS_INFO_BY_INTERVAL): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_STATS_INFO_BY_INTERVAL):
             return HandleQueryBundleStatsInfoByInterval(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_EVENTS): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_EVENTS):
             return HandleQueryBundleEvents(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::SET_APP_GROUP): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::SET_APP_GROUP):
             return HandleSetAppGroup(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_STATS_INFOS): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_BUNDLE_STATS_INFOS):
             return HandleQueryBundleStatsInfos(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_CURRENT_BUNDLE_EVENTS): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_CURRENT_BUNDLE_EVENTS):
             return HandleQueryCurrentBundleEvents(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_APP_GROUP): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_APP_GROUP):
             return HandleQueryAppGroup(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_MODULE_USAGE_RECORDS): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_MODULE_USAGE_RECORDS):
             return HandleQueryModuleUsageRecords(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::REGISTER_APP_GROUP_CALLBACK): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::REGISTER_APP_GROUP_CALLBACK):
             return HandleRegisterAppGroupCallBack(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::UNREGISTER_APP_GROUP_CALLBACK): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::UNREGISTER_APP_GROUP_CALLBACK):
             return HandleUnRegisterAppGroupCallBack(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_DEVICE_EVENT_STATES): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_DEVICE_EVENT_STATES):
             return HandleQueryDeviceEventStats(data, reply);
-        }
-        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_NOTIFICATION_NUMBER): {
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::QUERY_NOTIFICATION_NUMBER):
             return HandleQueryNotificationEventStats(data, reply);
-        }
+        case static_cast<uint32_t>(IBundleActiveServiceInterfaceCode::IS_BUNDLE_USE_PERIOD):
+            return HandleIsBundleUsePeriod(data, reply);
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
@@ -104,6 +93,16 @@ ErrCode BundleActiveStub::HandleIsBundleIdle(MessageParcel& data, MessageParcel&
     int32_t userId = data.ReadInt32();
     ErrCode errCode = IsBundleIdle(isBundleIdle, bundleName, userId);
     reply.WriteInt32(isBundleIdle);
+    return reply.WriteInt32(errCode);
+}
+
+ErrCode BundleActiveStub::HandleIsBundleUsePeriod(MessageParcel& data, MessageParcel& reply)
+{
+    bool IsUsePeriod = false;
+    std::string bundleName = data.ReadString();
+    int32_t userId = data.ReadInt32();
+    ErrCode errCode = IsBundleUsePeriod(IsUsePeriod, bundleName, userId);
+    reply.WriteInt32(IsUsePeriod);
     return reply.WriteInt32(errCode);
 }
 

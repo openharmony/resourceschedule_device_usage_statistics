@@ -32,6 +32,7 @@
 #include "bundle_active_shutdown_callback_service.h"
 #include "tokenid_kit.h"
 #include "xcollie/watchdog.h"
+#include "bundle_active_util.h"
 
 #include "bundle_active_service.h"
 
@@ -311,6 +312,28 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
     return ERR_OK;
 }
 
+ErrCode BundleActiveService::IsBundleUsePeriod(bool& IsUsePeriod, const std::string& bundleName, int32_t userId)
+{
+    int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+    if (AccessToken::AccessTokenKit::GetTokenType(tokenId) != AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
+        return ERR_PERMISSION_DENIED;
+    }
+    auto ret = CheckNativePermission(tokenId);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    if (userId == -1) {
+        ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+        if (ret != ERR_OK || userId == -1) {
+            return ret;
+        }
+    }
+    IsUsePeriod = bundleActiveCore_->IsBundleUsePeriod(bundleName, userId);
+    BUNDLE_ACTIVE_LOGI("IsBundleUsePeriod %{public}d", IsUsePeriod);
+    return ERR_OK;
+}
+
 ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
@@ -524,13 +547,8 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
 
 ErrCode BundleActiveService::CheckNativePermission(OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
-    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, "ohos.permission.DUMP");
-    if (ret == Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
-        BUNDLE_ACTIVE_LOGD("check native permission success, request from dump");
-        return ERR_OK;
-    }
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
-    if (bundleHasPermission != 0) {
+    if (bundleHasPermission != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
         BUNDLE_ACTIVE_LOGE("check native permission not have permission");
         return ERR_PERMISSION_DENIED;
     }
@@ -721,46 +739,76 @@ int32_t BundleActiveService::Dump(int32_t fd, const std::vector<std::u16string> 
 int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
 {
     int32_t ret = -1;
+    if (!bundleActiveCore_) {
+        return ret;
+    }
     if (dumpOption[1] == "Events") {
-        std::vector<BundleActiveEvent> eventResult;
-        if (static_cast<int32_t>(dumpOption.size()) != EVENTS_PARAM) {
-            return ret;
-        }
-        int64_t beginTime = std::stoll(dumpOption[2]);
-        int64_t endTime = std::stoll(dumpOption[3]);
-        int32_t userId = std::stoi(dumpOption[4]);
-        this->QueryBundleEvents(eventResult, beginTime, endTime, userId);
-        for (auto& oneEvent : eventResult) {
-            dumpInfo.emplace_back(oneEvent.ToString());
-        }
+        ret = DumpEvents(dumpOption, dumpInfo);
     } else if (dumpOption[1] == "PackageUsage") {
-        std::vector<BundleActivePackageStats> packageUsageResult;
-        if (static_cast<int32_t>(dumpOption.size()) != PACKAGE_USAGE_PARAM) {
-            return ret;
-        }
-        int32_t intervalType = std::stoi(dumpOption[2]);
-        int64_t beginTime = std::stoll(dumpOption[3]);
-        int64_t endTime = std::stoll(dumpOption[4]);
-        int32_t userId = std::stoi(dumpOption[5]);
-        this->QueryBundleStatsInfoByInterval(packageUsageResult, intervalType, beginTime, endTime, userId);
-        for (auto& onePackageRecord : packageUsageResult) {
-            dumpInfo.emplace_back(onePackageRecord.ToString());
-        }
+        ret = DumpPackageUsage(dumpOption, dumpInfo);
     } else if (dumpOption[1] == "ModuleUsage") {
-        std::vector<BundleActiveModuleRecord> moduleResult;
-        if (static_cast<int32_t>(dumpOption.size()) != MODULE_USAGE_PARAM) {
-            return ret;
-        }
-        int32_t maxNum = std::stoi(dumpOption[2]);
-        int32_t userId = std::stoi(dumpOption[3]);
-        BUNDLE_ACTIVE_LOGI("M is %{public}d, u is %{public}d", maxNum, userId);
-        ret = this->QueryModuleUsageRecords(maxNum, moduleResult, userId);
-        for (auto& oneModuleRecord : moduleResult) {
-            dumpInfo.emplace_back(oneModuleRecord.ToString());
-            for (uint32_t i = 0; i < oneModuleRecord.formRecords_.size(); i++) {
-                std::string oneFormInfo = "form " + std::to_string(static_cast<int32_t>(i) + 1) + ", ";
-                dumpInfo.emplace_back(oneFormInfo + oneModuleRecord.formRecords_[i].ToString());
-            }
+        ret = DumpModuleUsage(dumpOption, dumpInfo);
+    }
+    return ret;
+}
+
+int32_t BundleActiveService::DumpEvents(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
+{
+    int32_t ret = -1;
+    std::vector<BundleActiveEvent> eventResult;
+    if (static_cast<int32_t>(dumpOption.size()) != EVENTS_PARAM) {
+        return ret;
+    }
+    int64_t beginTime = BundleActiveUtil::StringToInt64(dumpOption[2]);
+    int64_t endTime = BundleActiveUtil::StringToInt64(dumpOption[3]);
+    int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[4]);
+    bundleActiveCore_->QueryBundleEvents(eventResult, userId, beginTime, endTime, "");
+    for (auto& oneEvent : eventResult) {
+        dumpInfo.emplace_back(oneEvent.ToString());
+    }
+    return ret;
+}
+
+int32_t BundleActiveService::DumpPackageUsage(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
+{
+    int32_t ret = -1;
+    std::vector<BundleActivePackageStats> packageUsageResult;
+    if (static_cast<int32_t>(dumpOption.size()) != PACKAGE_USAGE_PARAM) {
+        return ret;
+    }
+    int32_t intervalType = ConvertIntervalType(BundleActiveUtil::StringToInt32(dumpOption[2]));
+    int64_t beginTime = BundleActiveUtil::StringToInt64(dumpOption[3]);
+    int64_t endTime = BundleActiveUtil::StringToInt64(dumpOption[4]);
+    int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[5]);
+    bundleActiveCore_->QueryBundleStatsInfos(
+        packageUsageResult, userId, intervalType, beginTime, endTime, "");
+    for (auto& onePackageRecord : packageUsageResult) {
+        dumpInfo.emplace_back(onePackageRecord.ToString());
+    }
+    return ret;
+}
+
+int32_t BundleActiveService::DumpModuleUsage(const std::vector<std::string> &dumpOption,
+    std::vector<std::string> &dumpInfo)
+{
+    int32_t ret = -1;
+    std::vector<BundleActiveModuleRecord> moduleResult;
+    if (static_cast<int32_t>(dumpOption.size()) != MODULE_USAGE_PARAM) {
+        return ret;
+    }
+    int32_t maxNum = BundleActiveUtil::StringToInt32(dumpOption[2]);
+    int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[3]);
+    BUNDLE_ACTIVE_LOGI("M is %{public}d, u is %{public}d", maxNum, userId);
+    ret = bundleActiveCore_->QueryModuleUsageRecords(maxNum, moduleResult, userId);
+    for (auto& oneResult : moduleResult) {
+        QueryModuleRecordInfos(oneResult);
+    }
+    for (auto& oneModuleRecord : moduleResult) {
+        dumpInfo.emplace_back(oneModuleRecord.ToString());
+        for (uint32_t i = 0; i < oneModuleRecord.formRecords_.size(); i++) {
+            std::string oneFormInfo = "form " + std::to_string(static_cast<int32_t>(i) + 1) + ", ";
+            dumpInfo.emplace_back(oneFormInfo + oneModuleRecord.formRecords_[i].ToString());
         }
     }
     return ret;

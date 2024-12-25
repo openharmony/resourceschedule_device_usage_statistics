@@ -32,7 +32,8 @@ namespace DeviceUsageStats {
         REGISTER_APP_GROUP_CALLBACK = 10,
         UNREGISTER_APP_GROUP_CALLBACK = 11,
         QUERY_DEVICE_EVENT_STATES = 12,
-        QUERY_NOTIFICATION_NUMBER = 13
+        QUERY_NOTIFICATION_NUMBER = 13,
+        IS_BUNDLE_USE_PERIOD = 14
     };
 }  // namespace BackgroundTaskMgr
 }  // namespace OHOS

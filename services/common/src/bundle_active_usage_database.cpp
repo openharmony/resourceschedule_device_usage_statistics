@@ -1435,7 +1435,7 @@ void BundleActiveUsageDatabase::GetQuerySqlCommand(const int64_t beginTime,
 }
 
 vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageStats(int32_t databaseType,
-    int64_t beginTime, int64_t endTime, int32_t userId)
+    int64_t beginTime, int64_t endTime, int32_t userId, const std::string& bundleName)
 {
     lock_guard<ffrt::mutex> lock(databaseMutex_);
     vector<BundleActivePackageStats> databaseUsageStats;
@@ -1447,8 +1447,13 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
     for (int32_t i = startIndex; i <= endIndex; i++) {
         string queryPackageSql;
         vector<string> queryCondition;
+
         GetQuerySqlCommand(beginTime, endTime, databaseType, i, startIndex,
             endIndex, userId, queryCondition, queryPackageSql);
+        if (bundleName != "") {
+            queryCondition.push_back(bundleName);
+            queryPackageSql += " and bundleName = ?";
+        }
         auto bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
             queryCondition);
         if (bundleActiveResult == nullptr) {
