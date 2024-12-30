@@ -36,6 +36,8 @@ ohos_fuzztest("BundleActiveObserverFuzzTest") {
   fuzz_config_file =
       "${usage_statistics_path}/test/fuzztest/bundleactiveobserver_fuzzer"
   configs = [ ":module_private_config" ]
+  resource_config_file =
+      "${usage_statistics_path}/test/resource/deviceUsage/deviceUsageConfig.xml"
   cflags = [
     "-g",
     "-O0",
