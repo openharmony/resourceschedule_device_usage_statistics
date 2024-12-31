@@ -22,6 +22,7 @@
 #include "iservice_registry.h"
 #include "bundle_active_service.h"
 #include "iapp_group_callback.h"
+#include "bundle_active_config_reader.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -55,6 +56,39 @@ namespace DeviceUsageStats {
         DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleUsePeriod(result, inputBundlName, userId);
         return true;
     }
+
+    bool BundleActiveServiceStartAndStopFuzzTest(const char* data, size_t size)
+    {
+        DelayedSingleton<BundleActiveService>::GetInstance()->OnStart();
+        DelayedSingleton<BundleActiveService>::GetInstance()->InitNecessaryState();
+        DelayedSingleton<BundleActiveService>::GetInstance()->OnStop();
+        return true;
+    }
+
+    bool BundleActiveConfigReaderFuzzTest(const char* data, size_t size)
+    {
+        DelayedSingleton<BundleActiveConfigReader>::GetInstance()->GetApplicationUsePeriodicallyConfig();
+        return true;
+    }
+
+    bool BundleActiveServiceDumpFuzzTest(const char* data, size_t size)
+    {
+        int32_t fd = static_cast<int32_t>(GetU32Data(data));
+        std::vector<std::u16string> args;
+        args = {to_utf16(std::to_string(GetU32Data(data)))};
+        DelayedSingleton<BundleActiveService>::GetInstance()->Dump(fd, args);
+        DelayedSingleton<BundleActiveService>::GetInstance()->AllowDump();
+
+        std::vector<std::string> dumpOption = {std::to_string(GetU32Data(data))};
+        std::vector<std::string> dumpInfo = {std::to_string(GetU32Data(data))};
+        DelayedSingleton<BundleActiveService>::GetInstance()->ShellDump(dumpOption, dumpInfo);
+        DelayedSingleton<BundleActiveService>::GetInstance()->DumpEvents(dumpOption, dumpInfo);
+        DelayedSingleton<BundleActiveService>::GetInstance()->DumpPackageUsage(dumpOption, dumpInfo);
+        DelayedSingleton<BundleActiveService>::GetInstance()->DumpModuleUsage(dumpOption, dumpInfo);
+        std::string result = std::to_string(GetU32Data(data));
+        DelayedSingleton<BundleActiveService>::GetInstance()->DumpUsage(result);
+        return true;
+    }
 } // namespace DeviceUsageStats
 } // namespace OHOS
 
@@ -82,6 +116,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     }
 
     OHOS::DeviceUsageStats::DoSomethingInterestingWithMyAPI(ch, size);
+    OHOS::DeviceUsageStats::BundleActiveServiceStartAndStopFuzzTest(ch, size);
+    OHOS::DeviceUsageStats::BundleActiveConfigReaderFuzzTest(ch, size);
+    OHOS::DeviceUsageStats::BundleActiveServiceDumpFuzzTest(ch, size);
     free(ch);
     ch = nullptr;
     return 0;
