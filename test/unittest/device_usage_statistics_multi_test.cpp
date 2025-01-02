@@ -82,7 +82,7 @@ void DeviceUsageStatisticsMultiTest::SetUpTestCase(void)
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "DeviceUsageStatisticsServiceTest",
+        .processName = "DeviceUsageStatisticsMultiTest",
         .aplStr = "system_core",
     };
     tokenId = GetAccessTokenId(&infoInstance);
