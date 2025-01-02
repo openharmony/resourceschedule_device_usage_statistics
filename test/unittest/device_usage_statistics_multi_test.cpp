@@ -32,12 +32,16 @@
 #include "app_group_callback_proxy.h"
 #include "bundle_active_log.h"
 #include "iapp_group_callback.h"
+#include "accesstoken_kit.h"
+#include "token_setproc.h"
+#include "nativetoken_kit.h"
 
 using namespace testing::ext;
 using namespace testing::mt;
 
 namespace OHOS {
 namespace DeviceUsageStats {
+using namespace Security::AccessToken;
 #ifdef __aarch64__
 static std::string g_defaultBundleName = "com.huawei.hmos.camera";
 #else
@@ -67,6 +71,23 @@ public:
 
 void DeviceUsageStatisticsMultiTest::SetUpTestCase(void)
 {
+    static const char *perms[] = {
+        "ohos.permission.BUNDLE_ACTIVE_INFO",
+    };
+    uint64_t tokenId;
+    NativeTokenInfoParams infoInstance = {
+        .dcapsNum = 0,
+        .permsNum = 1,
+        .aclsNum = 0,
+        .dcaps = nullptr,
+        .perms = perms,
+        .acls = nullptr,
+        .processName = "DeviceUsageStatisticsMultiTest",
+        .aplStr = "system_core",
+    };
+    tokenId = GetAccessTokenId(&infoInstance);
+    SetSelfTokenID(tokenId);
+    AccessTokenKit::ReloadNativeTokenInfo();
 }
 
 void DeviceUsageStatisticsMultiTest::TearDownTestCase(void)

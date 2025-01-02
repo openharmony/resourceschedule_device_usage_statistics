@@ -30,11 +30,15 @@
 #include "app_group_callback_proxy.h"
 #include "iapp_group_callback.h"
 #include "bundle_active_log.h"
+#include "accesstoken_kit.h"
+#include "token_setproc.h"
+#include "nativetoken_kit.h"
 
 using namespace testing::ext;
 
 namespace OHOS {
 namespace DeviceUsageStats {
+using namespace Security::AccessToken;
 #ifdef __aarch64__
 static std::string g_defaultBundleName = "com.huawei.hmos.camera";
 #else
@@ -62,6 +66,23 @@ public:
 
 void DeviceUsageStatisticsTest::SetUpTestCase(void)
 {
+    static const char *perms[] = {
+        "ohos.permission.BUNDLE_ACTIVE_INFO",
+    };
+    uint64_t tokenId;
+    NativeTokenInfoParams infoInstance = {
+        .dcapsNum = 0,
+        .permsNum = 1,
+        .aclsNum = 0,
+        .dcaps = nullptr,
+        .perms = perms,
+        .acls = nullptr,
+        .processName = "DeviceUsageStatisticsTest",
+        .aplStr = "system_core",
+    };
+    tokenId = GetAccessTokenId(&infoInstance);
+    SetSelfTokenID(tokenId);
+    AccessTokenKit::ReloadNativeTokenInfo();
 }
 
 void DeviceUsageStatisticsTest::TearDownTestCase(void)
@@ -205,7 +226,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_IsBundleUsePeriod_
     bool result = false;
     int32_t errCode = BundleActiveClient::GetInstance().IsBundleUsePeriod(result, g_defaultBundleName, g_defaultUserId);
     EXPECT_EQ(result, false);
-    EXPECT_EQ(errCode, ERR_PERMISSION_DENIED);
+    EXPECT_EQ(errCode, 0);
 }
 
 /*
