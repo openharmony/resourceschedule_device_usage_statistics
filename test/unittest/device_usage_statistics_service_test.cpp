@@ -29,11 +29,15 @@
 #include "bundle_active_group_controller.h"
 #include "bundle_active_log.h"
 #include "bundle_active_config_reader.h"
+#include "accesstoken_kit.h"
+#include "token_setproc.h"
+#include "nativetoken_kit.h"
 
 using namespace testing::ext;
 
 namespace OHOS {
 namespace DeviceUsageStats {
+using namespace Security::AccessToken;
 class DeviceUsageStatisticsServiceTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -47,6 +51,23 @@ std::shared_ptr<BundleActiveCore> DeviceUsageStatisticsServiceTest::bundleActive
 
 void DeviceUsageStatisticsServiceTest::SetUpTestCase(void)
 {
+    static const char *perms[] = {
+        "ohos.permission.BUNDLE_ACTIVE_INFO",
+    };
+    uint64_t tokenId;
+    NativeTokenInfoParams infoInstance = {
+        .dcapsNum = 0,
+        .permsNum = 1,
+        .aclsNum = 0,
+        .dcaps = nullptr,
+        .perms = perms,
+        .acls = nullptr,
+        .processName = "DeviceUsageStatisticsServiceTest",
+        .aplStr = "system_core",
+    };
+    tokenId = GetAccessTokenId(&infoInstance);
+    SetSelfTokenID(tokenId);
+    AccessTokenKit::ReloadNativeTokenInfo();
     bundleActiveCore_ = std::make_shared<BundleActiveCore>();
     bundleActiveCore_->Init();
     bundleActiveCore_->InitBundleGroupController();
