@@ -74,6 +74,13 @@ ohos_unittest("BundleActiveTotalTest") {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
   }
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 }
 
 ohos_unittest("DeviceUsageStatsTest") {
@@ -111,6 +118,13 @@ ohos_unittest("DeviceUsageStatsTest") {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
   }
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 }
 
 ohos_unittest("DeviceUsageStatsMultiTest") {
@@ -147,6 +161,13 @@ ohos_unittest("DeviceUsageStatsMultiTest") {
   if (device_usage_statistics_with_powermgr_power_manager_enable) {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
+  }
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
   }
 }
 
@@ -248,6 +269,13 @@ ohos_unittest("DeviceUsageStatsMockTest") {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
   }
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 }
 
 ohos_unittest("DeviceUsagePackageUsageTest") {
@@ -289,6 +317,13 @@ ohos_unittest("DeviceUsagePackageUsageTest") {
   if (device_usage_statistics_with_powermgr_power_manager_enable) {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
+  }
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
   }
 }
 
