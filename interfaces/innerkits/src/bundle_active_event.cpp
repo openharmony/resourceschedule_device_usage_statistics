@@ -173,9 +173,9 @@ bool BundleActiveEvent::Marshalling(Parcel &parcel) const
     return false;
 }
 
-std::shared_ptr<BundleActiveEvent> BundleActiveEvent::UnMarshalling(Parcel &parcel)
+BundleActiveEvent *BundleActiveEvent::Unmarshalling(Parcel &parcel)
 {
-    std::shared_ptr<BundleActiveEvent> result = std::make_shared<BundleActiveEvent>();
+    BundleActiveEvent *result = new (std::nothrow) BundleActiveEvent();
     result->bundleName_ = parcel.ReadString();
     result->continuousTaskAbilityName_ = parcel.ReadString();
     result->abilityName_ = parcel.ReadString();

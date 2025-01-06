@@ -11,8 +11,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build/config/components/idl_tool/idl.gni")
 import("//build/ohos/sa_profile/sa_profile.gni")
 import("device_usage_statistics.gni")
+
+idl_gen_interface("bundle_active_interface") {
+  src_idl = rebase_path("IBundleActiveService.idl")
+  log_domainid = "0xD001710"
+  log_tag = "BUNDLE_ACTIVE"
+}
+
+idl_gen_interface("app_group_callback_interface") {
+  src_idl = rebase_path("IAppGroupCallback.idl")
+  log_domainid = "0xD001710"
+  log_tag = "BUNDLE_ACTIVE"
+}
 
 ohos_sa_profile("device_usage_statistics_sa_profile") {
   sources = [ "sa_profile/1907.json" ]
@@ -21,6 +34,7 @@ ohos_sa_profile("device_usage_statistics_sa_profile") {
 
 config("usagestats_public_config") {
   include_dirs = [
+    "${target_gen_dir}",
     "interfaces/innerkits/include",
     "interfaces/kits/bundlestats/napi/include",
     "services/common/include",
@@ -33,28 +47,57 @@ config("usagestatsutils_config") {
   include_dirs = [ "utils/include" ]
 }
 
+ohos_source_set("bundle_active_service_stub") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  output_values = get_target_outputs(":bundle_active_interface")
+  sources = filter_include(output_values, ["*_stub.cpp"])
+  public_configs = []
+  deps = [":bundle_active_interface"]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+  subsystem_name = "resourceschedule"
+  part_name = "${device_usage_statistics_part_name}"
+}
+
 ohos_shared_library("usagestatsinner") {
   sources = [
     "interfaces/innerkits/src/app_group_callback_info.cpp",
-    "interfaces/innerkits/src/app_group_callback_proxy.cpp",
-    "interfaces/innerkits/src/app_group_callback_stub.cpp",
     "interfaces/innerkits/src/bundle_active_client.cpp",
     "interfaces/innerkits/src/bundle_active_event.cpp",
     "interfaces/innerkits/src/bundle_active_event_stats.cpp",
     "interfaces/innerkits/src/bundle_active_form_record.cpp",
     "interfaces/innerkits/src/bundle_active_module_record.cpp",
     "interfaces/innerkits/src/bundle_active_package_stats.cpp",
-    "interfaces/innerkits/src/bundle_active_proxy.cpp",
   ]
   public_configs = [ ":usagestats_public_config" ]
-  deps = [ ":usagestatsutils" ]
+  deps = [
+    ":usagestatsutils",
+    ":bundle_active_interface",
+    ":app_group_callback_interface",
+    ]
   external_deps = [
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
+    "hitrace:hitrace_meter",
+    "ipc:ipc_core",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
+
+  bundle_active_output_values = get_target_outputs(":bundle_active_interface")
+  sources += filter_include(bundle_active_output_values, ["*.cpp"])
+  app_group_callback_output_values = get_target_outputs(":app_group_callback_interface")
+  sources += filter_include(app_group_callback_output_values, ["*.cpp"])
+
   public_external_deps = [ "ffrt:libffrt" ]
   part_name = "${device_usage_statistics_part_name}"
   subsystem_name = "resourceschedule"
@@ -177,7 +220,6 @@ ohos_shared_library("usagestatservice") {
     "services/common/src/bundle_active_power_state_callback_service.cpp",
     "services/common/src/bundle_active_service.cpp",
     "services/common/src/bundle_active_shutdown_callback_service.cpp",
-    "services/common/src/bundle_active_stub.cpp",
     "services/common/src/bundle_active_usage_database.cpp",
     "services/packagegroup/src/bundle_active_group_controller.cpp",
     "services/packagegroup/src/bundle_active_group_handler.cpp",
@@ -263,7 +305,6 @@ ohos_static_library("usagestatservice_static") {
     "services/common/src/bundle_active_power_state_callback_service.cpp",
     "services/common/src/bundle_active_service.cpp",
     "services/common/src/bundle_active_shutdown_callback_service.cpp",
-    "services/common/src/bundle_active_stub.cpp",
     "services/common/src/bundle_active_usage_database.cpp",
     "services/packagegroup/src/bundle_active_group_controller.cpp",
     "services/packagegroup/src/bundle_active_group_handler.cpp",

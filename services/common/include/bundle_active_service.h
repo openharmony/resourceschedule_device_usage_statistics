@@ -20,7 +20,7 @@
 
 #include "app_mgr_interface.h"
 #include "ibundle_active_service.h"
-#include "bundle_active_stub.h"
+#include "bundle_active_service_stub.h"
 #include "bundle_active_core.h"
 #include "bundle_active_report_handler.h"
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
@@ -37,7 +37,7 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
-class BundleActiveService : public SystemAbility, public BundleActiveStub,
+class BundleActiveService : public SystemAbility, public BundleActiveServiceStub,
     public std::enable_shared_from_this<BundleActiveService> {
     DISALLOW_COPY_AND_MOVE(BundleActiveService);
     DECLARE_SYSTEM_ABILITY(BundleActiveService);
@@ -59,7 +59,7 @@ public:
      * @param userId .
      * @return errCode.
      */
-    ErrCode ReportEvent(BundleActiveEvent& event, const int32_t userId) override;
+    ErrCode ReportEvent(BundleActiveEvent& event, int32_t userId) override;
 
     /**
      * @brief IsBundleIdle, used to check whether specific bundle is idle.
@@ -148,7 +148,7 @@ public:
      * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
      * @return errCode.
      */
-    ErrCode QueryAppGroup(int32_t& appGroup, std::string& bundleName, const int32_t userId) override;
+    ErrCode QueryAppGroup(int32_t& appGroup, std::string& bundleName, int32_t userId) override;
 
     /**
      * @brief QueryModuleUsageRecords, query all from usage statistics in specific time span for calling user.

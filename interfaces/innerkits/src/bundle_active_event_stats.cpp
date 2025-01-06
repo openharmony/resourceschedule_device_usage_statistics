@@ -102,9 +102,9 @@ bool BundleActiveEventStats::Marshalling(Parcel &parcel) const
     return false;
 }
 
-std::shared_ptr<BundleActiveEventStats> BundleActiveEventStats::UnMarshalling(Parcel &parcel)
+BundleActiveEventStats *BundleActiveEventStats::Unmarshalling(Parcel &parcel)
 {
-    std::shared_ptr<BundleActiveEventStats> result = std::make_shared<BundleActiveEventStats>();
+    BundleActiveEventStats *result = new (std::nothrow) BundleActiveEventStats();
     result->eventId_ = parcel.ReadInt32();
     result->beginTimeStamp_ = parcel.ReadInt64();
     result->endTimeStamp_ = parcel.ReadInt64();

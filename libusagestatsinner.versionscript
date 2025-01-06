@@ -14,10 +14,11 @@
 1.0 {
   global:
     *AppGroupCallbackInfo*;
-    *AppGroupCallbackStub*;
+    *AppGroupCallback*;
     *IAppGroupCallback*;
     *BundleActiveGroupCallbackProxy*;
     *BundleActiveClient*;
+    *BundleActiveService*;
     *BundleActiveProxy*;
     *IBundleActiveService*;
     *BundleActiveEvent*;

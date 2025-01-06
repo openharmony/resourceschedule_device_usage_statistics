@@ -89,11 +89,11 @@ public:
     */
     bool Marshalling(Parcel &parcel) const override;
     /*
-    * function: UnMarshalling, Unmashalling record object from parcel.
+    * function: Unmarshalling, Unmashalling record object from parcel.
     * parameters: parcel
     * return: point to a BundleActiveFormRecord.
     */
-    static std::shared_ptr<BundleActiveFormRecord> UnMarshalling(Parcel &parcel);
+    static BundleActiveFormRecord *Unmarshalling(Parcel &parcel);
     /*
     * function: ToString, change form record object to string.
     * return: string of form name, form id, form dimension, last used time and touch count.
