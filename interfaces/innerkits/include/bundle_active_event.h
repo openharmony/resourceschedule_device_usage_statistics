@@ -117,11 +117,11 @@ public:
     */
     virtual bool Marshalling(Parcel &parcel) const override;
     /*
-    * function: UnMarshalling, Unmashalling event object from parcel.
+    * function: Unmarshalling, Unmashalling event object from parcel.
     * parameters: parcel
     * return: point to a BundleActiveEvent.
     */
-    static std::shared_ptr<BundleActiveEvent> UnMarshalling(Parcel &parcel);
+    static BundleActiveEvent *Unmarshalling(Parcel &parcel);
     /*
     * function: ToString, change event object to string.
     * return: string of bundlename, timestamp, eventid.

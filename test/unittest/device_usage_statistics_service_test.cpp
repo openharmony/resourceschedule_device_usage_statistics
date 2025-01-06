@@ -92,12 +92,13 @@ void DeviceUsageStatisticsServiceTest::TearDown(void)
 
 class TestServiceAppGroupChangeCallback : public AppGroupCallbackStub {
 public:
-    void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
+    ErrCode OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
 };
 
-void TestServiceAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
+ErrCode TestServiceAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
 {
     BUNDLE_ACTIVE_LOGI("TestServiceAppGroupChangeCallback::OnAppGroupChanged!");
+    return ERR_OK;
 }
 
 /*

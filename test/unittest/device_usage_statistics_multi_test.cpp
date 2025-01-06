@@ -104,10 +104,10 @@ void DeviceUsageStatisticsMultiTest::TearDown(void)
 
 class TestAppGroupChangeCallback : public AppGroupCallbackStub {
 public:
-    void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
+    ErrCode OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
 };
 
-void TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
+ErrCode TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
 {
     BUNDLE_ACTIVE_LOGI("TestAppGroupChangeCallback::OnAppGroupChanged!");
     MessageParcel data;
@@ -115,6 +115,7 @@ void TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &a
         BUNDLE_ACTIVE_LOGE("Marshalling fail");
     }
     appGroupCallbackInfo.Unmarshalling(data);
+    return ERR_OK;
 }
 
 /*

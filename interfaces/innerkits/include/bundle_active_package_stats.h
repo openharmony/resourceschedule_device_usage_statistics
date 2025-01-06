@@ -82,11 +82,11 @@ public:
     */
     virtual bool Marshalling(Parcel &parcel) const override;
     /*
-    * function: UnMarshalling, Unmashalling BundleActivePackageStats object from parcel.
+    * function: Unmarshalling, Unmashalling BundleActivePackageStats object from parcel.
     * parameters: parcel
     * return: point to a BundleActivePackageStats.
     */
-    static std::shared_ptr<BundleActivePackageStats> UnMarshalling(Parcel &parcel);
+    static BundleActivePackageStats *Unmarshalling(Parcel &parcel);
     /*
     * function: ToString, change module record object to string.
     * return: string of bundle name, last used time, total front time, last continuous task used time,

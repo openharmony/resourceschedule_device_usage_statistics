@@ -97,9 +97,9 @@ bool BundleActiveModuleRecord::Marshalling(Parcel &parcel) const
     return false;
 }
 
-std::shared_ptr<BundleActiveModuleRecord> BundleActiveModuleRecord::UnMarshalling(Parcel &parcel)
+BundleActiveModuleRecord *BundleActiveModuleRecord::Unmarshalling(Parcel &parcel)
 {
-    std::shared_ptr<BundleActiveModuleRecord> result = std::make_shared<BundleActiveModuleRecord>();
+    BundleActiveModuleRecord *result = new (std::nothrow) BundleActiveModuleRecord();
     result->deviceId_ = parcel.ReadString();
     result->bundleName_ = parcel.ReadString();
     result->moduleName_ = parcel.ReadString();
@@ -116,9 +116,9 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveModuleRecord::UnMarshallin
     if (size > MAX_FORM_NUM) {
         return nullptr;
     }
-    std::shared_ptr<BundleActiveFormRecord> tmp = std::make_shared<BundleActiveFormRecord>();
+    BundleActiveFormRecord *tmp = new (std::nothrow) BundleActiveFormRecord;
     for (uint32_t i = 0; i < size; i++) {
-        tmp = tmp->UnMarshalling(parcel);
+        tmp = tmp->Unmarshalling(parcel);
         if (!tmp) {
             continue;
         }

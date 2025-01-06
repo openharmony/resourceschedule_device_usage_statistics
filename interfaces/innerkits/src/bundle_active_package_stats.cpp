@@ -221,9 +221,9 @@ bool BundleActivePackageStats::Marshalling(Parcel &parcel) const
     return false;
 }
 
-std::shared_ptr<BundleActivePackageStats> BundleActivePackageStats::UnMarshalling(Parcel &parcel)
+BundleActivePackageStats *BundleActivePackageStats::Unmarshalling(Parcel &parcel)
 {
-    std::shared_ptr<BundleActivePackageStats> result = std::make_shared<BundleActivePackageStats>();
+    BundleActivePackageStats *result = new (std::nothrow) BundleActivePackageStats();
     result->bundleName_ = parcel.ReadString();
     result->beginTimeStamp_ = parcel.ReadInt64();
     result->lastTimeUsed_ = parcel.ReadInt64();

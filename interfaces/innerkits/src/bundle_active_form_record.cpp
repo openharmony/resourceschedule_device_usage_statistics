@@ -71,9 +71,9 @@ bool BundleActiveFormRecord::Marshalling(Parcel &parcel) const
     return false;
 }
 
-std::shared_ptr<BundleActiveFormRecord> BundleActiveFormRecord::UnMarshalling(Parcel &parcel)
+BundleActiveFormRecord *BundleActiveFormRecord::Unmarshalling(Parcel &parcel)
 {
-    std::shared_ptr<BundleActiveFormRecord> result = std::make_shared<BundleActiveFormRecord>();
+    BundleActiveFormRecord *result = new (std::nothrow) BundleActiveFormRecord();
     result->formName_ = parcel.ReadString();
     result->formDimension_ = parcel.ReadInt32();
     result->formId_ = parcel.ReadInt64();

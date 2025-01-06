@@ -1,0 +1,4 @@
+sequenceable OHOS.DeviceUsageStats.AppGroupCallbackInfo;
+interface OHOS.DeviceUsageStats.IAppGroupCallback {
+    void OnAppGroupChanged([in] AppGroupCallbackInfo appGroupCallbackInfo);
+}

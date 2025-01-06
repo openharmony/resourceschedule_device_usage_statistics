@@ -243,7 +243,7 @@ void BundleActiveService::OnStop()
     ready_ = false;
 }
 
-ErrCode BundleActiveService::ReportEvent(BundleActiveEvent& event, const int32_t userId)
+ErrCode BundleActiveService::ReportEvent(BundleActiveEvent& event, int32_t userId)
 {
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (CheckNativePermission(tokenId) == ERR_OK) {
