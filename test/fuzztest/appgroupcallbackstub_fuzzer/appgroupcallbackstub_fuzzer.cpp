@@ -33,7 +33,7 @@ namespace DeviceUsageStats {
     constexpr uint8_t THREE = 3;
     const std::u16string APP_GOUNP_ACTIVE_TOKEN = u"Resourceschedule.IAppGroupCallback";
 
-    class TestAppGroupCallback : public AppGroupCallbackStub {
+    class TestAppGroupChangeCallback : public AppGroupCallbackStub {
     public:
         ErrCode OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
     };
