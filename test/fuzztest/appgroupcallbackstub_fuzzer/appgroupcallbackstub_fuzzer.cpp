@@ -32,6 +32,17 @@ namespace DeviceUsageStats {
     constexpr uint8_t TWO = 2;
     constexpr uint8_t THREE = 3;
     const std::u16string APP_GOUNP_ACTIVE_TOKEN = u"Resourceschedule.IAppGroupCallback";
+
+    class TestAppGroupCallback : public AppGroupCallbackStub {
+    public:
+        ErrCode OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
+    };
+
+    ErrCode TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
+    {
+        return ERR_OK;
+    }
+
     uint32_t GetU32Data(const char* ptr)
     {
         return (ptr[0] << TWENTYFOUR) | (ptr[1] << SIXTEEN) | (ptr[TWO] << EIGHT) | (ptr[THREE]);
@@ -47,7 +58,7 @@ namespace DeviceUsageStats {
         datas.RewindRead(0);
         MessageParcel reply;
         MessageOption option;
-        DelayedSingleton<AppGroupCallbackStub>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
+        DelayedSingleton<TestAppGroupChangeCallback>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
         return true;
     }
 } // namespace DeviceUsageStats

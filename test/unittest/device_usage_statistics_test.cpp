@@ -99,10 +99,12 @@ void DeviceUsageStatisticsTest::TearDown(void)
 
 class TestAppGroupChangeCallback : public AppGroupCallbackStub {
 public:
-    void OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
+    TestAppGroupChangeCallback() = default;
+    virtual ~TestAppGroupChangeCallback() = default;
+    ErrCode OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
 };
 
-void TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
+ErrCode TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
 {
     BUNDLE_ACTIVE_LOGI("TestAppGroupChangeCallback::OnAppGroupChanged!");
     MessageParcel data;
@@ -110,6 +112,7 @@ void TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &a
         BUNDLE_ACTIVE_LOGE("Marshalling fail");
     }
     appGroupCallbackInfo.Unmarshalling(data);
+    return ERR_OK;
 }
 
 /*
@@ -454,12 +457,12 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveEventS
 
     MessageParcel data;
     EXPECT_TRUE(bundleActiveEventStats->Marshalling(data));
-    auto tempEventStats = bundleActiveEventStats->UnMarshalling(data);
+    auto tempEventStats = bundleActiveEventStats->Unmarshalling(data);
     EXPECT_TRUE(tempEventStats != nullptr);
 
     auto bundleActiveEvent = std::make_shared<BundleActiveEvent>();
     EXPECT_TRUE(bundleActiveEvent->Marshalling(data));
-    auto tempEvent = bundleActiveEvent->UnMarshalling(data);
+    auto tempEvent = bundleActiveEvent->Unmarshalling(data);
     EXPECT_TRUE(tempEvent != nullptr);
 
     EXPECT_EQ(tempEventStats->GetEventId(), g_commonUserid);
@@ -483,7 +486,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_FormRecord_001, Fu
 
     MessageParcel data;
     EXPECT_TRUE(bundleActiveFormRecord->Marshalling(data));
-    EXPECT_TRUE(bundleActiveFormRecord->UnMarshalling(data) != nullptr);
+    EXPECT_TRUE(bundleActiveFormRecord->Unmarshalling(data) != nullptr);
 
     BundleActiveFormRecord bundleActiveFormRecordA;
     bundleActiveFormRecordA.count_ = 2;
@@ -520,7 +523,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_PackageStats_001, 
 
     MessageParcel data;
     EXPECT_TRUE(bundleActivePackageStats->Marshalling(data));
-    EXPECT_TRUE(bundleActivePackageStats->UnMarshalling(data) != nullptr);
+    EXPECT_TRUE(bundleActivePackageStats->Unmarshalling(data) != nullptr);
 }
 
 /*
@@ -536,7 +539,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ModuleRecord_001, 
 
     MessageParcel data;
     EXPECT_TRUE(bundleActiveModuleRecord->Marshalling(data));
-    EXPECT_TRUE(bundleActiveModuleRecord->UnMarshalling(data) != nullptr);
+    EXPECT_TRUE(bundleActiveModuleRecord->Unmarshalling(data) != nullptr);
 
     BundleActiveModuleRecord bundleActiveModuleRecordA;
     bundleActiveModuleRecordA.lastModuleUsedTime_ = 2;
@@ -563,7 +566,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_AppGroupCallbackPr
     uint32_t changeReason = 1;
     AppGroupCallbackInfo appGroupCallbackInfo(g_commonUserid, oldGroup, newGroup, changeReason, g_defaultBundleName);
 
-    auto appGroupCallbackProxy = std::make_shared<BundleActiveGroupCallbackProxy>(nullptr);
+    auto appGroupCallbackProxy = std::make_shared<AppGroupCallbackProxy>(nullptr);
     appGroupCallbackProxy->OnAppGroupChanged(appGroupCallbackInfo);
     EXPECT_NE(appGroupCallbackProxy, nullptr);
 }
@@ -581,7 +584,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_AppGroupCallbackSt
     uint32_t changeReason = 1;
     AppGroupCallbackInfo appGroupCallbackInfo(g_commonUserid, oldGroup, newGroup, changeReason, g_defaultBundleName);
 
-    auto appGroupCallbackStub = std::make_shared<AppGroupCallbackStub>();
+    auto appGroupCallbackStub = std::make_shared<TestAppGroupChangeCallback>();
     appGroupCallbackStub->OnAppGroupChanged(appGroupCallbackInfo);
     MessageParcel data1;
     MessageParcel reply;

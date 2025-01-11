@@ -17,6 +17,7 @@
 #define BUNDLE_ACTIVE_PERIOD_STATS_H
 
 #include <memory>
+#include <set>
 
 #include "ibundle_active_service.h"
 #include "bundle_active_event.h"

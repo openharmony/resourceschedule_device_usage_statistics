@@ -29,6 +29,10 @@
 #include "event_runner.h"
 #include "ffrt.h"
 
+#include "system_ability_definition.h"
+#include "if_system_ability_manager.h"
+#include "iservice_registry.h"
+
 namespace OHOS {
 namespace DeviceUsageStats {
 class BundleActiveClient {
