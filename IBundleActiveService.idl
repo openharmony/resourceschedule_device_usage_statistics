@@ -19,7 +19,7 @@ sequenceable OHOS.DeviceUsageStats.BundleActiveModuleRecord;
 sequenceable OHOS.DeviceUsageStats.BundleActiveEventStats;
 interface OHOS.DeviceUsageStats.IAppGroupCallback;
 interface OHOS.DeviceUsageStats.IBundleActiveService {
-    void ReportEvent([out] BundleActiveEvent event, [in] int userId);
+    void ReportEvent([in] BundleActiveEvent event, [in] int userId);
     void IsBundleIdle([out] boolean isBundleIdle, [in] String bundleName, [in] int userId);
     void IsBundleUsePeriod([out] boolean isUsePeriod, [in] String bundleName, [in] int userId);
     void QueryBundleStatsInfoByInterval([out] List<BundleActivePackageStats> packageStats,

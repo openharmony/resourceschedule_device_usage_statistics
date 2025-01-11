@@ -243,7 +243,7 @@ void BundleActiveService::OnStop()
     ready_ = false;
 }
 
-ErrCode BundleActiveService::ReportEvent(BundleActiveEvent& event, int32_t userId)
+ErrCode BundleActiveService::ReportEvent(const BundleActiveEvent& event, int32_t userId)
 {
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (CheckNativePermission(tokenId) == ERR_OK) {
@@ -254,7 +254,8 @@ ErrCode BundleActiveService::ReportEvent(BundleActiveEvent& event, int32_t userI
             callingTokenInfo.processName.c_str(), callingUid);
         if (callingTokenInfo.processName == PERMITTED_PROCESS_NAME) {
             BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-            tmpHandlerObject.event_ = event;
+            BundleActiveEvent eventNew(event); 
+            tmpHandlerObject.event_ = eventNew;
             sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
             tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =

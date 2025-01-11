@@ -59,7 +59,7 @@ public:
      * @param userId .
      * @return errCode.
      */
-    ErrCode ReportEvent(BundleActiveEvent& event, int32_t userId) override;
+    ErrCode ReportEvent(const BundleActiveEvent& event, int32_t userId) override;
 
     /**
      * @brief IsBundleIdle, used to check whether specific bundle is idle.
