@@ -79,9 +79,9 @@ ohos_shared_library("usagestatsinner") {
   ]
   public_configs = [ ":usagestats_public_config" ]
   deps = [
-    ":usagestatsutils",
-    ":bundle_active_interface",
     ":app_group_callback_interface",
+    ":bundle_active_interface",
+    ":usagestatsutils",
     ]
   external_deps = [
     "c_utils:utils",
