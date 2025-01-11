@@ -82,7 +82,7 @@ ohos_shared_library("usagestatsinner") {
     ":app_group_callback_interface",
     ":bundle_active_interface",
     ":usagestatsutils",
-    ]
+  ]
   external_deps = [
     "c_utils:utils",
     "eventhandler:libeventhandler",
