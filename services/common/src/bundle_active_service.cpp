@@ -254,7 +254,7 @@ ErrCode BundleActiveService::ReportEvent(const BundleActiveEvent& event, int32_t
             callingTokenInfo.processName.c_str(), callingUid);
         if (callingTokenInfo.processName == PERMITTED_PROCESS_NAME) {
             BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-            BundleActiveEvent eventNew(event); 
+            BundleActiveEvent eventNew(event);
             tmpHandlerObject.event_ = eventNew;
             sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
             tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
