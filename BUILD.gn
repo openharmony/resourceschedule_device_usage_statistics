@@ -54,9 +54,9 @@ ohos_source_set("bundle_active_service_stub") {
     debug = false
   }
   output_values = get_target_outputs(":bundle_active_interface")
-  sources = filter_include(output_values, ["*_stub.cpp"])
+  sources = filter_include(output_values, [ "*_stub.cpp" ])
   public_configs = []
-  deps = [":bundle_active_interface"]
+  deps = [ ":bundle_active_interface" ]
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
@@ -94,9 +94,10 @@ ohos_shared_library("usagestatsinner") {
   ]
 
   bundle_active_output_values = get_target_outputs(":bundle_active_interface")
-  sources += filter_include(bundle_active_output_values, ["*.cpp"])
-  app_group_callback_output_values = get_target_outputs(":app_group_callback_interface")
-  sources += filter_include(app_group_callback_output_values, ["*.cpp"])
+  sources += filter_include(bundle_active_output_values, [ "*.cpp" ])
+  app_group_callback_output_values =
+      get_target_outputs(":app_group_callback_interface")
+  sources += filter_include(app_group_callback_output_values, [ "*.cpp" ])
 
   public_external_deps = [ "ffrt:libffrt" ]
   part_name = "${device_usage_statistics_part_name}"
