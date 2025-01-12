@@ -115,6 +115,14 @@ struct AsyncCallbackInfoSetAppGroup : public AsyncWorkData {
     bool state = true;
 };
 
+struct AsyncCallbackInfoAppStats : public AsyncWorkData {
+    explicit AsyncCallbackInfoAppStats(napi_env env) : AsyncWorkData(env) {}
+    int64_t beginTime = -1;
+    int64_t endTime = -1;
+    std::map<std::string, std::vector<int64_t>> queryInfos;
+    std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> appStats;
+};
+
 struct AsyncCallbackInfoModuleRecord : public AsyncWorkData {
     explicit AsyncCallbackInfoModuleRecord(napi_env env) : AsyncWorkData(env) {}
     int32_t maxNum = -1;
@@ -163,6 +171,12 @@ struct AppUsageParamsByIntervalInfo {
 struct QueryBundleStatsParamsInfo {
     int64_t beginTime = -1;
     int64_t endTime = -1;
+    napi_ref callback = nullptr;
+    int32_t errorCode = 0;
+};
+
+struct QueryLastUseTimeParamsInfo {
+    std::map<std::string, std::vector<int64_t>> queryInfos;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
 };

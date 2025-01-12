@@ -125,6 +125,7 @@ private:
         std::vector<std::string> &queryCondition, std::string &queryPackageSql);
     bool GetDbIndex(const int64_t beginTime, const int64_t endTime,
         const int32_t databaseType, int32_t &startIndex, int32_t &endIndex);
+    int32_t GetNameAndIndexForUid(int32_t uid);
 
 private:
     int32_t GetOldDbVersion();

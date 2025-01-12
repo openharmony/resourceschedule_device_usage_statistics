@@ -1481,11 +1481,35 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
                 usageStats.totalContiniousTaskUsedTime_);
             bundleActiveResult->GetInt(PACKAGE_LOG_UID_COLUMN_INDEX, usageStats.uid_);
             usageStats.userId_ = userId;
+            usageStats.appIndex_ = GetNameAndIndexForUid(usageStats.uid_);
             databaseUsageStats.push_back(usageStats);
         }
         queryCondition.clear();
     }
     return databaseUsageStats;
+}
+
+int32_t BundleActiveUsageDatabase::GetNameAndIndexForUid(int32_t uid)
+{
+    auto systemAbilityManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityManager == nullptr) {
+        BUNDLE_ACTIVE_LOGE("failed to get samgr");
+        return -1;
+    }
+
+    sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    if (remoteObject == nullptr) {
+        BUNDLE_ACTIVE_LOGE("failed to get bundle manager service");
+        return -1;
+    }
+
+    sptr<AppExecFwk::IBundleMgr> bundleManager = iface_cast<AppExecFwk::IBundleMgr>(remoteObject);
+    int32_t appIndex = -1;
+    if (bundleManager != nullptr) {
+        std::string bundleName;
+        bundleManager->GetNameAndIndexForUid(uid, bundleName, appIndex);
+    }
+    return appIndex;
 }
 
 vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t beginTime, int64_t endTime,
