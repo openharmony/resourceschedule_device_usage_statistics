@@ -673,7 +673,197 @@ napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info)
         return promise;
     }
 }
+void QueryAppStatsInfosAsync(napi_env env, void *data)
+{
+    AsyncCallbackInfoAppStats *asyncCallbackInfo = (AsyncCallbackInfoAppStats *)data;
+    if (asyncCallbackInfo != nullptr) {
+        asyncCallbackInfo->appStats = BundleStateCommon::QueryAppStatsInfos(asyncCallbackInfo->beginTime,
+            asyncCallbackInfo->endTime, asyncCallbackInfo->errorCode);
+    } else {
+        BUNDLE_ACTIVE_LOGE("QueryAppStatsInfos asyncCallbackInfo == nullptr");
+    }
+}
 
+void QueryAppStatsInfosAsyncCB(napi_env env, napi_status status, void *data)
+{
+    AsyncCallbackInfoAppStats *asyncCallbackInfo = (AsyncCallbackInfoAppStats *) data;
+    if (asyncCallbackInfo != nullptr) {
+        napi_value result = nullptr;
+        napi_create_object(env, &result);
+        BundleStateCommon::GetAppStatsInfosForResult(env, asyncCallbackInfo->appStats, result);
+        BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
+    }
+}
+
+napi_value ParseAppStatsInfos(const napi_env &env, const napi_callback_info &info,
+    QueryBundleStatsParamsInfo &params, AsyncCallbackInfoAppStats*& asyncCallbackInfo)
+{
+    size_t argc = APP_USAGE_PARAMS;
+    napi_value argv[APP_USAGE_PARAMS] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if ((argc != APP_USAGE_MIN_PARAMS) && (argc != APP_USAGE_PARAMS)) {
+        params.errorCode = ERR_PARAMETERS_NUMBER;
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
+    }
+    // argv[0] : beginTime
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
+        BUNDLE_ACTIVE_LOGE("ParseAppStatsInfos failed, beginTime type is invalid.");
+        params.errorCode = ERR_BEGIN_TIME_TYPE;
+        return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_TYPE, "");
+    }
+    if (params.beginTime < TIME_NUMBER_MIN) {
+        BUNDLE_ACTIVE_LOGE("ParseAppStatsInfos failed failed, beginTime value is invalid.");
+        params.errorCode = ERR_BEGIN_TIME_LESS_THEN_ZERO;
+        return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
+    }
+    // argv[1] : endTime
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr) {
+        BUNDLE_ACTIVE_LOGE("ParseAppStatsInfos failed, endTime type is invalid.");
+        params.errorCode = ERR_END_TIME_TYPE;
+        return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_TYPE, "");
+    }
+    if (params.endTime <= params.beginTime) {
+        BUNDLE_ACTIVE_LOGE("ParseAppStatsInfos endTime(%{public}lld) <= beginTime(%{public}lld)",
+            (long long)params.endTime, (long long)params.beginTime);
+        params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
+        return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
+    }
+    // argv[SECOND_ARG]: callback
+    if (argc == APP_USAGE_PARAMS) {
+        napi_valuetype valuetype = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
+        if (valuetype != napi_function) {
+            params.errorCode = ERR_CALL_BACK_TYPE;
+            return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
+        }
+        napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
+    }
+    BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
+    return BundleStateCommon::NapiGetNull(env);
+}
+
+napi_value QueryAppStatsInfos(napi_env env, napi_callback_info info)
+{
+    QueryBundleStatsParamsInfo params;
+    AsyncCallbackInfoAppStats *asyncCallbackInfo = nullptr;
+    ParseAppStatsInfos(env, info, params, asyncCallbackInfo);
+    if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
+        return BundleStateCommon::NapiGetNull(env);
+    }
+    napi_value promise = nullptr;
+    std::unique_ptr<AsyncCallbackInfoAppStats> callbackPtr {asyncCallbackInfo};
+    callbackPtr->beginTime = params.beginTime;
+    BUNDLE_ACTIVE_LOGD("QueryAppStatsInfos callbackPtr->beginTime: %{public}lld",
+        (long long)callbackPtr->beginTime);
+    callbackPtr->endTime = params.endTime;
+    BUNDLE_ACTIVE_LOGD("QueryAppStatsInfos callbackPtr->endTime: %{public}lld",
+        (long long)callbackPtr->endTime);
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, "queryAppStatsInfos", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, QueryAppStatsInfosAsync,
+        QueryAppStatsInfosAsyncCB, static_cast<void*>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
+        return BundleStateCommon::NapiGetNull(env);
+    } else {
+        callbackPtr.release();
+        return promise;
+    }
+}
+
+void QueryLastUseTimeAsync(napi_env env, void *data)
+{
+    AsyncCallbackInfoAppStats *asyncCallbackInfo = (AsyncCallbackInfoAppStats *)data;
+    if (asyncCallbackInfo != nullptr) {
+        asyncCallbackInfo->appStats = BundleStateCommon::QueryLastUseTime(
+            asyncCallbackInfo->queryInfos, asyncCallbackInfo->errorCode);
+    } else {
+        BUNDLE_ACTIVE_LOGE("QueryLastUseTimeAsync asyncCallbackInfo == nullptr");
+    }
+}
+
+void QueryLastUseTimeAsyncCB(napi_env env, napi_status status, void *data)
+{
+    AsyncCallbackInfoAppStats *asyncCallbackInfo = (AsyncCallbackInfoAppStats *)data;
+    if (asyncCallbackInfo != nullptr) {
+        napi_value result = nullptr;
+        napi_create_object(env, &result);
+        BundleStateCommon::GetAppStatsInfosForResult(env, asyncCallbackInfo->appStats, result);
+        BundleStateCommon::GetCallbackPromiseResult(env, *asyncCallbackInfo, result);
+    }
+}
+
+napi_value ParseLastUseTime(const napi_env &env, const napi_callback_info &info,
+    QueryLastUseTimeParamsInfo &params, AsyncCallbackInfoAppStats*& asyncCallbackInfo)
+{
+    size_t argc = APP_USAGE_PARAMS;
+    napi_value argv[APP_USAGE_PARAMS] = {nullptr};
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, NULL, NULL));
+    if (argc != 1) {
+        params.errorCode = ERR_PARAMETERS_NUMBER;
+        BUNDLE_ACTIVE_LOGE("ParseLastUseTime failed");
+        return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
+    }
+
+    // argv[0] : queryInfos
+    if (BundleStateCommon::ConvertMapFromJs(env, argv[0], params.queryInfos) == nullptr) {
+        BUNDLE_ACTIVE_LOGE("ParseLastUseTime failed, queryInfos type is invalid.");
+        params.errorCode = ERR_BEGIN_TIME_TYPE;
+        return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_TYPE, "");
+    }
+
+    //argv[SECOND_ARG]: callback
+    if (argc == APP_USAGE_PARAMS) {
+        napi_valuetype valuetype = napi_undefined;
+        NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
+        if (valuetype != napi_function) {
+            params.errorCode = ERR_CALL_BACK_TYPE;
+            return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
+        }
+        napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
+    }
+
+    asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfoAppStats(env);
+    if (!asyncCallbackInfo) {
+        params.errorCode = ERR_ASYNC_CALLBACK_NULLPTR;
+        return BundleStateCommon::HandleParamErr(env, ERR_ASYNC_CALLBACK_NULLPTR, "");
+    }
+    return BundleStateCommon::NapiGetNull(env);
+}
+
+napi_value QueryLastUseTime(napi_env env, napi_callback_info info)
+{
+    QueryLastUseTimeParamsInfo params;
+    AsyncCallbackInfoAppStats *asyncCallbackInfo = nullptr;
+    ParseLastUseTime(env, info, params, asyncCallbackInfo);
+    if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
+        BUNDLE_ACTIVE_LOGE("QueryLastUseTime failed.");
+        return BundleStateCommon::NapiGetNull(env);
+    }
+    napi_value promise = nullptr;
+    std::unique_ptr<AsyncCallbackInfoAppStats> callbackPtr {asyncCallbackInfo};
+
+    if (callbackPtr == nullptr) {
+        BUNDLE_ACTIVE_LOGE("callbackPtr is null.");
+        return BundleStateCommon::NapiGetNull(env);
+    }
+    callbackPtr->queryInfos = params.queryInfos;
+    BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_latin1(env, "queryLastUseTime", NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, QueryLastUseTimeAsync,
+        QueryLastUseTimeAsyncCB, static_cast<void*>(asyncCallbackInfo), &asyncCallbackInfo->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work(env, callbackPtr->asyncWork));
+    if (callbackPtr->isCallback) {
+        callbackPtr.release();
+        return BundleStateCommon::NapiGetNull(env);
+    } else {
+        callbackPtr.release();
+        return promise;
+    }
+}
 napi_value ParseDeviceEventStates(const napi_env &env, const napi_callback_info &info,
     EventStatesParamsInfo &params)
 {

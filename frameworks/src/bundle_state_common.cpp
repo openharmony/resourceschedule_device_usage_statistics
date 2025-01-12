@@ -21,6 +21,8 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 const int ERR_MULTIPLE = 100;
+const int64_t YEAR_TYPE = 3;
+const int64_t MAX_TIME = 20000000000000;
 AsyncWorkData::AsyncWorkData(napi_env napiEnv)
 {
     env = napiEnv;
@@ -252,6 +254,45 @@ void BundleStateCommon::GetBundleStateInfoForResult(napi_env env,
     }
 }
 
+void BundleStateCommon::GetAppStatsInfosForResult(napi_env env,
+    const std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> &packageStats,
+    napi_value result)
+{
+    if (packageStats == nullptr) {
+        BUNDLE_ACTIVE_LOGE("PackageStats is invalid");
+        return;
+    }
+    for (const auto &item : *packageStats) {
+        napi_value packageStatsArray = nullptr;
+        napi_create_array(env, &packageStatsArray);
+        int32_t index = 0;
+        for (auto iter : item.second) {
+            napi_value packageObject = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_object(env, &packageObject));
+            napi_value bundleName = nullptr;
+            NAPI_CALL_RETURN_VOID(
+                env, napi_create_string_utf8(env, iter.bundleName_.c_str(), NAPI_AUTO_LENGTH, &bundleName));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "bundleName", bundleName));
+            napi_value abilityPrevAccessTime = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, iter.lastTimeUsed_, &abilityPrevAccessTime));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "abilityPrevAccessTime",
+                abilityPrevAccessTime));
+            napi_value abilityInFgTotalTime = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_int64(env, iter.totalInFrontTime_, &abilityInFgTotalTime));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "abilityInFgTotalTime",
+                abilityInFgTotalTime));
+            napi_value id = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, iter.userId_, &id));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "id", id));
+            napi_value appIndex = nullptr;
+            NAPI_CALL_RETURN_VOID(env, napi_create_int32(env, iter.appIndex_, &appIndex));
+            NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, packageObject, "appIndex", appIndex));
+            NAPI_CALL_RETURN_VOID(env, napi_set_element(env, packageStatsArray, index++, packageObject));
+        }
+        NAPI_CALL_RETURN_VOID(env, napi_set_named_property(env, result, item.first.c_str(), packageStatsArray));
+    }
+}
+
 void BundleStateCommon::GetModuleRecordBasicForResult(napi_env env,
     const BundleActiveModuleRecord &moduleRecords, napi_value moduleObject)
 {
@@ -379,6 +420,76 @@ napi_value BundleStateCommon::GetErrorValue(napi_env env, int32_t errCode)
     return result;
 }
 
+napi_value BundleStateCommon::ConvertMapFromJs(napi_env env, napi_value value,
+    std::map<std::string, std::vector<int64_t>>& result)
+{
+    napi_valuetype valuetype = napi_undefined;
+    NAPI_CALL(env, napi_typeof(env, value, &valuetype));
+    if (valuetype != napi_object) {
+        BUNDLE_ACTIVE_LOGE("Wrong argument type, number expected.");
+        return nullptr;
+    }
+
+    std::vector<std::string> propNames;
+    napi_value array = nullptr;
+    napi_get_property_names(env, value, &array);
+    ParseArrayStringValue(env, array, propNames);
+    for (const auto &propName : propNames) {
+        napi_value prop = nullptr;
+        napi_get_named_property(env, value, propName.c_str(), &prop);
+        if (prop == nullptr) {
+            BUNDLE_ACTIVE_LOGW("prop is null: %{public}s", propName.c_str());
+            continue;
+        }
+        std::vector<int64_t> intList;
+        ConvertInt64ArrayFromJs(env, prop, intList);
+        result.emplace(propName, std::move(intList));
+    }
+    return BundleStateCommon::NapiGetNull(env);
+}
+
+napi_value BundleStateCommon::ParseArrayStringValue(napi_env env, napi_value array,
+    std::vector<std::string>& vectorResult)
+{
+    uint32_t arrayLen = 0;
+    napi_get_array_length(env, array, &arrayLen);
+    if (arrayLen == 0) {
+        return BundleStateCommon::NapiGetNull(env);
+    }
+    vectorResult.reserve(arrayLen);
+    for (uint32_t i = 0; i < arrayLen; i++) {
+        std::string strItem;
+        napi_value jsValue = nullptr;
+        napi_get_element(env, array, i, &jsValue);
+        size_t len = 0;
+        if (napi_get_value_string_utf8(env, jsValue, nullptr, 0, &len) != napi_ok) {
+        }
+        auto buffer = std::make_unique<char[]>(len + 1);
+        size_t strLength = 0;
+        if (napi_get_value_string_utf8(env, jsValue, buffer.get(), len + 1, &strLength) == napi_ok) {
+            strItem = buffer.get();
+        }
+        vectorResult.emplace_back(std::move(strItem));
+    }
+    return BundleStateCommon::NapiGetNull(env);
+}
+
+napi_value BundleStateCommon::ConvertInt64ArrayFromJs(napi_env env, napi_value jsObject,
+    std::vector<int64_t>& intList)
+{
+    uint32_t length = 0;
+    napi_get_array_length(env, jsObject, &length);
+    for (uint32_t i = 0; i < length; i++) {
+        int64_t persistentId;
+        napi_value elememtVal = nullptr;
+        napi_get_element(env, jsObject, i, &elememtVal);
+        napi_get_value_int64(env, elememtVal, &persistentId);
+        intList.push_back(std::move(persistentId));
+    }
+    return BundleStateCommon::NapiGetNull(env);
+}
+
+
 napi_value BundleStateCommon::JSParaError(const napi_env &env, const napi_ref &callback, const int32_t &errorCode)
 {
     if (callback) {
@@ -488,6 +599,92 @@ std::shared_ptr<std::map<std::string, BundleActivePackageStats>> BundleStateComm
         } else {
             mergedPackageStats->
                 insert(std::pair<std::string, BundleActivePackageStats>(packageStat.bundleName_, packageStat));
+        }
+    }
+    return mergedPackageStats;
+}
+
+std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> BundleStateCommon::QueryAppStatsInfos(
+    int64_t &beginTime, int64_t &endTime, int32_t &errCode)
+{
+    std::vector<BundleActivePackageStats> packageStats;
+    errCode = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats, 0,
+        beginTime, endTime);
+    std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> mergedPackageStats =
+        std::make_shared<std::map<std::string, std::vector<BundleActivePackageStats>>>();
+    if (packageStats.empty()) {
+        return nullptr;
+    }
+    for (auto packageStat : packageStats) {
+        std::map<std::string, std::vector<BundleActivePackageStats>>::iterator iter =
+            mergedPackageStats->find(packageStat.bundleName_);
+        if (iter != mergedPackageStats->end()) {
+            bool sign = false;
+            for (auto packageMerge : iter->second) {
+                if (packageMerge.appIndex_ == packageStat.appIndex_) {
+                    MergePackageStats(packageMerge, packageStat);
+                    sign = true;
+                }
+            }
+            if (sign == false) {
+                iter->second.push_back(packageStat);
+            }
+        } else {
+            std::vector<BundleActivePackageStats> temp;
+            temp.push_back(packageStat);
+            mergedPackageStats->insert(std::pair<std::string, std::vector<BundleActivePackageStats>>(
+                packageStat.bundleName_, temp));
+        }
+    }
+    return mergedPackageStats;
+}
+
+std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> BundleStateCommon::QueryLastUseTime(
+    const std::map<std::string, std::vector<int64_t>>& queryInfos, int32_t &errCode)
+{
+    std::vector<BundleActivePackageStats> packageStats;
+    errCode = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats, YEAR_TYPE, 0, MAX_TIME);
+    std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> mergedPackageStats =
+        std::make_shared<std::map<std::string, std::vector<BundleActivePackageStats>>>();
+    if (packageStats.empty()) {
+        return nullptr;
+    }
+
+    std::vector<std::string> tempQueryInfos;
+    for (auto queryInfo : queryInfos) {
+        for (std::vector<int64_t>::iterator queryInfoIter = queryInfo.second.begin();
+            queryInfoIter != queryInfo.second.end(); queryInfoIter++) {
+            std::string tempQueryInfo = queryInfo.first + std::to_string(*queryInfoIter);
+            tempQueryInfos.push_back(tempQueryInfo);
+        }
+    }
+    std::vector<BundleActivePackageStats> tempPackageStats;
+    for (auto tempQueryInfoIter : tempQueryInfos) {
+        for (auto packageStat : packageStats) {
+            if (tempQueryInfoIter == packageStat.bundleName_ + std::to_string(packageStat.appIndex_)) {
+                tempPackageStats.push_back(packageStat);
+            }
+        }
+    }
+    for (auto tempPackageStat : tempPackageStats) {
+        std::map<std::string, std::vector<BundleActivePackageStats>>::iterator iter =
+            mergedPackageStats->find(tempPackageStat.bundleName_);
+        if (iter != mergedPackageStats->end()) {
+            bool sign = false;
+            for (auto packageMerge : iter->second) {
+                if (packageMerge.appIndex_ == tempPackageStat.appIndex_) {
+                    MergePackageStats(packageMerge, tempPackageStat);
+                    sign = true;
+                }
+            }
+            if (sign == false) {
+                iter->second.push_back(tempPackageStat);
+            }
+        } else {
+            std::vector<BundleActivePackageStats> temp;
+            temp.push_back(tempPackageStat);
+            mergedPackageStats->insert(std::pair<std::string, std::vector<BundleActivePackageStats>>(
+                tempPackageStat.bundleName_, temp));
         }
     }
     return mergedPackageStats;
