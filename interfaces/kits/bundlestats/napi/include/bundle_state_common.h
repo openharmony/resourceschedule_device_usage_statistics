@@ -64,6 +64,9 @@ public:
 
     static void GetBundleStateInfoForResult(napi_env env,
         const std::shared_ptr<std::map<std::string, BundleActivePackageStats>> &packageStats, napi_value result);
+    static void GetAppStatsInfosForResult(napi_env env,
+        const std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> &packageStats,
+        napi_value result);
 
     static void GetModuleRecordForResult(napi_env env,
         const std::vector<BundleActiveModuleRecord> &moduleRecords, napi_value result);
@@ -82,8 +85,23 @@ public:
 
     static napi_value GetInt32NumberValue(const napi_env &env, const napi_value &value, int32_t &result);
 
+    static napi_value ConvertMapFromJs(napi_env env, napi_value value,
+        std::map<std::string, std::vector<int64_t>>& result);
+
+    static napi_value ConvertInt64ArrayFromJs(napi_env env, napi_value jsObject,
+        std::vector<int64_t>& result);
+
+    static napi_value ParseArrayStringValue(napi_env env, napi_value array,
+        std::vector<std::string>& vectorResult);
+
     static std::shared_ptr<std::map<std::string, BundleActivePackageStats>> QueryBundleStatsInfos(
 	    int64_t &beginTime, int64_t &endTime, int32_t &errCode);
+
+    static std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> QueryAppStatsInfos(
+	    int64_t &beginTime, int64_t &endTime, int32_t &errCode);
+
+    static std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> QueryLastUseTime(
+	    const std::map<std::string, std::vector<int64_t>>& queryInfos, int32_t &errCode);
 
     static void MergePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right);
 

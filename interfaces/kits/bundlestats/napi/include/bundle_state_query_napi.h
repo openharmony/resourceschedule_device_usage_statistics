@@ -30,6 +30,8 @@ namespace DeviceUsageStats {
     napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info);
     napi_value QueryDeviceEventStats(napi_env env, napi_callback_info info);
     napi_value QueryNotificationEventStats(napi_env env, napi_callback_info info);
+    napi_value QueryAppStatsInfos(napi_env env, napi_callback_info info);
+    napi_value QueryLastUseTime(napi_env env, napi_callback_info info);
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // FOUNDATION_RESOURCESCHEDULE_DEVICE_USAGE_STATISTICS_BUNDLE_STATE_QUERY_NAPI_H

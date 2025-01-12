@@ -49,7 +49,9 @@ static napi_value UsageStatisticsInit(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("registerAppGroupCallBack", RegisterAppGroupCallBack),
         DECLARE_NAPI_FUNCTION("unregisterAppGroupCallBack", UnRegisterAppGroupCallBack),
         DECLARE_NAPI_FUNCTION("queryDeviceEventStats", QueryDeviceEventStats),
-        DECLARE_NAPI_FUNCTION("queryNotificationEventStats", QueryNotificationEventStats)
+        DECLARE_NAPI_FUNCTION("queryNotificationEventStats", QueryNotificationEventStats),
+        DECLARE_NAPI_FUNCTION("queryAppStatsInfos", QueryAppStatsInfos),
+        DECLARE_NAPI_FUNCTION("queryLastUseTime", QueryLastUseTime)
     };
 
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc));
