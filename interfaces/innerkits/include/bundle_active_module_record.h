@@ -31,7 +31,7 @@ public:
     ~BundleActiveModuleRecord() {}
     static bool cmp(const BundleActiveModuleRecord& moduleRecordA, const BundleActiveModuleRecord& moduleRecordB);
     bool Marshalling(Parcel &parcel) const override;
-    static std::shared_ptr<BundleActiveModuleRecord> UnMarshalling(Parcel &parcel);
+    static BundleActiveModuleRecord *Unmarshalling(Parcel &parcel);
     std::string ToString();
 
 public:

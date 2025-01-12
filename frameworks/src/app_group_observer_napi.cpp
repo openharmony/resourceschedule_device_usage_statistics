@@ -129,26 +129,26 @@ void UvQueueWorkOnAppGroupChanged(uv_work_t *work, int status)
 /*
 * observer callback when group change
 */
-void AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
+ErrCode AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
 {
     BUNDLE_ACTIVE_LOGD("OnAppGroupChanged start");
     uv_loop_s *loop = nullptr;
     napi_get_uv_event_loop(bundleGroupCallbackInfo_.env, &loop);
     if (!loop) {
         BUNDLE_ACTIVE_LOGE("loop instance is nullptr");
-        return;
+        return ERR_OK;
     }
     uv_work_t* work = new (std::nothrow) uv_work_t;
     if (!work) {
         BUNDLE_ACTIVE_LOGE("work is null");
-        return;
+        return ERR_OK;
     }
     CallbackReceiveDataWorker* callbackReceiveDataWorker = new (std::nothrow) CallbackReceiveDataWorker();
     if (!callbackReceiveDataWorker) {
         BUNDLE_ACTIVE_LOGE("callbackReceiveDataWorker is null");
         delete work;
         work = nullptr;
-        return;
+        return ERR_OK;
     }
     MessageParcel data;
     if (!appGroupCallbackInfo.Marshalling(data)) {
@@ -172,6 +172,7 @@ void AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCal
         delete work;
         work = nullptr;
     }
+    return ERR_OK;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

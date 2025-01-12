@@ -98,4 +98,3 @@ AppGroupCallbackInfo* AppGroupCallbackInfo::Unmarshalling(Parcel &parcel)
 }
 }
 }
-

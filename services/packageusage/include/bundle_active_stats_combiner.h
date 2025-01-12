@@ -16,6 +16,7 @@
 #ifndef BUNDLE_ACTIVE_STATS_COMBINER_H
 #define BUNDLE_ACTIVE_STATS_COMBINER_H
 
+#include <set>
 #include <vector>
 
 #include "bundle_active_period_stats.h"

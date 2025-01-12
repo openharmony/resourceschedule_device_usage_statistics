@@ -87,11 +87,11 @@ public:
     bool Marshalling(Parcel &parcel) const override;
 
     /*
-    * function: UnMarshalling, Unmashalling event stats object from parcel.
+    * function: Unmarshalling, Unmashalling event stats object from parcel.
     * parameters: parcel
     * return: point to a BundleActiveEventStats.
     */
-    static std::shared_ptr<BundleActiveEventStats> UnMarshalling(Parcel &parcel);
+    static BundleActiveEventStats *Unmarshalling(Parcel &parcel);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
