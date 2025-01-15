@@ -771,7 +771,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupController_002, Function | MediumTes
     event.eventId_ = BundleActiveEvent::SYSTEM_INTERACTIVE;
     int64_t timeStamp = 20000000000000;
     coreObject->bundleGroupController_->ReportEvent(event, timeStamp, userId);
-    SUCCEED();
+    EXPECT_TRUE(coreObject->bundleGroupController_ != nullptr);
 }
 
 /*
@@ -786,6 +786,7 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumT
     auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
     auto bundleActiveReportHandler = std::make_shared<BundleActiveReportHandler>();
     bundleActiveReportHandler->Init(bundleActiveCore_);
+    EXPECT_TRUE(bundleActiveReportHandler->isInited_);
     bundleActiveReportHandler->ProcessEvent(0, handlerObject);
     bundleActiveReportHandler->ProcessEvent(0, handlerObject);
 }
@@ -966,6 +967,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_005, Function | MediumTest |
         SUCCEED();
     });
     bundleActiveGroupHandler->Init(bundleActiveCore_->bundleGroupController_);
+    EXPECT_TRUE(bundleActiveGroupHandler->isInited_);
     bundleActiveGroupHandler->PostTask([]() {
         SUCCEED();
     });
@@ -988,7 +990,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_006, Function | MediumTest |
     int32_t eventId = 0;
     std::shared_ptr<BundleActiveGroupHandlerObject> tmpObject = nullptr;
     bundleActiveGroupHandler->SendCheckBundleMsg(eventId, tmpObject, 0);
-    SUCCEED();
+    EXPECT_TRUE(bundleActiveGroupHandler->isInited_);
 }
 
 /*
@@ -1001,7 +1003,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_007, Function | MediumTest |
 {
     auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
     bundleActiveGroupHandler->Init(nullptr);
-    SUCCEED();
+    EXPECT_TRUE(bundleActiveGroupHandler->isInited_);
 }
 
 /*
@@ -1015,7 +1017,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_008, Function | MediumTest |
     auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
     int32_t eventId = 0;
     bundleActiveGroupHandler->RemoveEvent(eventId);
-    SUCCEED();
+    EXPECT_TRUE(bundleActiveGroupHandler->isInited_);
 }
 
 /*
@@ -1030,7 +1032,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_009, Function | MediumTest |
     int32_t eventId = 0;
     std::shared_ptr<BundleActiveGroupHandlerObject> tmpObject = nullptr;
     bundleActiveGroupHandler->ProcessEvent(eventId, tmpObject);
-    SUCCEED();
+    EXPECT_TRUE(bundleActiveGroupHandler->bundleActiveGroupController_ == nullptr);
 }
 
 /*
@@ -1051,7 +1053,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_010, Function | MediumTest |
     bundleActiveGroupHandler->ProcessEvent(eventId, handlerObject);
     eventId = 100;
     bundleActiveGroupHandler->ProcessEvent(eventId, handlerObject);
-    SUCCEED();
+    EXPECT_TRUE(bundleActiveGroupHandler->isInited_);
 }
 
 /*

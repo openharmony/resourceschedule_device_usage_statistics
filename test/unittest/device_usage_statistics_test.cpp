@@ -146,6 +146,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_ReportEvent_001, F
     BundleActiveEvent eventB(g_defaultBundleName, g_defaultMoudleName, g_defaultFormName,
         g_defaultDimension, g_defaultFormId, BundleActiveEvent::FORM_IS_REMOVED);
     BundleActiveClient::GetInstance().ReportEvent(eventB, g_defaultUserId);
+    EXPECT_TRUE(BundleActiveClient::GetInstance().bundleActiveProxy_ != nullptr);
 }
 
 /*

@@ -93,7 +93,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Func
     BundleActiveContinuousTaskObserver test;
     test.Init(reportHandler);
     test.Init(reportHandler1);
-    SUCCEED();
+    EXPECT_TRUE(test.reportHandler_ != nullptr);
 
     std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo> continuousTaskCallbackInfo;
     test.OnContinuousTaskStart(continuousTaskCallbackInfo);
@@ -131,7 +131,8 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_001, Function | 
 
     test.bundleMgr_ = nullptr;
     test.GetNameForUid(0, string);
-    test.GetApplicationInfo(string, flag, 0, appInfo);
+    bool result = test.GetApplicationInfo(string, flag, 0, appInfo);
+    EXPECT_FALSE(result);
     test.GetBundleInfo(string, AppExecFwk::BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo, 0);
     SUCCEED();
 }
@@ -146,8 +147,8 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_002, Function | 
 {
     AppExecFwk::ApplicationFlag flag = AppExecFwk::GET_BASIC_APPLICATION_INFO;
     std::vector<AppExecFwk::ApplicationInfo> appInfos;
-    BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfos(flag, 0, appInfos);
-    SUCCEED();
+    bool result = BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfos(flag, 0, appInfos);
+    EXPECT_TRUE(result);
 }
 
 /*
@@ -162,7 +163,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | 
     BundleActiveBundleMgrHelper::GetInstance()->IsLauncherApp("test", 0);
     BundleActiveBundleMgrHelper::GetInstance()->launcherAppMap_["test"] = false;
     BundleActiveBundleMgrHelper::GetInstance()->IsLauncherApp("test", 0);
-    SUCCEED();
+    EXPECT_TRUE(BundleActiveBundleMgrHelper::GetInstance()->isInitLauncherAppMap_);
 }
 
 /*
@@ -203,7 +204,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveAppStateObserverTest_001, Function |
     test.Init(reportHandler);
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND);
     test.OnAbilityStateChanged(abilityStateData);
-    SUCCEED();
+    EXPECT_TRUE(test.reportHandler_ != nullptr);
 
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     test.OnAbilityStateChanged(abilityStateData);
@@ -224,7 +225,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_001, Function | Me
 {
     BundleActiveUsageDatabase test;
     test.InitDatabaseTableInfo(test.ParseStartTime(test.eventTableName_)-1);
-    SUCCEED();
+    EXPECT_FALSE(test.debugDatabase_);
 }
 
 /*
@@ -236,6 +237,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_001, Function | Me
 HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_002, Function | MediumTest | Level0)
 {
     BundleActiveUsageDatabase test;
+    EXPECT_FALSE(test.debugDatabase_);
     test.debugDatabase_ = true;
     test.DeleteExcessiveTableData(100);
     test.DeleteExcessiveTableData(0);
@@ -272,8 +274,8 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_005, Function | Me
     test.GetTableIndexSql(5, 0, false, 0);
     test.GetTableIndexSql(5, 0, false, 1);
     test.GetTableIndexSql(5, 0, false, 2);
-    test.GetTableIndexSql(0, 0, false, 0);
-    SUCCEED();
+    std::string result = test.GetTableIndexSql(0, 0, false, 0);
+    EXPECT_TRUE(result != "");
 }
 
 /*
@@ -286,8 +288,8 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_006, Function | Me
 {
     BundleActiveUsageDatabase test;
     std::shared_ptr<NativeRdb::RdbStore> rdbStore;
-    test.SetNewIndexWhenTimeChanged(5, 0, 0, rdbStore);
-    SUCCEED();
+    int32_t result = test.SetNewIndexWhenTimeChanged(5, 0, 0, rdbStore);
+    EXPECT_EQ(result, -1);
     test.RenameTableName(0, 0, 0);
     test.ExecuteRenameTableName("test", 0, 0, rdbStore);
     SUCCEED();
@@ -305,7 +307,8 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_007, Function | Me
     std::shared_ptr<NativeRdb::RdbStore> rdbStore;
     BundleActiveFormRecord formRecord;
     test.UpdateFormData(0, "test", "test", formRecord, rdbStore);
-    test.GetSystemEventName(0);
+    std::string result = test.GetSystemEventName(0);
+    EXPECT_EQ(result, "");
     test.JudgeQueryCondition(0, 0, 1);
     SUCCEED();
 }
@@ -327,7 +330,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActivePowerStateCallbackServiceTest_001, F
     test2.OnPowerStateChanged(PowerState::AWAKE);
     SUCCEED();
     test2.OnPowerStateChanged(PowerState::SLEEP);
-    SUCCEED();
+    EXPECT_TRUE(test2.bundleActiveCore_ != nullptr);
 #endif
 }
 
