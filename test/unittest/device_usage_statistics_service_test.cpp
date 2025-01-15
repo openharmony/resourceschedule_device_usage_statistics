@@ -153,7 +153,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump
     dumpOption.clear();
     dumpInfo.clear();
     dumpOption = {"-A", "ModuleUsage"};
-    DelayedSingleton<BundleActiveService>::GetInstance()->ShellDump(dumpOption, dumpInfo);
+    int32_t ret;
+    ret = DelayedSingleton<BundleActiveService>::GetInstance()->ShellDump(dumpOption, dumpInfo);
+    EXPECT_TRUE(ret == -1);
 
     dumpOption.clear();
     dumpInfo.clear();
