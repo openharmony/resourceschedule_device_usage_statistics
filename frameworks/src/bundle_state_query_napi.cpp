@@ -847,6 +847,7 @@ napi_value QueryLastUseTime(napi_env env, napi_callback_info info)
 
     if (callbackPtr == nullptr) {
         BUNDLE_ACTIVE_LOGE("callbackPtr is null.");
+        return BundleStateCommon::NapiGetNull(env);
     }
     callbackPtr->queryInfos = params.queryInfos;
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);

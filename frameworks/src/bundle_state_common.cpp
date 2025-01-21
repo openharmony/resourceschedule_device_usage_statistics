@@ -621,7 +621,7 @@ std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> Bu
         if (iter != mergedPackageStats->end()) {
             bool sign = false;
             for (auto packageMerge : iter->second) {
-                if (packageMerge.uid_ == packageStat.uid_) {
+                if (packageMerge.appIndex_ == packageStat.appIndex_) {
                     MergePackageStats(packageMerge, packageStat);
                     sign = true;
                 }
@@ -672,7 +672,7 @@ std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> Bu
         if (iter != mergedPackageStats->end()) {
             bool sign = false;
             for (auto packageMerge : iter->second) {
-                if (packageMerge.uid_ == tempPackageStat.uid_) {
+                if (packageMerge.appIndex_ == tempPackageStat.appIndex_) {
                     MergePackageStats(packageMerge, tempPackageStat);
                     sign = true;
                 }

@@ -51,6 +51,7 @@ BundleActivePackageStats::BundleActivePackageStats (const BundleActivePackageSta
     lastEvent_ = orig.lastEvent_;
     userId_ = orig.userId_;
     uid_ = orig.uid_;
+    appIndex_ = orig.appIndex_;
 }
 
 bool BundleActivePackageStats::HasFrontAbility()
