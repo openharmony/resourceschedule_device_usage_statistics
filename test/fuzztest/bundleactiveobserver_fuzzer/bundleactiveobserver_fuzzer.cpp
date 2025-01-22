@@ -79,11 +79,17 @@ namespace DeviceUsageStats {
         DelayedSingleton<BundleActiveService>::GetInstance()->Dump(fd, args);
         DelayedSingleton<BundleActiveService>::GetInstance()->AllowDump();
 
-        std::vector<std::string> dumpOption = {std::to_string(GetU32Data(data))};
-        std::vector<std::string> dumpInfo = {std::to_string(GetU32Data(data))};
+        std::vector<std::string> dumpOption = {
+            std::to_string(GetU32Data(data)), std::to_string(GetU32Data(data)),
+            std::to_string(GetU32Data(data)), std::to_string(GetU32Data(data)),
+            std::to_string(GetU32Data(data)), std::to_string(GetU32Data(data))};
+        std::vector<std::string> dumpInfo;
         DelayedSingleton<BundleActiveService>::GetInstance()->ShellDump(dumpOption, dumpInfo);
+        dumpInfo.clear();
         DelayedSingleton<BundleActiveService>::GetInstance()->DumpEvents(dumpOption, dumpInfo);
+        dumpInfo.clear();
         DelayedSingleton<BundleActiveService>::GetInstance()->DumpPackageUsage(dumpOption, dumpInfo);
+        dumpInfo.clear();
         DelayedSingleton<BundleActiveService>::GetInstance()->DumpModuleUsage(dumpOption, dumpInfo);
         std::string result = std::to_string(GetU32Data(data));
         DelayedSingleton<BundleActiveService>::GetInstance()->DumpUsage(result);

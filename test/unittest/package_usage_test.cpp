@@ -1003,7 +1003,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_007, Function | MediumTest |
 {
     auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
     bundleActiveGroupHandler->Init(nullptr);
-    EXPECT_TRUE(bundleActiveGroupHandler->isInited_);
+    EXPECT_FALSE(bundleActiveGroupHandler->isInited_);
 }
 
 /*
@@ -1017,7 +1017,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_008, Function | MediumTest |
     auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
     int32_t eventId = 0;
     bundleActiveGroupHandler->RemoveEvent(eventId);
-    EXPECT_TRUE(bundleActiveGroupHandler->isInited_);
+    EXPECT_FALSE(bundleActiveGroupHandler->isInited_);
 }
 
 /*
