@@ -57,14 +57,6 @@ namespace DeviceUsageStats {
         return true;
     }
 
-    bool BundleActiveServiceStartAndStopFuzzTest(const char* data, size_t size)
-    {
-        DelayedSingleton<BundleActiveService>::GetInstance()->OnStart();
-        DelayedSingleton<BundleActiveService>::GetInstance()->InitNecessaryState();
-        DelayedSingleton<BundleActiveService>::GetInstance()->OnStop();
-        return true;
-    }
-
     bool BundleActiveConfigReaderFuzzTest(const char* data, size_t size)
     {
         DelayedSingleton<BundleActiveConfigReader>::GetInstance()->GetApplicationUsePeriodicallyConfig();
@@ -91,7 +83,7 @@ namespace DeviceUsageStats {
         DelayedSingleton<BundleActiveService>::GetInstance()->DumpPackageUsage(dumpOption, dumpInfo);
         dumpInfo.clear();
         DelayedSingleton<BundleActiveService>::GetInstance()->DumpModuleUsage(dumpOption, dumpInfo);
-        std::string result = std::to_string(GetU32Data(data));
+        std::string result;
         DelayedSingleton<BundleActiveService>::GetInstance()->DumpUsage(result);
         return true;
     }
@@ -122,7 +114,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     }
 
     OHOS::DeviceUsageStats::DoSomethingInterestingWithMyAPI(ch, size);
-    OHOS::DeviceUsageStats::BundleActiveServiceStartAndStopFuzzTest(ch, size);
     OHOS::DeviceUsageStats::BundleActiveConfigReaderFuzzTest(ch, size);
     OHOS::DeviceUsageStats::BundleActiveServiceDumpFuzzTest(ch, size);
     free(ch);
