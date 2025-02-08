@@ -54,11 +54,6 @@ namespace DeviceUsageStats {
         std::string inputBundlName(data);
         DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(result, inputBundlName, userId);
         DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleUsePeriod(result, inputBundlName, userId);
-        return true;
-    }
-
-    bool BundleActiveConfigReaderFuzzTest(const char* data, size_t size)
-    {
         DelayedSingleton<BundleActiveConfigReader>::GetInstance()->GetApplicationUsePeriodicallyConfig();
         return true;
     }
@@ -114,7 +109,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     }
 
     OHOS::DeviceUsageStats::DoSomethingInterestingWithMyAPI(ch, size);
-    OHOS::DeviceUsageStats::BundleActiveConfigReaderFuzzTest(ch, size);
     OHOS::DeviceUsageStats::BundleActiveServiceDumpFuzzTest(ch, size);
     free(ch);
     ch = nullptr;
