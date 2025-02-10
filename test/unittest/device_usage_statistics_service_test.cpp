@@ -1525,6 +1525,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Conf
     std::string fullPath = "";
     bool result = bundleActiveConfigReader->ConvertFullPath(partialPath, fullPath);
     EXPECT_EQ(result, false);
+    DelayedSingleton<BundleActiveService>::DestoryInstance();
 }
 
 }  // namespace DeviceUsageStats
