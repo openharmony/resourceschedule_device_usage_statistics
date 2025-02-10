@@ -590,9 +590,9 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_AppGroupCallbackSt
     MessageParcel data1;
     MessageParcel reply;
     MessageOption option;
-    EXPECT_EQ(appGroupCallbackStub->OnRemoteRequest(1, data1, reply, option), -1);
+    EXPECT_EQ(appGroupCallbackStub->OnRemoteRequest(1, data1, reply, option), 1);
     data1.WriteInterfaceToken(AppGroupCallbackStub::GetDescriptor());
-    EXPECT_EQ(appGroupCallbackStub->OnRemoteRequest(1, data1, reply, option), -1);
+    EXPECT_EQ(appGroupCallbackStub->OnRemoteRequest(1, data1, reply, option), 5);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

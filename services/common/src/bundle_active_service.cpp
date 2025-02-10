@@ -483,7 +483,7 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
     return ret;
 }
 
-ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundleName, int32_t userId)
+ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, const std::string& bundleName, int32_t userId)
 {
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
@@ -502,8 +502,7 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, std::string& bundl
             BUNDLE_ACTIVE_LOGE("%{public}s is not system app", localBundleName.c_str());
             return ERR_NOT_SYSTEM_APP;
         }
-        bundleName = localBundleName;
-        ret = bundleActiveCore_->QueryAppGroup(appGroup, bundleName, userId);
+        ret = bundleActiveCore_->QueryAppGroup(appGroup, localBundleName, userId);
     } else {
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         ret = CheckSystemAppOrNativePermission(callingUid, tokenId);

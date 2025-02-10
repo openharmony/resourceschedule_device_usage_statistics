@@ -148,7 +148,7 @@ public:
      * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
      * @return errCode.
      */
-    ErrCode QueryAppGroup(int32_t& appGroup, std::string& bundleName, int32_t userId) override;
+    ErrCode QueryAppGroup(int32_t& appGroup, const std::string& bundleName, int32_t userId) override;
 
     /**
      * @brief QueryModuleUsageRecords, query all from usage statistics in specific time span for calling user.

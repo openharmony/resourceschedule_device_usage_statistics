@@ -19,7 +19,7 @@ sequenceable OHOS.DeviceUsageStats.BundleActiveModuleRecord;
 sequenceable OHOS.DeviceUsageStats.BundleActiveEventStats;
 interface OHOS.DeviceUsageStats.IAppGroupCallback;
 interface OHOS.DeviceUsageStats.IBundleActiveService {
-    void ReportEvent([in] BundleActiveEvent event, [in] int userId);
+    [oneway] void ReportEvent([in] BundleActiveEvent event, [in] int userId);
     void IsBundleIdle([out] boolean isBundleIdle, [in] String bundleName, [in] int userId);
     void IsBundleUsePeriod([out] boolean isUsePeriod, [in] String bundleName, [in] int userId);
     void QueryBundleStatsInfoByInterval([out] List<BundleActivePackageStats> packageStats,
@@ -30,7 +30,7 @@ interface OHOS.DeviceUsageStats.IBundleActiveService {
         [in] int intervalType, [in] long beginTime, [in] long endTime);
     void QueryCurrentBundleEvents([out] List<BundleActiveEvent> bundleActiveEvents,
         [in] long beginTime, [in]long endTime);
-    void QueryAppGroup([out] int appGroup, [out] String bundleName, [in] int userId);
+    void QueryAppGroup([out] int appGroup, [in] String bundleName, [in] int userId);
     void SetAppGroup([in] String bundleName, [in] int newGroup, [in] int userId);
     void QueryModuleUsageRecords([in] int maxNum, [out] List<BundleActiveModuleRecord> results, [in] int userId);
     void RegisterAppGroupCallBack([in] IAppGroupCallback observer);
