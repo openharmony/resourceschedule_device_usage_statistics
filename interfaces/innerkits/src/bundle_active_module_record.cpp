@@ -100,6 +100,9 @@ bool BundleActiveModuleRecord::Marshalling(Parcel &parcel) const
 BundleActiveModuleRecord *BundleActiveModuleRecord::Unmarshalling(Parcel &parcel)
 {
     BundleActiveModuleRecord *result = new (std::nothrow) BundleActiveModuleRecord();
+    if (result == nullptr) {
+        return nullptr;
+    }
     result->deviceId_ = parcel.ReadString();
     result->bundleName_ = parcel.ReadString();
     result->moduleName_ = parcel.ReadString();
@@ -117,6 +120,9 @@ BundleActiveModuleRecord *BundleActiveModuleRecord::Unmarshalling(Parcel &parcel
         return nullptr;
     }
     BundleActiveFormRecord *tmp = new (std::nothrow) BundleActiveFormRecord;
+    if (tmp == nullptr) {
+        return result;
+    }
     for (uint32_t i = 0; i < size; i++) {
         tmp = tmp->Unmarshalling(parcel);
         if (!tmp) {
@@ -124,6 +130,7 @@ BundleActiveModuleRecord *BundleActiveModuleRecord::Unmarshalling(Parcel &parcel
         }
         result->formRecords_.emplace_back(*tmp);
     }
+    delete tmp;
     return result;
 }
 
