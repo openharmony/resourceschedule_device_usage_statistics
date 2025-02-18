@@ -31,7 +31,7 @@ namespace DeviceUsageStats {
     constexpr uint8_t EIGHT = 8;
     constexpr uint8_t TWO = 2;
     constexpr uint8_t THREE = 3;
-    const std::u16string BUNDLE_ACTIVE_TOKEN = u"Resourceschedule.IBundleActiveService";
+    const std::u16string BUNDLE_ACTIVE_TOKEN = u"OHOS.DeviceUsageStats.IBundleActiveService";
     bool isInited = false;
 
     uint32_t GetU32Data(const char* ptr)
