@@ -31,7 +31,7 @@ namespace DeviceUsageStats {
     constexpr uint8_t EIGHT = 8;
     constexpr uint8_t TWO = 2;
     constexpr uint8_t THREE = 3;
-    const std::u16string APP_GOUNP_ACTIVE_TOKEN = u"Resourceschedule.IAppGroupCallback";
+    const std::u16string APP_GOUNP_ACTIVE_TOKEN = u"OHOS.DeviceUsageStats.IAppGroupCallback";
 
     class TestAppGroupChangeCallback : public AppGroupCallbackStub {
     public:
