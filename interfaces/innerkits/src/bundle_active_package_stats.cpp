@@ -32,6 +32,7 @@ BundleActivePackageStats::BundleActivePackageStats()
     lastEvent_ = 0;
     userId_ = 0;
     uid_ = 0;
+    appIndex_ = 0;
 }
 
 BundleActivePackageStats::BundleActivePackageStats (const BundleActivePackageStats& orig)
@@ -50,6 +51,7 @@ BundleActivePackageStats::BundleActivePackageStats (const BundleActivePackageSta
     lastEvent_ = orig.lastEvent_;
     userId_ = orig.userId_;
     uid_ = orig.uid_;
+    appIndex_ = orig.appIndex_;
 }
 
 bool BundleActivePackageStats::HasFrontAbility()
@@ -215,7 +217,8 @@ bool BundleActivePackageStats::Marshalling(Parcel &parcel) const
         parcel.WriteInt64(lastContiniousTaskUsed_) &&
         parcel.WriteInt64(totalContiniousTaskUsedTime_) &&
         parcel.WriteInt32(startCount_) &&
-        parcel.WriteInt32(userId_)) {
+        parcel.WriteInt32(userId_) &&
+        parcel.WriteInt32(appIndex_)) {
         return true;
     }
     return false;
@@ -232,6 +235,7 @@ std::shared_ptr<BundleActivePackageStats> BundleActivePackageStats::UnMarshallin
     result->totalContiniousTaskUsedTime_ = parcel.ReadInt64();
     result->startCount_ = parcel.ReadInt32();
     result->userId_ = parcel.ReadInt32();
+    result->appIndex_ = parcel.ReadInt32();
     return result;
 }
 
