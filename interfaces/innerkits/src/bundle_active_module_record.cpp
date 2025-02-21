@@ -119,18 +119,14 @@ BundleActiveModuleRecord *BundleActiveModuleRecord::Unmarshalling(Parcel &parcel
     if (size > MAX_FORM_NUM) {
         return nullptr;
     }
-    BundleActiveFormRecord *tmp = new (std::nothrow) BundleActiveFormRecord;
-    if (tmp == nullptr) {
-        return result;
-    }
+
     for (uint32_t i = 0; i < size; i++) {
-        tmp = tmp->Unmarshalling(parcel);
+        std::unique_ptr<BundleActiveFormRecord> tmp(BundleActiveFormRecord::Unmarshalling(parcel));
         if (!tmp) {
             continue;
         }
         result->formRecords_.emplace_back(*tmp);
     }
-    delete tmp;
     return result;
 }
 
