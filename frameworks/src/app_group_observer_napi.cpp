@@ -77,7 +77,7 @@ napi_value SetBundleGroupChangedData(const CallbackReceiveDataWorker *commonEven
     return BundleStateCommon::NapiGetNull(commonEventDataWorkerData->env);
 }
 
-void UvQueueWorkOnAppGroupChanged(uv_work_t *work, int status)
+void UvQueueWorkOnAppGroupChanged(uv_work_t *work)
 {
     BUNDLE_ACTIVE_LOGD("OnAppGroupChanged uv_work_t start");
     if (!work) {
@@ -151,10 +151,13 @@ ErrCode AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroup
         return ERR_OK;
     }
     MessageParcel data;
-    if (!appGroupCallbackInfo.Marshalling(data)) {
-        BUNDLE_ACTIVE_LOGE("Marshalling fail");
-    }
+    if (!appGroupCallbackInfo.Marshalling(data)) {}
     AppGroupCallbackInfo* callBackInfo = appGroupCallbackInfo.Unmarshalling(data);
+    if (callBackInfo == nullptr) {
+        delete work;
+        work = nullptr;
+        return ERR_OK;
+    }
     callbackReceiveDataWorker->oldGroup     = callBackInfo->GetOldGroup();
     callbackReceiveDataWorker->newGroup     = callBackInfo->GetNewGroup();
     callbackReceiveDataWorker->changeReason = callBackInfo->GetChangeReason();
@@ -163,10 +166,12 @@ ErrCode AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroup
     callbackReceiveDataWorker->env = bundleGroupCallbackInfo_.env;
     callbackReceiveDataWorker->ref = bundleGroupCallbackInfo_.ref;
     delete callBackInfo;
-
     work->data = static_cast<void*>(callbackReceiveDataWorker);
-    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvQueueWorkOnAppGroupChanged);
-    if (ret != 0) {
+    auto task = [work]() {
+        UvQueueWorkOnAppGroupChanged(work);
+    };
+    if (napi_status::napi_ok != napi_send_event(callbackReceiveDataWorker->env, task, napi_eprio_high)) {
+        BUNDLE_ACTIVE_LOGE("failed to napi_send_event");
         delete callbackReceiveDataWorker;
         callbackReceiveDataWorker = nullptr;
         delete work;
