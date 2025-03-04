@@ -105,6 +105,9 @@ bool BundleActiveEventStats::Marshalling(Parcel &parcel) const
 BundleActiveEventStats *BundleActiveEventStats::Unmarshalling(Parcel &parcel)
 {
     BundleActiveEventStats *result = new (std::nothrow) BundleActiveEventStats();
+    if (result == nullptr) {
+        return nullptr;
+    }
     result->eventId_ = parcel.ReadInt32();
     result->beginTimeStamp_ = parcel.ReadInt64();
     result->endTimeStamp_ = parcel.ReadInt64();

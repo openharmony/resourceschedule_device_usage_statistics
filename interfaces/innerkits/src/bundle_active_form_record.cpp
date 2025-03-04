@@ -74,6 +74,9 @@ bool BundleActiveFormRecord::Marshalling(Parcel &parcel) const
 BundleActiveFormRecord *BundleActiveFormRecord::Unmarshalling(Parcel &parcel)
 {
     BundleActiveFormRecord *result = new (std::nothrow) BundleActiveFormRecord();
+    if (result == nullptr) {
+        return nullptr;
+    }
     result->formName_ = parcel.ReadString();
     result->formDimension_ = parcel.ReadInt32();
     result->formId_ = parcel.ReadInt64();
