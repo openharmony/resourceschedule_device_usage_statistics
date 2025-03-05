@@ -176,6 +176,9 @@ bool BundleActiveEvent::Marshalling(Parcel &parcel) const
 BundleActiveEvent *BundleActiveEvent::Unmarshalling(Parcel &parcel)
 {
     BundleActiveEvent *result = new (std::nothrow) BundleActiveEvent();
+    if (result == nullptr) {
+        return nullptr;
+    }
     result->bundleName_ = parcel.ReadString();
     result->continuousTaskAbilityName_ = parcel.ReadString();
     result->abilityName_ = parcel.ReadString();

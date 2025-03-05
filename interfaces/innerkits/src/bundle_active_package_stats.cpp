@@ -227,6 +227,9 @@ bool BundleActivePackageStats::Marshalling(Parcel &parcel) const
 BundleActivePackageStats *BundleActivePackageStats::Unmarshalling(Parcel &parcel)
 {
     BundleActivePackageStats *result = new (std::nothrow) BundleActivePackageStats();
+    if (result == nullptr) {
+        return nullptr;
+    }
     result->bundleName_ = parcel.ReadString();
     result->beginTimeStamp_ = parcel.ReadInt64();
     result->lastTimeUsed_ = parcel.ReadInt64();
