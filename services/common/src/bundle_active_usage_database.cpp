@@ -575,8 +575,12 @@ shared_ptr<NativeRdb::RdbStore> WEAK_FUNC BundleActiveUsageDatabase::GetBundleAc
         config.SetSecurityLevel(NativeRdb::SecurityLevel::S1);
         rdbStore = RdbHelper::GetRdbStore(config, BUNDLE_ACTIVE_RDB_VERSION, rdbDataCallBack, errCode);
         if ((rdbStore == nullptr)) {
-            BUNDLE_ACTIVE_LOGE("get bundle active rdbStore fail, rdbStore is nullptr");
-            return nullptr;
+            config.SetJournalMode(NativeRdb::JournalMode::MODE_WAL);
+            rdbStore = RdbHelper::GetRdbStore(config, BUNDLE_ACTIVE_RDB_VERSION_V2, rdbDataCallBack, errCode);
+            if (rdbStore == nullptr) {
+                BUNDLE_ACTIVE_LOGE("get bundle active rdbStore fail, rdbStore is nullptr");
+                return nullptr;
+            }
         }
         bundleActiveRdbStoreCache_.insert(pair {file, rdbStore});
     } else {
@@ -585,6 +589,15 @@ shared_ptr<NativeRdb::RdbStore> WEAK_FUNC BundleActiveUsageDatabase::GetBundleAc
     if (rdbStore == nullptr) {
         BUNDLE_ACTIVE_LOGE("get bundle active rdbStore fail, rdbStore is nullptr");
         return nullptr;
+    }
+    int version = 0;
+    rdbStore->GetVersion(version);
+    if (version == BUNDLE_ACTIVE_RDB_VERSION_V2) {
+        return rdbStore;
+    }
+    auto[createResult, test] = rdbStore->Execute("PRAGMA journal_mode = WAL;");
+    if (createResult != NativeRdb::E_OK) {
+        BUNDLE_ACTIVE_LOGE("PRAGMA journal_mode createResult is fail, rdb error: %{public}d", createResult);
     }
     return rdbStore;
 }
