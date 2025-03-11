@@ -19,6 +19,7 @@
 #include "system_ability_definition.h"
 
 #include "bundle_active_usage_database.h"
+#include "bundle_active_util.h"
 
 using namespace testing::ext;
 
@@ -217,5 +218,36 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CreateReco
     EXPECT_NE(database, nullptr);
 }
 
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_GetQuerySqlCommand_001
+ * @tc.desc: GetQuerySqlCommand
+ * @tc.type: FUNC
+ * @tc.require: issuesI9Q9ZJ
+ */
+ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetQuerySqlCommand_001,
+    Function | MediumTest | Level0)
+{
+    std::vector<std::string> queryCondition;
+    std::string queryPackageSql;
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    database->sortedTableArray_ = {{0}, {1}};
+    database->GetQuerySqlCommand(0, 1, 2, 0, 0, 1, 10, queryCondition, queryPackageSql);
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveUtil_001
+ * @tc.desc: CreateRecordTable
+ * @tc.type: FUNC
+ * @tc.require: issuesI9Q9ZJ
+ */
+ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUtil_001,
+    Function | MediumTest | Level0)
+{
+    int32_t result = BundleActiveUtil::StringToInt32("11");
+    EXPECT_EQ(result, 11);
+    int64_t resultInt64 = BundleActiveUtil::StringToInt64("11");
+    EXPECT_EQ(resultInt64, 11);
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

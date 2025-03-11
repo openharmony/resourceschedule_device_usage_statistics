@@ -31,6 +31,7 @@
 #include "bundle_active_report_handler.h"
 #include "bundle_active_log.h"
 #include "bundle_active_group_controller.h"
+#include "bundle_active_event_list.h"
 
 using namespace testing::ext;
 
@@ -775,6 +776,37 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupController_002, Function | MediumTes
 }
 
 /*
+ * @tc.name: BundleActiveProcessRmoveUserEventTest_001
+ * @tc.desc: ProcessRmoveUserEvent
+ * @tc.type: FUNC
+ * @tc.require: issuesIAF8RF
+*/
+HWTEST_F(PackageUsageTest, BundleActiveProcessRmoveUserEventTest_001, Function | MediumTest | Level0)
+{
+    BundleActiveReportHandlerObject tmpObject;
+    auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
+    auto bundleActiveReportHandler = std::make_shared<BundleActiveReportHandler>();
+    bundleActiveReportHandler->Init(bundleActiveCore_);
+    EXPECT_TRUE(bundleActiveReportHandler->isInited_);
+    bundleActiveReportHandler->ProcessRmoveUserEvent(*handlerObject);
+    bundleActiveReportHandler->ProcessUserSwitchEvent(*handlerObject);
+}
+
+/*
+ * @tc.name: BundleActiveEventListTest_001
+ * @tc.desc: BundleActiveEventList
+ * @tc.type: FUNC
+ * @tc.require: issuesIAF8RF
+*/
+HWTEST_F(PackageUsageTest, BundleActiveEventListTest_001, Function | MediumTest | Level0)
+{
+    BundleActiveEventList right;
+    auto combiner = std::make_shared<BundleActiveEventList>();
+    combiner->Merge(right);
+    EXPECT_TRUE(combiner->events_.size() == 0);
+}
+
+/*
  * @tc.name: BundleActiveReportHandlerTest_001
  * @tc.desc: ProcessEvent
  * @tc.type: FUNC
@@ -789,6 +821,7 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumT
     EXPECT_TRUE(bundleActiveReportHandler->isInited_);
     bundleActiveReportHandler->ProcessEvent(0, handlerObject);
     bundleActiveReportHandler->ProcessEvent(0, handlerObject);
+    bundleActiveReportHandler->ProcessEvent(0, nullptr);
 }
 
 /*
@@ -863,6 +896,7 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_004, Function | MediumT
     EXPECT_NE(service->currentStats_[0]->endTime_, timeNow);
     bundleActiveCore_->OnBundleInstalled(userId, bundleName, uid, appIndex);
     EXPECT_FALSE(bundleActiveCore_->isUninstalledApp(uid));
+    bundleActiveCore_->UnRegisterSubscriber();
     SUCCEED();
 }
 
