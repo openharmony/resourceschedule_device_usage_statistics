@@ -120,6 +120,20 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetS
 }
 
 /*
+ * @tc.name: DeviceUsageStatisticsServiceTest_GetNameAndIndexForUid_001
+ * @tc.desc: get service object
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetNameAndIndexForUid_001,
+    Function | MediumTest | Level0)
+{
+    int32_t uid = 10;
+    int32_t result = DelayedSingleton<BundleActiveService>::GetInstance()->GetNameAndIndexForUid(uid);
+    EXPECT_TRUE(result == -1);
+}
+
+/*
  * @tc.name: DeviceUsageStatisticsServiceTest_dump_001
  * @tc.desc: test dump
  * @tc.type: FUNC
@@ -941,6 +955,45 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_011,
 }
 
 /*
+ * @tc.name: BundleActiveGroupControllerTest_012
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: IssuesIA9M7I
+ */
+ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_012,
+    Function | MediumTest | Level0)
+{
+    bundleActiveCore_->bundleGroupController_->ShutDown(1, 10);
+    EXPECT_NE(bundleActiveCore_->bundleGroupController_->bundleUserHistory_, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_013
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: IssuesIA9M7I
+ */
+ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_013,
+    Function | MediumTest | Level0)
+{
+    bundleActiveCore_->bundleGroupController_->OnUserRemoved(10);
+    EXPECT_NE(bundleActiveCore_->bundleGroupController_->bundleUserHistory_, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveGroupControllerTest_014
+ * @tc.desc: test the interface
+ * @tc.type: FUNC
+ * @tc.require: IssuesIA9M7I
+ */
+ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_014,
+    Function | MediumTest | Level0)
+{
+    bundleActiveCore_->bundleGroupController_->OnUserSwitched(1, 10);
+    EXPECT_NE(bundleActiveCore_->bundleGroupController_->bundleUserHistory_, nullptr);
+}
+
+/*
  * @tc.name: BundleActiveUserHistoryTest_001
  * @tc.desc: test the interface
  * @tc.type: FUNC
@@ -1423,6 +1476,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
     userService->DeleteUninstalledBundleStats("test", 0, appIndex);
     appIndex = 0;
     userService->DeleteUninstalledBundleStats("test", 0, appIndex);
+    userService->OnUserRemoved();
+    userService->NotifyNewUpdate();
 }
 
 /*
