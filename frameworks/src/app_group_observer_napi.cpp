@@ -131,7 +131,6 @@ void UvQueueWorkOnAppGroupChanged(uv_work_t *work)
 */
 ErrCode AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
 {
-    BUNDLE_ACTIVE_LOGD("OnAppGroupChanged start");
     uv_loop_s *loop = nullptr;
     napi_get_uv_event_loop(bundleGroupCallbackInfo_.env, &loop);
     if (!loop) {
@@ -151,9 +150,11 @@ ErrCode AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroup
         return ERR_OK;
     }
     MessageParcel data;
-    if (!appGroupCallbackInfo.Marshalling(data)) {}
+    appGroupCallbackInfo.Marshalling(data);
     AppGroupCallbackInfo* callBackInfo = appGroupCallbackInfo.Unmarshalling(data);
     if (callBackInfo == nullptr) {
+        delete callbackReceiveDataWorker;
+        callbackReceiveDataWorker = nullptr;
         delete work;
         work = nullptr;
         return ERR_OK;
