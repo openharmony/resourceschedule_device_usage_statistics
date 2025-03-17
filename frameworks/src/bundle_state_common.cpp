@@ -17,12 +17,14 @@
 
 #include "bundle_active_log.h"
 #include "bundle_state_common.h"
+#include "bundle_state_condition.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
 const int ERR_MULTIPLE = 100;
 const int64_t YEAR_TYPE = 3;
 const int64_t MAX_TIME = 20000000000000;
+const int64_t INTERVAL_TIME = (30 * 24 * 60 * 60 * 1000LL); // 30天
 AsyncWorkData::AsyncWorkData(napi_env napiEnv)
 {
     env = napiEnv;
@@ -608,8 +610,13 @@ std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> Bu
     int64_t &beginTime, int64_t &endTime, int32_t &errCode)
 {
     std::vector<BundleActivePackageStats> packageStats;
-    errCode = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats, 0,
-        beginTime, endTime);
+    if (endTime - beginTime <= INTERVAL_TIME) {
+        errCode = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats,
+            BundleStateCondition::IntervalType::BY_DAILY, beginTime, endTime);
+    } else {
+        errCode = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats,
+            BundleStateCondition::IntervalType::BY_OPTIMIZED, beginTime, endTime);
+    }
     std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> mergedPackageStats =
         std::make_shared<std::map<std::string, std::vector<BundleActivePackageStats>>>();
     if (packageStats.empty()) {
