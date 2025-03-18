@@ -304,9 +304,10 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_006, Function | Me
 HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_007, Function | MediumTest | Level0)
 {
     BundleActiveUsageDatabase test;
+    std::vector<NativeRdb::ValuesBucket> formValueBuckets;
     std::shared_ptr<NativeRdb::RdbStore> rdbStore;
     BundleActiveFormRecord formRecord;
-    test.UpdateFormData(0, "test", "test", formRecord, rdbStore);
+    test.UpdateFormData(0, "test", "test", formRecord, rdbStore, formValueBuckets);
     std::string result = test.GetSystemEventName(0);
     EXPECT_EQ(result, "");
     test.JudgeQueryCondition(0, 0, 1);
