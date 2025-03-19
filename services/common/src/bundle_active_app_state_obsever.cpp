@@ -53,15 +53,9 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
         switch (abilityStateData.abilityState) {
             case static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND):
-                if (!abilityStateData.isFocused) {
-                    return;
-                }
                 tmpHandlerObject.event_.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
                 break;
             case static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND):
-                if (abilityStateData.isFocused) {
-                    return;
-                }
                 tmpHandlerObject.event_.eventId_ = BundleActiveEvent::ABILITY_BACKGROUND;
                 break;
             case static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED):
