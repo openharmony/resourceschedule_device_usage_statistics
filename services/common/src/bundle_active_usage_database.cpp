@@ -813,6 +813,15 @@ int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(uint32_t databaseTyp
     return BUNDLE_ACTIVE_SUCCESS;
 }
 
+void BundleActiveUsageDatabase::BatchInsert(std::shared_ptr<NativeRdb::RdbStore> rdbStore,
+    std::vector<NativeRdb::ValuesBucket>& rawContactValues, const std::string& tableName)
+{
+    int64_t outRowId = BUNDLE_ACTIVE_FAIL;
+    if (rawContactValues.size() != 0) {
+        rdbStore->BatchInsert(outRowId, tableName, rawContactValues);
+    }
+}
+
 void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userHistory)
 {
@@ -826,8 +835,7 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
     }
     CheckDatabaseFileAndTable();
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
-    int64_t outRowId = BUNDLE_ACTIVE_FAIL;
-    NativeRdb::ValuesBucket valuesBucket;
+    std::vector<NativeRdb::ValuesBucket> valuesBuckets;
     vector<string> queryCondition;
     int32_t updatedcount = 0;
     int32_t unupdatedcount = 0;
@@ -836,6 +844,7 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
             unupdatedcount++;
             continue;
         }
+        NativeRdb::ValuesBucket valuesBucket;
         queryCondition.push_back(to_string(userId));
         queryCondition.push_back(iter->second->bundleName_);
         queryCondition.push_back(to_string(iter->second->uid_));
@@ -851,16 +860,15 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
             valuesBucket.PutString(BUNDLE_ACTIVE_DB_BUNDLE_NAME, iter->second->bundleName_);
             valuesBucket.PutInt(BUNDLE_ACTIVE_DB_USER_ID, userId);
             valuesBucket.PutInt(BUNDLE_ACTIVE_DB_UID, iter->second->uid_);
-            rdbStore->Insert(outRowId, BUNDLE_HISTORY_LOG_TABLE, valuesBucket);
-            outRowId = BUNDLE_ACTIVE_FAIL;
+            valuesBuckets.push_back(valuesBucket);
         } else {
             changeRow = BUNDLE_ACTIVE_FAIL;
         }
-        valuesBucket.Clear();
         queryCondition.clear();
         iter->second->isChanged_ = false;
         updatedcount++;
     }
+    BatchInsert(rdbStore, valuesBuckets, BUNDLE_HISTORY_LOG_TABLE);
     BUNDLE_ACTIVE_LOGI("update %{public}d bundles, keep %{public}d bundles group", updatedcount, unupdatedcount);
 }
 
@@ -973,14 +981,14 @@ void BundleActiveUsageDatabase::FlushPackageInfo(uint32_t databaseType, const Bu
     }
     string tableName = PACKAGE_LOG_TABLE + to_string(stats.beginTime_);
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
-    int64_t outRowId = BUNDLE_ACTIVE_FAIL;
-    NativeRdb::ValuesBucket valuesBucket;
+    std::vector<NativeRdb::ValuesBucket> valuesBuckets;
     vector<string> queryCondition;
     for (auto iter = stats.bundleStats_.begin(); iter != stats.bundleStats_.end(); iter++) {
         if (iter->second == nullptr || (iter->second->totalInFrontTime_ == 0 &&
             iter->second->totalContiniousTaskUsedTime_ == 0)) {
             continue;
         }
+        NativeRdb::ValuesBucket valuesBucket;
         queryCondition.push_back(to_string(stats.userId_));
         queryCondition.push_back(iter->second->bundleName_);
         queryCondition.push_back(to_string(iter->second->uid_));
@@ -999,14 +1007,13 @@ void BundleActiveUsageDatabase::FlushPackageInfo(uint32_t databaseType, const Bu
             valuesBucket.PutString(BUNDLE_ACTIVE_DB_BUNDLE_NAME, iter->second->bundleName_);
             valuesBucket.PutInt(BUNDLE_ACTIVE_DB_USER_ID, stats.userId_);
             valuesBucket.PutInt(BUNDLE_ACTIVE_DB_UID, iter->second->uid_);
-            rdbStore->Insert(outRowId, tableName, valuesBucket);
-            outRowId = BUNDLE_ACTIVE_FAIL;
+            valuesBuckets.push_back(valuesBucket);
         } else {
             changeRow = BUNDLE_ACTIVE_FAIL;
         }
-        valuesBucket.Clear();
         queryCondition.clear();
     }
+    BatchInsert(rdbStore, valuesBuckets, tableName);
 }
 
 shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageData(int32_t databaseType,
@@ -1074,17 +1081,18 @@ void BundleActiveUsageDatabase::FlushEventInfo(uint32_t databaseType, BundleActi
     }
     int64_t eventTableTime = ParseStartTime(eventTableName_);
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
-    NativeRdb::ValuesBucket valuesBucket;
+    std::vector<NativeRdb::ValuesBucket> valuesBuckets;
     for (int32_t i = 0; i < stats.events_.Size(); i++) {
+        NativeRdb::ValuesBucket valuesBucket;
         valuesBucket.PutInt(BUNDLE_ACTIVE_DB_USER_ID, stats.userId_);
         valuesBucket.PutString(BUNDLE_ACTIVE_DB_BUNDLE_NAME, stats.events_.events_.at(i).bundleName_);
         valuesBucket.PutInt(BUNDLE_ACTIVE_DB_EVENT_ID, stats.events_.events_.at(i).eventId_);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_TIME_STAMP, stats.events_.events_.at(i).timeStamp_ - eventTableTime);
         valuesBucket.PutString(BUNDLE_ACTIVE_DB_ABILITY_ID, stats.events_.events_.at(i).abilityId_);
         valuesBucket.PutInt(BUNDLE_ACTIVE_DB_UID, stats.events_.events_.at(i).uid_);
-        rdbStore->Insert(outRowId, eventTableName_, valuesBucket);
-        valuesBucket.Clear();
+        valuesBuckets.push_back(valuesBucket);
     }
+    BatchInsert(rdbStore, valuesBuckets, eventTableName_);
 }
 
 string BundleActiveUsageDatabase::GetTableIndexSql(uint32_t databaseType, int64_t tableTime, bool createFlag,
@@ -1632,10 +1640,11 @@ void BundleActiveUsageDatabase::UpdateModuleData(const int32_t userId,
     CreateRecordTable(timeStamp);
     int64_t moduleTableTime = ParseStartTime(moduleRecordsTableName_);
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
-    int64_t outRowId = BUNDLE_ACTIVE_FAIL;
-    NativeRdb::ValuesBucket moduleValuesBucket;
+    std::vector<NativeRdb::ValuesBucket> moduleValuesBuckets;
+    std::vector<NativeRdb::ValuesBucket> formValueBuckets;
     vector<string> queryCondition;
     for (const auto& oneModuleRecord : moduleRecords) {
+        NativeRdb::ValuesBucket moduleValuesBucket;
         if (oneModuleRecord.second) {
             queryCondition.emplace_back(to_string(oneModuleRecord.second->userId_));
             queryCondition.emplace_back(oneModuleRecord.second->bundleName_);
@@ -1652,20 +1661,20 @@ void BundleActiveUsageDatabase::UpdateModuleData(const int32_t userId,
                 moduleValuesBucket.PutString(BUNDLE_ACTIVE_DB_BUNDLE_NAME, oneModuleRecord.second->bundleName_);
                 moduleValuesBucket.PutString(BUNDLE_ACTIVE_DB_MODULE_NAME, oneModuleRecord.second->moduleName_);
                 moduleValuesBucket.PutInt(BUNDLE_ACTIVE_DB_UID, oneModuleRecord.second->uid_);
-                rdbStore->Insert(outRowId, moduleRecordsTableName_, moduleValuesBucket);
-                outRowId = BUNDLE_ACTIVE_FAIL;
+                moduleValuesBuckets.push_back(moduleValuesBucket);
                 changeRow = BUNDLE_ACTIVE_FAIL;
             } else {
                 changeRow = BUNDLE_ACTIVE_FAIL;
             }
-            moduleValuesBucket.Clear();
             queryCondition.clear();
             for (const auto& oneFormRecord : oneModuleRecord.second->formRecords_) {
                 UpdateFormData(oneModuleRecord.second->userId_, oneModuleRecord.second->bundleName_,
-                    oneModuleRecord.second->moduleName_, oneFormRecord, rdbStore);
+                    oneModuleRecord.second->moduleName_, oneFormRecord, rdbStore, formValueBuckets);
             }
         }
     }
+    BatchInsert(rdbStore, moduleValuesBuckets, moduleRecordsTableName_);
+    BatchInsert(rdbStore, formValueBuckets, formRecordsTableName_);
 }
 
 void BundleActiveUsageDatabase::CreateRecordTable(const int64_t timeStamp)
@@ -1680,16 +1689,15 @@ void BundleActiveUsageDatabase::CreateRecordTable(const int64_t timeStamp)
 
 void BundleActiveUsageDatabase::UpdateFormData(const int32_t userId, const std::string bundleName,
     const string moduleName, const BundleActiveFormRecord& formRecord,
-    std::shared_ptr<NativeRdb::RdbStore> rdbStore)
+    std::shared_ptr<NativeRdb::RdbStore> rdbStore, std::vector<NativeRdb::ValuesBucket>& formValueBuckets)
 {
     if (rdbStore == nullptr) {
         return;
     }
-    int64_t formRecordsTableTime = ParseStartTime(formRecordsTableName_);
     NativeRdb::ValuesBucket formValueBucket;
+    int64_t formRecordsTableTime = ParseStartTime(formRecordsTableName_);
     vector<string> queryCondition;
     int32_t changeRow = BUNDLE_ACTIVE_FAIL;
-    int64_t outRowId = BUNDLE_ACTIVE_FAIL;
     queryCondition.emplace_back(to_string(userId));
     queryCondition.emplace_back(bundleName);
     queryCondition.emplace_back(moduleName);
@@ -1713,7 +1721,7 @@ void BundleActiveUsageDatabase::UpdateFormData(const int32_t userId, const std::
         formValueBucket.PutInt(BUNDLE_ACTIVE_DB_FORM_DIMENSION, formRecord.formDimension_);
         formValueBucket.PutInt(BUNDLE_ACTIVE_DB_FORM_ID, formRecord.formId_);
         formValueBucket.PutInt(BUNDLE_ACTIVE_DB_FORM_ID, formRecord.uid_);
-        rdbStore->Insert(outRowId, formRecordsTableName_, formValueBucket);
+        formValueBuckets.push_back(formValueBucket);
     }
 }
 

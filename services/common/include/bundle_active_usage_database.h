@@ -114,7 +114,10 @@ private:
     void CheckDatabaseFile(uint32_t databaseType);
     void UpdateFormData(const int32_t userId, const std::string bundleName,
         const std::string moduleName, const BundleActiveFormRecord& formRecord,
-        std::shared_ptr<NativeRdb::RdbStore> rdbStore);
+        std::shared_ptr<NativeRdb::RdbStore> rdbStore,
+        std::vector<NativeRdb::ValuesBucket>& formValueBuckets);
+    void BatchInsert(std::shared_ptr<NativeRdb::RdbStore> rdbStore,
+        std::vector<NativeRdb::ValuesBucket>& rawContactValues, const std::string& tableName);
     int32_t JudgeQueryCondition(const int64_t beginTime, const int64_t endTime, const int64_t eventTableTime);
     std::string GetSystemEventName(const int32_t userId);
     int32_t ExecuteRenameTableName(std::string tablePrefix, int64_t tableOldTime, int64_t tableNewTime,
