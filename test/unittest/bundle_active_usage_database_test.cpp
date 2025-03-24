@@ -230,9 +230,9 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CreateReco
     std::vector<std::string> queryCondition;
     std::string queryPackageSql;
     auto database = std::make_shared<BundleActiveUsageDatabase>();
-    database->sortedTableArray_ = {{0}, {1}};
+    database->sortedTableArray_ = {{0}, {1}, {2}};
     database->GetQuerySqlCommand(0, 1, 2, 0, 0, 1, 10, queryCondition, queryPackageSql);
-    EXPECT_NE(database, nullptr);
+    EXPECT_TRUE(!queryPackageSql.empty());
 }
 
 /*
