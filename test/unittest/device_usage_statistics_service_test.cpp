@@ -76,6 +76,7 @@ void DeviceUsageStatisticsServiceTest::SetUpTestCase(void)
 void DeviceUsageStatisticsServiceTest::TearDownTestCase(void)
 {
     bundleActiveCore_->bundleGroupHandler_->ffrtQueue_.reset();
+    DelayedSingleton<BundleActiveService>::DestroyInstance();
     int64_t sleepTime = 10;
     std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
 }
