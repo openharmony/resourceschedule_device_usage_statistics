@@ -36,6 +36,8 @@
 #include "bundle_active_usage_database.h"
 #include "bundle_active_bundle_mgr_helper.h"
 #include "bundle_active_account_helper.h"
+#include "hisysevent.h"
+#include "bundle_active_core.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -45,6 +47,8 @@ namespace {
     const int32_t MAX_FILES_EVERY_INTERVAL_TYPE[SORTED_TABLE_ARRAY_NUMBER] = {30, 30, 12, 10};
     const int32_t MAIN_APP_INDEX = 0;
     const int32_t FILE_VERSION_LINE_NUM = 50;
+    const int64_t MAX_END_TIME = 20000000000000;
+    static constexpr char RSS[] = "RSS";
 }
 BundleActiveUsageDatabase::BundleActiveUsageDatabase()
 {
@@ -1366,6 +1370,31 @@ void BundleActiveUsageDatabase::UpdateEventData(int32_t databaseType, BundleActi
 
 void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, BundleActivePeriodStats &stats)
 {
+    if (databaseType == 0) {
+        int32_t bundleStatsSize = 0;
+        vector<BundleActivePackageStats> bundleActivePackageStats =
+            QueryDatabaseUsageStats(databaseType, 0, MAX_END_TIME, stats.userId_, "");
+        for (int32_t i = 0; i < bundleActivePackageStats.size(); i++) {
+            std::map<std::string, std::shared_ptr<BundleActivePackageStats>>::iterator iter =
+                stats.bundleStats_.find(bundleActivePackageStats[i].bundleName_ + to_string(
+                    bundleActivePackageStats[i].uid_));
+            if (iter != stats.bundleStats_.end() &&
+                iter->second->lastTimeUsed_ == bundleActivePackageStats[i].lastTimeUsed_) {
+                    bundleStatsSize++;
+            }
+        }
+        std::shared_ptr<BundleActiveCore> bundleActiveCore = std::make_shared<BundleActiveCore>();
+        if (bundleActiveCore == nullptr) {
+            BUNDLE_ACTIVE_LOGE("UpdateBundleUsageData bundleActiveCore is nullptr");
+            return;
+        }
+        HiSysEventWrite(RSS,
+            "UPDATE_BUNDLE_USAGE_SCENE", HiviewDFX::HiSysEvent::EventType::STATISTIC,
+            "UPDATE_BUNDLE_USAGE_EVENT_SIZE", stats.events_.Size(),
+            "UPDATE_BUNDLE_USAGE_STATS_SIZE", stats.bundleStats_.size() - bundleStatsSize,
+            "UPDATE_BUNDLE_USAGE_USERID", stats.userId_,
+            "UPDATE_BUNDLE_USAGE_TIME", bundleActiveCore->GetSystemTimeMs());
+    }
     lock_guard<ffrt::mutex> lock(databaseMutex_);
     if (databaseType < 0 || databaseType >= EVENT_DATABASE_INDEX) {
         BUNDLE_ACTIVE_LOGE("databaseType is invalid : %{public}d", databaseType);
