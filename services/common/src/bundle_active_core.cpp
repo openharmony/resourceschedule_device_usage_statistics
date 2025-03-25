@@ -26,6 +26,7 @@
 #include "bundle_active_util.h"
 #include "ffrt_inner.h"
 #include "bundle_constants.h"
+#include "hisysevent.h"
 
 
 namespace OHOS {
@@ -34,6 +35,7 @@ namespace DeviceUsageStats {
 const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 #endif // OS_ACCOUNT_PART_ENABLED
 constexpr int32_t BUNDLE_UNINSTALL_DELAY_TIME = 5 * 1000 * 1000;
+static constexpr char RSS[] = "RSS";
 
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
 {
@@ -843,6 +845,14 @@ void BundleActiveCore::OnAppGroupChanged(const AppGroupCallbackInfo& callbackInf
     bundleGroupHandler_->PostTask([bundleActiveCore, callbackInfo, tokenInfo]() {
         bundleActiveCore->NotifOberserverGroupChanged(callbackInfo, tokenInfo);
     });
+    HiSysEventWrite(RSS,
+        "UPDATE_GROUP_SCENE", HiviewDFX::HiSysEvent::EventType::STATISTIC,
+        "UPDATE_GROUP_BUNDLENAME", callbackInfo.GetBundleName(),
+        "UPDATE_GROUP_USERID", callbackInfo.GetUserId(),
+        "UPDATE_GROUP_REASON", callbackInfo.GetChangeReason(),
+        "UPDATE_GROUP_TIME", GetSystemTimeMs(),
+        "UPDATE_GROUP_OLD_GROUP", callbackInfo.GetOldGroup(),
+        "UPDATE_GROUP_NEW_GROUP", callbackInfo.GetNewGroup());
 }
 
 void BundleActiveCore::NotifOberserverGroupChanged(const AppGroupCallbackInfo& callbackInfo,

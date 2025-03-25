@@ -47,7 +47,8 @@
         "time_service",
         "init",
         "jsoncpp",
-        "ffrt"
+        "ffrt",
+        "hisysevent"
       ],
       "third_party": []
     },
