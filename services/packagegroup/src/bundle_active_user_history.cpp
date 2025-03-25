@@ -89,7 +89,7 @@ int32_t BundleActiveUserHistory::GetLevelIndex(const string& bundleName, const i
     }
     int64_t screenDiff = GetScreenOnTimeStamp(bootBasedTimeStamp) - oneBundleHistory->lastScreenUsedTimeStamp_;
     int64_t bootFromDiff = GetBootBasedTimeStamp(bootBasedTimeStamp) - oneBundleHistory->lastBootFromUsedTimeStamp_;
-    BUNDLE_ACTIVE_LOGI("screendiff is %{public}lld, bootfromdiff is %{public}lld, bundle name is %{public}s,"
+    BUNDLE_ACTIVE_LOGD("screendiff is %{public}lld, bootfromdiff is %{public}lld, bundle name is %{public}s,"
         "userid is %{public}d",
         (long long)screenDiff, (long long)bootFromDiff, bundleName.c_str(), userId);
     for (int32_t i = 3; i >= 0; i--) {
@@ -223,8 +223,6 @@ int32_t BundleActiveUserHistory::SetAppGroup(const string& bundleName, const int
     const int64_t bootBasedTimeStamp, int32_t newGroup, uint32_t groupReason, const bool isFlush)
 {
     std::lock_guard<ffrt::mutex> lock(setGroupMutex_);
-    BUNDLE_ACTIVE_LOGI("set %{public}s to group %{public}d, reason is %{public}d, userId is %{public}d",
-        bundleName.c_str(), newGroup, groupReason, userId);
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userBundleHistory = GetUserHistory(userId, false);
     if (!userBundleHistory) {
         return ERR_GET_BUNDLE_USED_HISTORY_FAILED;
@@ -242,7 +240,8 @@ int32_t BundleActiveUserHistory::SetAppGroup(const string& bundleName, const int
     oneBundleHistory->currentGroup_ = newGroup;
     oneBundleHistory->reasonInGroup_ = groupReason;
     oneBundleHistory->isChanged_ = true;
-    BUNDLE_ACTIVE_LOGI("SetAppGroup set success");
+    BUNDLE_ACTIVE_LOGI("set %{public}s to group %{public}d, reason is %{public}d, userId is %{public}d",
+        bundleName.c_str(), newGroup, groupReason, userId);
     if (isFlush) {
         WriteBundleUsage(userId);
     }

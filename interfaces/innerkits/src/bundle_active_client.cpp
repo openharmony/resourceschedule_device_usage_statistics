@@ -63,7 +63,7 @@ ErrCode BundleActiveClient::GetBundleActiveProxy()
 
 ErrCode BundleActiveClient::ReportEvent(BundleActiveEvent event, const int32_t userId)
 {
-    BUNDLE_ACTIVE_LOGI("BundleActiveClient::ReportEvent called");
+    BUNDLE_ACTIVE_LOGD("BundleActiveClient::ReportEvent called");
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {

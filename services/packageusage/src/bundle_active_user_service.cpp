@@ -716,7 +716,7 @@ void BundleActiveUserService::ReportModuleEvent(const BundleActiveEvent& event)
 
 void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
 {
-    BUNDLE_ACTIVE_LOGI("ReportFormEvent called");
+    BUNDLE_ACTIVE_LOGD("ReportFormEvent called");
     auto moduleRecord = GetOrCreateModuleRecord(event);
     if (event.eventId_ == BundleActiveEvent::FORM_IS_CLICKED && moduleRecord) {
         moduleRecord->AddOrUpdateOneFormRecord(event.formName_, event.formDimension_, event.formId_,
@@ -733,7 +733,7 @@ void BundleActiveUserService::ReportFormEvent(const BundleActiveEvent& event)
 std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateModuleRecord(
     const BundleActiveEvent& event)
 {
-    BUNDLE_ACTIVE_LOGI("GetOrCreateModuleRecord called");
+    BUNDLE_ACTIVE_LOGD("GetOrCreateModuleRecord called");
     std::string combinedInfo = event.bundleName_ + " " + std::to_string(event.uid_) + " " + event.moduleName_;
     auto it = moduleRecords_.find(combinedInfo);
     if (it == moduleRecords_.end()) {

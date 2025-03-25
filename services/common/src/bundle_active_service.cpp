@@ -250,7 +250,7 @@ ErrCode BundleActiveService::ReportEvent(const BundleActiveEvent& event, int32_t
         AccessToken::NativeTokenInfo callingTokenInfo;
         AccessToken::AccessTokenKit::GetNativeTokenInfo(tokenId, callingTokenInfo);
         int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-        BUNDLE_ACTIVE_LOGI("calling process name is %{public}s, uid is %{public}d",
+        BUNDLE_ACTIVE_LOGD("calling process name is %{public}s, uid is %{public}d",
             callingTokenInfo.processName.c_str(), callingUid);
         if (callingTokenInfo.processName == PERMITTED_PROCESS_NAME) {
             BundleActiveReportHandlerObject tmpHandlerObject(userId, "");

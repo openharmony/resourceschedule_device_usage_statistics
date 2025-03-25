@@ -1314,7 +1314,7 @@ void BundleActiveUsageDatabase::RenewTableTime(int64_t timeDiffMillis)
         vector<int64_t> tableArray = sortedTableArray_.at(i);
         for (uint32_t j = 0; j < tableArray.size(); j++) {
             int64_t newTime = tableArray.at(j) + timeDiffMillis;
-            BUNDLE_ACTIVE_LOGI("new table time is %{public}lld", (long long)newTime);
+            BUNDLE_ACTIVE_LOGD("new table time is %{public}lld", (long long)newTime);
             if (newTime < 0) {
                 DeleteInvalidTable(i, tableArray.at(j));
             } else {
