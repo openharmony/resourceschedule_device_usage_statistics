@@ -401,7 +401,6 @@ ohos_shared_library("usagestatsutils") {
   cflags_cc = [
     "-fdata-sections",
     "-ffunction-sections",
-    "-fvisibility=hidden",
     "-fstack-protector-strong",
     "-Os",
   ]
