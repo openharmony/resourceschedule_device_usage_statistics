@@ -1084,7 +1084,6 @@ void BundleActiveUsageDatabase::FlushEventInfo(uint32_t databaseType, BundleActi
         CreateEventLogTable(databaseType, stats.beginTime_);
     }
     int64_t eventTableTime = ParseStartTime(eventTableName_);
-    int64_t outRowId = BUNDLE_ACTIVE_FAIL;
     std::vector<NativeRdb::ValuesBucket> valuesBuckets;
     for (int32_t i = 0; i < stats.events_.Size(); i++) {
         NativeRdb::ValuesBucket valuesBucket;
