@@ -25,9 +25,6 @@
 #include "bundle_active_package_stats.h"
 #include "bundle_active_module_record.h"
 #include "bundle_state_inner_errors.h"
-#include "event_handler.h"
-#include "event_runner.h"
-#include "ffrt.h"
 
 #include "system_ability_definition.h"
 #include "if_system_ability_manager.h"
@@ -234,7 +231,6 @@ private:
     ~BundleActiveClient() {}
     sptr<IBundleActiveService> bundleActiveProxy_;
     sptr<BundleActiveClientDeathRecipient> recipient_;
-    ffrt::recursive_mutex mutex_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

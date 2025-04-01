@@ -208,8 +208,6 @@ void BundleActiveGroupController::CheckIdleStatsOneTime()
     BundleActiveGroupHandlerObject tmpGroupHandlerObj;
     std::shared_ptr<BundleActiveGroupHandlerObject> handlerobjToPtr =
         std::make_shared<BundleActiveGroupHandlerObject>(tmpGroupHandlerObj);
-    auto handlerEvent = AppExecFwk::InnerEvent::Get(
-        BundleActiveGroupHandler::MSG_ONE_TIME_CHECK_BUNDLE_STATE);
     auto activeGroupHandler = activeGroupHandler_.lock();
     if (!activeGroupHandler_.expired()) {
         activeGroupHandler_.lock()->SendEvent(BundleActiveGroupHandler::MSG_ONE_TIME_CHECK_BUNDLE_STATE,
