@@ -87,7 +87,6 @@ namespace DeviceUsageStats {
     {
         g_data = data;
         g_size = size;
-        g_pos = 0;
         uint32_t code = GetData<uint32_t>();
         PowerMgr::PowerState state = static_cast<PowerMgr::PowerState>(code);
         auto bundleActiveCore = std::make_shared<BundleActiveCore>();
@@ -100,7 +99,6 @@ namespace DeviceUsageStats {
     {
         g_data = data;
         g_size = size;
-        g_pos = 0;
         bool result = false;
         int32_t userId = GetData<int32_t>();
         std::string inputBundleName = GetStringFromData(size);
@@ -142,7 +140,6 @@ namespace DeviceUsageStats {
     {
         g_data = data;
         g_size = size;
-        g_pos = 0;
         BundleActiveEventList right;
         int64_t resultData = GetData<int64_t>();
         auto combiner = std::make_shared<BundleActiveEventList>();
@@ -163,7 +160,6 @@ namespace DeviceUsageStats {
     {
         g_data = data;
         g_size = size;
-        g_pos = 0;
         auto combiner = std::make_shared<BundleActiveStatsCombiner<BundleActivePackageStats>>();
         auto stats = std::make_shared<BundleActivePeriodStats>();
         auto packageStat = std::make_shared<BundleActivePackageStats>();
@@ -177,6 +173,11 @@ namespace DeviceUsageStats {
         auto eventCombiner = std::make_shared<BundleActiveStatsCombiner<BundleActiveEvent>>();
         std::vector<BundleActiveEvent> activeEventResult;
         eventCombiner->combine(stats, activeEventResult, beginTime);
+        return true;
+    }
+    bool SetGPos()
+    {
+        g_pos = 0;
         return true;
     }
 } // namespace DeviceUsageStats
@@ -193,7 +194,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     if (size < OHOS::DeviceUsageStats::U32_AT_SIZE) {
         return 0;
     }
-
+    OHOS::DeviceUsageStats::SetGPos();
     OHOS::DeviceUsageStats::DoSomethingInterestingWithMyAPI(data, size);
     OHOS::DeviceUsageStats::BundleActiveClientFuzzTest(data, size);
     OHOS::DeviceUsageStats::BundleActiveEventListFuzzTest(data, size);
