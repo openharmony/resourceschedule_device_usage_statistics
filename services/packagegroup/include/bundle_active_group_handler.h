@@ -16,8 +16,6 @@
 #ifndef BUNDLE_ACTIVE_GROUP_HANDLER_H
 #define BUNDLE_ACTIVE_GROUP_HANDLER_H
 
-#include "event_handler.h"
-#include "event_runner.h"
 #include "ffrt.h"
 #include <map>
 #include <queue>

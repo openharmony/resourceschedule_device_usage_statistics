@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #include "unistd.h"
-
+#include "ffrt.h"
 #include "bundle_active_log.h"
 #include "bundle_active_client.h"
 
@@ -24,6 +24,7 @@ namespace {
     static const int32_t SLEEP_TIME_SECOND = 1;
     static const int32_t MS_TO_US = 1000;
 }
+ffrt::recursive_mutex mutex_;
 BundleActiveClient& BundleActiveClient::GetInstance()
 {
     static BundleActiveClient instance;
@@ -225,7 +226,7 @@ ErrCode BundleActiveClient::QueryNotificationEventStats(int64_t beginTime, int64
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const sptr<IAppGroupCallback> &observer)
 {
-    std::lock_guard<ffrt::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     if (observer) {
         observer_ = observer;
     }
@@ -233,7 +234,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::AddObserver(const spt
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::RemoveObserver()
 {
-    std::lock_guard<ffrt::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     if (observer_) {
         observer_ = nullptr;
     }
@@ -242,7 +243,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::RemoveObserver()
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wptr<IRemoteObject> &object)
 {
     (void)object;
-    std::lock_guard<ffrt::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     BundleActiveClient::GetInstance().bundleActiveProxy_ = nullptr;
     ffrt::submit([this]() {
         this->OnServiceDiedInner();
@@ -251,7 +252,7 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
 {
-    std::lock_guard<ffrt::recursive_mutex> lock(BundleActiveClient::GetInstance().mutex_);
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     while (BundleActiveClient::GetInstance().GetBundleActiveProxy() != ERR_OK) {
         sleep(SLEEP_TIME_SECOND);
     }

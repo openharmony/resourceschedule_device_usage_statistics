@@ -23,10 +23,8 @@
     "ram": "10240KB",
     "deps": {
       "components": [
-        "bundle_framework",
         "relational_store",
         "safwk",
-        "common_event_service",
         "config_policy",
         "os_account",
         "ipc",
@@ -39,9 +37,7 @@
         "cJSON",
         "c_utils",
         "napi",
-        "ability_base",
         "background_task_mgr",
-        "eventhandler",
         "power_manager",
         "selinux_adapter",
         "time_service",
