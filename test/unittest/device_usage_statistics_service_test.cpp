@@ -1450,10 +1450,11 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Upda
     std::string bundleName = "defaultBundleName";
     std::string moduleName = "defaultModuleName";
     std::string formName = "defaultFormName";
+    std::vector<NativeRdb::ValuesBucket> formValueBuckets;
     database->InitUsageGroupDatabase(0, true);
     BundleActiveFormRecord formRecord;
     auto rdbStore = database->GetBundleActiveRdbStore(0);
-    database->UpdateFormData(userId, bundleName, moduleName, formRecord, rdbStore);
+    database->UpdateFormData(userId, bundleName, moduleName, formRecord, rdbStore, formValueBuckets);
     EXPECT_NE(database, nullptr);
 }
 
