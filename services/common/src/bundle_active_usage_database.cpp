@@ -575,7 +575,11 @@ shared_ptr<NativeRdb::RdbStore> WEAK_FUNC BundleActiveUsageDatabase::GetBundleAc
         string currDatabaseFileConfig = BUNDLE_ACTIVE_DATABASE_DIR + databaseFiles_.at(databaseType);
         RdbStoreConfig config(currDatabaseFileConfig);
         BundleActiveOpenCallback rdbDataCallBack;
+#ifdef DEVICE_USAGES_STATISTICS_TEST_ENABLE
+        config.SetJournalMode(NativeRdb::JournalMode::MODE_WAL);
+#else
         config.SetJournalMode(NativeRdb::JournalMode::MODE_OFF);
+#endif // DEVICE_USAGES_STATISTICS_TEST_ENABLE
         config.SetSecurityLevel(NativeRdb::SecurityLevel::S1);
         rdbStore = RdbHelper::GetRdbStore(config, BUNDLE_ACTIVE_RDB_VERSION, rdbDataCallBack, errCode);
         if ((rdbStore == nullptr)) {
