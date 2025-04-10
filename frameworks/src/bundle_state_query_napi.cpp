@@ -135,7 +135,7 @@ napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info)
     ParseQueryModuleUsageRecords(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK) {
         if (params.callback != nullptr) {
-            napi_delete_reference(params.callback);
+            napi_delete_reference(env, params.callback);
         }
         return BundleStateCommon::NapiGetNull(env);
     }
@@ -229,7 +229,7 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
     ParseIsIdleStateParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         if (params.callback != nullptr) {
-            napi_delete_reference(params.callback);
+            napi_delete_reference(env, params.callback);
         }
         return BundleStateCommon::NapiGetNull(env);
     }
@@ -375,7 +375,7 @@ napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info)
     ParseQueryCurrentBundleEventsParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         if (params.callback != nullptr) {
-            napi_delete_reference(params.callback);
+            napi_delete_reference(env, params.callback);
         }
         return BundleStateCommon::NapiGetNull(env);
     }
@@ -434,7 +434,7 @@ napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
     ParseQueryCurrentBundleEventsParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         if (params.callback != nullptr) {
-            napi_delete_reference(params.callback);
+            napi_delete_reference(env, params.callback);
         }
         return BundleStateCommon::NapiGetNull(env);
     }
@@ -565,7 +565,7 @@ napi_value QueryBundleStatsInfoByInterval(napi_env env, napi_callback_info info)
     ParseQueryBundleStatsInfoByInterval(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         if (params.callback != nullptr) {
-            napi_delete_reference(params.callback);
+            napi_delete_reference(env, params.callback);
         }
         return BundleStateCommon::NapiGetNull(env);
     }
@@ -665,7 +665,7 @@ napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info)
     ParseQueryBundleStatsInfos(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         if (params.callback != nullptr) {
-            napi_delete_reference(params.callback);
+            napi_delete_reference(env, params.callback);
         }
         return BundleStateCommon::NapiGetNull(env);
     }
@@ -767,7 +767,7 @@ napi_value QueryAppStatsInfos(napi_env env, napi_callback_info info)
     ParseAppStatsInfos(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         if (params.callback != nullptr) {
-            napi_delete_reference(params.callback);
+            napi_delete_reference(env, params.callback);
         }
         return BundleStateCommon::NapiGetNull(env);
     }

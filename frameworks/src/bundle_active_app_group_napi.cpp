@@ -141,7 +141,7 @@ napi_value QueryAppGroup(napi_env env, napi_callback_info info)
     ParseQueryAppGroupParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         if (params.callback != nullptr) {
-            napi_delete_reference(params.callback);
+            napi_delete_reference(env, params.callback);
         }
         return BundleStateCommon::NapiGetNull(env);
     }
@@ -318,7 +318,7 @@ napi_value SetAppGroup(napi_env env, napi_callback_info info)
     ParseSetAppGroupParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         if (params.callback != nullptr) {
-            napi_delete_reference(params.callback);
+            napi_delete_reference(env, params.callback);
         }
         return BundleStateCommon::NapiGetNull(env);
     }
@@ -429,7 +429,7 @@ napi_value RegisterAppGroupCallBack(napi_env env, napi_callback_info info)
     ParseRegisterAppGroupCallBackParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
         if (params.callback != nullptr) {
-            napi_delete_reference(params.callback);
+            napi_delete_reference(env, params.callback);
         }
         return BundleStateCommon::NapiGetNull(env);
     }
