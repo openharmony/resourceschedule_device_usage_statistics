@@ -734,7 +734,8 @@ std::unique_ptr<AsyncCallbackInfoEventStats> BundleStateCommon::HandleEventStats
     return callbackPtr;
 }
 
-void BundleStateCommon::DeleteNapiReference(const napi_env &env, QueryAppGroupParamsInfo &params)
+template <typename T>
+void BundleStateCommon::DeleteNapiReference(const napi_env &env, T &params)
 {
     if (params.callback != nullptr) {
         napi_delete_reference(env, params.callback);
