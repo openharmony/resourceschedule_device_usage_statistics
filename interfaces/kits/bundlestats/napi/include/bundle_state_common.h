@@ -110,6 +110,7 @@ public:
 
     template <typename PARAMT, typename ASYNCT>
     static void AsyncInit(napi_env env, PARAMT &params, ASYNCT* &asyncCallbackInfo);
+    static void DeleteNapiReference(const napi_env &env, QueryAppGroupParamsInfo &params);
 };
 
 template <typename PARAMT, typename ASYNCT>

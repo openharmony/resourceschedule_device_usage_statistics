@@ -140,9 +140,7 @@ napi_value QueryAppGroup(napi_env env, napi_callback_info info)
     AsyncQueryAppGroupCallbackInfo *asyncCallbackInfo = nullptr;
     ParseQueryAppGroupParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
-        if (params.callback != nullptr) {
-            napi_delete_reference(env, params.callback);
-        }
+        BundleStateCommon::DeleteNapiReference(env, params);
         return BundleStateCommon::NapiGetNull(env);
     }
     std::unique_ptr<AsyncQueryAppGroupCallbackInfo> callbackPtr {asyncCallbackInfo};
@@ -317,9 +315,7 @@ napi_value SetAppGroup(napi_env env, napi_callback_info info)
     AsyncCallbackInfoSetAppGroup *asyncCallbackInfo = nullptr;
     ParseSetAppGroupParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
-        if (params.callback != nullptr) {
-            napi_delete_reference(env, params.callback);
-        }
+        BundleStateCommon::DeleteNapiReference(env, params);
         return BundleStateCommon::NapiGetNull(env);
     }
     std::unique_ptr<AsyncCallbackInfoSetAppGroup> callbackPtr {asyncCallbackInfo};
@@ -428,9 +424,7 @@ napi_value RegisterAppGroupCallBack(napi_env env, napi_callback_info info)
     AsyncRegisterCallbackInfo *asyncCallbackInfo = nullptr;
     ParseRegisterAppGroupCallBackParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
-        if (params.callback != nullptr) {
-            napi_delete_reference(env, params.callback);
-        }
+        BundleStateCommon::DeleteNapiReference(env, params);
         return BundleStateCommon::NapiGetNull(env);
     }
     std::unique_ptr<AsyncRegisterCallbackInfo> callbackPtr {asyncCallbackInfo};
