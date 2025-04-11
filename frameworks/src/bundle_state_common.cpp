@@ -734,11 +734,10 @@ std::unique_ptr<AsyncCallbackInfoEventStats> BundleStateCommon::HandleEventStats
     return callbackPtr;
 }
 
-template <typename T>
-void BundleStateCommon::DeleteNapiReference(const napi_env &env, T &params)
+void BundleStateCommon::DeleteNapiReference(napi_env &env, napi_ref ref)
 {
-    if (params.callback != nullptr) {
-        napi_delete_reference(env, params.callback);
+    if (ref != nullptr) {
+        napi_delete_reference(env, ref);
     }
 }
 }  // namespace DeviceUsageStats

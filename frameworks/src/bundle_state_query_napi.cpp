@@ -134,7 +134,7 @@ napi_value QueryModuleUsageRecords(napi_env env, napi_callback_info info)
     AsyncCallbackInfoModuleRecord *asyncCallbackInfo = nullptr;
     ParseQueryModuleUsageRecords(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK) {
-        BundleStateCommon::DeleteNapiReference(env, params);
+        BundleStateCommon::DeleteNapiReference(env, params.callback);
         return BundleStateCommon::NapiGetNull(env);
     }
     napi_value promise = nullptr;
@@ -226,7 +226,7 @@ napi_value IsIdleState(napi_env env, napi_callback_info info)
     AsyncCallbackInfoIsIdleState *asyncCallbackInfo = nullptr;
     ParseIsIdleStateParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
-        BundleStateCommon::DeleteNapiReference(env, params);
+        BundleStateCommon::DeleteNapiReference(env, params.callback);
         return BundleStateCommon::NapiGetNull(env);
     }
     napi_value promise = nullptr;
@@ -370,7 +370,7 @@ napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info)
     AsyncCallbackInfoStates *asyncCallbackInfo = nullptr;
     ParseQueryCurrentBundleEventsParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
-        BundleStateCommon::DeleteNapiReference(env, params);
+        BundleStateCommon::DeleteNapiReference(env, params.callback);
         return BundleStateCommon::NapiGetNull(env);
     }
     napi_value promise = nullptr;
@@ -427,7 +427,7 @@ napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
     AsyncCallbackInfoStates *asyncCallbackInfo = nullptr;
     ParseQueryCurrentBundleEventsParameters(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
-        BundleStateCommon::DeleteNapiReference(env, params);
+        BundleStateCommon::DeleteNapiReference(env, params.callback);
         return BundleStateCommon::NapiGetNull(env);
     }
     napi_value promise = nullptr;
@@ -556,7 +556,7 @@ napi_value QueryBundleStatsInfoByInterval(napi_env env, napi_callback_info info)
     AsyncCallbackInfoAppUsageByInterval *asyncCallbackInfo = nullptr;
     ParseQueryBundleStatsInfoByInterval(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
-        BundleStateCommon::DeleteNapiReference(env, params);
+        BundleStateCommon::DeleteNapiReference(env, params.callback);
         return BundleStateCommon::NapiGetNull(env);
     }
     napi_value promise = nullptr;
@@ -654,7 +654,7 @@ napi_value QueryBundleStatsInfos(napi_env env, napi_callback_info info)
     AsyncCallbackInfoAppUsage *asyncCallbackInfo = nullptr;
     ParseQueryBundleStatsInfos(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
-        BundleStateCommon::DeleteNapiReference(env, params);
+        BundleStateCommon::DeleteNapiReference(env, params.callback);
         return BundleStateCommon::NapiGetNull(env);
     }
     napi_value promise = nullptr;
@@ -754,7 +754,7 @@ napi_value QueryAppStatsInfos(napi_env env, napi_callback_info info)
     AsyncCallbackInfoAppStats *asyncCallbackInfo = nullptr;
     ParseAppStatsInfos(env, info, params, asyncCallbackInfo);
     if (params.errorCode != ERR_OK && !asyncCallbackInfo) {
-        BundleStateCommon::DeleteNapiReference(env, params);
+        BundleStateCommon::DeleteNapiReference(env, params.callback);
         return BundleStateCommon::NapiGetNull(env);
     }
     napi_value promise = nullptr;
