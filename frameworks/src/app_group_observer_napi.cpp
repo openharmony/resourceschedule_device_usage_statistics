@@ -116,8 +116,11 @@ void UvQueueWorkOnAppGroupChanged(uv_work_t *work)
 
     napi_value results[ARGS_ONE] = {nullptr};
     results[PARAM_FIRST] = result;
-    NAPI_CALL_RETURN_VOID(callbackReceiveDataWorkerData->env, napi_call_function(callbackReceiveDataWorkerData->env,
-        undefined, callback, ARGS_ONE, &results[PARAM_FIRST], &resultout));
+    napi_status status = napi_call_function(callbackReceiveDataWorkerData->env,
+        undefined, callback, ARGS_ONE, &results[PARAM_FIRST], &resultout);
+    if (status != napi_ok) {
+        GET_AND_THROW_LAST_ERROR(callbackReceiveDataWorkerData->env);
+    }
 
     napi_close_handle_scope(callbackReceiveDataWorkerData->env, scope);
     delete callbackReceiveDataWorkerData;

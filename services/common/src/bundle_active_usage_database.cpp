@@ -424,6 +424,10 @@ int64_t BundleActiveUsageDatabase::ParseStartTime(const string &tableName)
         return invalidStartTime;
     }
     string tableTime = tableName;
+    if (tableTime.length() > BUNDLE_ACTIVE_DB_NAME_MAX_LENGTH) {
+        int64_t invalidStartTime(BUNDLE_ACTIVE_FAIL);
+        return invalidStartTime;
+    }
     for (uint32_t i = 0; i < tableTime.length(); i++) {
         if (tableTime[i] >= '0' && tableTime[i] <= '9') {
             tableTime = tableTime.substr(i);
@@ -1377,7 +1381,7 @@ void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, Bund
         int32_t bundleStatsSize = 0;
         vector<BundleActivePackageStats> bundleActivePackageStats =
             QueryDatabaseUsageStats(databaseType, 0, MAX_END_TIME, stats.userId_, "");
-        for (int32_t i = 0; i < bundleActivePackageStats.size(); i++) {
+        for (uint32_t i = 0; i < bundleActivePackageStats.size(); i++) {
             std::map<std::string, std::shared_ptr<BundleActivePackageStats>>::iterator iter =
                 stats.bundleStats_.find(bundleActivePackageStats[i].bundleName_ + to_string(
                     bundleActivePackageStats[i].uid_));
