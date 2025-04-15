@@ -733,6 +733,13 @@ std::unique_ptr<AsyncCallbackInfoEventStats> BundleStateCommon::HandleEventStats
         (long long)callbackPtr->beginTime, (long long)callbackPtr->endTime);
     return callbackPtr;
 }
+
+void BundleStateCommon::DeleteNapiReference(napi_env &env, napi_ref ref)
+{
+    if (ref != nullptr) {
+        napi_delete_reference(env, ref);
+    }
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 

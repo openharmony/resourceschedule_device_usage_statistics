@@ -420,6 +420,10 @@ int64_t BundleActiveUsageDatabase::ParseStartTime(const string &tableName)
         return invalidStartTime;
     }
     string tableTime = tableName;
+    if (tableTime.length() > BUNDLE_ACTIVE_DB_NAME_MAX_LENGTH) {
+        int64_t invalidStartTime(BUNDLE_ACTIVE_FAIL);
+        return invalidStartTime;
+    }
     for (uint32_t i = 0; i < tableTime.length(); i++) {
         if (tableTime[i] >= '0' && tableTime[i] <= '9') {
             tableTime = tableTime.substr(i);
@@ -1082,7 +1086,7 @@ void BundleActiveUsageDatabase::FlushEventInfo(uint32_t databaseType, BundleActi
     int64_t eventTableTime = ParseStartTime(eventTableName_);
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
     std::vector<NativeRdb::ValuesBucket> valuesBuckets;
-    for (int32_t i = 0; i < stats.events_.Size(); i++) {
+    for (uint32_t i = 0; i < stats.events_.Size(); i++) {
         NativeRdb::ValuesBucket valuesBucket;
         valuesBucket.PutInt(BUNDLE_ACTIVE_DB_USER_ID, stats.userId_);
         valuesBucket.PutString(BUNDLE_ACTIVE_DB_BUNDLE_NAME, stats.events_.events_.at(i).bundleName_);
