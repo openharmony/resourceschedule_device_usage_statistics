@@ -459,7 +459,7 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
         ret = bundleActiveCore_->QueryBundleStatsInfos(tempPackageStats, userId, convertedIntervalType,
             beginTime, endTime, bundleName);
     }
-    packageStats = MergePackageStats(tempPackageStats);
+    bundleActivePackageStats = MergePackageStats(tempPackageStats);
     return ret;
 }
 
