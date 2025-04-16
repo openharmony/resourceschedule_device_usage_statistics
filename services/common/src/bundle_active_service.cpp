@@ -353,6 +353,7 @@ ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleAc
     if (ret != ERR_OK) {
         return ret;
     }
+    std::vector<BundleActivePackageStats> tempPackageStats;
     int32_t convertedIntervalType = ConvertIntervalType(intervalType);
     ret = bundleActiveCore_->QueryBundleStatsInfos(
         tempPackageStats, userId, convertedIntervalType, beginTime, endTime, "");
@@ -866,12 +867,11 @@ std::vector<BundleActivePackageStats> BundleActiveService::MergePackageStats(
         return packageStats;
     }
     std::vector<BundleActivePackageStats> tempPackageStats;
-    std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> mergedPackageStats =
-        std::make_shared<std::map<std::string, std::vector<BundleActivePackageStats>>>();
+    std::shared_ptr<std::map<std::string, BundleActivePackageStats>> mergedPackageStats =
+        std::make_shared<std::map<std::string, BundleActivePackageStats>>();
     for (auto packageStat : packageStats) {
         std::string mergedPackageStatsKey = packageStat.bundleName_ + std::to_string(packageStat.uid_);
-        std::map<std::string, BundleActivePackageStats>::iterator iter =
-            mergedPackageStats->find(mergedPackageStatsKey);
+        auto iter = mergedPackageStats->find(mergedPackageStatsKey);
         if (iter != mergedPackageStats->end()) {
             MergeSamePackageStats(iter->second, packageStat);
         } else {
