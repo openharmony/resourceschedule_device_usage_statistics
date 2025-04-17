@@ -117,6 +117,7 @@ BundleActiveModuleRecord *BundleActiveModuleRecord::Unmarshalling(Parcel &parcel
     uint32_t size = parcel.ReadUint32();
     result->uid_ = parcel.ReadInt32();
     if (size > MAX_FORM_NUM) {
+        delete result;
         return nullptr;
     }
 
