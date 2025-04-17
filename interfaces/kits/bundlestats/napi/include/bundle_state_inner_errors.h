@@ -111,14 +111,15 @@ const inline std::map<int32_t, std::string> saErrCodeMsgMap = {
     {ERR_PERMISSION_DENIED, "Permission denied."},
     {ERR_NOT_SYSTEM_APP, "Not system app."},
     {ERR_MEMORY_OPERATION_FAILED, "Memory operation failed. create object failed."},
-    {ERR_PARCEL_WRITE_FALIED, "Parcel operation failed. Failed to write the parcel."},
+    {ERR_PARCEL_WRITE_FALIED, "Parcel operation failed. Failed to write data into parcel."
+        "Possible reasons: 1. Invalid parameters; 2. Failed to apply for memory."},
     {ERR_GET_SYSTEM_ABILITY_MANAGER_FAILED, "System service operation failed. Failed to get system ability manager."},
     {ERR_GET_SYSTEM_ABILITY_FAILED, "System service operation failed. Failed to get system ability manager."},
     {ERR_CHECK_SYSTEM_ABILITY_FAILED, "System service operation failed. Failed to get system ability."},
     {ERR_SYSTEM_SERVICES_NOT_READY, "System service operation failed. The service is not ready."},
     {ERR_REMOTE_OBJECT_IF_CAST_FAILED, "System service operation failed. The remote object if cast failed."},
     {ERR_SYSTEM_ABILITY_SUPPORT_FAILED, "System service operation failed. System ability support failed."},
-    {ERR_IPC_COMMUNICATION_FAILED, "IPC failed. Failed to access the system service."},
+    {ERR_IPC_COMMUNICATION_FAILED, "IPC failed. Failed to access the device usage service."},
     {ERR_APPLICATION_IS_NOT_INSTALLED, "The application is not installed. Failed to operation the application."},
     {ERR_FIND_APP_USAGE_RECORDS_FAILED, "Failed to get the application information. Cannot find app usage records."},
     {ERR_NO_RECORDS_INFO_BY_INTERVAL, "Failed to get the application information."
