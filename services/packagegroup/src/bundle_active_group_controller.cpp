@@ -26,6 +26,7 @@ namespace OHOS {
 namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
     const int32_t MAIN_APP_INDEX = 0;
+    const int32_t MSG_KEY_HIGH_BIT = 32;
 BundleActiveGroupHandlerObject::BundleActiveGroupHandlerObject()
 {
         bundleName_ = "";
@@ -79,7 +80,6 @@ void BundleActiveGroupController::OnUserSwitched(const int32_t userId, const int
     CheckEachBundleState(currentUsedUser);
     bundleUserHistory_->WriteBundleUsage(currentUsedUser);
     std::lock_guard<ffrt::mutex> lock(mutex_);
-    auto activeGroupHandler = activeGroupHandler_.lock();
     if (!activeGroupHandler_.expired()) {
         activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
         activeGroupHandler_.lock()->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE);
