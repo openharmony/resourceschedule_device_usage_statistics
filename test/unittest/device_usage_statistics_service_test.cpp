@@ -1587,5 +1587,32 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Conf
     EXPECT_EQ(result, false);
 }
 
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_MergePackageStats_001
+ * @tc.desc: MergePackageStats
+ * @tc.type: FUNC
+ * @tc.require: IC0GWV
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_MergePackageStats_001,
+    Function | MediumTest | Level0)
+{
+    std::vector<BundleActivePackageStats> bundleActivePackageStatsVector;
+    BundleActivePackageStats bundleActivePackageStats;
+    bundleActivePackageStats.bundleName_ = "test";
+    bundleActivePackageStats.uid_ = 1;
+    bundleActivePackageStatsVector.push_back(bundleActivePackageStats);
+    BundleActivePackageStats bundleActivePackageStats2;
+    bundleActivePackageStats2.bundleName_ = "test";
+    bundleActivePackageStats2.uid_ = 1;
+    bundleActivePackageStatsVector.push_back(bundleActivePackageStats2);
+    BundleActivePackageStats bundleActivePackageStats3;
+    bundleActivePackageStats3.bundleName_ = "test";
+    bundleActivePackageStats3.uid_ = 2;
+    bundleActivePackageStatsVector.push_back(bundleActivePackageStats3);
+    auto bundleActiveService = std::make_shared<BundleActiveService>();
+    auto MergeResult = bundleActiveService->MergePackageStats(bundleActivePackageStatsVector);
+    EXPECT_EQ(MergeResult.size(), 2);
+}
+
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
