@@ -85,14 +85,14 @@ public:
     /**
      * @brief QueryBundleStatsInfoByInterval, query all bundle usage statistics in specific time span for calling user.
      *
-     * @param PackageStats .
+     * @param packageStats .
      * @param intervalType .
      * @param beginTime .
      * @param endTime .
      * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
      * @return errCode.
      */
-    ErrCode QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
+    ErrCode QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& packageStats,
         const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId) override;
 
     /**
@@ -254,6 +254,9 @@ private:
     int32_t DumpEvents(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     int32_t DumpPackageUsage(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     int32_t DumpModuleUsage(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+    std::vector<BundleActivePackageStats> MergePackageStats(
+        const std::vector<BundleActivePackageStats>& packageStats);
+    void MergeSamePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
