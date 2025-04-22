@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024  Huawei Device Co., Ltd.
+ * Copyright (c) 2022  Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,9 +19,9 @@
 #include "system_ability_definition.h"
 
 #include "bundle_active_power_state_callback_service.h"
-#include "bundle_active_power_state_callback_service.h"
 #include "bundle_active_service_stub.h"
 #include "bundle_active_core.h"
+
 #include "bundle_active_continuous_task_observer.h"
 #include "bundle_active_bundle_mgr_helper.h"
 #include "bundle_active_app_state_observer.h"

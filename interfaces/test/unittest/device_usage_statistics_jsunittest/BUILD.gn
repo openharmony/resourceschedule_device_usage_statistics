@@ -12,8 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
-module_output_path =
-    "device_usage_statistics/device_usage_statistics/interfaces"
+module_output_path = "device_usage_statistics/interfaces"
 
 ohos_js_unittest("DeviceUsageStatisticsJsTest") {
   module_out_path = module_output_path

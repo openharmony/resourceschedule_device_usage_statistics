@@ -60,7 +60,6 @@ ohos_fuzztest("AppgroupcallbackstubFuzzTest") {
     "access_token:libtokenid_sdk",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
-    "cJSON:cjson",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "eventhandler:libeventhandler",
@@ -71,7 +70,6 @@ ohos_fuzztest("AppgroupcallbackstubFuzzTest") {
     "relational_store:native_rdb",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "selinux_adapter:librestorecon",
     "time_service:time_client",
   ]
 
