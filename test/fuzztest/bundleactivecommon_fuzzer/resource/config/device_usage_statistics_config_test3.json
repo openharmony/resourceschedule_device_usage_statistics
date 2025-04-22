@@ -1,0 +1,6 @@
+{
+    "application_use_periodically": {
+        "MinUseTimes": 1,
+        "MinUseDays": 3
+    }
+}

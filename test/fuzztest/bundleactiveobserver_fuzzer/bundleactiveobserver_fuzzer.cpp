@@ -55,6 +55,8 @@ namespace DeviceUsageStats {
         DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(result, inputBundlName, userId);
         DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleUsePeriod(result, inputBundlName, userId);
         DelayedSingleton<BundleActiveConfigReader>::GetInstance()->GetApplicationUsePeriodicallyConfig();
+        DelayedSingleton<BundleActiveConfigReader>::GetInstance()->LoadApplicationUsePeriodically(
+            inputBundlName.c_str());
         return true;
     }
 
