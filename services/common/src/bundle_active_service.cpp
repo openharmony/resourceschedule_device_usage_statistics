@@ -335,7 +335,7 @@ ErrCode BundleActiveService::IsBundleUsePeriod(bool& IsUsePeriod, const std::str
     return ERR_OK;
 }
 
-ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
+ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& packageStats,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
     BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfoByInterval stats called, intervaltype is %{public}d", intervalType);
@@ -350,14 +350,17 @@ ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleAc
     }
     BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos user id is %{public}d", userId);
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
-    if (ret == ERR_OK) {
-        int32_t convertedIntervalType = ConvertIntervalType(intervalType);
-        ret = bundleActiveCore_->QueryBundleStatsInfos(
-            PackageStats, userId, convertedIntervalType, beginTime, endTime, "");
-        for (auto& packageStat : PackageStats) {
-            packageStat.appIndex_ = GetNameAndIndexForUid(packageStat.uid_);
-        }
+    if (ret != ERR_OK) {
+        return ret;
     }
+    std::vector<BundleActivePackageStats> tempPackageStats;
+    int32_t convertedIntervalType = ConvertIntervalType(intervalType);
+    ret = bundleActiveCore_->QueryBundleStatsInfos(
+        tempPackageStats, userId, convertedIntervalType, beginTime, endTime, "");
+    for (auto& packageStat : tempPackageStats) {
+        packageStat.appIndex_ = GetNameAndIndexForUid(packageStat.uid_);
+    }
+    packageStats = MergePackageStats(tempPackageStats);
     return ret;
 }
 
@@ -443,17 +446,20 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
     // get userid
     int32_t userId = -1;
     ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
-    if (ret == ERR_OK && userId != -1) {
-        BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos userid is %{public}d", userId);
-        std::string bundleName = "";
-        BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
-        ErrCode isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId);
-        if (!bundleName.empty() && isSystemAppAndHasPermission == ERR_OK) {
-            int32_t convertedIntervalType = ConvertIntervalType(intervalType);
-            ret = bundleActiveCore_->QueryBundleStatsInfos(bundleActivePackageStats, userId, convertedIntervalType,
-                beginTime, endTime, bundleName);
-        }
+    if (ret != ERR_OK || userId == -1) {
+        return ret;
     }
+    std::vector<BundleActivePackageStats> tempPackageStats;
+    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos userid is %{public}d", userId);
+    std::string bundleName = "";
+    BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
+    ErrCode isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId);
+    if (!bundleName.empty() && isSystemAppAndHasPermission == ERR_OK) {
+        int32_t convertedIntervalType = ConvertIntervalType(intervalType);
+        ret = bundleActiveCore_->QueryBundleStatsInfos(tempPackageStats, userId, convertedIntervalType,
+            beginTime, endTime, bundleName);
+    }
+    bundleActivePackageStats = MergePackageStats(tempPackageStats);
     return ret;
 }
 
@@ -799,7 +805,7 @@ int32_t BundleActiveService::DumpPackageUsage(const std::vector<std::string> &du
     std::vector<std::string> &dumpInfo)
 {
     int32_t ret = -1;
-    std::vector<BundleActivePackageStats> packageUsageResult;
+    std::vector<BundleActivePackageStats> tempPackageUsage;
     if (static_cast<int32_t>(dumpOption.size()) != PACKAGE_USAGE_PARAM) {
         return ret;
     }
@@ -808,7 +814,8 @@ int32_t BundleActiveService::DumpPackageUsage(const std::vector<std::string> &du
     int64_t endTime = BundleActiveUtil::StringToInt64(dumpOption[4]);
     int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[5]);
     bundleActiveCore_->QueryBundleStatsInfos(
-        packageUsageResult, userId, intervalType, beginTime, endTime, "");
+        tempPackageUsage, userId, intervalType, beginTime, endTime, "");
+    auto packageUsageResult = MergePackageStats(tempPackageUsage);
     for (auto& onePackageRecord : packageUsageResult) {
         dumpInfo.emplace_back(onePackageRecord.ToString());
     }
@@ -851,6 +858,45 @@ void BundleActiveService::DumpUsage(std::string &result)
         "      PackageUsage [intervalType] [beginTime] [endTime] [userId] get package usage for one user\n"
         "      ModuleUsage [maxNum] [userId]                              get module usage for one user\n";
     result.append(dumpHelpMsg);
+}
+
+std::vector<BundleActivePackageStats> BundleActiveService::MergePackageStats(
+    const std::vector<BundleActivePackageStats>& packageStats)
+{
+    if (packageStats.empty()) {
+        return packageStats;
+    }
+    std::vector<BundleActivePackageStats> tempPackageStats;
+    std::shared_ptr<std::map<std::string, BundleActivePackageStats>> mergedPackageStats =
+        std::make_shared<std::map<std::string, BundleActivePackageStats>>();
+    for (auto packageStat : packageStats) {
+        std::string mergedPackageStatsKey = packageStat.bundleName_ + std::to_string(packageStat.uid_);
+        auto iter = mergedPackageStats->find(mergedPackageStatsKey);
+        if (iter != mergedPackageStats->end()) {
+            MergeSamePackageStats(iter->second, packageStat);
+        } else {
+            mergedPackageStats->
+                insert(std::pair<std::string, BundleActivePackageStats>(mergedPackageStatsKey, packageStat));
+        }
+    }
+    for (auto pair : *mergedPackageStats) {
+        tempPackageStats.push_back(pair.second);
+    }
+    return tempPackageStats;
+}
+
+void BundleActiveService::MergeSamePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right)
+{
+    if (left.bundleName_ != right.bundleName_) {
+        BUNDLE_ACTIVE_LOGE("Merge package stats failed, existing packageName : %{public}s,"
+            " new packageName : %{public}s,", left.bundleName_.c_str(), right.bundleName_.c_str());
+        return;
+    }
+    left.lastTimeUsed_ = std::max(left.lastTimeUsed_, right.lastTimeUsed_);
+    left.lastContiniousTaskUsed_ = std::max(left.lastContiniousTaskUsed_, right.lastContiniousTaskUsed_);
+    left.totalInFrontTime_ += right.totalInFrontTime_;
+    left.totalContiniousTaskUsedTime_ += right.totalContiniousTaskUsedTime_;
+    left.bundleStartedCount_ += right.bundleStartedCount_;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
