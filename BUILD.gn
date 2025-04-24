@@ -439,6 +439,7 @@ group("test_all") {
     deps = [
       "${usage_statistics_path}/interfaces/test/unittest/device_usage_statistics_jsunittest:js_unittest",
       "${usage_statistics_path}/test/fuzztest/appgroupcallbackstub_fuzzer:fuzztest",
+      "${usage_statistics_path}/test/fuzztest/bundleactivecommon_fuzzer:fuzztest",
       "${usage_statistics_path}/test/fuzztest/bundleactiveobserver_fuzzer:fuzztest",
       "${usage_statistics_path}/test/fuzztest/bundleactiveonremoterequest_fuzzer:fuzztest",
       "${usage_statistics_path}/test/fuzztest/bundleactivepowerstatecallbackproxy_fuzzer:fuzztest",

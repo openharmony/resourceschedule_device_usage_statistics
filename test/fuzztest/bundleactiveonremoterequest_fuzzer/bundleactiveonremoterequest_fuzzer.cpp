@@ -25,7 +25,7 @@
 namespace OHOS {
 namespace DeviceUsageStats {
     constexpr uint32_t U32_AT_SIZE = 4;
-    constexpr uint32_t MAX_CODE = 14; // current max code is 14
+    constexpr uint32_t MAX_CODE = 20; // current max code is 20
     constexpr uint8_t TWENTYFOUR = 24;
     constexpr uint8_t SIXTEEN = 16;
     constexpr uint8_t EIGHT = 8;

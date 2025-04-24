@@ -1,0 +1,7 @@
+{
+    "application_use_periodically": {
+        "MinUseTimes": 1,
+        "MAX_USE_TIMES": 10,
+        "MinUseDays": 3
+    }
+}
