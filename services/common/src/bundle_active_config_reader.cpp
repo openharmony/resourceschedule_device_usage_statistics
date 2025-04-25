@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,7 @@
 #include "bundle_active_config_reader.h"
 #include "config_policy_utils.h"
 #include "bundle_active_log.h"
-#include <fstream>
-#include <iostream>
+#include "file_ex.h"
 
 using namespace std;
 namespace OHOS {
@@ -89,29 +88,21 @@ void BundleActiveConfigReader::LoadApplicationUsePeriodically(const char *filePa
 
 bool BundleActiveConfigReader::GetJsonFromFile(const char *filePath, Json::Value &root)
 {
-    ifstream fin;
     std::string realPath;
     if (!BundleActiveConfigReader::ConvertFullPath(filePath, realPath)) {
         BUNDLE_ACTIVE_LOGE("Get real path failed %{private}s", filePath);
         return false;
     }
     BUNDLE_ACTIVE_LOGD("Read from %{private}s", realPath.c_str());
-    fin.open(realPath, ios::in);
-    if (!fin.is_open()) {
-        BUNDLE_ACTIVE_LOGE("cannot open file %{private}s", realPath.c_str());
+    std::string data;
+    LoadStringFromFile(realPath.c_str(), data);
+    if (data.empty()) {
         return false;
     }
-    char buffer[MAX_BUFFER];
-    ostringstream os;
-    while (fin.getline(buffer, MAX_BUFFER)) {
-        os << buffer;
-    }
-    string data = os.str();
     JSONCPP_STRING errs;
     Json::CharReaderBuilder readerBuilder;
     const unique_ptr<Json::CharReader> jsonReader(readerBuilder.newCharReader());
     bool res = jsonReader->parse(data.c_str(), data.c_str() + data.length(), &root, &errs);
-    fin.close();
     if (!res || !errs.empty()) {
         BUNDLE_ACTIVE_LOGE("parse %{private}s json error", realPath.c_str());
         return false;
@@ -139,4 +130,3 @@ AppUsePeriodicallyConfig BundleActiveConfigReader::GetApplicationUsePeriodically
 
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-
