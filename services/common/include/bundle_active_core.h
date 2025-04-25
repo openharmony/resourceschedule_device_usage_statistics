@@ -249,6 +249,7 @@ public:
     bool isUninstalledApp(const int32_t uid);
     void OnBundleInstalled(const int32_t userId, const std::string& bundleName, const int32_t uid,
         const int32_t appIndex);
+    void DeInit();
 
 private:
     void NotifOberserverGroupChanged(const AppGroupCallbackInfo& callbackInfo, AccessToken::HapTokenInfo tokenInfo);

@@ -76,6 +76,16 @@ BundleActiveCore::~BundleActiveCore()
 {
 }
 
+void BundleActiveCore::DeInit()
+{
+    if (bundleGroupHandler_ != nullptr) {
+        bundleGroupHandler_->DeInit();
+    }
+    if (!handler_.expired()) {
+        handler_.lock()->DeInit();
+    }
+}
+
 void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &data)
 {
     std::lock_guard<ffrt::mutex> lock(mutex_);
