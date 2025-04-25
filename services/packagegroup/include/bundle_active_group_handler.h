@@ -56,6 +56,7 @@ public:
     void PostSyncTask(const std::function<void()>& fuc);
     void PostTask(const std::function<void()>& fuc);
     void Init(const std::shared_ptr<BundleActiveGroupController>& bundleActiveController);
+    void DeInit();
     static const int32_t MSG_CHECK_DEFAULT_BUNDLE_STATE;
     static const int32_t MSG_ONE_TIME_CHECK_BUNDLE_STATE;
     static const int32_t MSG_CHECK_IDLE_STATE;

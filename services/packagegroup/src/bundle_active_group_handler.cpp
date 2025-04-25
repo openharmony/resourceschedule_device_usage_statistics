@@ -48,6 +48,23 @@ BundleActiveGroupHandler::BundleActiveGroupHandler(const bool debug)
     }
 }
 
+void BundleActiveGroupHandler::DeInit()
+{
+    isInited_ = false;
+    for (auto& iter : taskHandlerMap_) {
+        auto& queue = iter.second;
+        while (!queue.empty()) {
+            ffrtQueue_->cancel(queue.front());
+            queue.pop();
+        }
+    }
+    taskHandlerMap_.clear();
+    for (const auto& iter: checkBundleTaskMap_) {
+        ffrtQueue_->cancel(iter.second);
+    }
+    checkBundleTaskMap_.clear();
+}
+
 void BundleActiveGroupHandler::Init(const std::shared_ptr<BundleActiveGroupController>& bundleActiveController)
 {
     BUNDLE_ACTIVE_LOGI("Init called");
@@ -182,6 +199,9 @@ void BundleActiveGroupHandler::PostTask(const std::function<void()>& fuc)
 void BundleActiveGroupHandler::ProcessEvent(const int32_t& eventId,
     const std::shared_ptr<BundleActiveGroupHandlerObject>& handlerobj)
 {
+    if (!isInited_) {
+        return;
+    }
     switch (eventId) {
         case MSG_CHECK_DEFAULT_BUNDLE_STATE:
         case MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE:

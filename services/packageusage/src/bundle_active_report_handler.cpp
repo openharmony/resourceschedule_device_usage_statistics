@@ -40,6 +40,19 @@ void BundleActiveReportHandler::Init(const std::shared_ptr<BundleActiveCore>& bu
     isInited_ = true;
 }
 
+void BundleActiveReportHandler::DeInit()
+{
+    isInited_ = false;
+    for (auto& iter : taskHandlerMap_) {
+        auto& queue = iter.second;
+        while (!queue.empty()) {
+            ffrtQueue_->cancel(queue.front());
+            queue.pop();
+        }
+    }
+    taskHandlerMap_.clear();
+}
+
 void BundleActiveReportHandler::SendEvent(const int32_t& eventId,
     const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj, const int64_t& delayTime)
 {
@@ -99,6 +112,10 @@ bool BundleActiveReportHandler::HasEvent(const int32_t& eventId)
 void BundleActiveReportHandler::ProcessEvent(const int32_t& eventId,
     const std::shared_ptr<BundleActiveReportHandlerObject>& handlerobj)
 {
+    if (!isInited_) {
+        BUNDLE_ACTIVE_LOGE("init failed");
+        return;
+    }
     if (handlerobj == nullptr) {
         BUNDLE_ACTIVE_LOGE("handlerobj is null, exit ProcessEvent");
         return;

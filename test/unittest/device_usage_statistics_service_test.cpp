@@ -45,6 +45,7 @@ public:
     void SetUp();
     void TearDown();
     static std::shared_ptr<BundleActiveCore> bundleActiveCore_;
+    static void TestBundleActiveCoreDeInit(std::shared_ptr<BundleActiveCore>& bundleActiveCore);
 };
 
 std::shared_ptr<BundleActiveCore> DeviceUsageStatisticsServiceTest::bundleActiveCore_ = nullptr;
@@ -75,7 +76,7 @@ void DeviceUsageStatisticsServiceTest::SetUpTestCase(void)
 
 void DeviceUsageStatisticsServiceTest::TearDownTestCase(void)
 {
-    bundleActiveCore_->bundleGroupHandler_->ffrtQueue_.reset();
+    TestBundleActiveCoreDeInit(bundleActiveCore_);
     int64_t sleepTime = 10;
     std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
 }
@@ -88,6 +89,18 @@ void DeviceUsageStatisticsServiceTest::TearDown(void)
 {
     int64_t sleepTime = 300;
     std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
+}
+
+void DeviceUsageStatisticsServiceTest::TestBundleActiveCoreDeInit(std::shared_ptr<BundleActiveCore>& bundleActiveCore)
+{
+    int64_t sleepTime = 1;
+    std::this_thread::sleep_for(std::chrono::seconds(sleepTime));
+    bundleActiveCore->DeInit();
+    if (bundleActiveCore->bundleGroupHandler_ && bundleActiveCore->bundleGroupHandler_->ffrtQueue_) {
+        auto handle = bundleActiveCore->bundleGroupHandler_->ffrtQueue_->submit_h([]() {});
+        bundleActiveCore->bundleGroupHandler_->ffrtQueue_->wait(handle);
+        bundleActiveCore->bundleGroupHandler_->ffrtQueue_.reset();
+    }
 }
 
 class TestServiceAppGroupChangeCallback : public AppGroupCallbackStub {
@@ -192,6 +205,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump
     args.clear();
     args = {to_utf16("-D")};
     bundleActiveService->Dump(-1, args);
+    TestBundleActiveCoreDeInit(bundleActiveService->bundleActiveCore_);
 }
 
 /*
@@ -243,6 +257,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppG
     wptr<IRemoteObject> remote = nullptr;
     bundleActiveService->bundleActiveCore_->OnObserverDied(remote);
     bundleActiveService->bundleActiveCore_->OnObserverDiedInner(remote);
+    TestBundleActiveCoreDeInit(bundleActiveService->bundleActiveCore_);
 }
 
 /*
@@ -704,23 +719,24 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetS
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ReportEvent_001,
     Function | MediumTest | Level0)
 {
-    bundleActiveCore_ = std::make_shared<BundleActiveCore>();
-    bundleActiveCore_->Init();
-    bundleActiveCore_->InitBundleGroupController();
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->Init();
+    bundleActiveCore->InitBundleGroupController();
     BundleActiveEvent event;
     int32_t userId = 0;
-    EXPECT_NE(bundleActiveCore_->ReportEvent(event, userId), ERR_OK);
+    EXPECT_NE(bundleActiveCore->ReportEvent(event, userId), ERR_OK);
 
     userId = 101;
     event.bundleName_ = "com.ohos.launcher";
-    EXPECT_EQ(bundleActiveCore_->ReportEvent(event, userId), ERR_OK);
+    EXPECT_EQ(bundleActiveCore->ReportEvent(event, userId), ERR_OK);
 
     event.bundleName_ = "com.ohos.settings";
     event.eventId_ = 15;
-    EXPECT_EQ(bundleActiveCore_->ReportEvent(event, userId), ERR_OK);
+    EXPECT_EQ(bundleActiveCore->ReportEvent(event, userId), ERR_OK);
 
     event.eventId_ = 16;
-    EXPECT_EQ(bundleActiveCore_->ReportEvent(event, userId), ERR_OK);
+    EXPECT_EQ(bundleActiveCore->ReportEvent(event, userId), ERR_OK);
+    TestBundleActiveCoreDeInit(bundleActiveCore);
 }
 
 /*
@@ -758,6 +774,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Repo
     coreObject->InitBundleGroupController();
     coreObject->ReportEventToAllUserId(event);
     EXPECT_NE(coreObject, nullptr);
+    TestBundleActiveCoreDeInit(coreObject);
 }
 
 /*
@@ -769,7 +786,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Repo
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RestoreToDatabase_001,
     Function | MediumTest | Level0)
 {
-    auto coreObject = bundleActiveCore_;
+    auto coreObject = std::make_shared<BundleActiveCore>();
+    coreObject->Init();
+    coreObject->InitBundleGroupController();
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
     int64_t timeStamp = 20000000000000;
@@ -780,6 +799,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rest
     userId = 101;
     coreObject->RestoreToDatabase(userId);
     EXPECT_NE(coreObject, nullptr);
+    TestBundleActiveCoreDeInit(coreObject);
 }
 
 /*
@@ -925,6 +945,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
     EXPECT_EQ(coreObject->bundleGroupController_->IsBundleInstalled("test", userId), false);
     coreObject->bundleGroupController_->sptrBundleMgr_ = nullptr;
     EXPECT_EQ(coreObject->bundleGroupController_->IsBundleInstalled("test", userId), false);
+    TestBundleActiveCoreDeInit(coreObject);
 }
 
 /*
@@ -1116,8 +1137,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Chec
     auto coreObject = bundleActiveCore_;
     coreObject->OnUserRemoved(100);
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(coreObject.get()), false);
+    int64_t timeStamp = 20000000000000;
+    userService->Init(timeStamp);
     coreObject->userStatServices_[userId] = userService;
-
     coreObject->CheckTimeChangeAndGetWallTime(userId);
     coreObject->OnUserSwitched(userId);
     EXPECT_NE(coreObject, nullptr);
