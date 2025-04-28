@@ -1085,7 +1085,7 @@ void BundleActiveUsageDatabase::FlushEventInfo(uint32_t databaseType, BundleActi
     }
     int64_t eventTableTime = ParseStartTime(eventTableName_);
     std::vector<NativeRdb::ValuesBucket> valuesBuckets;
-    for (uint32_t i = 0; i < stats.events_.Size(); i++) {
+    for (int32_t i = 0; i < stats.events_.Size(); i++) {
         NativeRdb::ValuesBucket valuesBucket;
         valuesBucket.PutInt(BUNDLE_ACTIVE_DB_USER_ID, stats.userId_);
         valuesBucket.PutString(BUNDLE_ACTIVE_DB_BUNDLE_NAME, stats.events_.events_.at(i).bundleName_);

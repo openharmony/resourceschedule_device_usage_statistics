@@ -13,8 +13,7 @@
 
 import("//build/test.gni")
 import("../../device_usage_statistics.gni")
-module_output_path =
-    "device_usage_statistics/device_usage_statistics/deviceusagestatisticstest"
+module_output_path = "device_usage_statistics/deviceusagestatisticstest"
 
 config("module_private_config") {
   visibility = [ ":*" ]
