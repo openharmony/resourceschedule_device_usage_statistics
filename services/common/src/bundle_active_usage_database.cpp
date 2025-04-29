@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +13,7 @@
  * limitations under the License.
  */
 
-#include <iostream>
-#include <fstream>
+#include "file_ex.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -24,9 +23,7 @@
 #include <map>
 #include <limits>
 #include <cmath>
-
 #include "time_service_client.h"
-
 #include "bundle_active_constant.h"
 #include "bundle_active_open_callback.h"
 #include "bundle_active_log.h"
@@ -38,7 +35,6 @@
 #include "bundle_active_account_helper.h"
 #include "hisysevent.h"
 #include "bundle_active_core.h"
-
 namespace OHOS {
 namespace DeviceUsageStats {
 using namespace OHOS::NativeRdb;
@@ -102,6 +98,7 @@ void BundleActiveUsageDatabase::InitUsageGroupDatabase(const int32_t databaseTyp
     bundleActiveResult->GetRowCount(tableNumber);
     if (tableNumber == TABLE_NOT_EXIST) {
         BUNDLE_ACTIVE_LOGE("table not exist");
+        bundleActiveResult->Close();
         return;
     }
     int32_t tableNameIndex;
@@ -124,6 +121,7 @@ void BundleActiveUsageDatabase::InitUsageGroupDatabase(const int32_t databaseTyp
             }
         }
     }
+    bundleActiveResult->Close();
 }
 
 int32_t BundleActiveUsageDatabase::CreateDatabasePath()
@@ -224,6 +222,7 @@ shared_ptr<NativeRdb::ResultSet> WEAK_FUNC BundleActiveUsageDatabase::QueryStats
     } else {
         result = rdbStore->QueryByStep(sql, selectionArgs);
     }
+    result->Close();
     return result;
 }
 
@@ -242,6 +241,7 @@ void BundleActiveUsageDatabase::HandleTableInfo(uint32_t databaseType)
     bundleActiveResult->GetRowCount(tableNumber);
     if (tableNumber == TABLE_NOT_EXIST) {
         BUNDLE_ACTIVE_LOGE("table not exist");
+        bundleActiveResult->Close();
         return;
     }
     int32_t tableNameIndex;
@@ -262,6 +262,7 @@ void BundleActiveUsageDatabase::HandleTableInfo(uint32_t databaseType)
         if ((databaseType == DAILY_DATABASE_INDEX) && !sortedTableArray_.at(databaseType).empty()) {
             size_t lastTableIndex = sortedTableArray_.at(databaseType).size();
             if (lastTableIndex == 0) {
+                bundleActiveResult->Close();
                 return;
             }
             eventBeginTime_ = sortedTableArray_.at(databaseType).at(lastTableIndex -1);
@@ -272,6 +273,7 @@ void BundleActiveUsageDatabase::HandleTableInfo(uint32_t databaseType)
             bundleActiveResult->GetString(tableNameIndex, eventTableName_);
         }
     }
+    bundleActiveResult->Close();
 }
 
 void BundleActiveUsageDatabase::HandleAllTableName(const uint32_t databaseType,
@@ -290,6 +292,7 @@ void BundleActiveUsageDatabase::HandleAllTableName(const uint32_t databaseType,
     bundleActiveResult->GetRowCount(tableNumber);
     if (tableNumber == TABLE_NOT_EXIST) {
         BUNDLE_ACTIVE_LOGE("table not exist");
+        bundleActiveResult->Close();
         return;
     }
     int32_t tableNameIndex;
@@ -300,6 +303,7 @@ void BundleActiveUsageDatabase::HandleAllTableName(const uint32_t databaseType,
         bundleActiveResult->GetString(tableNameIndex, tableName);
         allTableName.at(databaseType).push_back(tableName);
     }
+    bundleActiveResult->Close();
 }
 
 void BundleActiveUsageDatabase::DeleteExcessiveTableData(uint32_t databaseType)
@@ -374,6 +378,7 @@ std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTable
     bundleActiveResult->GetRowCount(tableNumber);
     if (tableNumber == 0) {
         BUNDLE_ACTIVE_LOGE("table does not exist");
+        bundleActiveResult->Close();
         return nullptr;
     }
     int32_t tableNameIndex;
@@ -386,6 +391,7 @@ std::unique_ptr<std::vector<int64_t>> BundleActiveUsageDatabase::GetOverdueTable
             overdueTableCreateTime->push_back(ParseStartTime(tableName));
         }
     }
+    bundleActiveResult->Close();
     return overdueTableCreateTime;
 }
 
@@ -444,12 +450,8 @@ void BundleActiveUsageDatabase::CheckDatabaseVersion()
         if (oldVersion != BUNDLE_ACTIVE_FAIL && oldVersion < BUNDLE_ACTIVE_CURRENT_VERSION) {
             UpgradleDatabase(oldVersion, BUNDLE_ACTIVE_CURRENT_VERSION);
         }
-        ofstream openVersionFile;
-        openVersionFile.open(BUNDLE_ACTIVE_VERSION_DIRECTORY_PATH, ios::out);
-        if (openVersionFile) {
-            openVersionFile << "version : " << BUNDLE_ACTIVE_CURRENT_VERSION;
-        }
-        openVersionFile.close();
+        std::string fileVersion = "version : " + std::to_string(BUNDLE_ACTIVE_CURRENT_VERSION);
+        SaveStringToFile(BUNDLE_ACTIVE_VERSION_DIRECTORY_PATH, fileVersion, true);
     }
 }
 
@@ -457,14 +459,11 @@ int32_t BundleActiveUsageDatabase::GetOldDbVersion()
 {
     int32_t oldVersion = -1;
     if (access(BUNDLE_ACTIVE_DATABASE_DIR.c_str(), F_OK) == 0) {
-        ifstream openVersionFile;
-        openVersionFile.open(BUNDLE_ACTIVE_VERSION_DIRECTORY_PATH, ios::in);
-        if (openVersionFile) {
-            char str[FILE_VERSION_LINE_NUM] = {0};
-            openVersionFile.getline(str, FILE_VERSION_LINE_NUM);
-            oldVersion = GetVersionByFileInput(str);
+        std::string data;
+        LoadStringFromFile(BUNDLE_ACTIVE_VERSION_DIRECTORY_PATH.c_str(), data);
+        if (!data.empty()) {
+            oldVersion = GetVersionByFileInput(data);
         }
-        openVersionFile.close();
     }
     return oldVersion;
 }
@@ -568,6 +567,7 @@ void BundleActiveUsageDatabase::UpdateOldDataUid(const shared_ptr<NativeRdb::Rdb
         valuesBucket.Clear();
         changeRow = BUNDLE_ACTIVE_FAIL;
     }
+    bundleActiveResult->Close();
 }
 
 shared_ptr<NativeRdb::RdbStore> WEAK_FUNC BundleActiveUsageDatabase::GetBundleActiveRdbStore(uint32_t databaseType)
@@ -911,6 +911,7 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
     int32_t tableRowNumber;
     bundleActiveResult->GetRowCount(tableRowNumber);
     if (tableRowNumber == TABLE_ROW_ZERO) {
+        bundleActiveResult->Close();
         return nullptr;
     }
     shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> userUsageHistory =
@@ -934,6 +935,7 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
         userUsageHistory->insert(pair<string, shared_ptr<BundleActivePackageHistory>>(usageHistoryKey,
             usageHistory));
     }
+    bundleActiveResult->Close();
     return userUsageHistory;
 }
 
@@ -981,6 +983,7 @@ pair<int64_t, int64_t> BundleActiveUsageDatabase::GetDurationData()
         bundleActiveResult->GetLong(BOOT_BASED_DURATION_COLUMN_INDEX, durationData.first);
         bundleActiveResult->GetLong(SCREEN_ON_DURATION_COLUMN_INDEX, durationData.second);
     }
+    bundleActiveResult->Close();
     return durationData;
 }
 
@@ -1072,6 +1075,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         BundleActiveBundleMgrHelper::GetInstance()->InsertPackageUid(usageStats->bundleName_, usageStats->uid_);
         bundleStats.insert(pair<string, shared_ptr<BundleActivePackageStats>>(bundleStatsKey, usageStats));
     }
+    bundleActiveResult->Close();
     intervalStats->bundleStats_ = bundleStats;
     if (databaseType == DAILY_DATABASE_INDEX) {
         eventBeginTime_ = currentPackageTime;
@@ -1514,6 +1518,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
         auto bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
             queryCondition);
         if (bundleActiveResult == nullptr) {
+            bundleActiveResult->Close();
             return databaseUsageStats;
         }
         int32_t tableRowNumber;
@@ -1540,6 +1545,7 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
             usageStats.userId_ = userId;
             databaseUsageStats.push_back(usageStats);
         }
+        bundleActiveResult->Close();
         queryCondition.clear();
     }
     return databaseUsageStats;
@@ -1590,6 +1596,7 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
         bundleActiveResult->GetInt(EVENT_UID_COLUMN_INDEX, event.uid_);
         databaseEvents.push_back(event);
     }
+    bundleActiveResult->Close();
     return databaseEvents;
 }
 
@@ -1820,6 +1827,7 @@ void BundleActiveUsageDatabase::LoadModuleData(const int32_t userId, std::map<st
             + " " + to_string(oneModuleRecord->uid_) + " " + oneModuleRecord->moduleName_;
         moduleRecords[combinedInfo] = oneModuleRecord;
     }
+    moduleRecordResult->Close();
 }
 
 void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std::string,
@@ -1858,6 +1866,7 @@ void BundleActiveUsageDatabase::LoadFormData(const int32_t userId, std::map<std:
             it->second->formRecords_.emplace_back(oneFormRecord);
         }
     }
+    formRecordResult->Close();
 }
 
 void BundleActiveUsageDatabase::QueryDeviceEventStats(int32_t eventId, int64_t beginTime,
@@ -1888,6 +1897,7 @@ void BundleActiveUsageDatabase::QueryDeviceEventStats(int32_t eventId, int64_t b
     int32_t tableRowNumber;
     bundleActiveResult->GetRowCount(tableRowNumber);
     if (tableRowNumber == 0) {
+        bundleActiveResult->Close();
         return;
     }
     BundleActiveEventStats event;
@@ -1895,6 +1905,7 @@ void BundleActiveUsageDatabase::QueryDeviceEventStats(int32_t eventId, int64_t b
     event.count_ = tableRowNumber;
     event.eventId_ = eventId;
     eventStats.insert(std::pair<std::string, BundleActiveEventStats>(event.name_, event));
+    bundleActiveResult->Close();
 }
 
 std::string BundleActiveUsageDatabase::GetSystemEventName(const int32_t userId)
@@ -1947,6 +1958,7 @@ void BundleActiveUsageDatabase::QueryNotificationEventStats(int32_t eventId, int
     int32_t tableRowNumber;
     bundleActiveResult->GetRowCount(tableRowNumber);
     if (tableRowNumber == 0) {
+        bundleActiveResult->Close();
         return;
     }
     BundleActiveEventStats event;
@@ -1964,6 +1976,7 @@ void BundleActiveUsageDatabase::QueryNotificationEventStats(int32_t eventId, int
             notificationEventStats.insert(std::pair<std::string, BundleActiveEventStats>(event.name_, event));
         }
     }
+    bundleActiveResult->Close();
 }
 
 int32_t BundleActiveUsageDatabase::JudgeQueryCondition(const int64_t beginTime,
@@ -1987,4 +2000,3 @@ int32_t BundleActiveUsageDatabase::JudgeQueryCondition(const int64_t beginTime,
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
-
