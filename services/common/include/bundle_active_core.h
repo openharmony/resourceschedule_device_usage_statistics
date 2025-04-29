@@ -68,7 +68,6 @@ public:
     }
 };
 
-class BundleActiveReportHandler;
 
 class BundleActiveCore : public BundleActiveStatsUpdateListener,
     public std::enable_shared_from_this<BundleActiveCore>  {
@@ -126,12 +125,6 @@ public:
     * create bundleGroupController_ object.
     */
     void InitBundleGroupController();
-
-    /*
-    * function: SetHandler, BundleActiveService call it to set event report handler
-    * parameters: reportHandler
-    */
-    void SetHandler(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
 
     /*
     * function: RestoreToDatabase, restore bundle usage data and form data to database
@@ -263,10 +256,7 @@ private:
     static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TWO_SECONDS;
     const int32_t DEFAULT_USER_ID = -1;
     std::map<int32_t, std::string> visibleActivities_;
-    // use weak_ptr to avoid circulate reference of core and handler.
-    std::weak_ptr<BundleActiveReportHandler> handler_;
-    std::shared_ptr<BundleActiveGroupController> bundleGroupController_;
-    std::shared_ptr<BundleActiveGroupHandler> bundleGroupHandler_;
+
     int64_t systemTimeShot_;
     int64_t realTimeShot_;
     ffrt::mutex mutex_;

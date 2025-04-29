@@ -22,16 +22,10 @@
 #include "bundle_active_event.h"
 #include "bundle_active_account_helper.h"
 #include "bundle_active_continuous_task_observer.h"
+#include "bundle_active_report_controller.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-void BundleActiveContinuousTaskObserver::Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
-{
-    if (reportHandler != nullptr) {
-        BUNDLE_ACTIVE_LOGI("report handler is not null, init success");
-        reportHandler_ = reportHandler;
-    }
-}
 
 void BundleActiveContinuousTaskObserver::OnContinuousTaskStart(
     const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>& continuousTaskCallbackInfo)
@@ -111,11 +105,12 @@ void BundleActiveContinuousTaskObserver::ReportContinuousTaskEvent(
             tmpHandlerObject.userId_, tmpHandlerObject.event_.bundleName_.c_str(),
             tmpHandlerObject.event_.continuousTaskAbilityName_.c_str(), tmpHandlerObject.event_.eventId_,
             uid, pid);
-        if (reportHandler_ != nullptr) {
+        auto reportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+        if (reportHandler != nullptr) {
             BUNDLE_ACTIVE_LOGI("BundleActiveAppStateObserver::OnAbilityStateChanged handler not null, SEND");
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            reportHandler_->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
+            reportHandler->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
         }
     }
 }
