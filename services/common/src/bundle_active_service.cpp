@@ -126,7 +126,6 @@ void BundleActiveService::InitNecessaryState()
 
 void BundleActiveService::InitService()
 {
-    HiviewDFX::Watchdog::GetInstance().InitFfrtWatchdog();
     if (bundleActiveCore_ == nullptr) {
         bundleActiveCore_ = std::make_shared<BundleActiveCore>();
         bundleActiveCore_->Init();
