@@ -1052,9 +1052,21 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
     if (bundleActiveResult == nullptr) {
         return nullptr;
     }
+    GetCurrentBundleStats(currentPackageTime, bundleActiveResult, intervalStats);
+    bundleActiveResult->Close();
+    if (databaseType == DAILY_DATABASE_INDEX) {
+        eventBeginTime_ = currentPackageTime;
+    }
+    int64_t systemTime = GetSystemTimeMs();
+    intervalStats->lastTimeSaved_ = systemTime;
+    return intervalStats;
+}
+
+void BundleActiveUsageDatabase::GetCurrentBundleStats(int64_t currentPackageTime,
+    shared_ptr<NativeRdb::ResultSet>& bundleActiveResult, shared_ptr<BundleActivePeriodStats>& intervalStats)
+{
     int32_t tableRowNumber;
     bundleActiveResult->GetRowCount(tableRowNumber);
-    map<string, shared_ptr<BundleActivePackageStats>> bundleStats;
     int64_t relativeLastTimeUsed;
     int64_t relativeLastTimeFrontServiceUsed;
     for (int32_t i = 0; i < tableRowNumber; i++) {
@@ -1073,16 +1085,9 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
         bundleActiveResult->GetInt(PACKAGE_LOG_UID_COLUMN_INDEX, usageStats->uid_);
         string bundleStatsKey = usageStats->bundleName_ + std::to_string(usageStats->uid_);
         BundleActiveBundleMgrHelper::GetInstance()->InsertPackageUid(usageStats->bundleName_, usageStats->uid_);
-        bundleStats.insert(pair<string, shared_ptr<BundleActivePackageStats>>(bundleStatsKey, usageStats));
+        intervalStats->bundleStats_.insert(
+            pair<string, shared_ptr<BundleActivePackageStats>>(bundleStatsKey, usageStats));
     }
-    bundleActiveResult->Close();
-    intervalStats->bundleStats_ = bundleStats;
-    if (databaseType == DAILY_DATABASE_INDEX) {
-        eventBeginTime_ = currentPackageTime;
-    }
-    int64_t systemTime = GetSystemTimeMs();
-    intervalStats->lastTimeSaved_ = systemTime;
-    return intervalStats;
 }
 
 void BundleActiveUsageDatabase::FlushEventInfo(uint32_t databaseType, BundleActivePeriodStats &stats)
