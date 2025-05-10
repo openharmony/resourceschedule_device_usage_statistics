@@ -126,6 +126,9 @@ private:
         const int64_t endTime, const int32_t databaseType,
         const int32_t index, const int32_t startIndex, const int32_t endIndex, const int32_t userId,
         std::vector<std::string> &queryCondition, std::string &queryPackageSql);
+    void GetCurrentBundleStats(int64_t currentPackageTime,
+        std::shared_ptr<NativeRdb::ResultSet>& bundleActiveResult,
+        std::shared_ptr<BundleActivePeriodStats>& intervalStats);
     bool GetDbIndex(const int64_t beginTime, const int64_t endTime,
         const int32_t databaseType, int32_t &startIndex, int32_t &endIndex);
 
