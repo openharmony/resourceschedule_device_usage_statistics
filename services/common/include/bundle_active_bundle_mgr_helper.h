@@ -27,6 +27,13 @@
 
 namespace OHOS {
 namespace DeviceUsageStats {
+struct BundleActiveApplication {
+    std::string bundleName;
+    int32_t uid;
+    bool isLauncherApp;
+    BundleActiveApplication(std::string bundleName_, int32_t uid_, bool isLauncherApp_)
+        : bundleName{std::move(bundleName_)}, uid{uid_}, isLauncherApp{isLauncherApp_} {}
+};
 class BundleActiveBundleMgrHelper : public DelayedSingleton<BundleActiveBundleMgrHelper> {
 public:
     /**
@@ -60,7 +67,7 @@ public:
         const int userId, AppExecFwk::ApplicationInfo &appInfo);
     
     bool GetApplicationInfos(const AppExecFwk::ApplicationFlag flag,
-        const int userId, std::vector<AppExecFwk::ApplicationInfo> &appInfos);
+        const int userId, std::vector<BundleActiveApplication> &bundleActiveApplicationInfos);
 
     bool IsLauncherApp(const std::string &bundleName, const int32_t userId);
 

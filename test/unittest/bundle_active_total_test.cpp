@@ -146,7 +146,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_001, Function | 
 HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_002, Function | MediumTest | Level0)
 {
     AppExecFwk::ApplicationFlag flag = AppExecFwk::GET_BASIC_APPLICATION_INFO;
-    std::vector<AppExecFwk::ApplicationInfo> appInfos;
+    std::vector<BundleActiveApplication> appInfos;
     bool result = BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfos(flag, 0, appInfos);
     EXPECT_TRUE(result);
 }

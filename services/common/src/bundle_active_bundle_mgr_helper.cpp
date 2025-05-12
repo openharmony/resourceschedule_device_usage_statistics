@@ -70,7 +70,7 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfo(const std::string &appName,
 }
 
 bool BundleActiveBundleMgrHelper::GetApplicationInfos(const AppExecFwk::ApplicationFlag flag,
-    const int userId, std::vector<AppExecFwk::ApplicationInfo> &appInfos)
+    const int userId, std::vector<BundleActiveApplication> &bundleActiveApplicationInfos)
 {
     BUNDLE_ACTIVE_LOGI("start get application infos");
     std::lock_guard<ffrt::mutex> lock(connectionMutex_);
@@ -79,10 +79,14 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfos(const AppExecFwk::Applicat
         return false;
     }
     BUNDLE_ACTIVE_LOGI("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
-    if (bundleMgr_ != nullptr && bundleMgr_->GetApplicationInfos(flag, userId, appInfos)) {
-        return true;
+    std::vector<AppExecFwk::ApplicationInfo> appInfos;
+    if (bundleMgr_ == nullptr || !bundleMgr_->GetApplicationInfos(flag, userId, appInfos)) {
+        return false;
     }
-    return false;
+    for (auto appInfo : appInfos) {
+        bundleActiveApplicationInfos.emplace_back(appInfo.bundleName, appInfo.uid, appInfo.isLauncherApp);
+    }
+    return true;
 }
 
 bool BundleActiveBundleMgrHelper::GetBundleInfo(const std::string &bundleName, const AppExecFwk::BundleFlag flag,
@@ -152,7 +156,7 @@ void BundleActiveBundleMgrHelper::InitLauncherAppMap()
     BUNDLE_ACTIVE_LOGI("init laucherAppMap");
     isInitLauncherAppMap_ = true;
     InitSystemEvent();
-    std::vector<AppExecFwk::ApplicationInfo> appInfos;
+    std::vector<BundleActiveApplication> appInfos;
     if (!GetApplicationInfos(AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO,
         AppExecFwk::Constants::ALL_USERID, appInfos)) {
         BUNDLE_ACTIVE_LOGE("Init Launcher App Map by BMS failed");

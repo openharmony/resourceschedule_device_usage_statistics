@@ -86,7 +86,6 @@ public:
 
 private:
     ffrt::mutex mutex_;
-    bool GetBundleMgrProxy();
     std::weak_ptr<BundleActiveGroupHandler> activeGroupHandler_;
     int64_t timeoutForDirectlyUse_;
     int64_t timeoutForNotifySeen_;
