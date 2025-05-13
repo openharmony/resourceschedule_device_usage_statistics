@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@
 #include "bundle_active_report_handler.h"
 #include "bundle_active_event.h"
 #include "bundle_active_util.h"
+#include "bundle_active_report_controller.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -60,13 +61,20 @@ void BundleActiveReportHandler::SendEvent(const int32_t& eventId,
         BUNDLE_ACTIVE_LOGE("init failed");
         return;
     }
-    auto reportHandler = shared_from_this();
     int64_t ffrtDelayTime = BundleActiveUtil::GetFFRTDelayTime(delayTime);
     std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
     if (taskHandlerMap_.find(eventId) == taskHandlerMap_.end()) {
         taskHandlerMap_[eventId] = std::queue<ffrt::task_handle>();
     }
-    ffrt::task_handle taskHandle = ffrtQueue_->submit_h([reportHandler, eventId, handlerobj]() {
+    ffrt::task_handle taskHandle = ffrtQueue_->submit_h([eventId, handlerobj]() {
+        auto reportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+        if (reportHandler == nullptr) {
+            return;
+        }
+        if (!reportHandler->isInited_) {
+            BUNDLE_ACTIVE_LOGE("init failed");
+            return;
+        }
         reportHandler->ProcessEvent(eventId, handlerobj);
         std::lock_guard<ffrt::mutex> lock(reportHandler->taskHandlerMutex_);
         if (reportHandler->taskHandlerMap_.find(eventId) == reportHandler->taskHandlerMap_.end()) {

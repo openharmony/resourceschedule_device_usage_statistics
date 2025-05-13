@@ -49,7 +49,7 @@ ohos_fuzztest("AppgroupcallbackstubFuzzTest") {
     "appgroupcallbackstub_fuzzer.cpp",
   ]
 
-  public_deps = [ "${usage_statistics_path}:usagestatservice_static" ]
+  public_deps = [ "${usage_statistics_path}:usagestatsinner_static" ]
   external_deps = [
     "ability_runtime:app_manager",
     "ability_runtime:wantagent_innerkits",

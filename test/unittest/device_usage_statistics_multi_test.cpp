@@ -35,6 +35,7 @@
 #include "accesstoken_kit.h"
 #include "token_setproc.h"
 #include "nativetoken_kit.h"
+#include "bundle_active_test_util.h"
 
 using namespace testing::ext;
 using namespace testing::mt;
@@ -88,10 +89,12 @@ void DeviceUsageStatisticsMultiTest::SetUpTestCase(void)
     tokenId = GetAccessTokenId(&infoInstance);
     SetSelfTokenID(tokenId);
     AccessTokenKit::ReloadNativeTokenInfo();
+    BundleActiveTestUtil::TestInit();
 }
 
 void DeviceUsageStatisticsMultiTest::TearDownTestCase(void)
 {
+    BundleActiveTestUtil::TestDeInit();
 }
 
 void DeviceUsageStatisticsMultiTest::SetUp(void)

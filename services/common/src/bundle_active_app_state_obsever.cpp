@@ -20,16 +20,10 @@
 #include "bundle_active_report_handler.h"
 #include "bundle_active_event.h"
 #include "bundle_active_account_helper.h"
+#include "bundle_active_report_controller.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
-void BundleActiveAppStateObserver::Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
-{
-    if (reportHandler != nullptr) {
-        BUNDLE_ACTIVE_LOGI("Init report handler is not null, init success");
-        reportHandler_ = reportHandler;
-    }
-}
 
 void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData &abilityStateData)
 {
@@ -65,10 +59,11 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
                 return;
         }
         BUNDLE_ACTIVE_LOGI("OnAblityStateChanged %{public}s", tmpHandlerObject.ToString().c_str());
-        if (reportHandler_ != nullptr) {
+        auto reportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+        if (reportHandler != nullptr) {
             std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
                 std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            reportHandler_->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
+            reportHandler->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
         }
     }
     return;

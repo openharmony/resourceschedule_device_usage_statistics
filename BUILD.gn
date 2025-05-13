@@ -87,7 +87,6 @@ ohos_shared_library("usagestatsinner") {
     "c_utils:utils",
     "ffrt:libffrt",
     "hilog:libhilog",
-    "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
@@ -246,6 +245,7 @@ ohos_shared_library("usagestatservice") {
     "services/packageusage/src/bundle_active_event_list.cpp",
     "services/packageusage/src/bundle_active_event_tracker.cpp",
     "services/packageusage/src/bundle_active_period_stats.cpp",
+    "services/packageusage/src/bundle_active_report_controller.cpp",
     "services/packageusage/src/bundle_active_report_handler.cpp",
     "services/packageusage/src/bundle_active_stats_combiner.cpp",
     "services/packageusage/src/bundle_active_user_service.cpp",
@@ -325,6 +325,7 @@ ohos_static_library("usagestatservice_static") {
     "services/packageusage/src/bundle_active_event_list.cpp",
     "services/packageusage/src/bundle_active_event_tracker.cpp",
     "services/packageusage/src/bundle_active_period_stats.cpp",
+    "services/packageusage/src/bundle_active_report_controller.cpp",
     "services/packageusage/src/bundle_active_report_handler.cpp",
     "services/packageusage/src/bundle_active_stats_combiner.cpp",
     "services/packageusage/src/bundle_active_user_service.cpp",
@@ -376,6 +377,49 @@ ohos_static_library("usagestatservice_static") {
   subsystem_name = "resourceschedule"
   branch_protector_ret = "pac_ret"
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+}
+
+ohos_static_library("usagestatsinner_static") {
+  cflags_cc = [ "-DDEVICE_USAGE_UNIT_TEST" ]
+  sources = [
+    "interfaces/innerkits/src/app_group_callback_info.cpp",
+    "interfaces/innerkits/src/bundle_active_client.cpp",
+    "interfaces/innerkits/src/bundle_active_event.cpp",
+    "interfaces/innerkits/src/bundle_active_event_stats.cpp",
+    "interfaces/innerkits/src/bundle_active_form_record.cpp",
+    "interfaces/innerkits/src/bundle_active_module_record.cpp",
+    "interfaces/innerkits/src/bundle_active_package_stats.cpp",
+  ]
+  public_configs = [ ":usagestats_public_config" ]
+  deps = [
+    ":app_group_callback_interface",
+    ":bundle_active_interface",
+    ":usagestatsutils",
+  ]
+  external_deps = [
+    "c_utils:utils",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+    "hitrace:hitrace_meter",
+    "ipc:ipc_core",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+
+  bundle_active_output_values = get_target_outputs(":bundle_active_interface")
+  sources += filter_include(bundle_active_output_values, [ "*.cpp" ])
+  app_group_callback_output_values =
+      get_target_outputs(":app_group_callback_interface")
+  sources += filter_include(app_group_callback_output_values, [ "*.cpp" ])
+
+  part_name = "${device_usage_statistics_part_name}"
+  subsystem_name = "resourceschedule"
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true

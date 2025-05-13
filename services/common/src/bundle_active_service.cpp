@@ -33,6 +33,7 @@
 #include "tokenid_kit.h"
 #include "xcollie/watchdog.h"
 #include "bundle_active_util.h"
+#include "bundle_active_report_controller.h"
 
 #include "bundle_active_service.h"
 
@@ -130,19 +131,12 @@ void BundleActiveService::InitService()
         bundleActiveCore_ = std::make_shared<BundleActiveCore>();
         bundleActiveCore_->Init();
     }
-    if (reportHandler_ == nullptr) {
-        reportHandler_ = std::make_shared<BundleActiveReportHandler>();
-        if (reportHandler_ == nullptr) {
-            return;
-        }
-        reportHandler_->Init(bundleActiveCore_);
-    }
-    if (reportHandler_ != nullptr && bundleActiveCore_ != nullptr) {
-        BUNDLE_ACTIVE_LOGI("core and handler is not null");
-        bundleActiveCore_->SetHandler(reportHandler_);
-    } else {
+    BundleActiveReportController::GetInstance().Init(bundleActiveCore_);
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr || bundleActiveCore_ == nullptr) {
         return;
     }
+    BUNDLE_ACTIVE_LOGI("core and handler is not null");
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     shutdownCallback_ = new (std::nothrow) BundleActiveShutdownCallbackService(bundleActiveCore_);
     powerStateCallback_ = new (std::nothrow) BundleActivePowerStateCallbackService(bundleActiveCore_);
@@ -155,8 +149,8 @@ void BundleActiveService::InitService()
         powerManagerClient.RegisterPowerStateCallback(powerStateCallback_);
     }
 #endif
-    InitAppStateSubscriber(reportHandler_);
-    InitContinuousSubscriber(reportHandler_);
+    InitAppStateSubscriber();
+    InitContinuousSubscriber();
     bundleActiveCore_->InitBundleGroupController();
     SubscribeAppState();
     SubscribeContinuousTask();
@@ -173,7 +167,7 @@ OHOS::sptr<OHOS::AppExecFwk::IAppMgr> BundleActiveService::GetAppManagerInstance
     return OHOS::iface_cast<OHOS::AppExecFwk::IAppMgr>(object);
 }
 
-void BundleActiveService::InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
+void BundleActiveService::InitAppStateSubscriber()
 {
     if (!appStateObserver_) {
         appStateObserver_ = new (std::nothrow)BundleActiveAppStateObserver();
@@ -181,16 +175,14 @@ void BundleActiveService::InitAppStateSubscriber(const std::shared_ptr<BundleAct
             BUNDLE_ACTIVE_LOGE("malloc app state observer failed");
             return;
         }
-        appStateObserver_->Init(reportHandler);
     }
 }
 
-void BundleActiveService::InitContinuousSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
+void BundleActiveService::InitContinuousSubscriber()
 {
 #ifdef BGTASKMGR_ENABLE
     if (continuousTaskObserver_ == nullptr) {
         continuousTaskObserver_ = std::make_shared<BundleActiveContinuousTaskObserver>();
-        continuousTaskObserver_->Init(reportHandler);
     }
 #endif
 }
@@ -238,6 +230,7 @@ void BundleActiveService::OnStop()
         return;
     }
 #endif
+    bundleActiveCore_->DeInit();
     BUNDLE_ACTIVE_LOGI("[Server] OnStop");
     ready_ = false;
 }
@@ -245,30 +238,33 @@ void BundleActiveService::OnStop()
 ErrCode BundleActiveService::ReportEvent(const BundleActiveEvent& event, int32_t userId)
 {
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    if (CheckNativePermission(tokenId) == ERR_OK) {
-        AccessToken::NativeTokenInfo callingTokenInfo;
-        AccessToken::AccessTokenKit::GetNativeTokenInfo(tokenId, callingTokenInfo);
-        int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
-        BUNDLE_ACTIVE_LOGD("calling process name is %{public}s, uid is %{public}d",
-            callingTokenInfo.processName.c_str(), callingUid);
-        if (callingTokenInfo.processName == PERMITTED_PROCESS_NAME) {
-            BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-            BundleActiveEvent eventNew(event);
-            tmpHandlerObject.event_ = eventNew;
-            sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-            tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
-            std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            reportHandler_->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
-            return ERR_OK;
-        } else {
-            BUNDLE_ACTIVE_LOGE("token does not belong to fms service process, return");
-            return ERR_PERMISSION_DENIED;
-        }
-    } else {
+    if (CheckNativePermission(tokenId) != ERR_OK) {
         BUNDLE_ACTIVE_LOGE("token does not belong to native process, return");
         return ERR_PERMISSION_DENIED;
     }
+
+    AccessToken::NativeTokenInfo callingTokenInfo;
+    AccessToken::AccessTokenKit::GetNativeTokenInfo(tokenId, callingTokenInfo);
+    int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    BUNDLE_ACTIVE_LOGD("calling process name is %{public}s, uid is %{public}d",
+        callingTokenInfo.processName.c_str(), callingUid);
+    if (callingTokenInfo.processName != PERMITTED_PROCESS_NAME) {
+        BUNDLE_ACTIVE_LOGE("token does not belong to fms service process, return");
+        return ERR_PERMISSION_DENIED;
+    }
+    BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
+    BundleActiveEvent eventNew(event);
+    tmpHandlerObject.event_ = eventNew;
+    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+    tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
+    std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+        std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr) {
+        return ERR_OK;
+    }
+    bundleActiveReportHandler->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
+    return ERR_OK;
 }
 
 ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId)

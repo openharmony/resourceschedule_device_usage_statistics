@@ -35,16 +35,11 @@ using CommonEventSupport = OHOS::EventFwk::CommonEventSupport;
 using CommonEventManager = OHOS::EventFwk::CommonEventManager;
 using MatchingSkills = OHOS::EventFwk::MatchingSkills;
 class BundleActiveGroupController;
-class BundleActiveReportHandler;
 
 class BundleActiveCommonEventSubscriber : public CommonEventSubscriber {
 public:
-    BundleActiveCommonEventSubscriber(const CommonEventSubscribeInfo &subscriberInfo,
-        const std::shared_ptr<BundleActiveGroupController> activeGroupController,
-        const std::weak_ptr<BundleActiveReportHandler>
-        bundleActiveReportHandler) : CommonEventSubscriber(subscriberInfo),
-        activeGroupController_(activeGroupController),
-        bundleActiveReportHandler_(bundleActiveReportHandler) {}
+    BundleActiveCommonEventSubscriber(
+        const CommonEventSubscribeInfo &subscriberInfo) : CommonEventSubscriber(subscriberInfo) {}
     ~BundleActiveCommonEventSubscriber() = default;
     void OnReceiveEvent(const CommonEventData &data) override;
 
@@ -56,8 +51,6 @@ private:
     void HandlePackageAddEvent(const CommonEventData &data);
     void HandleLockEvent(const CommonEventData &data);
     ffrt::mutex mutex_;
-    std::weak_ptr<BundleActiveGroupController> activeGroupController_;
-    std::weak_ptr<BundleActiveReportHandler> bundleActiveReportHandler_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

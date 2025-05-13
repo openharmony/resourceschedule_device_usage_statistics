@@ -32,6 +32,8 @@
 #include "bundle_active_shutdown_callback_service.h"
 #include "bundle_active_binary_search.h"
 #include "bundle_active_debug_mode.h"
+#include "bundle_active_report_controller.h"
+#include "bundle_active_test_util.h"
 
 using namespace testing::ext;
 
@@ -48,10 +50,12 @@ public:
 
 void BundleActiveTotalTest::SetUpTestCase(void)
 {
+    BundleActiveTestUtil::TestInit();
 }
 
 void BundleActiveTotalTest::TearDownTestCase(void)
 {
+    BundleActiveTestUtil::TestDeInit();
 }
 
 void BundleActiveTotalTest::SetUp(void)
@@ -87,13 +91,8 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Func
 {
 #ifdef BGTASKMGR_ENABLE
 #ifdef OS_ACCOUNT_PART_ENABLED
-    std::shared_ptr<AppExecFwk::EventRunner> runner;
-    auto reportHandler = std::make_shared<BundleActiveReportHandler>(runner);
-    auto reportHandler1 = std::make_shared<BundleActiveReportHandler>(runner);
+    BundleActiveReportController::GetInstance().Init();
     BundleActiveContinuousTaskObserver test;
-    test.Init(reportHandler);
-    test.Init(reportHandler1);
-    EXPECT_TRUE(test.reportHandler_ != nullptr);
 
     std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo> continuousTaskCallbackInfo;
     test.OnContinuousTaskStart(continuousTaskCallbackInfo);
@@ -104,8 +103,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Func
 
     test.GetBundleMgr();
     test.bundleMgr_ = nullptr;
-    test.GetBundleMgr();
-    SUCCEED();
+    EXPECT_TRUE(test.GetBundleMgr());
 #endif
 #endif
 }
@@ -195,16 +193,16 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_004, Function | 
  */
 HWTEST_F(BundleActiveTotalTest, BundleActiveAppStateObserverTest_001, Function | MediumTest | Level0)
 {
+    std::shared_ptr<BundleActiveCore> bundleActiveCore = std::make_shared<BundleActiveCore>();
+    BundleActiveReportController::GetInstance().Init(bundleActiveCore);
     AbilityStateData abilityStateData;
-    auto reportHandler = std::make_shared<BundleActiveReportHandler>();
+    abilityStateData.abilityType = 1;
     BundleActiveAppStateObserver test;
-    test.Init(reportHandler);
     test.OnAbilityStateChanged(abilityStateData);
 
-    test.Init(reportHandler);
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND);
     test.OnAbilityStateChanged(abilityStateData);
-    EXPECT_TRUE(test.reportHandler_ != nullptr);
+    EXPECT_TRUE(BundleActiveReportController::GetInstance().GetBundleReportHandler() != nullptr);
 
     abilityStateData.abilityState = static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND);
     test.OnAbilityStateChanged(abilityStateData);
