@@ -21,6 +21,7 @@
 #include "ibundle_active_service.h"
 #include "bundle_active_group_controller.h"
 #include "bundle_active_util.h"
+#include "bundle_active_bundle_mgr_helper.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -184,34 +185,6 @@ void BundleActiveGroupController::DeleteUsageGroupCache(
     }
 }
 
-bool BundleActiveGroupController::GetBundleMgrProxy()
-{
-    if (!sptrBundleMgr_) {
-        sptr<ISystemAbilityManager> systemAbilityManager =
-            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (!systemAbilityManager) {
-            BUNDLE_ACTIVE_LOGE("Failed to get system ability mgr.");
-            return false;
-        }
-        sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-        if (!remoteObject) {
-                BUNDLE_ACTIVE_LOGE("Failed to get bundle manager service.");
-                return false;
-        }
-        sptrBundleMgr_ = iface_cast<IBundleMgr>(remoteObject);
-        if (!sptrBundleMgr_) {
-            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability, sptrBundleMgr_");
-            return false;
-        }
-        auto object = sptrBundleMgr_->AsObject();
-        if (!object) {
-            BUNDLE_ACTIVE_LOGE("Failed to get system bundle manager services ability");
-            return false;
-        }
-    }
-    return true;
-}
-
 void BundleActiveGroupController::PeriodCheckBundleState(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("PeriodCheckBundleState called");
@@ -228,12 +201,8 @@ void BundleActiveGroupController::PeriodCheckBundleState(const int32_t userId)
 bool BundleActiveGroupController::CheckEachBundleState(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("CheckEachBundleState called, userid is %{public}d", userId);
-    std::vector<ApplicationInfo> allBundlesForUser;
-    if (!GetBundleMgrProxy()) {
-        BUNDLE_ACTIVE_LOGE("CheckEachBundleState get bundle manager proxy failed!");
-        return false;
-    }
-    sptrBundleMgr_->GetApplicationInfos(flag, userId, allBundlesForUser);
+    std::vector<BundleActiveApplication> allBundlesForUser;
+    BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfos(flag, userId, allBundlesForUser);
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     for (auto oneBundle : allBundlesForUser) {

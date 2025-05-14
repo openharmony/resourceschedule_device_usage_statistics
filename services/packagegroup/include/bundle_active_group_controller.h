@@ -91,7 +91,6 @@ private:
     ~BundleActiveGroupController() = default;
     ffrt::mutex mutex_;
     ffrt::mutex initMutex_;
-    bool GetBundleMgrProxy();
     std::shared_ptr<BundleActiveGroupHandler> activeGroupHandler_;
     int64_t timeoutForDirectlyUse_;
     int64_t timeoutForNotifySeen_;
