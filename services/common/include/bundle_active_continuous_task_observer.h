@@ -38,11 +38,10 @@ public:
     void OnContinuousTaskStop(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>
         &continuousTaskCallbackInfo) override;
     void OnRemoteDied(const wptr<IRemoteObject> &object) override;
-    void Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
     std::atomic<bool> isRemoteDied_ {false};
 private:
     sptr<IBundleMgr> bundleMgr_;
-    std::shared_ptr<BundleActiveReportHandler> reportHandler_;
+
     bool GetBundleMgr();
     void ReportContinuousTaskEvent(const std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>&
         continuousTaskCallbackInfo, const bool isStart);

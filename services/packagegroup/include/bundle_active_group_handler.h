@@ -35,7 +35,7 @@ public:
     ~BundleActiveGroupHandlerObject() {}
 };
 
-class BundleActiveGroupHandler : public std::enable_shared_from_this<BundleActiveGroupHandler> {
+class BundleActiveGroupHandler {
 public:
     explicit BundleActiveGroupHandler(const bool debug);
     ~BundleActiveGroupHandler() = default;
@@ -55,7 +55,7 @@ public:
     void RemoveCheckBundleMsg(const std::string& msgKey);
     void PostSyncTask(const std::function<void()>& fuc);
     void PostTask(const std::function<void()>& fuc);
-    void Init(const std::shared_ptr<BundleActiveGroupController>& bundleActiveController);
+    void Init();
     void DeInit();
     static const int32_t MSG_CHECK_DEFAULT_BUNDLE_STATE;
     static const int32_t MSG_ONE_TIME_CHECK_BUNDLE_STATE;
@@ -71,7 +71,6 @@ private:
     std::shared_ptr<ffrt::queue> ffrtQueue_;
     std::map<int32_t, std::queue<ffrt::task_handle>> taskHandlerMap_;
     std::map<std::string, ffrt::task_handle> checkBundleTaskMap_;
-    std::shared_ptr<BundleActiveGroupController> bundleActiveGroupController_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

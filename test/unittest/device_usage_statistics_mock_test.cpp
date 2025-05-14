@@ -25,6 +25,7 @@
 #include "iapp_group_callback.h"
 #include "bundle_active_constant.h"
 #include "bundle_active_usage_database.h"
+#include "bundle_active_test_util.h"
 
 using namespace testing::ext;
 
@@ -52,10 +53,12 @@ public:
 
 void DeviceUsageStatisticsMockTest::SetUpTestCase(void)
 {
+    BundleActiveTestUtil::TestInit();
 }
 
 void DeviceUsageStatisticsMockTest::TearDownTestCase(void)
 {
+    BundleActiveTestUtil::TestDeInit();
 }
 
 void DeviceUsageStatisticsMockTest::SetUp(void)
@@ -338,7 +341,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_CheckTimeC
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_getUserHistory_001,
     Function | MediumTest | Level0)
 {
-    auto groupController = std::make_shared<BundleActiveGroupController>(false);
+    auto groupController = std::make_shared<BundleActiveGroupController>();
     const int64_t timeStamp = g_largeNum;
     int32_t uid = 0;
     int32_t appIndex = 0;
@@ -358,7 +361,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_getUserHis
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_calculationTimeOut_001,
     Function | MediumTest | Level0)
 {
-    auto groupController = std::make_shared<BundleActiveGroupController>(false);
+    auto groupController = std::make_shared<BundleActiveGroupController>();
 
     std::shared_ptr<BundleActivePackageHistory> history = nullptr;
     groupController->calculationTimeOut(history, g_largeNum);

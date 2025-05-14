@@ -33,7 +33,7 @@ using OHOS::AppExecFwk::ProcessData;
 class BundleActiveAppStateObserver : public ApplicationStateObserverStub {
 public:
     void OnAbilityStateChanged(const AbilityStateData &abilityStateData) override;
-    void Init(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
+    void Init();
 private:
     inline bool ValidateAppStateData(const AppStateData &appStateData) const
     {
@@ -54,7 +54,6 @@ private:
         return processData.uid > 0 && processData.pid >= 0
             && processData.bundleName.size() > 0;
     }
-    std::shared_ptr<BundleActiveReportHandler> reportHandler_;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

@@ -68,6 +68,13 @@ ohos_unittest("BundleActiveTotalTest") {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
   }
+  if (os_account_part_enabled) {
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+  if (bgtaskmgr_enable) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
+  }
   branch_protector_ret = "pac_ret"
 
   sanitize = {
@@ -95,6 +102,8 @@ ohos_unittest("DeviceUsageStatsTest") {
   ]
 
   external_deps = [
+    "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
@@ -103,14 +112,23 @@ ohos_unittest("DeviceUsageStatsTest") {
     "hilog:libhilog",
     "ipc:ipc_single",
     "jsoncpp:jsoncpp",
+    "relational_store:native_rdb",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "selinux_adapter:librestorecon",
+    "time_service:time_client",
   ]
   defines = []
   if (device_usage_statistics_with_powermgr_power_manager_enable) {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
+  }
+  if (os_account_part_enabled) {
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+  if (bgtaskmgr_enable) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
   }
   branch_protector_ret = "pac_ret"
 
@@ -139,6 +157,8 @@ ohos_unittest("DeviceUsageStatsMultiTest") {
   ]
 
   external_deps = [
+    "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
     "access_token:libaccesstoken_sdk",
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
@@ -147,14 +167,23 @@ ohos_unittest("DeviceUsageStatsMultiTest") {
     "hilog:libhilog",
     "ipc:ipc_single",
     "jsoncpp:jsoncpp",
+    "relational_store:native_rdb",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "selinux_adapter:librestorecon",
+    "time_service:time_client",
   ]
   defines = []
   if (device_usage_statistics_with_powermgr_power_manager_enable) {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
+  }
+  if (os_account_part_enabled) {
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+  if (bgtaskmgr_enable) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
   }
   branch_protector_ret = "pac_ret"
 
@@ -203,6 +232,13 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
   if (device_usage_statistics_with_powermgr_power_manager_enable) {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
+  }
+  if (os_account_part_enabled) {
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+  if (bgtaskmgr_enable) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
   }
 
   sanitize = {
@@ -257,6 +293,13 @@ ohos_unittest("DeviceUsageStatsMockTest") {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
   }
+  if (os_account_part_enabled) {
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+  if (bgtaskmgr_enable) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
+  }
   branch_protector_ret = "pac_ret"
 
   sanitize = {
@@ -300,6 +343,13 @@ ohos_unittest("DeviceUsagePackageUsageTest") {
   if (device_usage_statistics_with_powermgr_power_manager_enable) {
     defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
     external_deps += [ "power_manager:powermgr_client" ]
+  }
+  if (os_account_part_enabled) {
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+  if (bgtaskmgr_enable) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
   }
   branch_protector_ret = "pac_ret"
 

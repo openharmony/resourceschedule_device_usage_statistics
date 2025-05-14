@@ -27,7 +27,7 @@
 #include "ffrt_inner.h"
 #include "bundle_constants.h"
 #include "hisysevent.h"
-
+#include "bundle_active_report_controller.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -78,12 +78,8 @@ BundleActiveCore::~BundleActiveCore()
 
 void BundleActiveCore::DeInit()
 {
-    if (bundleGroupHandler_ != nullptr) {
-        bundleGroupHandler_->DeInit();
-    }
-    if (!handler_.expired()) {
-        handler_.lock()->DeInit();
-    }
+    BundleActiveGroupController::GetInstance().DeInit();
+    BundleActiveReportController::GetInstance().DeInit();
 }
 
 void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &data)
@@ -109,48 +105,41 @@ void BundleActiveCommonEventSubscriber::OnReceiveEvent(const CommonEventData &da
 
 void BundleActiveCommonEventSubscriber::HandleScreenEvent()
 {
-    if (!bundleActiveReportHandler_.expired()) {
+    auto groupHandler = BundleActiveGroupController::GetInstance().GetBundleGroupHandler();
+    if (groupHandler != nullptr) {
         sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-        auto groupController = activeGroupController_.lock();
-        if (groupController == nullptr) {
-            return;
-        }
-        bool isScreenOn = groupController->IsScreenOn();
+        bool isScreenOn = BundleActiveGroupController::GetInstance().IsScreenOn();
         BUNDLE_ACTIVE_LOGI("screen state change to %{public}d", isScreenOn);
-        groupController->OnScreenChanged(isScreenOn, timer->GetBootTimeMs());
+        BundleActiveGroupController::GetInstance().OnScreenChanged(isScreenOn, timer->GetBootTimeMs());
     }
 }
 
 void BundleActiveCommonEventSubscriber::HandleUserRemoveEvent(const CommonEventData &data)
 {
-    if (!bundleActiveReportHandler_.expired()) {
-        int32_t userId = data.GetCode();
-        BUNDLE_ACTIVE_LOGI("remove user id %{public}d", userId);
-        BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        auto reportHandler = bundleActiveReportHandler_.lock();
-        if (reportHandler == nullptr) {
-            return;
-        }
-        reportHandler->SendEvent(BundleActiveReportHandler::MSG_REMOVE_USER, handlerobjToPtr);
+    int32_t userId = data.GetCode();
+    BUNDLE_ACTIVE_LOGI("remove user id %{public}d", userId);
+    BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
+    std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+        std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr) {
+        return;
     }
+    bundleActiveReportHandler->SendEvent(BundleActiveReportHandler::MSG_REMOVE_USER, handlerobjToPtr);
 }
 
 void BundleActiveCommonEventSubscriber::HandleUserSwitchEvent(const CommonEventData &data)
 {
-    if (!bundleActiveReportHandler_.expired()) {
-        int32_t userId = data.GetCode();
-        BUNDLE_ACTIVE_LOGI("OnReceiveEvent receive switched user event, user id is %{public}d", userId);
-        BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        auto reportHandler = bundleActiveReportHandler_.lock();
-        if (reportHandler == nullptr) {
-            return;
-        }
-        reportHandler->SendEvent(BundleActiveReportHandler::MSG_SWITCH_USER, handlerobjToPtr);
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr) {
+        return;
     }
+    int32_t userId = data.GetCode();
+    BUNDLE_ACTIVE_LOGI("OnReceiveEvent receive switched user event, user id is %{public}d", userId);
+    BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
+    std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+        std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+    bundleActiveReportHandler->SendEvent(BundleActiveReportHandler::MSG_SWITCH_USER, handlerobjToPtr);
 }
 
 void BundleActiveCommonEventSubscriber::HandlePackageRemoveEvent(const CommonEventData &data)
@@ -160,19 +149,17 @@ void BundleActiveCommonEventSubscriber::HandlePackageRemoveEvent(const CommonEve
     std::string bundleName = data.GetWant().GetElement().GetBundleName();
     BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
         action.c_str(), userId, bundleName.c_str());
-    if (!bundleActiveReportHandler_.expired()) {
-        BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
-        tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
-        tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
-        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        auto reportHandler = bundleActiveReportHandler_.lock();
-        if (reportHandler == nullptr) {
-            return;
-        }
-        reportHandler->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
-            handlerobjToPtr);
+    BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
+    tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
+    tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
+    std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+        std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr) {
+        return;
     }
+    bundleActiveReportHandler->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_UNINSTALLED,
+        handlerobjToPtr);
 }
 
 void BundleActiveCommonEventSubscriber::HandlePackageAddEvent(const CommonEventData &data)
@@ -182,19 +169,17 @@ void BundleActiveCommonEventSubscriber::HandlePackageAddEvent(const CommonEventD
     std::string bundleName = data.GetWant().GetElement().GetBundleName();
     BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d, bundlename is %{public}s",
         action.c_str(), userId, bundleName.c_str());
-    if (!bundleActiveReportHandler_.expired()) {
-        BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
-        tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
-        tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
-        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        auto reportHandler = bundleActiveReportHandler_.lock();
-        if (reportHandler == nullptr) {
-            return;
-        }
-        reportHandler->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_INSTALLED,
-            handlerobjToPtr);
+    BundleActiveReportHandlerObject tmpHandlerObject(userId, bundleName);
+    tmpHandlerObject.uid_ = data.GetWant().GetIntParam("uid", -1);
+    tmpHandlerObject.appIndex_ = data.GetWant().GetIntParam("appIndex", -1);
+    std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+        std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr) {
+        return;
     }
+    bundleActiveReportHandler->SendEvent(BundleActiveReportHandler::MSG_BUNDLE_INSTALLED,
+        handlerobjToPtr);
 }
 
 void BundleActiveCommonEventSubscriber::HandleLockEvent(const CommonEventData &data)
@@ -202,9 +187,6 @@ void BundleActiveCommonEventSubscriber::HandleLockEvent(const CommonEventData &d
     std::string action = data.GetWant().GetAction();
     int32_t userId = data.GetWant().GetIntParam("userId", 0);
     BUNDLE_ACTIVE_LOGI("action is %{public}s, userID is %{public}d", action.c_str(), userId);
-    if (bundleActiveReportHandler_.expired()) {
-        return;
-    }
     BundleActiveReportHandlerObject tmpHandlerObject(-1, "");
     BundleActiveEvent newEvent;
     tmpHandlerObject.event_ = newEvent;
@@ -217,7 +199,11 @@ void BundleActiveCommonEventSubscriber::HandleLockEvent(const CommonEventData &d
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
     auto handlerobjToPtr = std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-    bundleActiveReportHandler_.lock()->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr) {
+        return;
+    }
+    bundleActiveReportHandler->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
 }
 
 void BundleActiveCore::RegisterSubscriber()
@@ -232,8 +218,7 @@ void BundleActiveCore::RegisterSubscriber()
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_FULLY_REMOVED);
     matchingSkills.AddEvent(CommonEventSupport::COMMON_EVENT_PACKAGE_ADDED);
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-    commonEventSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
-        bundleGroupController_, handler_);
+    commonEventSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo);
     bool subscribeResult = CommonEventManager::SubscribeCommonEvent(commonEventSubscriber_);
     SubscriberLockScreenCommonEvent();
     BUNDLE_ACTIVE_LOGD("Register for events result is %{public}d", subscribeResult);
@@ -246,8 +231,7 @@ void BundleActiveCore::SubscriberLockScreenCommonEvent()
     matchingSkills.AddEvent(COMMON_EVENT_LOCK_SCREEN);
     CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     subscriberInfo.SetPublisherBundleName(AppExecFwk::Constants::SCENE_BOARD_BUNDLE_NAME);
-    lockScreenSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo,
-        bundleGroupController_, handler_);
+    lockScreenSubscriber_ = std::make_shared<BundleActiveCommonEventSubscriber>(subscriberInfo);
     CommonEventManager::SubscribeCommonEvent(lockScreenSubscriber_);
 }
 
@@ -266,7 +250,6 @@ void BundleActiveCore::Init()
     } while (realTimeShot_ == -1 && systemTimeShot_ == -1);
     realTimeShot_ = timer->GetBootTimeMs();
     systemTimeShot_ = GetSystemTimeMs();
-    bundleGroupController_ = std::make_shared<BundleActiveGroupController>(debugCore_);
     BUNDLE_ACTIVE_LOGD("system time shot is %{public}lld", (long long)systemTimeShot_);
     bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader_->LoadConfig();
@@ -275,33 +258,19 @@ void BundleActiveCore::Init()
 void BundleActiveCore::InitBundleGroupController()
 {
     BUNDLE_ACTIVE_LOGD("InitBundleGroupController called");
-    bundleGroupHandler_ = std::make_shared<BundleActiveGroupHandler>(debugCore_);
-    if (bundleGroupHandler_ == nullptr) {
-        return;
-    }
-    if (bundleGroupController_ != nullptr) {
-        bundleGroupHandler_->Init(bundleGroupController_);
-        bundleGroupController_->SetHandlerAndCreateUserHistory(bundleGroupHandler_, realTimeShot_, shared_from_this());
-        BUNDLE_ACTIVE_LOGI("Init Set group controller and handler done");
-    } else {
-        return;
-    }
+    BundleActiveGroupController::GetInstance().Init(debugCore_);
+    BundleActiveGroupController::GetInstance().CreateUserHistory(realTimeShot_, shared_from_this());
     RegisterSubscriber();
     std::vector<int32_t> activatedOsAccountIds;
-    bundleGroupController_->bundleGroupEnable_ = true;
+    BundleActiveGroupController::GetInstance().SetBundleGroupEnable(true);
     GetAllActiveUser(activatedOsAccountIds);
     if (activatedOsAccountIds.size() == 0) {
         BUNDLE_ACTIVE_LOGI("query activated account failed, no account activated");
         return;
     }
     for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
-        bundleGroupController_->PeriodCheckBundleState(activatedOsAccountIds[i]);
+        BundleActiveGroupController::GetInstance().PeriodCheckBundleState(activatedOsAccountIds[i]);
     }
-}
-
-void BundleActiveCore::SetHandler(const std::shared_ptr<BundleActiveReportHandler>& reportHandler)
-{
-    handler_ = reportHandler;
 }
 
 std::shared_ptr<BundleActiveUserService> WEAK_FUNC BundleActiveCore::GetUserDataAndInitializeIfNeeded(
@@ -337,7 +306,7 @@ void BundleActiveCore::OnBundleUninstalled(const int32_t userId, const std::stri
     AddbundleUninstalledUid(uid);
     DelayRemoveBundleUninstalledUid(uid);
     service->DeleteUninstalledBundleStats(bundleName, uid, appIndex);
-    bundleGroupController_->OnBundleUninstalled(userId, bundleName, uid, appIndex);
+    BundleActiveGroupController::GetInstance().OnBundleUninstalled(userId, bundleName, uid, appIndex);
 }
 
 void BundleActiveCore::OnBundleInstalled(const int32_t userId, const std::string& bundleName,
@@ -387,15 +356,18 @@ bool BundleActiveCore::isUninstalledApp(const int32_t uid)
 
 void BundleActiveCore::OnStatsChanged(const int32_t userId)
 {
-    if (!handler_.expired()) {
-        BundleActiveReportHandlerObject tmpHandlerObject;
-        tmpHandlerObject.userId_ = userId;
-        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        if (handler_.lock()->HasEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK) == false) {
-            BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event for user %{public}d", userId);
-            handler_.lock()->SendEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK, handlerobjToPtr, flushInterval_);
-        }
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr) {
+        return;
+    }
+    BundleActiveReportHandlerObject tmpHandlerObject;
+    tmpHandlerObject.userId_ = userId;
+    std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+        std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+    if (bundleActiveReportHandler->HasEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK) == false) {
+        BUNDLE_ACTIVE_LOGI("OnStatsChanged send flush to disk event for user %{public}d", userId);
+        bundleActiveReportHandler->SendEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK,
+            handlerobjToPtr, flushInterval_);
     }
 }
 
@@ -409,17 +381,17 @@ void BundleActiveCore::RestoreAllData()
         }
         BUNDLE_ACTIVE_LOGI("userid is %{public}d ", service->userId_);
         service->RestoreStats(true);
-        if (bundleGroupController_ != nullptr && bundleGroupController_->bundleUserHistory_ != nullptr) {
-            bundleGroupController_->RestoreToDatabase(it.first);
+        if (BundleActiveGroupController::GetInstance().bundleUserHistory_ != nullptr) {
+            BundleActiveGroupController::GetInstance().RestoreToDatabase(it.first);
         }
     }
-    if (bundleGroupController_ != nullptr) {
-        bundleGroupController_->RestoreDurationToDatabase();
+    BundleActiveGroupController::GetInstance().RestoreDurationToDatabase();
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr) {
+        return;
     }
-    if (!handler_.expired()) {
-        BUNDLE_ACTIVE_LOGI("RestoreAllData remove flush to disk event");
-        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
-    }
+    BUNDLE_ACTIVE_LOGI("RestoreAllData remove flush to disk event");
+    bundleActiveReportHandler->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
 }
 
 void BundleActiveCore::RestoreToDatabase(const int32_t userId)
@@ -443,34 +415,36 @@ void BundleActiveCore::RestoreToDatabaseLocked(const int32_t userId)
     if (it != userStatServices_.end()) {
         it->second->RestoreStats(false);
     }
-    if (bundleGroupController_ != nullptr) {
-        bundleGroupController_->RestoreDurationToDatabase();
+    BundleActiveGroupController::GetInstance().RestoreDurationToDatabase();
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr) {
+        return;
     }
-    if (!handler_.expired()) {
-        BUNDLE_ACTIVE_LOGI("RestoreToDatabaseLocked remove flush to disk event");
-        handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
-    }
+    BUNDLE_ACTIVE_LOGI("RestoreToDatabaseLocked remove flush to disk event");
+    bundleActiveReportHandler->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
 }
 
 void BundleActiveCore::PreservePowerStateInfo(const int32_t eventId)
 {
-    if (!handler_.expired()) {
-        int32_t userId = -1;
-        std::vector<int32_t> currentActiveUser;
-        BundleActiveCore::GetAllActiveUser(currentActiveUser);
-        if (currentActiveUser.size() == 1) {
-            userId = currentActiveUser.front();
-        }
-        BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
-        BundleActiveEvent newEvent;
-        tmpHandlerObject.event_ = newEvent;
-        tmpHandlerObject.event_.eventId_ = eventId;
-        sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-        tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
-        std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-            std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-        handler_.lock()->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
+    auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    if (bundleActiveReportHandler == nullptr) {
+        return;
     }
+    int32_t userId = -1;
+    std::vector<int32_t> currentActiveUser;
+    BundleActiveCore::GetAllActiveUser(currentActiveUser);
+    if (currentActiveUser.size() == 1) {
+        userId = currentActiveUser.front();
+    }
+    BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
+    BundleActiveEvent newEvent;
+    tmpHandlerObject.event_ = newEvent;
+    tmpHandlerObject.event_.eventId_ = eventId;
+    sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+    tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
+    std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
+        std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
+    bundleActiveReportHandler->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
 }
 
 void BundleActiveCore::ShutDown()
@@ -488,7 +462,7 @@ void BundleActiveCore::ShutDown()
         return;
     }
     for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
-        bundleGroupController_->ShutDown(timeStamp, activatedOsAccountIds[i]);
+        BundleActiveGroupController::GetInstance().ShutDown(timeStamp, activatedOsAccountIds[i]);
     }
     ReportEventToAllUserId(event);
     RestoreAllData();
@@ -497,7 +471,7 @@ void BundleActiveCore::ShutDown()
 void BundleActiveCore::OnStatsReload()
 {
     BUNDLE_ACTIVE_LOGD("OnStatsReload called");
-    bundleGroupController_->CheckIdleStatsOneTime();
+    BundleActiveGroupController::GetInstance().CheckIdleStatsOneTime();
 }
 
 void BundleActiveCore::OnSystemUpdate(int32_t userId)
@@ -518,27 +492,31 @@ int64_t WEAK_FUNC BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId
     BUNDLE_ACTIVE_LOGD("asystime is %{public}lld, artime is %{public}lld, esystime is %{public}lld, "
         "diff is %{public}lld", (long long)actualSystemTime,
         (long long)actualRealTime, (long long)expectedSystemTime, (long long)diffSystemTime);
-    if (std::abs(diffSystemTime) > TIME_CHANGE_THRESHOLD_MILLIS) {
-        // 时区变换逻辑
-        auto it = userStatServices_.find(userId);
-        if (it != userStatServices_.end()) {
-            BundleActiveEvent event;
-            event.eventId_ = BundleActiveEvent::FLUSH;
-            event.timeStamp_ = expectedSystemTime;
-            event.abilityId_ = "";
-            it->second->ReportEvent(event);
-            it->second->RestoreStats(true);
-            it->second->RenewTableTime(expectedSystemTime, actualSystemTime);
-            it->second->LoadActiveStats(actualSystemTime, true, true);
-            it->second->LoadModuleAndFormStats();
-            if (!handler_.expired()) {
-                BUNDLE_ACTIVE_LOGI("CheckTimeChangeAndGetWallTime remove flush to disk event");
-                handler_.lock()->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
-            }
-        }
-        realTimeShot_ = actualRealTime;
-        systemTimeShot_ = actualSystemTime;
+    if (std::abs(diffSystemTime) < TIME_CHANGE_THRESHOLD_MILLIS) {
+        return actualSystemTime;
     }
+
+    // 时区变换逻辑
+    auto it = userStatServices_.find(userId);
+    if (it != userStatServices_.end()) {
+        BundleActiveEvent event;
+        event.eventId_ = BundleActiveEvent::FLUSH;
+        event.timeStamp_ = expectedSystemTime;
+        event.abilityId_ = "";
+        it->second->ReportEvent(event);
+        it->second->RestoreStats(true);
+        it->second->RenewTableTime(expectedSystemTime, actualSystemTime);
+        it->second->LoadActiveStats(actualSystemTime, true, true);
+        it->second->LoadModuleAndFormStats();
+        auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+        if (bundleActiveReportHandler == nullptr) {
+            return actualSystemTime;
+        }
+        BUNDLE_ACTIVE_LOGI("CheckTimeChangeAndGetWallTime remove flush to disk event");
+        bundleActiveReportHandler->RemoveEvent(BundleActiveReportHandler::MSG_FLUSH_TO_DISK);
+    }
+    realTimeShot_ = actualRealTime;
+    systemTimeShot_ = actualSystemTime;
     return actualSystemTime;
 }
 
@@ -559,7 +537,7 @@ void BundleActiveCore::OnUserRemoved(const int32_t userId)
     userStatServices_[userId]->OnUserRemoved();
     userStatServices_[userId].reset();
     userStatServices_.erase(userId);
-    bundleGroupController_->OnUserRemoved(userId);
+    BundleActiveGroupController::GetInstance().OnUserRemoved(userId);
 }
 
 void BundleActiveCore::OnUserSwitched(const int32_t userId)
@@ -584,7 +562,7 @@ void BundleActiveCore::OnUserSwitched(const int32_t userId)
     }
     for (uint32_t i = 0; i < activatedOsAccountIds.size(); i++) {
         BUNDLE_ACTIVE_LOGI("start to period check for userId %{public}d", activatedOsAccountIds[i]);
-        bundleGroupController_->OnUserSwitched(activatedOsAccountIds[i], currentUsedUser_);
+        BundleActiveGroupController::GetInstance().OnUserSwitched(activatedOsAccountIds[i], currentUsedUser_);
     }
     currentUsedUser_ = userId;
     OnStatsChanged(userId);
@@ -607,7 +585,7 @@ int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, int32_t userId)
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     if (BundleActiveBundleMgrHelper::GetInstance()->IsLauncherApp(event.bundleName_, userId)) {
         BUNDLE_ACTIVE_LOGI("launcher event, only update app group");
-        bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
+        BundleActiveGroupController::GetInstance().ReportEvent(event, bootBasedTimeStamp, userId);
         return 0;
     }
     BUNDLE_ACTIVE_LOGD("report event called, bundle name %{public}s time %{public}lld userId %{public}d, "
@@ -630,7 +608,7 @@ int32_t BundleActiveCore::ReportEvent(BundleActiveEvent& event, int32_t userId)
     }
     service->ReportModuleEvent(event);
     service->ReportEvent(event);
-    bundleGroupController_->ReportEvent(event, bootBasedTimeStamp, userId);
+    BundleActiveGroupController::GetInstance().ReportEvent(event, bootBasedTimeStamp, userId);
     return 0;
 }
 
@@ -776,23 +754,23 @@ ErrCode BundleActiveCore::SetAppGroup(
     int32_t newReason = GROUP_CONTROL_REASON_FORCED;
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
-    return bundleGroupController_->SetAppGroup(
+    return BundleActiveGroupController::GetInstance().SetAppGroup(
         bundleName, userId, newGroup, newReason, bootBasedTimeStamp, isFlush);
 }
 
 ErrCode BundleActiveCore::QueryAppGroup(int32_t& appGroup, const std::string& bundleName, const int32_t userId)
 {
-    return bundleGroupController_->QueryAppGroup(appGroup, bundleName, userId);
+    return BundleActiveGroupController::GetInstance().QueryAppGroup(appGroup, bundleName, userId);
 }
 
 int32_t BundleActiveCore::IsBundleIdle(const std::string& bundleName, const int32_t userId)
 {
-    return bundleGroupController_->IsBundleIdle(bundleName, userId);
+    return BundleActiveGroupController::GetInstance().IsBundleIdle(bundleName, userId);
 }
 
 bool BundleActiveCore::IsBundleUsePeriod(const std::string& bundleName, const int32_t userId)
 {
-    if (!bundleGroupController_->IsBundleInstalled(bundleName, userId)) {
+    if (!BundleActiveGroupController::GetInstance().IsBundleInstalled(bundleName, userId)) {
         BUNDLE_ACTIVE_LOGI("IsBundleUsePeriod is not bundleInstalled");
         return false;
     }
@@ -852,9 +830,13 @@ void BundleActiveCore::OnAppGroupChanged(const AppGroupCallbackInfo& callbackInf
 {
     std::shared_ptr<BundleActiveCore> bundleActiveCore = shared_from_this();
     AccessToken::HapTokenInfo tokenInfo = AccessToken::HapTokenInfo();
-    bundleGroupHandler_->PostTask([bundleActiveCore, callbackInfo, tokenInfo]() {
-        bundleActiveCore->NotifOberserverGroupChanged(callbackInfo, tokenInfo);
-    });
+    auto bundleGroupHandler = BundleActiveGroupController::GetInstance().GetBundleGroupHandler();
+    if (bundleGroupHandler != nullptr) {
+        bundleGroupHandler->PostTask([bundleActiveCore, callbackInfo, tokenInfo]() {
+            bundleActiveCore->NotifOberserverGroupChanged(callbackInfo, tokenInfo);
+        });
+    }
+
     HiSysEventWrite(RSS,
         "UPDATE_GROUP_SCENE", HiviewDFX::HiSysEvent::EventType::STATISTIC,
         "UPDATE_GROUP_BUNDLENAME", callbackInfo.GetBundleName(),
@@ -970,7 +952,11 @@ void BundleActiveCore::OnObserverDied(const wptr<IRemoteObject> &remote)
         return;
     }
     std::shared_ptr<BundleActiveCore> bundleActiveCore = shared_from_this();
-    bundleGroupHandler_->PostSyncTask([bundleActiveCore, &remote]() {
+    auto bundleGroupHandler = BundleActiveGroupController::GetInstance().GetBundleGroupHandler();
+    if (bundleGroupHandler == nullptr) {
+        return;
+    }
+    bundleGroupHandler->PostSyncTask([bundleActiveCore, &remote]() {
         bundleActiveCore->OnObserverDiedInner(remote);
     });
 }

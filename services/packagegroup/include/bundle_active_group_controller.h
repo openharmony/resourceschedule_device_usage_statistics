@@ -35,8 +35,11 @@ namespace DeviceUsageStats {
 using namespace DeviceUsageStatsGroupConst;
 
 class BundleActiveGroupHandler;
-class BundleActiveGroupController : public std::enable_shared_from_this<BundleActiveGroupController> {
+class BundleActiveGroupController {
 public:
+    static BundleActiveGroupController& GetInstance();
+    void Init(const bool debug);
+    void DeInit();
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     using PowerMgrClient = OHOS::PowerMgr::PowerMgrClient;
 #endif
@@ -46,7 +49,6 @@ public:
     using BundleFlag = OHOS::AppExecFwk::BundleFlag;
     using ApplicationFlag = OHOS::AppExecFwk::ApplicationFlag;
     OHOS::AppExecFwk::ApplicationFlag flag = OHOS::AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO;
-    bool bundleGroupEnable_ = true;
     const int32_t LEVEL_GROUP[4] = {
         ACTIVE_GROUP_ALIVE,
         ACTIVE_GROUP_DAILY,
@@ -55,10 +57,8 @@ public:
     };
     std::vector<int64_t> screenTimeLevel_ = {0, 0, 0, 0};
     std::vector<int64_t> bootTimeLevel_ = {0, 0, 0, 0};
-    BundleActiveGroupController(const bool debug);
-    ~BundleActiveGroupController() {}
     std::shared_ptr<BundleActiveUserHistory> bundleUserHistory_;
-    void SetHandlerAndCreateUserHistory(const std::shared_ptr<BundleActiveGroupHandler>& groupHandler,
+    void CreateUserHistory(
         const int64_t bootFromTimeStamp, const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
     void ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp, const int32_t userId);
     void CheckAndUpdateGroup(const std::string& bundleName, int32_t userId,
@@ -83,15 +83,22 @@ public:
     ErrCode QueryAppGroup(int32_t& appGroup, const std::string& bundleName, const int32_t userId);
     void ShutDown(const int64_t bootBasedTimeStamp, const int32_t userId);
     void OnUserSwitched(const int32_t userId, const int32_t currentUsedUser);
-
+    void SetBundleGroupEnable(bool bundleGroupEnable);
+    bool GetBundleGroupEnable();
+    std::shared_ptr<BundleActiveGroupHandler> GetBundleGroupHandler();
 private:
+    BundleActiveGroupController() = default;
+    ~BundleActiveGroupController() = default;
     ffrt::mutex mutex_;
-    std::weak_ptr<BundleActiveGroupHandler> activeGroupHandler_;
+    ffrt::mutex initMutex_;
+    std::shared_ptr<BundleActiveGroupHandler> activeGroupHandler_;
     int64_t timeoutForDirectlyUse_;
     int64_t timeoutForNotifySeen_;
     int64_t timeoutForSystemInteraction_;
     int64_t timeoutCalculated_ = 0;
     std::map<int32_t, uint32_t> eventIdMatchReason_;
+    bool bundleGroupEnable_ = true;
+    bool isInit_ = false;
     sptr<IBundleMgr> sptrBundleMgr_;
     bool calculationTimeOut(const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory,
         const int64_t bootBasedTimeStamp);

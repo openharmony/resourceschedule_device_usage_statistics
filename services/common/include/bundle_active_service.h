@@ -223,7 +223,7 @@ protected:
 
 private:
     std::shared_ptr<BundleActiveCore> bundleActiveCore_;
-    std::shared_ptr<BundleActiveReportHandler> reportHandler_;
+
     sptr<BundleActiveAppStateObserver> appStateObserver_;
 #ifdef BGTASKMGR_ENABLE
     std::shared_ptr<BundleActiveContinuousTaskObserver> continuousTaskObserver_;
@@ -240,8 +240,8 @@ private:
         OHOS::Security::AccessToken::AccessTokenID tokenId);
     ErrCode CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId);
     ErrCode CheckNativePermission(OHOS::Security::AccessToken::AccessTokenID tokenId);
-    void InitAppStateSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
-    void InitContinuousSubscriber(const std::shared_ptr<BundleActiveReportHandler>& reportHandler);
+    void InitAppStateSubscriber();
+    void InitContinuousSubscriber();
     bool SubscribeAppState();
     bool SubscribeContinuousTask();
     OHOS::sptr<OHOS::AppExecFwk::IAppMgr> GetAppManagerInstance();
