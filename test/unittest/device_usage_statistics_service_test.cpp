@@ -913,7 +913,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
     bundleActiveCore_->InitBundleGroupController();
     int userId = 100;
     EXPECT_EQ(BundleActiveGroupController::GetInstance().IsBundleInstalled("test", userId), false);
-    BundleActiveGroupController::GetInstance().sptrBundleMgr_ = nullptr;
     EXPECT_EQ(BundleActiveGroupController::GetInstance().IsBundleInstalled("test", userId), false);
 }
 
@@ -1125,7 +1124,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
     int32_t userId = 100;
     EXPECT_NE(BundleActiveGroupController::GetInstance().QueryAppGroup(appGroup, bundleName, userId), ERR_OK);
 
-    BundleActiveGroupController::GetInstance().sptrBundleMgr_ = nullptr;
     bundleName = "defaultBundleName";
     EXPECT_NE(BundleActiveGroupController::GetInstance().QueryAppGroup(appGroup, bundleName, userId), ERR_OK);
 }

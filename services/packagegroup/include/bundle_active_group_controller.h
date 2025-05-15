@@ -99,7 +99,6 @@ private:
     std::map<int32_t, uint32_t> eventIdMatchReason_;
     bool bundleGroupEnable_ = true;
     bool isInit_ = false;
-    sptr<IBundleMgr> sptrBundleMgr_;
     bool calculationTimeOut(const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory,
         const int64_t bootBasedTimeStamp);
     int32_t GetNewGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
