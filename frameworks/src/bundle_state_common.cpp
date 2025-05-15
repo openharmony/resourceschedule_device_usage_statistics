@@ -612,7 +612,7 @@ std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> Bu
     std::vector<BundleActivePackageStats> packageStats;
     if (endTime - beginTime <= INTERVAL_TIME) {
         errCode = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats,
-            BundleStateCondition::IntervalType::BY_DAILY, beginTime, endTime);
+            BundleStateCondition::IntervalType::BY_MONTHLY, beginTime, endTime);
     } else {
         errCode = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(packageStats,
             BundleStateCondition::IntervalType::BY_OPTIMIZED, beginTime, endTime);
