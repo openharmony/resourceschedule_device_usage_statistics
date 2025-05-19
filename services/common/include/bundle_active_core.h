@@ -253,7 +253,7 @@ private:
     void AddbundleUninstalledUid(const int32_t uid);
     void DelayRemoveBundleUninstalledUid(const int32_t uid);
     int64_t flushInterval_;
-    static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TWO_SECONDS;
+    static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TEN_MINUTES;
     const int32_t DEFAULT_USER_ID = -1;
     std::map<int32_t, std::string> visibleActivities_;
 
