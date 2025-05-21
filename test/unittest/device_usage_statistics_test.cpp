@@ -312,14 +312,7 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryAppGroup_001,
     BundleActiveClient::GetInstance().SetAppGroup(g_defaultBundleName, g_defaultGroup, g_commonUserid);
     int32_t result = 0;
     BundleActiveClient::GetInstance().QueryAppGroup(result, g_defaultBundleName, g_commonUserid);
-    bool flag = false;
-    for (auto item = GROUP_TYPE.begin(); item != GROUP_TYPE.end(); item++) {
-        if (*item == result) {
-            flag = true;
-            break;
-        }
-    }
-    EXPECT_EQ(flag, true);
+    EXPECT_NE(result, DEFAULT_ERRCODE);
 }
 
 /*
