@@ -954,8 +954,8 @@ pair<int64_t, int64_t> BundleActiveUsageDatabase::GetDurationData()
 void BundleActiveUsageDatabase::FlushPackageInfo(uint32_t databaseType, const BundleActivePeriodStats &stats)
 {
     shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(databaseType);
-    if (rdbStore == nullptr) {
-        BUNDLE_ACTIVE_LOGE("flush package info fail, rdbStore is nullptr");
+    if (rdbStore == nullptr || stats.bundleStats_.empty()) {
+        BUNDLE_ACTIVE_LOGE("flush package info fail, rdbStore is nullptr or bundleStats is empty");
         return;
     }
     string tableName = PACKAGE_LOG_TABLE + to_string(stats.beginTime_);
@@ -963,7 +963,8 @@ void BundleActiveUsageDatabase::FlushPackageInfo(uint32_t databaseType, const Bu
     int64_t outRowId = BUNDLE_ACTIVE_FAIL;
     NativeRdb::ValuesBucket valuesBucket;
     vector<string> queryCondition;
-    for (auto iter = stats.bundleStats_.begin(); iter != stats.bundleStats_.end(); iter++) {
+    auto bundleStats = stats.bundleStats_;
+    for (auto iter = bundleStats.begin(); iter != bundleStats.end(); iter++) {
         if (iter->second == nullptr || (iter->second->totalInFrontTime_ == 0 &&
             iter->second->totalContiniousTaskUsedTime_ == 0)) {
             continue;
