@@ -95,7 +95,10 @@ bool BundleActiveConfigReader::GetJsonFromFile(const char *filePath, Json::Value
     }
     BUNDLE_ACTIVE_LOGD("Read from %{private}s", realPath.c_str());
     std::string data;
-    LoadStringFromFile(realPath.c_str(), data);
+    if (!LoadStringFromFile(realPath.c_str(), data)) {
+        BUNDLE_ACTIVE_LOGE("load string from %{private}s failed", realPath.c_str());
+        return false;
+    }
     if (data.empty()) {
         return false;
     }
