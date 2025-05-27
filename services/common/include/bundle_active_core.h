@@ -254,7 +254,7 @@ private:
     void OnObserverDied(const wptr<IRemoteObject> &remote);
     void OnObserverDiedInner(const wptr<IRemoteObject> &remote);
     int64_t flushInterval_;
-    static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TWO_SECONDS;
+    static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TEN_MINUTES;
     const int32_t DEFAULT_USER_ID = -1;
     std::map<int32_t, std::string> visibleActivities_;
     // use weak_ptr to avoid circulate reference of core and handler.
