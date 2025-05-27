@@ -80,6 +80,7 @@ const int32_t QUERY_CONDITION_VALID = 0;
 const int32_t QUERY_CONDITION_INVALID = -1;
 const uint32_t BUNDLE_ACTIVE_DB_NAME_MAX_LENGTH = 100;
 const int64_t TWO_SECONDS = 2 * 1000LL;
+const int64_t TEN_MINUTES = 10 * 60 * 1000LL;
 const int64_t THIRTY_MINUTE = 30 * 60 * 1000LL;
 const int64_t SIX_DAY_IN_MILLIS_MAX_DEBUG = 6 * 1 * 10 * 60 * 1000LL;
 const int64_t SIX_DAY_IN_MILLIS_MAX = 6 * 24 * 60 * 60 * 1000LL;
