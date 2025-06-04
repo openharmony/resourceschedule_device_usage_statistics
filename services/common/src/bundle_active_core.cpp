@@ -35,6 +35,7 @@ namespace DeviceUsageStats {
 const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no os_account part
 #endif // OS_ACCOUNT_PART_ENABLED
 constexpr int32_t BUNDLE_UNINSTALL_DELAY_TIME = 5 * 1000 * 1000;
+constexpr int32_t MIN_USER_ID = -1;
 static constexpr char RSS[] = "RSS";
 
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
@@ -530,6 +531,9 @@ void BundleActiveCore::OnUserRemoved(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGD("OnUserRemoved called");
     std::lock_guard<ffrt::mutex> lock(mutex_);
+    if (MIN_USER_ID > userId || userId > INT32_MAX) {
+        return;
+    }
     auto it = userStatServices_.find(userId);
     if (it == userStatServices_.end()) {
         return;
