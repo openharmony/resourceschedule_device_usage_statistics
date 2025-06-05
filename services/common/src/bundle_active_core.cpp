@@ -246,10 +246,10 @@ void BundleActiveCore::Init()
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     do {
         realTimeShot_ = timer->GetBootTimeMs();
-        systemTimeShot_ = GetSystemTimeMs();
+        systemTimeShot_ = BundleActiveUtil::GetSystemTimeMs();
     } while (realTimeShot_ == -1 && systemTimeShot_ == -1);
     realTimeShot_ = timer->GetBootTimeMs();
-    systemTimeShot_ = GetSystemTimeMs();
+    systemTimeShot_ = BundleActiveUtil::GetSystemTimeMs();
     BUNDLE_ACTIVE_LOGD("system time shot is %{public}lld", (long long)systemTimeShot_);
     bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader_->LoadConfig();
@@ -399,7 +399,7 @@ void BundleActiveCore::RestoreToDatabase(const int32_t userId)
     BUNDLE_ACTIVE_LOGD("RestoreToDatabase called");
     BundleActiveEvent event;
     event.eventId_ = BundleActiveEvent::FLUSH;
-    event.timeStamp_ = GetSystemTimeMs();
+    event.timeStamp_ = BundleActiveUtil::GetSystemTimeMs();
     event.abilityId_ = "";
     auto it = userStatServices_.find(userId);
     if (it != userStatServices_.end()) {
@@ -482,7 +482,7 @@ int64_t WEAK_FUNC BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId
 {
     BUNDLE_ACTIVE_LOGD("CheckTimeChangeAndGetWallTime called, userId is %{public}d", userId);
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-    int64_t actualSystemTime = GetSystemTimeMs();
+    int64_t actualSystemTime = BundleActiveUtil::GetSystemTimeMs();
     int64_t actualRealTime = timer->GetBootTimeMs();
     int64_t expectedSystemTime = (actualRealTime - realTimeShot_) + systemTimeShot_;
     int64_t diffSystemTime = actualSystemTime - expectedSystemTime;
@@ -774,7 +774,10 @@ bool BundleActiveCore::IsBundleUsePeriod(const std::string& bundleName, const in
         BUNDLE_ACTIVE_LOGI("IsBundleUsePeriod is not bundleInstalled");
         return false;
     }
-    int64_t currentSystemTime = GetSystemTimeMs();
+    if (BundleActiveGroupController::GetInstance().IsUsedOverOneWeek(bundleName, userId)) {
+        return true;
+    }
+    int64_t currentSystemTime = BundleActiveUtil::GetSystemTimeMs();
     int64_t aWeekAgo = currentSystemTime - ONE_WEEK_TIME;
     int64_t startTime = BundleActiveUtil::GetIntervalTypeStartTime(aWeekAgo, BundleActiveUtil::PERIOD_DAILY);
     std::vector<BundleActivePackageStats> packageStats;
@@ -808,24 +811,6 @@ void BundleActiveCore::GetAllActiveUser(std::vector<int32_t>& activatedOsAccount
     }
 }
 
-int64_t BundleActiveCore::GetSystemTimeMs()
-{
-    time_t now;
-    (void)time(&now);  // unit is seconds.
-    if (static_cast<int64_t>(now) < 0) {
-        BUNDLE_ACTIVE_LOGE("Get now time error");
-        return 0;
-    }
-    auto tarEndTimePoint = std::chrono::system_clock::from_time_t(now);
-    auto tarDuration = std::chrono::duration_cast<std::chrono::milliseconds>(tarEndTimePoint.time_since_epoch());
-    int64_t tarDate = tarDuration.count();
-    if (tarDate < 0) {
-        BUNDLE_ACTIVE_LOGE("tarDuration is less than 0.");
-        return -1;
-    }
-    return static_cast<int64_t>(tarDate);
-}
-
 void BundleActiveCore::OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo)
 {
     std::shared_ptr<BundleActiveCore> bundleActiveCore = shared_from_this();
@@ -842,7 +827,7 @@ void BundleActiveCore::OnAppGroupChanged(const AppGroupCallbackInfo& callbackInf
         "UPDATE_GROUP_BUNDLENAME", callbackInfo.GetBundleName(),
         "UPDATE_GROUP_USERID", callbackInfo.GetUserId(),
         "UPDATE_GROUP_REASON", callbackInfo.GetChangeReason(),
-        "UPDATE_GROUP_TIME", GetSystemTimeMs(),
+        "UPDATE_GROUP_TIME", BundleActiveUtil::GetSystemTimeMs(),
         "UPDATE_GROUP_OLD_GROUP", callbackInfo.GetOldGroup(),
         "UPDATE_GROUP_NEW_GROUP", callbackInfo.GetNewGroup());
 }

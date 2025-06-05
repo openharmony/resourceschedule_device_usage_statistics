@@ -36,6 +36,7 @@ BundleActivePackageHistory::BundleActivePackageHistory()
     uid_ = 0;
     lastCalculatedGroup_ = ACTIVE_GROUP_NEVER;
     isChanged_ = false;
+    bundlefirstUseTimeStamp_ = MAX_END_TIME;
 };
 
 void BundleActiveUserHistory::WriteDeviceDuration()
@@ -156,6 +157,7 @@ shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryI
         usageHistoryInserted->bundleAliveTimeoutTimeStamp_ = 0;
         usageHistoryInserted->bundleDailyTimeoutTimeStamp_ = 0;
         usageHistoryInserted->uid_ = uid;
+        usageHistoryInserted->bundlefirstUseTimeStamp_ = INT64_MAX;
         (*oneUserHistory)[userHistoryKey] = usageHistoryInserted;
     }
     return (*oneUserHistory)[userHistoryKey];
@@ -177,9 +179,13 @@ shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryF
 }
 
 void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory> oneBundleUsageHistory,
-    const string& bundleName, const int32_t newGroup, const uint32_t groupReason, const int64_t bootBasedTimeStamp,
-    const int64_t timeUntilNextCheck, const int32_t userId, const int32_t uid)
+    const BundleActiveEvent& event, const int32_t newGroup, const uint32_t groupReason,
+    const int64_t bootBasedTimeStamp, const int64_t timeUntilNextCheck, const int32_t userId)
 {
+    string bundleName = event.bundleName_;
+    int32_t uid = event.uid_;
+    oneBundleUsageHistory->bundlefirstUseTimeStamp_ =
+        std::min(oneBundleUsageHistory->bundlefirstUseTimeStamp_, event.timeStamp_);
     if ((oneBundleUsageHistory->reasonInGroup_ & GROUP_CONTROL_REASON_MASK) == GROUP_CONTROL_REASON_FORCED) {
         return;
     }
@@ -291,6 +297,23 @@ void BundleActiveUserHistory::PrintData(int32_t userId)
             (long long)oneBundleUsage.second->bundleDailyTimeoutTimeStamp_,
             (long long)oneBundleUsage.second->bundleAliveTimeoutTimeStamp_);
     }
+}
+
+int64_t BundleActiveUserHistory::GetFirstUseTime(const std::string& bundleName, const int32_t userId)
+{
+    int64_t firstUseTime = MAX_END_TIME;
+    auto userHistory = GetUserHistory(userId, false);
+    if (userHistory == nullptr) {
+        BUNDLE_ACTIVE_LOGI("WriteBundleUsage called, no existed user history, return");
+        return firstUseTime;
+    }
+    for (auto packageHistoryIter : *userHistory) {
+        if (packageHistoryIter.first.find(bundleName) == std::string::npos || packageHistoryIter.second == nullptr) {
+            continue;
+        }
+        firstUseTime = std::min(firstUseTime, packageHistoryIter.second->bundlefirstUseTimeStamp_);
+    }
+    return firstUseTime;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

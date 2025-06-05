@@ -32,6 +32,7 @@ public:
     static int64_t GetIntervalTypeStartTime(const int64_t& timeStamp, const int32_t& intervalType);
     static int32_t StringToInt32(const std::string& str);
     static int64_t StringToInt64(const std::string& str);
+    static int64_t GetSystemTimeMs();
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

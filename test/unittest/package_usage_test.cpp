@@ -33,6 +33,7 @@
 #include "bundle_active_group_controller.h"
 #include "bundle_active_event_list.h"
 #include "bundle_active_test_util.h"
+#include "bundle_active_util.h"
 
 using namespace testing::ext;
 
@@ -1186,7 +1187,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_005, Function | MediumTest |
  */
 HWTEST_F(PackageUsageTest, BundleActiveCalendar_001, Function | MediumTest | Level0)
 {
-    int64_t nowTime = bundleActiveCore_->GetSystemTimeMs();
+    int64_t nowTime = BundleActiveUtil::GetSystemTimeMs();
     BundleActiveCalendar testCalendar(nowTime);
     testCalendar.TruncateToDay();
     EXPECT_TRUE(nowTime - testCalendar.GetMilliseconds() >= 0);
@@ -1209,7 +1210,7 @@ HWTEST_F(PackageUsageTest, BundleActiveCalendar_001, Function | MediumTest | Lev
  */
 HWTEST_F(PackageUsageTest, BundleActiveCalendar_002, Function | MediumTest | Level0)
 {
-    int64_t nowTime = bundleActiveCore_->GetSystemTimeMs();
+    int64_t nowTime = BundleActiveUtil::GetSystemTimeMs();
     BundleActiveCalendar testCalendar(nowTime);
     testCalendar.ChangeToDebug();
     testCalendar.TruncateToDay();

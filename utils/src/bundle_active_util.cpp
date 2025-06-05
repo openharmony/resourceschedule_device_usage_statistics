@@ -16,6 +16,7 @@
 #include <ctime>
 #include <limits>
 #include "bundle_active_util.h"
+#include "bundle_active_log.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -98,6 +99,24 @@ int64_t BundleActiveUtil::StringToInt64(const std::string& str)
         return 0;
     }
     return res;
+}
+
+int64_t BundleActiveUtil::GetSystemTimeMs()
+{
+    time_t now;
+    (void)time(&now);  // unit is seconds.
+    if (static_cast<int64_t>(now) < 0) {
+        BUNDLE_ACTIVE_LOGE("Get now time error");
+        return 0;
+    }
+    auto tarEndTimePoint = std::chrono::system_clock::from_time_t(now);
+    auto tarDuration = std::chrono::duration_cast<std::chrono::milliseconds>(tarEndTimePoint.time_since_epoch());
+    int64_t tarDate = tarDuration.count();
+    if (tarDate < 0) {
+        BUNDLE_ACTIVE_LOGE("tarDuration is less than 0.");
+        return -1;
+    }
+    return static_cast<int64_t>(tarDate);
 }
 } // namespace DeviceUsageStats
 }  // namespace OHOS

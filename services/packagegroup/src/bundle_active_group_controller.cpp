@@ -268,20 +268,20 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
         int32_t checkBundleMsgEventId = BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE;
         switch (eventId) {
             case BundleActiveEvent::NOTIFICATION_SEEN:
-                bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_DAILY,
-                    eventReason, 0, bootBasedTimeStamp + timeoutForNotifySeen_, userId, event.uid_);
+                bundleUserHistory_->ReportUsage(bundleUsageHistory, event, ACTIVE_GROUP_DAILY,
+                    eventReason, 0, bootBasedTimeStamp + timeoutForNotifySeen_, userId);
                 timeUntilNextCheck = timeoutForNotifySeen_;
                 checkBundleMsgEventId = BundleActiveGroupHandler::MSG_CHECK_NOTIFICATION_SEEN_BUNDLE_STATE;
                 break;
             case BundleActiveEvent::SYSTEM_INTERACTIVE:
-                bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_ALIVE,
-                    eventReason, 0, bootBasedTimeStamp + timeoutForSystemInteraction_, userId, event.uid_);
+                bundleUserHistory_->ReportUsage(bundleUsageHistory, event, ACTIVE_GROUP_ALIVE,
+                    eventReason, 0, bootBasedTimeStamp + timeoutForSystemInteraction_, userId);
                 timeUntilNextCheck = timeoutForSystemInteraction_;
                 checkBundleMsgEventId = BundleActiveGroupHandler::MSG_CHECK_SYSTEM_INTERACTIVE_BUNDLE_STATE;
                 break;
             default:
-                bundleUserHistory_->ReportUsage(bundleUsageHistory, event.bundleName_, ACTIVE_GROUP_ALIVE,
-                    eventReason, bootBasedTimeStamp, bootBasedTimeStamp + timeoutForDirectlyUse_, userId, event.uid_);
+                bundleUserHistory_->ReportUsage(bundleUsageHistory, event, ACTIVE_GROUP_ALIVE,
+                    eventReason, bootBasedTimeStamp, bootBasedTimeStamp + timeoutForDirectlyUse_, userId);
                 timeUntilNextCheck = timeoutForDirectlyUse_;
                 break;
         }
@@ -473,6 +473,21 @@ bool BundleActiveGroupController::IsScreenOn()
 #endif
     BUNDLE_ACTIVE_LOGI("IsScreenOn() is %{public}d", result);
     return result;
+}
+bool BundleActiveGroupController::IsUsedOverOneWeek(const std::string& bundleName, const int32_t userId)
+{
+    if (bundleUserHistory_ == nullptr) {
+        return false;
+    }
+    int64_t firstUseTime = bundleUserHistory_->GetFirstUseTime(bundleName, userId);
+    if (firstUseTime == MAX_END_TIME) {
+        return false;
+    }
+    int64_t curTime = BundleActiveUtil::GetSystemTimeMs();
+    if (curTime < 0 || curTime - firstUseTime > ONE_WEEK_TIME) {
+        return false;
+    }
+    return true;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
