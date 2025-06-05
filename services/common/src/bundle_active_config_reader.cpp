@@ -21,11 +21,11 @@
 using namespace std;
 namespace OHOS {
 namespace DeviceUsageStats {
-const char* CONFIG_PATH = "etc/device_usage_statistics/device_usage_statistics_config.json";
-const std::string APPLICATION_USE_PERIODICALLY_KEY = "application_use_periodically";
-const std::string MIN_USE_TIMES = "MinUseTimes";
-const std::string MAX_USE_TIMES = "MaxUseTimes";
-const std::string MIN_USE_DAYS = "MinUseDays";
+const static char* CONFIG_PATH = "etc/device_usage_statistics/device_usage_statistics_config.json";
+const static char* APPLICATION_USE_PERIODICALLY_KEY = "application_use_periodically";
+const static char* MIN_USE_TIMES = "MinUseTimes";
+const static char* MAX_USE_TIMES = "MaxUseTimes";
+const static char* MIN_USE_DAYS = "MinUseDays";
 const int32_t DEFAULT_MIN_USE_TIMES = 1;
 const int32_t DEFAULT_MAX_USE_TIMES = 10;
 const int32_t DEFAULT_MIN_USE_DAYS = 3;
@@ -54,39 +54,43 @@ void BundleActiveConfigReader::LoadApplicationUsePeriodically(const char *filePa
     if (!filePath) {
         return;
     }
-    Json::Value root;
-    if (!GetJsonFromFile(filePath, root) || root.empty()) {
+    cJSON *root = nullptr;
+    if (!GetJsonFromFile(filePath, root) || !root) {
         BUNDLE_ACTIVE_LOGE("file is empty %{private}s", filePath);
         return;
     }
-    if (!root.isMember(APPLICATION_USE_PERIODICALLY_KEY)) {
-        BUNDLE_ACTIVE_LOGE("not have application_use_periodically key");
-        return;
-    }
-    Json::Value appUsePeriodicallyRoot = root[APPLICATION_USE_PERIODICALLY_KEY];
-    if (appUsePeriodicallyRoot.empty() || !appUsePeriodicallyRoot.isObject()) {
+    cJSON *appUsePeriodicallyRoot = cJSON_GetObjectItem(root, APPLICATION_USE_PERIODICALLY_KEY);
+    if (!appUsePeriodicallyRoot || cJSON_IsObject(appUsePeriodicallyRoot)) {
         BUNDLE_ACTIVE_LOGE("application_use_periodically content is empty");
+        cJSON_Delete(root);
         return;
     }
-    if (appUsePeriodicallyRoot[MIN_USE_TIMES].empty() || !appUsePeriodicallyRoot[MIN_USE_TIMES].isInt()) {
+    cJSON *minUseTimesItem = cJSON_GetObjectItem(appUsePeriodicallyRoot, MIN_USE_TIMES);
+    if (!minUseTimesItem || !cJSON_IsNumber(minUseTimesItem)) {
         BUNDLE_ACTIVE_LOGE("not have MinUseTimes key");
+        cJSON_Delete(root);
         return;
     }
-    int32_t minUseTimes = appUsePeriodicallyRoot[MIN_USE_TIMES].asInt();
-    if (appUsePeriodicallyRoot[MAX_USE_TIMES].empty() || !appUsePeriodicallyRoot[MAX_USE_TIMES].isInt()) {
+    int32_t minUseTimes = static_cast<int32_t>(minUseTimesItem->valueint);
+    cJSON *maxUseTimesItem = cJSON_GetObjectItem(appUsePeriodicallyRoot, MAX_USE_TIMES);
+    if (!maxUseTimesItem || !cJSON_IsNumber(maxUseTimesItem)) {
         BUNDLE_ACTIVE_LOGE("not have MaxUseTimes key");
+        cJSON_Delete(root);
         return;
     }
-    int32_t maxUseTimes = appUsePeriodicallyRoot[MAX_USE_TIMES].asInt();
-    if (appUsePeriodicallyRoot[MIN_USE_DAYS].empty() || !appUsePeriodicallyRoot[MIN_USE_DAYS].isInt()) {
+    int32_t maxUseTimes = static_cast<int32_t>(maxUseTimesItem->valueint);
+    cJSON *minUseDaysItem = cJSON_GetObjectItem(appUsePeriodicallyRoot, MIN_USE_DAYS);
+    if (!minUseDaysItem || !cJSON_IsNumber(minUseDaysItem)) {
         BUNDLE_ACTIVE_LOGE("not have MinUseDays key");
+        cJSON_Delete(root);
         return;
     }
-    int32_t minUseDays = appUsePeriodicallyRoot[MIN_USE_DAYS].asInt();
+    int32_t minUseDays = static_cast<int32_t>(minUseDaysItem->valueint);
     appUsePeriodicallyConfig_ = { minUseTimes, maxUseTimes, minUseDays};
+    cJSON_Delete(root);
 };
 
-bool BundleActiveConfigReader::GetJsonFromFile(const char *filePath, Json::Value &root)
+bool BundleActiveConfigReader::GetJsonFromFile(const char *filePath, cJSON *&root)
 {
     std::string realPath;
     if (!BundleActiveConfigReader::ConvertFullPath(filePath, realPath)) {
@@ -102,11 +106,8 @@ bool BundleActiveConfigReader::GetJsonFromFile(const char *filePath, Json::Value
     if (data.empty()) {
         return false;
     }
-    JSONCPP_STRING errs;
-    Json::CharReaderBuilder readerBuilder;
-    const unique_ptr<Json::CharReader> jsonReader(readerBuilder.newCharReader());
-    bool res = jsonReader->parse(data.c_str(), data.c_str() + data.length(), &root, &errs);
-    if (!res || !errs.empty()) {
+    root = cJSON_Parse(data.c_str());
+    if (!root) {
         BUNDLE_ACTIVE_LOGE("parse %{private}s json error", realPath.c_str());
         return false;
     }

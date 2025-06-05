@@ -49,7 +49,7 @@ namespace DeviceUsageStats {
         bundleActiveConfigReader->LoadApplicationUsePeriodically(CONFIG_TEST2_PATH);
         bundleActiveConfigReader->LoadApplicationUsePeriodically(CONFIG_TEST3_PATH);
         bundleActiveConfigReader->LoadApplicationUsePeriodically(CONFIG_TEST4_PATH);
-        Json::Value root;
+        cJSON *root = nullptr;
         bundleActiveConfigReader->GetJsonFromFile(filePath.c_str(), root);
         bundleActiveConfigReader->GetJsonFromFile(CONFIG_TEST_PATH, root);
         std::string fullPath = "";

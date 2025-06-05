@@ -1546,7 +1546,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Conf
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
     const char *path = "test";
-    Json::Value root;
+    cJSON *root = nullptr;
     bool result = bundleActiveConfigReader->GetJsonFromFile(path, root);
     EXPECT_EQ(result, false);
 }
