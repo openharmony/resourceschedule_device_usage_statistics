@@ -16,7 +16,7 @@
 #ifndef BUNDLE_ACTIVE_CONFIG_READER_H
 #define BUNDLE_ACTIVE_CONFIG_READER_H
 #include <string>
-#include "json/json.h"
+#include "cJSON.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -31,7 +31,7 @@ public:
     AppUsePeriodicallyConfig GetApplicationUsePeriodicallyConfig();
 private:
     void LoadApplicationUsePeriodically(const char* path);
-    bool GetJsonFromFile(const char* filePath, Json::Value& root);
+    bool GetJsonFromFile(const char* filePath, cJSON *&root);
     bool ConvertFullPath(const std::string& partialPath, std::string& fullPath);
     AppUsePeriodicallyConfig appUsePeriodicallyConfig_;
 };

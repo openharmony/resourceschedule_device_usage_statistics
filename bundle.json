@@ -42,7 +42,6 @@
         "selinux_adapter",
         "time_service",
         "init",
-        "jsoncpp",
         "ffrt",
         "hisysevent"
       ],
