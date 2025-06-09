@@ -204,6 +204,8 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
   sources = [ "device_usage_statistics_service_test.cpp" ]
 
   configs = [ ":module_private_config" ]
+  resource_config_file =
+      "${usage_statistics_path}/test/resource/deviceUsage/ohos_test.xml"
 
   deps = [
     "../../:usagestatservice_static",
@@ -360,9 +362,61 @@ ohos_unittest("DeviceUsagePackageUsageTest") {
   }
 }
 
+ohos_unittest("BundleActiveEventReporterTest") {
+  module_out_path = module_output_path
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+  ]
+
+  sources = [ "bundle_active_event_reporter_test.cpp" ]
+
+  configs = [ ":module_private_config" ]
+
+  deps = [
+    "../../:usagestatservice_static",
+    "../../:usagestatsinner",
+    "../../:usagestatsutils",
+  ]
+
+  external_deps = [
+    "ability_runtime:app_manager",
+    "ability_runtime:wantagent_innerkits",
+    "access_token:libaccesstoken_sdk",
+    "cJSON:cjson",
+    "ffrt:libffrt",
+    "hilog:libhilog",
+    "ipc:ipc_single",
+    "relational_store:native_rdb",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+    "time_service:time_client",
+  ]
+  defines = []
+  if (device_usage_statistics_with_powermgr_power_manager_enable) {
+    defines += [ "DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE" ]
+    external_deps += [ "power_manager:powermgr_client" ]
+  }
+  if (os_account_part_enabled) {
+    external_deps += [ "os_account:os_account_innerkits" ]
+  }
+  if (bgtaskmgr_enable) {
+    external_deps += [ "background_task_mgr:bgtaskmgr_innerkits" ]
+    defines += [ "BGTASKMGR_ENABLE" ]
+  }
+  branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+}
+
 group("unittest") {
   testonly = true
   deps = [
+    ":BundleActiveEventReporterTest",
     ":BundleActiveTotalTest",
     ":DeviceUsagePackageUsageTest",
     ":DeviceUsageStatsMockTest",

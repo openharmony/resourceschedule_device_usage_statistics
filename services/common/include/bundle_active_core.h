@@ -249,11 +249,15 @@ private:
     void OnObserverDiedInner(const wptr<IRemoteObject> &remote);
     void AddbundleUninstalledUid(const int32_t uid);
     void DelayRemoveBundleUninstalledUid(const int32_t uid);
+    bool IsUserSpaceMemoryLimit();
+    void ProcessDataSize();
+    bool IsFolderSizeLimit();
+    void DeleteExcessiveTableData();
     int64_t flushInterval_;
     static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TEN_MINUTES;
     const int32_t DEFAULT_USER_ID = -1;
     std::map<int32_t, std::string> visibleActivities_;
-
+    double percentUserSpaceLimit_ = 0;
     int64_t systemTimeShot_;
     int64_t realTimeShot_;
     ffrt::mutex mutex_;

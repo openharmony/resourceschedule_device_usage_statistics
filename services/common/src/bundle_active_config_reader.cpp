@@ -26,10 +26,12 @@ const static char* APPLICATION_USE_PERIODICALLY_KEY = "application_use_periodica
 const static char* MIN_USE_TIMES = "MinUseTimes";
 const static char* MAX_USE_TIMES = "MaxUseTimes";
 const static char* MIN_USE_DAYS = "MinUseDays";
+const static char* MAX_DATA_SIZE = "MaxDataSize";
 const int32_t DEFAULT_MIN_USE_TIMES = 1;
 const int32_t DEFAULT_MAX_USE_TIMES = 10;
 const int32_t DEFAULT_MIN_USE_DAYS = 3;
 const int32_t MAX_BUFFER = 2048;
+const uint64_t DEFAULT_MAX_DATA_SIZE = 5 * 1024 * 1024;
 
 
 void BundleActiveConfigReader::LoadConfig()
@@ -42,10 +44,12 @@ void BundleActiveConfigReader::LoadConfig()
     }
     for (const auto& filePath : cfgFiles->paths) {
         LoadApplicationUsePeriodically(filePath);
+        LoadMaxDataSize(filePath);
     }
     BUNDLE_ACTIVE_LOGI("appUsePeriodicallyConfig minUseTimes:%{public}d, maxUseTimes:%{public}d,"
-        "minUseDays:%{public}d", appUsePeriodicallyConfig_.minUseTimes,
-        appUsePeriodicallyConfig_.maxUseTimes, appUsePeriodicallyConfig_.minUseDays);
+        "minUseDays:%{public}d maxDataSize:%{public}lu", appUsePeriodicallyConfig_.minUseTimes,
+        appUsePeriodicallyConfig_.maxUseTimes, appUsePeriodicallyConfig_.minUseDays,
+        static_cast<unsigned long>(maxDataSize_));
     FreeCfgFiles(cfgFiles);
 };
 
@@ -130,6 +134,34 @@ bool BundleActiveConfigReader::ConvertFullPath(const std::string& partialPath, s
 AppUsePeriodicallyConfig BundleActiveConfigReader::GetApplicationUsePeriodicallyConfig()
 {
     return appUsePeriodicallyConfig_;
+};
+
+void BundleActiveConfigReader::LoadMaxDataSize(const char *filePath)
+{
+    if (!filePath) {
+        return;
+    }
+    cJSON *root = nullptr;
+    if (!GetJsonFromFile(filePath, root) || !root) {
+        BUNDLE_ACTIVE_LOGE("file is empty %{private}s", filePath);
+        return;
+    }
+    cJSON *maxDataSizeItem = cJSON_GetObjectItem(root, MAX_DATA_SIZE);
+    if (!maxDataSizeItem || !cJSON_IsNumber(maxDataSizeItem)) {
+        BUNDLE_ACTIVE_LOGE("not have max data size key");
+        cJSON_Delete(root);
+        return;
+    }
+    maxDataSize_ = static_cast<uint64_t>(maxDataSizeItem->valueint);
+    cJSON_Delete(root);
+};
+
+uint64_t BundleActiveConfigReader::GetMaxDataSize()
+{
+    if (maxDataSize_ == 0) {
+        return DEFAULT_MAX_DATA_SIZE;
+    }
+    return maxDataSize_;
 };
 
 }  // namespace DeviceUsageStats

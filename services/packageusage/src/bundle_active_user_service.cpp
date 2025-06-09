@@ -746,5 +746,13 @@ std::shared_ptr<BundleActiveModuleRecord> BundleActiveUserService::GetOrCreateMo
     }
     return moduleRecords_[combinedInfo];
 }
+
+void BundleActiveUserService::DeleteExcessiveEventTableData(int32_t deleteDays)
+{
+    if (deleteDays < 0) {
+        return;
+    }
+    database_.DeleteExcessiveEventTableData(deleteDays);
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

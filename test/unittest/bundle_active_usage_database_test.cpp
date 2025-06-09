@@ -307,5 +307,92 @@ HWTEST_F(BundleActiveUsageDatabaseTest, UpdateFirstUseTime_002,
     database->UpdateFirstUseTime(rdb, BUNDLE_HISTORY_LOG_TABLE, 100);
     EXPECT_NE(database, nullptr);
 }
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_DeleteExcessiveEventTableData_001
+ * @tc.desc: DeleteExcessiveEventTableData
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_DeleteExcessiveEventTableData_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    database->DeleteExcessiveEventTableData(0);
+    database->eventTableName_ = "a123";
+    database->DeleteExcessiveEventTableData(0);
+    database->eventBeginTime_  = 0;
+    database->DeleteExcessiveEventTableData(0);
+    database->eventBeginTime_  = MAX_END_TIME;
+    database->DeleteExcessiveEventTableData(0);
+    database->InitDatabaseTableInfo(100);
+    database->DeleteExcessiveEventTableData(0);
+    EXPECT_EQ(database->eventTableName_, "a123");
+}
+
+/*
+ * @tc.name: GetSteadyTime_001
+ * @tc.desc: BundleActiveUtil Test
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, GetSteadyTime_001,
+    Function | MediumTest | Level0)
+{
+    EXPECT_TRUE(BundleActiveUtil::GetSteadyTime() > 0);
+}
+
+/*
+ * @tc.name: GetFolderOrFileSize_001
+ * @tc.desc: BundleActiveUtil Test
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, GetFolderOrFileSize_001,
+    Function | MediumTest | Level0)
+{
+    EXPECT_EQ(BundleActiveUtil::GetFolderOrFileSize(""), 0);
+    EXPECT_TRUE(BundleActiveUtil::GetFolderOrFileSize(BUNDLE_ACTIVE_DATABASE_DIR) > 0);
+}
+
+/*
+ * @tc.name: GetPartitionName_001
+ * @tc.desc: BundleActiveUtil Test
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, GetPartitionName_001,
+    Function | MediumTest | Level0)
+{
+    EXPECT_EQ(BundleActiveUtil::GetPartitionName(""), "/");
+    EXPECT_EQ(BundleActiveUtil::GetPartitionName(BUNDLE_ACTIVE_DATABASE_DIR), "/data");
+    EXPECT_EQ(BundleActiveUtil::GetPartitionName("/data"), "/data");
+}
+
+/*
+ * @tc.name: GetDeviceValidSize_001
+ * @tc.desc: BundleActiveUtil Test
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, GetDeviceValidSize_001,
+    Function | MediumTest | Level0)
+{
+    EXPECT_EQ(BundleActiveUtil::GetDeviceValidSize(""), 0);
+    EXPECT_TRUE(BundleActiveUtil::GetDeviceValidSize(BUNDLE_ACTIVE_DATABASE_DIR) > 0);
+}
+
+/*
+ * @tc.name: GetPercentOfAvailableUserSpace_001
+ * @tc.desc: BundleActiveUtil Test
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, GetPercentOfAvailableUserSpace_001,
+    Function | MediumTest | Level0)
+{
+    EXPECT_EQ(BundleActiveUtil::GetPercentOfAvailableUserSpace(""), 0);
+    EXPECT_TRUE(BundleActiveUtil::GetPercentOfAvailableUserSpace(BUNDLE_ACTIVE_DATABASE_DIR) > 0);
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

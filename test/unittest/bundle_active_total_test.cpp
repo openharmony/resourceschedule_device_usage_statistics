@@ -34,6 +34,8 @@
 #include "bundle_active_debug_mode.h"
 #include "bundle_active_report_controller.h"
 #include "bundle_active_test_util.h"
+#include "bundle_active_event_reporter.h"
+#include "file_ex.h"
 
 using namespace testing::ext;
 

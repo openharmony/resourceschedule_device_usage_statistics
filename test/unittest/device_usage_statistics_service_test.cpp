@@ -42,6 +42,12 @@ using namespace testing::ext;
 namespace OHOS {
 namespace DeviceUsageStats {
 using namespace Security::AccessToken;
+const char* CONFIG_PATH =
+    "/sys_prod/etc/device_usage_statistics/device_usage_statistics_config.json";
+const char* CONFIG_TEST1_PATH =
+    "/sys_prod/etc/device_usage_statistics/device_usage_statistics_config_test1.json";
+const char* CONFIG_TEST2_PATH =
+    "/sys_prod/etc/device_usage_statistics/device_usage_statistics_config_test2.json";
 class DeviceUsageStatisticsServiceTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -1635,6 +1641,175 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetF
     EXPECT_EQ(bundleUserHistory->GetFirstUseTime(bundleName, userId), MAX_END_TIME);
     (*userHistoryMap)[bundleName]->bundlefirstUseTimeStamp_ = 100;
     EXPECT_EQ(bundleUserHistory->GetFirstUseTime(bundleName, userId), 100);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadMaxDataSize_001
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadMaxDataSize_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveConfigReader->maxDataSize_ = 1;
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    std::string path = "test";
+    bundleActiveConfigReader->LoadMaxDataSize(path.c_str());
+    EXPECT_EQ(bundleActiveConfigReader->maxDataSize_, 1);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadMaxDataSize_002
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadMaxDataSize_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveConfigReader->maxDataSize_ = 0;
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    bundleActiveConfigReader->LoadMaxDataSize(CONFIG_PATH);
+    EXPECT_EQ(bundleActiveConfigReader->maxDataSize_, 6);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadMaxDataSize_003
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadMaxDataSize_003,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveConfigReader->maxDataSize_ = 0;
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    bundleActiveConfigReader->LoadMaxDataSize(CONFIG_TEST1_PATH);
+    EXPECT_EQ(bundleActiveConfigReader->maxDataSize_, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadMaxDataSize_004
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadMaxDataSize_004,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveConfigReader->maxDataSize_ = 0;
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    bundleActiveConfigReader->LoadMaxDataSize(CONFIG_TEST2_PATH);
+    EXPECT_EQ(bundleActiveConfigReader->maxDataSize_, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_GetMaxDataSize_001
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetMaxDataSize_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveConfigReader->maxDataSize_ = 0;
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    EXPECT_EQ(bundleActiveConfigReader->GetMaxDataSize(), 5 * 1024 * 1024);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_GetMaxDataSize_002
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetMaxDataSize_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveConfigReader->maxDataSize_ = 10;
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    EXPECT_EQ(bundleActiveConfigReader->GetMaxDataSize(), 10);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_RestoreToDatabase_002
+ * @tc.desc: RestoreToDatabase
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RestoreToDatabase_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->Init();
+    bundleActiveCore->InitBundleGroupController();
+    int userId = 100;
+    auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), false);
+    int64_t timeStamp = 20000000000000;
+    userService->Init(timeStamp);
+    BundleActiveEvent event;
+    userService->currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Clear();
+    userService->currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Insert(event);
+    EXPECT_EQ(userService->currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Size(), 1);
+    bundleActiveCore->userStatServices_[userId] = userService;
+    bundleActiveCore->RestoreToDatabase(userId);
+    bundleActiveCore->percentUserSpaceLimit_ = 0;
+    bundleActiveCore->RestoreToDatabase(userId);
+    EXPECT_EQ(userService->currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->events_.Size(), 1);
+    bundleActiveCore->percentUserSpaceLimit_ = 1;
+    bundleActiveCore->RestoreToDatabase(userId);
+    EXPECT_NE(bundleActiveCore, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ProcessDataSize_001
+ * @tc.desc: RestoreToDatabase
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ProcessDataSize_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->Init();
+    bundleActiveCore->ProcessDataSize();
+    bundleActiveCore->bundleActiveConfigReader_->maxDataSize_ = 0;
+    bundleActiveCore->ProcessDataSize();
+    EXPECT_NE(bundleActiveCore, nullptr);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_DeleteExcessiveTableData_001
+ * @tc.desc: RestoreToDatabase
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DeleteExcessiveTableData_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->DeleteExcessiveTableData();
+    bundleActiveCore->ProcessDataSize();
+    bundleActiveCore->Init();
+    bundleActiveCore->InitBundleGroupController();
+    int userId = 100;
+    auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore.get()), false);
+    int64_t timeStamp = 20000000000000;
+    userService->Init(timeStamp);
+    bundleActiveCore->userStatServices_[userId] = userService;
+    bundleActiveCore->currentUsedUser_ = userId;
+    bundleActiveCore->bundleActiveConfigReader_->maxDataSize_ = 1;
+    bundleActiveCore->DeleteExcessiveTableData();
+    bundleActiveCore->bundleActiveConfigReader_->maxDataSize_ = 10 * 1024 * 1024;
+    bundleActiveCore->DeleteExcessiveTableData();
+    EXPECT_NE(bundleActiveCore, nullptr);
 }
 
 }  // namespace DeviceUsageStats

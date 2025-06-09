@@ -17,6 +17,9 @@
 #include <limits>
 #include "bundle_active_util.h"
 #include "bundle_active_log.h"
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/statfs.h>
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -117,6 +120,107 @@ int64_t BundleActiveUtil::GetSystemTimeMs()
         return -1;
     }
     return static_cast<int64_t>(tarDate);
+}
+
+int64_t BundleActiveUtil::GetSteadyTime()
+{
+    std::chrono::seconds secs = std::chrono::duration_cast<std::chrono::seconds>(
+        std::chrono::steady_clock::now().time_since_epoch());
+    return static_cast<int64_t>(secs.count());
+}
+
+int64_t BundleActiveUtil::GetNowMicroTime()
+{
+    std::chrono::microseconds microSecs;
+    // get system time, it can change.
+    microSecs = std::chrono::duration_cast<std::chrono::microseconds>(
+    std::chrono::system_clock::now().time_since_epoch());
+    return static_cast<int64_t>(microSecs.count());
+}
+
+uint64_t BundleActiveUtil::GetFolderOrFileSize(const std::string& path)
+{
+    struct stat st;
+    if (stat(path.c_str(), &st) != 0) {
+        return 0;
+    }
+    if (!S_ISDIR(st.st_mode)) {
+        return static_cast<uint64_t>(st.st_size);
+    }
+    uint64_t totalSize = 0;
+    DIR *dir = opendir(path.c_str());
+    // input invaild, open failed
+    if (dir == nullptr) {
+        return 0;
+    }
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != nullptr) {
+        // current dir is path of '.' or '..'
+        std::string entryPath = path + "/" + entry->d_name;
+        if (entry->d_name[0] == '.') {
+            continue;
+        }
+
+        struct stat entryStat;
+        if (stat(entryPath.c_str(), &entryStat) != 0) {
+            continue;
+        }
+        if (S_ISDIR(entryStat.st_mode)) {
+            uint64_t subDirSize = GetFolderOrFileSize(entryPath);
+            totalSize += subDirSize;
+        } else {
+            totalSize += static_cast<uint64_t>(entryStat.st_size);
+        }
+    }
+    closedir(dir);
+    return totalSize;
+}
+
+std::string BundleActiveUtil::GetPartitionName(const std::string& path)
+{
+    std::string partition;
+    std::size_t first = path.find_first_of("/");
+    if (first == std::string::npos) {
+        partition = "/" + path;
+        return partition;
+    }
+    std::size_t second = path.find_first_of("/", first + 1);
+    if (second == std::string::npos) {
+        if (path.at(0) != '/') {
+            partition = "/" + path.substr(0, first);
+        } else {
+            partition = path;
+        }
+        return partition;
+    }
+    partition = path.substr(0, second - first);
+    return partition;
+}
+
+double BundleActiveUtil::GetDeviceValidSize(const std::string& path)
+{
+    std::string partitionName = GetPartitionName(path);
+    struct statfs stat;
+    if (statfs(partitionName.c_str(), &stat) != 0) {
+        return 0;
+    }
+    constexpr double units = 1024.0;
+    return (static_cast<double>(stat.f_bfree) / units) * (static_cast<double>(stat.f_bsize) / units);
+}
+
+double BundleActiveUtil::GetPercentOfAvailableUserSpace(const std::string& path)
+{
+    std::string partitionName = GetPartitionName(path);
+    struct statfs stat;
+    if (statfs(partitionName.c_str(), &stat) != 0) {
+        return 0;
+    }
+    uint64_t totalBytes = static_cast<uint64_t>(stat.f_blocks) * stat.f_bsize;
+    uint64_t availableBytes = static_cast<uint64_t>(stat.f_bfree) * stat.f_bsize;
+    if (totalBytes == 0 || availableBytes == 0) {
+        return 0;
+    }
+    return static_cast<double>(availableBytes) / static_cast<double>(totalBytes);
 }
 } // namespace DeviceUsageStats
 }  // namespace OHOS
