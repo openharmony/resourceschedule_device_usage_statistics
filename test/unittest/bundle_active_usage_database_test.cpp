@@ -20,6 +20,7 @@
 
 #include "bundle_active_usage_database.h"
 #include "bundle_active_util.h"
+#include "bundle_active_constant.h"
 
 using namespace testing::ext;
 
@@ -150,22 +151,49 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetVersion
 }
 
 /*
- * @tc.name: BundleActiveUsageDatabaseTest_UpgradleDatabase_001
- * @tc.desc: UpgradleDatabase
+ * @tc.name: BundleActiveUsageDatabaseTest_UpgradeDatabase_001
+ * @tc.desc: UpgradeDatabase
  * @tc.type: FUNC
  * @tc.require: issuesI9Q9ZJ
  */
-HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpgradleDatabase_001,
+HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpgradeDatabase_001,
     Function | MediumTest | Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
+    database->currentVersion_ = 0;
     int32_t oldVersion = 1;
     int32_t curVersion = 2;
-    database->UpgradleDatabase(oldVersion, curVersion);
+    database->UpgradeDatabase(oldVersion, curVersion);
+    
     oldVersion = 2;
-    curVersion = 2;
-    database->UpgradleDatabase(oldVersion, curVersion);
-    EXPECT_NE(database, nullptr);
+    curVersion = 3;
+    database->UpgradeDatabase(oldVersion, curVersion);
+    EXPECT_EQ(database->currentVersion_, curVersion);
+}
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_UpgradeDatabase_001
+ * @tc.desc: UpgradeDatabase
+ * @tc.type: FUNC
+ * @tc.require: issuesI9Q9ZJ
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpgradeDatabase_002,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    database->currentVersion_ = 0;
+    int32_t oldVersion = 1;
+    int32_t curVersion = 3;
+    database->UpgradeDatabase(oldVersion, curVersion);
+    EXPECT_EQ(database->currentVersion_, curVersion);
+    database->currentVersion_ = 0;
+    oldVersion = 2;
+    curVersion = 3;
+    database->UpgradeDatabase(oldVersion, curVersion);
+    EXPECT_EQ(database->currentVersion_, curVersion);
+    oldVersion = 3;
+    database->UpgradeDatabase(oldVersion, curVersion);
+    EXPECT_EQ(database->currentVersion_, curVersion);
 }
 
 /*
@@ -248,6 +276,36 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CreateReco
     EXPECT_EQ(result, 11);
     int64_t resultInt64 = BundleActiveUtil::StringToInt64("11");
     EXPECT_EQ(resultInt64, 11);
+}
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_SupportFirstUseTime_001
+ * @tc.desc: SupportFirstUseTime
+ * @tc.type: FUNC
+ * @tc.require: issuesICCZ27
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, SupportFirstUseTime_001,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    
+    database->SupportFirstUseTime();
+    EXPECT_NE(database, nullptr);
+}
+
+/*
+ * @tc.name: BundleActiveUsageDatabaseTest_UpdateFirstUseTime_002
+ * @tc.desc: UpdateFirstUseTime
+ * @tc.type: FUNC
+ * @tc.require: issuesICCZ27
+ */
+HWTEST_F(BundleActiveUsageDatabaseTest, UpdateFirstUseTime_002,
+    Function | MediumTest | Level0)
+{
+    auto database = std::make_shared<BundleActiveUsageDatabase>();
+    auto rdb = database->GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
+    database->UpdateFirstUseTime(rdb, BUNDLE_HISTORY_LOG_TABLE, 100);
+    EXPECT_NE(database, nullptr);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

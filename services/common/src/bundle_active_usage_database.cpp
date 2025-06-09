@@ -35,6 +35,7 @@
 #include "bundle_active_account_helper.h"
 #include "hisysevent.h"
 #include "bundle_active_core.h"
+#include "bundle_active_util.h"
 namespace OHOS {
 namespace DeviceUsageStats {
 using namespace OHOS::NativeRdb;
@@ -43,7 +44,6 @@ namespace {
     const int32_t MAX_FILES_EVERY_INTERVAL_TYPE[SORTED_TABLE_ARRAY_NUMBER] = {30, 30, 12, 10};
     const int32_t MAIN_APP_INDEX = 0;
     const int32_t FILE_VERSION_LINE_NUM = 50;
-    const int64_t MAX_END_TIME = 20000000000000;
     static constexpr char RSS[] = "RSS";
 }
 BundleActiveUsageDatabase::BundleActiveUsageDatabase()
@@ -138,12 +138,12 @@ int32_t BundleActiveUsageDatabase::CreateDatabasePath()
 
 void BundleActiveUsageDatabase::InitDatabaseTableInfo(int64_t currentTime)
 {
-    lock_guard<ffrt::mutex> lock(databaseMutex_);
     if (CreateDatabasePath() == BUNDLE_ACTIVE_FAIL) {
         BUNDLE_ACTIVE_LOGE("database path is not exist");
         return;
     }
     CheckDatabaseVersion();
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
     for (uint32_t i = 0; i < databaseFiles_.size(); i++) {
         HandleTableInfo(i);
         DeleteExcessiveTableData(i);
@@ -448,7 +448,7 @@ void BundleActiveUsageDatabase::CheckDatabaseVersion()
     if (access(BUNDLE_ACTIVE_DATABASE_DIR.c_str(), F_OK) == 0) {
         int32_t oldVersion = GetOldDbVersion();
         if (oldVersion != BUNDLE_ACTIVE_FAIL && oldVersion < BUNDLE_ACTIVE_CURRENT_VERSION) {
-            UpgradleDatabase(oldVersion, BUNDLE_ACTIVE_CURRENT_VERSION);
+            UpgradeDatabase(oldVersion, BUNDLE_ACTIVE_CURRENT_VERSION);
         }
         std::string fileVersion = "version : " + std::to_string(BUNDLE_ACTIVE_CURRENT_VERSION);
         SaveStringToFile(BUNDLE_ACTIVE_VERSION_DIRECTORY_PATH, fileVersion, true);
@@ -481,93 +481,6 @@ int32_t BundleActiveUsageDatabase::GetVersionByFileInput(const std::string& File
         }
     }
     return atoi(databaseVersion.c_str());
-}
-
-void BundleActiveUsageDatabase::UpgradleDatabase(const int32_t oldVersion, const int32_t curVersion)
-{
-    BUNDLE_ACTIVE_LOGI("upgradle database oldVersion: %{public}d, curVersion: %{public}d", oldVersion, curVersion);
-    if (oldVersion < curVersion && curVersion == BUNDLE_ACTIVE_CURRENT_VERSION) {
-        if (oldVersion == BUNDLE_ACTIVE_VERSION_V1) {
-            SupportAppTwin();
-        }
-    }
-}
-
-void BundleActiveUsageDatabase::SupportAppTwin()
-{
-    vector<vector<string>> allTableName = vector<vector<string>>(ALL_TABLE_ARRAY_NUMBER);
-    for (uint32_t i = 0; i <databaseFiles_.size(); i++) {
-        HandleAllTableName(i, allTableName);
-    }
-
-    map<string, int32_t> bundleNameUidMap;
-    vector<int32_t> activatedOsAccountIds;
-    BundleActiveAccountHelper::GetActiveUserId(activatedOsAccountIds);
-    for (uint32_t i = 0; i < allTableName.size(); i++) {
-        auto tableNames = allTableName.at(i);
-        shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(i);
-        if (!rdbStore) {
-            BUNDLE_ACTIVE_LOGI("get RdbStore fail, databaseType: %{public}u", i);
-            continue;
-        }
-        for (string tableName: tableNames) {
-            if (DURATION_LOG_TABLE == tableName) {
-                continue;
-            }
-            AddRdbColumn(rdbStore, tableName, BUNDLE_ACTIVE_DB_UID, RDB_STORE_COLUMN_TYPE_INT);
-            for (auto userId: activatedOsAccountIds) {
-                UpdateOldDataUid(rdbStore, tableName, userId, bundleNameUidMap);
-            }
-        }
-    }
-}
-
-void BundleActiveUsageDatabase::AddRdbColumn(const shared_ptr<NativeRdb::RdbStore> store,
-    const string& tableName, const string& columnName, const string& columnType)
-{
-    string sqlStr = "";
-    if (columnType == RDB_STORE_COLUMN_TYPE_INT) {
-        sqlStr = "ALTER TABLE " + tableName + " ADD " + columnName + " " + columnType + " NOT NULL DEFAULT -1";
-    }
-    store->ExecuteSql(sqlStr);
-}
-
-void BundleActiveUsageDatabase::UpdateOldDataUid(const shared_ptr<NativeRdb::RdbStore> store,
-    const string& tableName, const int32_t userId, map<string, int32_t>& bundleNameUidMap)
-{
-    vector<string> queryCondition;
-    string querySql = "select * from " + tableName;
-    shared_ptr<NativeRdb::ResultSet> bundleActiveResult;
-    bundleActiveResult = store->QueryByStep(querySql);
-    int32_t tableRowNumber = 0;
-    bundleActiveResult->GetRowCount(tableRowNumber);
-    string bundleName;
-    int32_t uid;
-    int32_t changeRow = BUNDLE_ACTIVE_FAIL;
-    NativeRdb::ValuesBucket valuesBucket;
-    for (int32_t i = 0; i < tableRowNumber; i++) {
-        bundleActiveResult->GoToRow(i);
-        bundleActiveResult->GetString(BUNDLE_NAME_COLUMN_INDEX, bundleName);
-        AppExecFwk::ApplicationInfo appInfo;
-        string bundleNameUserIdKey = bundleName + to_string(userId);
-        auto it = bundleNameUidMap.find(bundleNameUserIdKey);
-        if (it == bundleNameUidMap.end()) {
-            BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfo(bundleName,
-                AppExecFwk::ApplicationFlag::GET_BASIC_APPLICATION_INFO, userId, appInfo);
-            uid = appInfo.uid;
-            bundleNameUidMap[bundleNameUserIdKey] = uid;
-        } else {
-            uid = it->second;
-        }
-        queryCondition.push_back(to_string(userId));
-        queryCondition.push_back(bundleName);
-        valuesBucket.PutInt(BUNDLE_ACTIVE_DB_UID, uid);
-        store->Update(changeRow, tableName, valuesBucket, "userId = ? and bundleName = ?", queryCondition);
-        queryCondition.clear();
-        valuesBucket.Clear();
-        changeRow = BUNDLE_ACTIVE_FAIL;
-    }
-    bundleActiveResult->Close();
 }
 
 shared_ptr<NativeRdb::RdbStore> WEAK_FUNC BundleActiveUsageDatabase::GetBundleActiveRdbStore(uint32_t databaseType)
@@ -809,7 +722,9 @@ int32_t BundleActiveUsageDatabase::CreateBundleHistoryTable(uint32_t databaseTyp
                                         + BUNDLE_ACTIVE_DB_REASON_IN_GROUP + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_BUNDLE_ALIVE_TIMEOUT_TIME + " INTEGER NOT NULL, "
                                         + BUNDLE_ACTIVE_DB_BUNDLE_DAILY_TIMEOUT_TIME + " INTEGER NOT NULL, "
-                                        + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1);";
+                                        + BUNDLE_ACTIVE_DB_UID + " INTEGER NOT NULL DEFAULT -1, "
+                                        + BUNDLE_ACTIVE_DB_FIRST_USE_TIME + " INTEGER NOT NULL DEFAULT "
+                                        + std::to_string(MAX_END_TIME) + ");";
     int32_t createBundleHistoryTable = rdbStore->ExecuteSql(createBundleHistoryTableSql);
     if (createBundleHistoryTable != NativeRdb::E_OK) {
         BUNDLE_ACTIVE_LOGE("create bundleHistory table failed, rdb error number: %{public}d", createBundleHistoryTable);
@@ -866,6 +781,7 @@ void BundleActiveUsageDatabase::PutBundleHistoryData(int32_t userId,
         valuesBucket.PutInt(BUNDLE_ACTIVE_DB_REASON_IN_GROUP, static_cast<int32_t>(iter->second->reasonInGroup_));
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_ALIVE_TIMEOUT_TIME, iter->second->bundleAliveTimeoutTimeStamp_);
         valuesBucket.PutLong(BUNDLE_ACTIVE_DB_BUNDLE_DAILY_TIMEOUT_TIME, iter->second->bundleDailyTimeoutTimeStamp_);
+        valuesBucket.PutLong(BUNDLE_ACTIVE_DB_FIRST_USE_TIME, iter->second->bundlefirstUseTimeStamp_);
         rdbStore->Update(changeRow, BUNDLE_HISTORY_LOG_TABLE, valuesBucket,
             "userId = ? and bundleName = ? and uid = ?", queryCondition);
         if (changeRow == NO_UPDATE_ROW) {
@@ -931,6 +847,8 @@ shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUsag
         bundleActiveResult->GetLong(BUNDLE_DAILY_TIMEOUT_TIME_COLUMN_INDEX,
             usageHistory->bundleDailyTimeoutTimeStamp_);
         bundleActiveResult->GetInt(BUNDLE_HISTORY_LOG_UID_COLUMN_INDEX, usageHistory->uid_);
+        bundleActiveResult->GetLong(BUNDLE_HISTORY_LOG_FIRST_USE_TIME_COLUMN_INDEX,
+            usageHistory->bundlefirstUseTimeStamp_);
         string usageHistoryKey = usageHistory->bundleName_ + to_string(usageHistory->uid_);
         userUsageHistory->insert(pair<string, shared_ptr<BundleActivePackageHistory>>(usageHistoryKey,
             usageHistory));
@@ -1058,7 +976,7 @@ shared_ptr<BundleActivePeriodStats> BundleActiveUsageDatabase::GetCurrentUsageDa
     if (databaseType == DAILY_DATABASE_INDEX) {
         eventBeginTime_ = currentPackageTime;
     }
-    int64_t systemTime = GetSystemTimeMs();
+    int64_t systemTime = BundleActiveUtil::GetSystemTimeMs();
     intervalStats->lastTimeSaved_ = systemTime;
     return intervalStats;
 }
@@ -1410,7 +1328,7 @@ void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, Bund
             "UPDATE_BUNDLE_USAGE_EVENT_SIZE", stats.events_.Size(),
             "UPDATE_BUNDLE_USAGE_STATS_SIZE", stats.bundleStats_.size() - bundleStatsSize,
             "UPDATE_BUNDLE_USAGE_USERID", stats.userId_,
-            "UPDATE_BUNDLE_USAGE_TIME", bundleActiveCore->GetSystemTimeMs());
+            "UPDATE_BUNDLE_USAGE_TIME", BundleActiveUtil::GetSystemTimeMs());
     }
     lock_guard<ffrt::mutex> lock(databaseMutex_);
     if (databaseType < 0 || databaseType >= EVENT_DATABASE_INDEX) {
@@ -1431,7 +1349,7 @@ void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, Bund
         DeleteExcessiveTableData(databaseType);
     }
     FlushPackageInfo(databaseType, stats);
-    int64_t systemTime = GetSystemTimeMs();
+    int64_t systemTime = BundleActiveUtil::GetSystemTimeMs();
     stats.lastTimeSaved_ = systemTime;
 }
 
@@ -1656,24 +1574,6 @@ void BundleActiveUsageDatabase::DeleteUninstalledInfo(const int32_t userId, cons
     queryCondition.push_back(bundleName);
     queryCondition.push_back(to_string(uid));
     rdbStore->Delete(deletedRows, tableName, "userId = ? and bundleName = ? and uid = ?", queryCondition);
-}
-
-int64_t BundleActiveUsageDatabase::GetSystemTimeMs()
-{
-    time_t now;
-    (void)time(&now);  // unit is seconds.
-    if (static_cast<int64_t>(now) < 0) {
-        BUNDLE_ACTIVE_LOGE("Get now time error");
-        return 0;
-    }
-    auto tarEndTimePoint = std::chrono::system_clock::from_time_t(now);
-    auto tarDuration = std::chrono::duration_cast<std::chrono::milliseconds>(tarEndTimePoint.time_since_epoch());
-    int64_t tarDate = tarDuration.count();
-    if (tarDate < 0) {
-        BUNDLE_ACTIVE_LOGE("tarDuration is less than 0.");
-        return -1;
-    }
-    return static_cast<int64_t>(tarDate);
 }
 
 void BundleActiveUsageDatabase::UpdateModuleData(const int32_t userId,

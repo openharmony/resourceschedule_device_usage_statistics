@@ -34,6 +34,8 @@
 #include "nativetoken_kit.h"
 #include "bundle_active_report_controller.h"
 #include "bundle_active_test_util.h"
+#include "bundle_active_util.h"
+#include "bundle_active_constant.h"
 
 using namespace testing::ext;
 
@@ -680,20 +682,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsServiceTest_GetSystemTimeMs_001
- * @tc.desc: GetSystemTimeMs
- * @tc.type: FUNC
- * @tc.require: issuesI5SOZY
- */
-HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetSystemTimeMs_001,
-    Function | MediumTest | Level0)
-{
-    auto database = std::make_shared<BundleActiveUsageDatabase>();
-    database->GetSystemTimeMs();
-    EXPECT_NE(database, nullptr);
-}
-
-/*
  * @tc.name: DeviceUsageStatisticsServiceTest_ReportEvent_001
  * @tc.desc: ReportEvent
  * @tc.type: FUNC
@@ -1029,15 +1017,16 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_003,
     int64_t bootBasedTimeStamp = 2000;
     auto oneBundleUsageHistory = std::make_shared<BundleActivePackageHistory>();
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore_);
-    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 0, 0, 1000, 2000, 100, 0);
+    BundleActiveEvent event;
+    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, event, 0, 0, 1000, 2000, 100);
     SUCCEED();
-    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 0, 0, 2000, 1000, 100, 0);
+    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, event, 0, 0, 2000, 1000, 100);
     SUCCEED();
-    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 10, 0, 1000, 2000, 100, 0);
+    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, event, 10, 0, 1000, 2000, 100);
     SUCCEED();
-    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 20, 0, 1000, 2000, 100, 0);
+    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, event, 20, 0, 1000, 2000, 100);
     SUCCEED();
-    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, "test", 20, 0, 0, 2000, 100, 0);
+    bundleUserHistory_->ReportUsage(oneBundleUsageHistory, event, 20, 0, 0, 2000, 100);
     SUCCEED();
 }
 
@@ -1593,6 +1582,59 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Merg
     auto bundleActiveService = std::make_shared<BundleActiveService>();
     auto MergeResult = bundleActiveService->MergePackageStats(bundleActivePackageStatsVector);
     EXPECT_EQ(MergeResult.size(), 2);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_IsUsedOverOneWeek_001
+ * @tc.desc: IsUsedOverOneWeek
+ * @tc.type: FUNC
+ * @tc.require: issuesICCZ27
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_IsUsedOverOneWeek_001,
+    Function | MediumTest | Level0)
+{
+    std::string bundleName = "test";
+    int32_t userId = 100;
+    BundleActiveGroupController::GetInstance().bundleUserHistory_  = nullptr;
+    EXPECT_FALSE(BundleActiveGroupController::GetInstance().IsUsedOverOneWeek(bundleName, userId));
+    BundleActiveGroupController::GetInstance().CreateUserHistory(0, bundleActiveCore_);
+    EXPECT_FALSE(BundleActiveGroupController::GetInstance().IsUsedOverOneWeek(bundleName, userId));
+    auto userHistory = BundleActiveGroupController::GetInstance().bundleUserHistory_->GetUserHistory(userId, true);
+    EXPECT_NE(userHistory, nullptr);
+    std::shared_ptr<BundleActivePackageHistory> usageHistoryInserted =
+        std::make_shared<BundleActivePackageHistory>();
+    usageHistoryInserted->bundleName_ = bundleName;
+    
+    (*userHistory)[bundleName] = usageHistoryInserted;
+    EXPECT_FALSE(BundleActiveGroupController::GetInstance().IsUsedOverOneWeek(bundleName, userId));
+    int64_t curTime = BundleActiveUtil::GetSystemTimeMs();
+    int64_t testTime = 100000;
+    usageHistoryInserted->bundlefirstUseTimeStamp_ = curTime - (ONE_WEEK_TIME - testTime);
+    (*userHistory)[bundleName] = usageHistoryInserted;
+    EXPECT_TRUE(BundleActiveGroupController::GetInstance().IsUsedOverOneWeek(bundleName, userId));
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_GetFirstUseTime_001
+ * @tc.desc: GetFirstUseTime
+ * @tc.type: FUNC
+ * @tc.require: issuesICCZ27
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetFirstUseTime_001,
+    Function | MediumTest | Level0)
+{
+    int64_t bootBasedTimeStamp = 2000;
+    auto bundleUserHistory = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore_);
+    std::string bundleName = "com.ohos.camera";
+    int32_t userId = 100;
+    EXPECT_EQ(bundleUserHistory->GetFirstUseTime(bundleName, userId), MAX_END_TIME);
+    auto userHistoryMap = bundleUserHistory->GetUserHistory(userId, true);
+    (*userHistoryMap)[bundleName] = nullptr;
+    EXPECT_EQ(bundleUserHistory->GetFirstUseTime(bundleName, userId), MAX_END_TIME);
+    (*userHistoryMap)[bundleName] = std::make_shared<BundleActivePackageHistory>();
+    EXPECT_EQ(bundleUserHistory->GetFirstUseTime(bundleName, userId), MAX_END_TIME);
+    (*userHistoryMap)[bundleName]->bundlefirstUseTimeStamp_ = 100;
+    EXPECT_EQ(bundleUserHistory->GetFirstUseTime(bundleName, userId), 100);
 }
 
 }  // namespace DeviceUsageStats

@@ -218,9 +218,6 @@ public:
     // when service stop, call it to unregister commen event and shutdown call back.
     void UnRegisterSubscriber();
 
-    // get system time in MS.
-    int64_t GetSystemTimeMs();
-
     /*
     * function: RegisterAppGroupCallBack, register the observer to groupObservers.
     * parameters: observer

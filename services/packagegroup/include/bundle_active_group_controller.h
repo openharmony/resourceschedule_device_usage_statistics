@@ -85,6 +85,7 @@ public:
     void OnUserSwitched(const int32_t userId, const int32_t currentUsedUser);
     void SetBundleGroupEnable(bool bundleGroupEnable);
     bool GetBundleGroupEnable();
+    bool IsUsedOverOneWeek(const std::string& bundleName, const int32_t userId);
     std::shared_ptr<BundleActiveGroupHandler> GetBundleGroupHandler();
 private:
     BundleActiveGroupController() = default;
