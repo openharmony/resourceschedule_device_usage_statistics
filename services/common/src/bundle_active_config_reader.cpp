@@ -60,7 +60,7 @@ void BundleActiveConfigReader::LoadApplicationUsePeriodically(const char *filePa
         return;
     }
     cJSON *appUsePeriodicallyRoot = cJSON_GetObjectItem(root, APPLICATION_USE_PERIODICALLY_KEY);
-    if (!appUsePeriodicallyRoot || cJSON_IsObject(appUsePeriodicallyRoot)) {
+    if (!appUsePeriodicallyRoot || !cJSON_IsObject(appUsePeriodicallyRoot)) {
         BUNDLE_ACTIVE_LOGE("application_use_periodically content is empty");
         cJSON_Delete(root);
         return;
