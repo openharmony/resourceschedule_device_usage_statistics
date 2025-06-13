@@ -1904,5 +1904,30 @@ int32_t BundleActiveUsageDatabase::JudgeQueryCondition(const int64_t beginTime,
     }
     return QUERY_CONDITION_VALID;
 }
+
+void BundleActiveUsageDatabase::DeleteExcessiveEventTableData(int32_t deleteDays)
+{
+    lock_guard<ffrt::mutex> lock(databaseMutex_);
+    // 删除多余event表数据
+    if ((eventTableName_ == UNKNOWN_TABLE_NAME) || (eventBeginTime_ == EVENT_BEGIN_TIME_INITIAL_VALUE)) {
+        return;
+    }
+    int64_t eventTableTime = ParseStartTime(eventTableName_);
+    int64_t deleteTimePoint = eventBeginTime_ - (SIX_DAY_IN_MILLIS_MAX - deleteDays * ONE_DAY_TIME) - eventTableTime;
+    if (deleteTimePoint <= 0) {
+        return;
+    }
+    shared_ptr<NativeRdb::RdbStore> rdbStore = GetBundleActiveRdbStore(EVENT_DATABASE_INDEX);
+    if (rdbStore == nullptr) {
+        BUNDLE_ACTIVE_LOGE("delete excessive tableData fail, rdbStore is nullptr");
+        return;
+    }
+    string deleteEventDataSql = "delete from " + eventTableName_ + " where timeStamp <= " +
+        to_string(deleteTimePoint);
+    int32_t deleteResult = rdbStore->ExecuteSql(deleteEventDataSql);
+    if (deleteResult != NativeRdb::E_OK) {
+        BUNDLE_ACTIVE_LOGE("delete event data failed, rdb error number: %{public}d", deleteResult);
+    }
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

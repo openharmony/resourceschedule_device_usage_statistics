@@ -28,6 +28,7 @@
 #include "bundle_constants.h"
 #include "hisysevent.h"
 #include "bundle_active_report_controller.h"
+#include "bundle_active_event_reporter.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -36,7 +37,11 @@ const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no
 #endif // OS_ACCOUNT_PART_ENABLED
 constexpr int32_t BUNDLE_UNINSTALL_DELAY_TIME = 5 * 1000 * 1000;
 constexpr int32_t MIN_USER_ID = -1;
+constexpr int32_t MAX_DELETE_EVENT_DALIYS = 6;
+constexpr double DEFAULT_PERCENT_USER_SPACE_LIMIT = 0.1;
 static constexpr char RSS[] = "RSS";
+static constexpr char FILEMANAGEMENT[] = "FILEMANAGEMENT";
+static constexpr char DATA_PATH[] = "/data";
 
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
 {
@@ -71,6 +76,7 @@ BundleActiveCore::BundleActiveCore()
         flushInterval_ = THIRTY_MINUTE;
         debugCore_ = false;
     }
+    percentUserSpaceLimit_ = DEFAULT_PERCENT_USER_SPACE_LIMIT;
 }
 
 BundleActiveCore::~BundleActiveCore()
@@ -254,6 +260,7 @@ void BundleActiveCore::Init()
     BUNDLE_ACTIVE_LOGD("system time shot is %{public}lld", (long long)systemTimeShot_);
     bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader_->LoadConfig();
+    BundleActiveEventReporter::GetInstance().ReportFileSizeEvent();
 }
 
 void BundleActiveCore::InitBundleGroupController()
@@ -397,6 +404,10 @@ void BundleActiveCore::RestoreAllData()
 
 void BundleActiveCore::RestoreToDatabase(const int32_t userId)
 {
+    if (IsUserSpaceMemoryLimit()) {
+        BUNDLE_ACTIVE_LOGE("The available memory in user space is too low and is not on the disk");
+        return;
+    }
     BUNDLE_ACTIVE_LOGD("RestoreToDatabase called");
     BundleActiveEvent event;
     event.eventId_ = BundleActiveEvent::FLUSH;
@@ -407,6 +418,13 @@ void BundleActiveCore::RestoreToDatabase(const int32_t userId)
         it->second->ReportEvent(event);
     }
     RestoreToDatabaseLocked(userId);
+    std::shared_ptr<BundleActiveCore> bundleActiveCore = shared_from_this();
+    ffrt::submit([bundleActiveCore]() {
+        if (bundleActiveCore == nullptr) {
+            return;
+        }
+        bundleActiveCore->ProcessDataSize();
+        });
 }
 
 void BundleActiveCore::RestoreToDatabaseLocked(const int32_t userId)
@@ -972,6 +990,41 @@ void BundleActiveCore::OnObserverDiedInner(const wptr<IRemoteObject> &remote)
         }
     }
     recipientMap_.erase(objectProxy);
+}
+
+bool BundleActiveCore::IsUserSpaceMemoryLimit()
+{
+    return BundleActiveUtil::GetPercentOfAvailableUserSpace(DATA_PATH) <= percentUserSpaceLimit_;
+}
+
+void BundleActiveCore::ProcessDataSize()
+{
+    if (!bundleActiveConfigReader_ || !IsFolderSizeLimit()) {
+        return;
+    }
+    DeleteExcessiveTableData();
+}
+
+bool BundleActiveCore::IsFolderSizeLimit()
+{
+    return BundleActiveUtil::GetFolderOrFileSize(BUNDLE_ACTIVE_DATABASE_DIR) >=
+        bundleActiveConfigReader_->GetMaxDataSize();
+}
+
+void BundleActiveCore::DeleteExcessiveTableData()
+{
+    std::lock_guard<ffrt::mutex> lock(mutex_);
+    auto it = userStatServices_.find(currentUsedUser_);
+    if (it == userStatServices_.end()) {
+        BUNDLE_ACTIVE_LOGE("currentUsedUser_ is not exit, delete exceeive table data failed");
+        return;
+    }
+    for (int32_t deleteDays = DEFAULT_DELETE_EVENT_DALIYS; deleteDays <= MAX_DELETE_EVENT_DALIYS; deleteDays++) {
+        it->second->DeleteExcessiveEventTableData(deleteDays);
+        if (!IsFolderSizeLimit()) {
+            return;
+        }
+    }
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

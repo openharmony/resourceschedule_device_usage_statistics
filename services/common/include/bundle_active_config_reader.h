@@ -29,11 +29,14 @@ class BundleActiveConfigReader {
 public:
     void LoadConfig();
     AppUsePeriodicallyConfig GetApplicationUsePeriodicallyConfig();
+    uint64_t GetMaxDataSize();
 private:
     void LoadApplicationUsePeriodically(const char* path);
     bool GetJsonFromFile(const char* filePath, cJSON *&root);
     bool ConvertFullPath(const std::string& partialPath, std::string& fullPath);
+    void LoadMaxDataSize(const char *filePath);
     AppUsePeriodicallyConfig appUsePeriodicallyConfig_;
+    uint64_t maxDataSize_ = 0;
 };
 
 }  // namespace DeviceUsageStats

@@ -42,6 +42,7 @@ public:
     bool HasEvent(const int32_t& eventId);
     void Init(const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
     void DeInit();
+    
     static const int32_t MSG_REPORT_EVENT;
     static const int32_t MSG_FLUSH_TO_DISK;
     static const int32_t MSG_REMOVE_USER;

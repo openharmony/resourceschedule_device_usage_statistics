@@ -4,5 +4,5 @@
         "MaxUseTimes" : 15,
         "MinUseDays" : 6
     },
-    "MaxDataSize": 6
+    "MaxDataSize": "abc"
 }

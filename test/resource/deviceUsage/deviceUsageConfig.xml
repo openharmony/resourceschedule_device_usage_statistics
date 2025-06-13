@@ -20,6 +20,13 @@
             <option name="shell" value="target mount"/>
             <option name="shell" value="mkdir /system/variant/phone/base/etc/device_usage_statistics/"/>
             <option name="push" value="parseconfig/device_usage_statistics_config.json -> /system/variant/phone/base/etc/device_usage_statistics/" src="res"/>
+            <option name="push" value="parseconfig/device_usage_statistics_config_test1.json -> /system/variant/phone/base/etc/device_usage_statistics/" src="res"/>
+            <option name="push" value="parseconfig/device_usage_statistics_config_test2.json -> /system/variant/phone/base/etc/device_usage_statistics/" src="res"/>
         </preparer>
+        <cleaner>
+            <option name="shell" value="rm -rf /system/variant/phone/base/etc/device_usage_statistics/device_usage_statistics_config.json"/>
+            <option name="shell" value="rm -rf /system/variant/phone/base/etc/device_usage_statistics/device_usage_statistics_config_test1.json"/>
+            <option name="shell" value="rm -rf /system/variant/phone/base/etc/device_usage_statistics/device_usage_statistics_config_test2.json"/>
+        </cleaner>
     </target>
 </configuration>

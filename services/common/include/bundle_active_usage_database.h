@@ -80,6 +80,7 @@ public:
         std::map<std::string, BundleActiveEventStats>& eventStats, int32_t userId);
     void QueryNotificationEventStats(int32_t eventId, int64_t beginTime, int64_t endTime,
         std::map<std::string, BundleActiveEventStats>& notificationEventStats, int32_t userId);
+    void DeleteExcessiveEventTableData(int32_t deleteDays);
 
 private:
     void CheckDatabaseVersion();

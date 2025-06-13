@@ -77,6 +77,7 @@ public:
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
     void LoadActiveStats(const int64_t timeStamp, const bool& force, const bool& timeChanged);
     void LoadModuleAndFormStats();
+    void DeleteExcessiveEventTableData(int32_t deleteDays);
 
 private:
     static const int64_t ONE_SECOND_MILLISECONDS = 1000;
