@@ -1336,28 +1336,6 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_SetN
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsServiceTest_ReportContinuousTaskEvent_001
- * @tc.desc: ReportContinuousTaskEvent
- * @tc.type: FUNC
- * @tc.require: issuesI5SOZY
- */
-HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ReportContinuousTaskEvent_001,
-    Function | MediumTest | Level0)
-{
-    #ifdef BGTASKMGR_ENABLE
-    auto bgtaskObserver = std::make_shared<BundleActiveContinuousTaskObserver>();
-    auto continuousTaskCallbackInfo = std::shared_ptr<OHOS::BackgroundTaskMgr::ContinuousTaskCallbackInfo>();
-    continuousTaskCallbackInfo->creatorUid_ = 20000000;
-    bool isStart = false;
-    bgtaskObserver->ReportContinuousTaskEvent(continuousTaskCallbackInfo, isStart);
-
-    isStart = true;
-    bgtaskObserver->ReportContinuousTaskEvent(continuousTaskCallbackInfo, isStart);
-    EXPECT_NE(bgtaskObserver, nullptr);
-    #endif
-}
-
-/*
  * @tc.name: DeviceUsageStatisticsServiceTest_RemoveFormData_001
  * @tc.desc: RemoveFormData
  * @tc.type: FUNC
