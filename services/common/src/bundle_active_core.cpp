@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,7 @@
 #include "ffrt_inner.h"
 #include "bundle_constants.h"
 #include "hisysevent.h"
+#include "bundle_active_high_frequency_period.h"
 #include "bundle_active_report_controller.h"
 #include "bundle_active_event_reporter.h"
 #include "os_account_constants.h"
@@ -39,15 +40,23 @@ const int32_t DEFAULT_OS_ACCOUNT_ID = 0; // 0 is the default id when there is no
 constexpr int32_t BUNDLE_UNINSTALL_DELAY_TIME = 5 * 1000 * 1000;
 constexpr int32_t MIN_USER_ID = -1;
 constexpr int32_t MAX_DELETE_EVENT_DALIYS = 6;
+constexpr int32_t INDEX_USE_TIME = 1;
+constexpr int32_t INDEX_HOUR = 0;
 constexpr double DEFAULT_PERCENT_USER_SPACE_LIMIT = 0.1;
 static constexpr char RSS[] = "RSS";
 static constexpr char FILEMANAGEMENT[] = "FILEMANAGEMENT";
 static constexpr char DATA_PATH[] = "/data";
 
+// 用于根据使用次数对时段进行降序的数据结构
+struct ElementWithIndex {
+    int32_t useTimes;
+    int32_t originlIndex;
+};
+
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject()
 {
-        userId_ = -1;
-        bundleName_ = "";
+    userId_ = -1;
+    bundleName_ = "";
 }
 
 BundleActiveReportHandlerObject::BundleActiveReportHandlerObject(const int32_t userId, const std::string bundleName)
@@ -1024,6 +1033,140 @@ void BundleActiveCore::DeleteExcessiveTableData()
         it->second->DeleteExcessiveEventTableData(deleteDays);
         if (!IsFolderSizeLimit()) {
             return;
+        }
+    }
+}
+
+ErrCode BundleActiveCore::QueryHighFrequencyPeriodBundle(
+    std::vector<BundleActiveHighFrequencyPeriod>& appFreqHours, int32_t userId)
+{
+    BUNDLE_ACTIVE_LOGD("QueryHighFrequencyPeriodBundle called");
+    std::lock_guard<ffrt::mutex> lock(mutex_);
+    int64_t timeNow = CheckTimeChangeAndGetWallTime(userId);
+    if (timeNow == ERR_TIME_OPERATION_FAILED) {
+        return ERR_TIME_OPERATION_FAILED;
+    }
+    std::shared_ptr<BundleActiveUserService> service = GetUserDataAndInitializeIfNeeded(userId, timeNow, debugCore_);
+    if (service == nullptr) {
+        return ERR_MEMORY_OPERATION_FAILED;
+    }
+    int64_t currentSystemTime = BundleActiveUtil::GetSystemTimeMs();
+    int64_t aWeekAgo = currentSystemTime - ONE_WEEK_TIME;
+    std::vector<BundleActiveEvent> bundleActiveEvents;
+    auto res = service->QueryBundleEvents(bundleActiveEvents, aWeekAgo, currentSystemTime, userId, "");
+    if (res != ERR_OK) {
+        BUNDLE_ACTIVE_LOGE("QueryHighFrequencyPeriodBundle QueryBundleEvents fail");
+        return res;
+    }
+    std::unordered_map<std::string, BundleActiveCore::AppUsage> appUsages;
+    // 解析前台事件，记录应用使用时段数据
+    ProcessEvents(appUsages, bundleActiveEvents);
+    // 获取高频时段使用应用信息
+    GetFreqBundleHours(appFreqHours, appUsages);
+    return res;
+}
+
+void BundleActiveCore::GetFreqBundleHours(std::vector<BundleActiveHighFrequencyPeriod>& appFreqHours,
+    std::unordered_map<std::string, BundleActiveCore::AppUsage>& appUsages)
+{
+    BUNDLE_ACTIVE_LOGD("BundleActiveCore GetFreqBundleHours appUsages size: %{public}zu", appUsages.size());
+    for (auto& [appName, usage] : appUsages) {
+        // 统计应用一周内的使用天数
+        int32_t totalDayUse = 0;
+        for (int32_t i = 0; i < NUM_DAY_ONE_WEEK; i++) {
+            if (usage.dayUsage[i] != 0) {
+                totalDayUse++;
+            }
+        }
+        // 若一周内的使用天数不满足阈值minTotalUseDays, 则判断为非周期性使用应用
+        if (totalDayUse < bundleActiveConfigReader_->GetAppHighFrequencyPeriodThresholdConfig().minTotalUseDays) {
+            continue;
+        }
+        // 统计应用每个时段 一周内的使用天数，只取满足使用天数限制的时段信息
+        std::vector<std::vector<int32_t>> topHoursUsage;
+        GetTopHourUsage(topHoursUsage, usage);
+        if (topHoursUsage.size() > 0) {
+            // 按使用天数降序排序
+            std::sort(topHoursUsage.begin(),
+                topHoursUsage.end(),
+                [](const std::vector<int32_t>& hourUsageA, const std::vector<int32_t> &hourUsageB) {
+                    return hourUsageA[INDEX_USE_TIME] > hourUsageB[INDEX_USE_TIME];
+                });
+            uint64_t maxHighFreqHourNum = static_cast<uint64_t>(
+                bundleActiveConfigReader_->GetAppHighFrequencyPeriodThresholdConfig().maxHighFreqHourNum);
+            // 只取使用天数最多的前TOPN个时段
+            if (topHoursUsage.size() > maxHighFreqHourNum) {
+                topHoursUsage.erase(topHoursUsage.begin() + maxHighFreqHourNum, topHoursUsage.end());
+            }
+            std::vector<int32_t> hourColumn;
+            for (const auto& hourUsage : topHoursUsage) {
+                hourColumn.push_back(hourUsage[INDEX_HOUR]);
+            }
+            appFreqHours.emplace_back(appName, hourColumn);
+        }
+    }
+}
+
+void BundleActiveCore::GetTopHourUsage(
+    std::vector<std::vector<int32_t>>& topHoursUsage, BundleActiveCore::AppUsage& usage)
+{
+    std::vector<ElementWithIndex> elementsWithIndices(NUM_HOUR_ONE_DAY);
+    for (int32_t i = 0; i < NUM_HOUR_ONE_DAY; i++) {
+        elementsWithIndices[i] = {usage.hourTotalUse[i], i};
+    }
+    sort(elementsWithIndices.begin(),
+        elementsWithIndices.end(),
+        [](const ElementWithIndex& hourUseTimeA, const ElementWithIndex& hourUseTimeB) {
+            return hourUseTimeA.useTimes > hourUseTimeB.useTimes;
+        });
+    int32_t minTopUseHoursLimit =
+        bundleActiveConfigReader_->GetAppHighFrequencyPeriodThresholdConfig().minTopUseHoursLimit;
+    for (int32_t i = 0; i < minTopUseHoursLimit; i++) {
+        int32_t hour = elementsWithIndices[i].originlIndex;
+        int32_t hourUseDays = 0;
+        for (int32_t weekDay = 0; weekDay < NUM_DAY_ONE_WEEK; weekDay++) {
+            if (usage.hourUsage[weekDay][hour] > 0) {
+                hourUseDays++;
+            }
+        }
+        if (hourUseDays >= bundleActiveConfigReader_->GetAppHighFrequencyPeriodThresholdConfig().minHourUseDays) {
+            topHoursUsage.emplace_back(std::vector<int32_t>{hour, hourUseDays});
+        }
+    }
+}
+
+void BundleActiveCore::ProcessEvents(
+    std::unordered_map<std::string, AppUsage>& appUsages, std::vector<BundleActiveEvent>& events)
+{
+    BUNDLE_ACTIVE_LOGD("BundleActiveCore ProcessEvent events size: %{public}zu", events.size());
+    for (size_t i = 0; i < events.size(); ++i) {
+        std::string bundleName = events[i].bundleName_;
+        if (events[i].eventId_ == BundleActiveEvent::ABILITY_FOREGROUND) {
+            auto [it, inserted] = appUsages.emplace(bundleName, BundleActiveCore::AppUsage());
+            if (it->second.startTime == DEFAULT_INVALID_VALUE) {
+                it->second.startTime = events[i].timeStamp_;
+            }
+        } else if (events[i].eventId_ == BundleActiveEvent::ABILITY_BACKGROUND ||
+                   events[i].eventId_ == BundleActiveEvent::ABILITY_STOP) {
+            auto it = appUsages.find(bundleName);
+            if (it == appUsages.end() || it->second.startTime == DEFAULT_INVALID_VALUE) {
+                continue;
+            }
+            // 转换成以秒为单位
+            const time_t timestampSeconds = it->second.startTime / 1000;
+            // 转换为tm结构体以获取详细信息
+            std::tm* startTimeTm = std::localtime(&timestampSeconds);
+            if (startTimeTm == nullptr) {
+                it->second.startTime = DEFAULT_INVALID_VALUE;
+                continue;
+            }
+            // 获取星期几(0=周日, 6=周六)
+            int32_t weekDay = startTimeTm->tm_wday;
+            int32_t hour = startTimeTm->tm_hour;
+            it->second.dayUsage[weekDay]++;
+            it->second.hourUsage[weekDay][hour]++;
+            it->second.hourTotalUse[hour]++;
+            it->second.startTime = DEFAULT_INVALID_VALUE;
         }
     }
 }

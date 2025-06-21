@@ -25,17 +25,34 @@ struct AppUsePeriodicallyConfig {
     int32_t maxUseTimes;
     int32_t minUseDays;
 };
+
+struct AppHighFrequencyPeriodThresholdConfig {
+    int32_t minTotalUseDays;
+    int32_t minTopUseHoursLimit;
+    int32_t minHourUseDays;
+    int32_t maxHighFreqHourNum;
+};
+
 class BundleActiveConfigReader {
 public:
     void LoadConfig();
     AppUsePeriodicallyConfig GetApplicationUsePeriodicallyConfig();
+    AppHighFrequencyPeriodThresholdConfig GetAppHighFrequencyPeriodThresholdConfig();
     uint64_t GetMaxDataSize();
 private:
-    void LoadApplicationUsePeriodically(const char* path);
-    bool GetJsonFromFile(const char* filePath, cJSON *&root);
+    void LoadConfigFile(const char* filePath);
+    void LoadApplicationUsePeriodically(cJSON* root);
+    void LoadAppHighFreqPeriodThresholdConfig(cJSON* root);
+    void LoadMaxDataSize(cJSON* root);
+    bool GetJsonFromFile(const char* filePath, cJSON*& root);
     bool ConvertFullPath(const std::string& partialPath, std::string& fullPath);
-    void LoadMaxDataSize(const char *filePath);
+    int32_t GetIntValue(
+        cJSON* root, const char* parameterName, int32_t minLimit, int32_t maxLimit, int32_t defaultValue);
+    bool IsValidObject(cJSON* item);
+    bool IsValidNumber(cJSON* item);
+
     AppUsePeriodicallyConfig appUsePeriodicallyConfig_;
+    AppHighFrequencyPeriodThresholdConfig appHighFreqPeriodThresholdConfig_;
     uint64_t maxDataSize_ = 0;
 };
 

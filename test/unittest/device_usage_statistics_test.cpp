@@ -34,6 +34,7 @@
 #include "token_setproc.h"
 #include "nativetoken_kit.h"
 #include "bundle_active_test_util.h"
+#include "bundle_active_high_frequency_period.h"
 
 using namespace testing::ext;
 
@@ -589,6 +590,130 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_AppGroupCallbackSt
     EXPECT_EQ(appGroupCallbackStub->OnRemoteRequest(1, data1, reply, option), 1);
     data1.WriteInterfaceToken(AppGroupCallbackStub::GetDescriptor());
     EXPECT_EQ(appGroupCallbackStub->OnRemoteRequest(1, data1, reply, option), 5);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_QueryHighFrequencyPeriodBundle_001
+ * @tc.desc: QueryHighFrequencyPeriodBundle
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryHighFrequencyPeriodBundle_001,
+    Function | MediumTest | Level0)
+{
+    std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
+    ErrCode ret = BundleActiveClient::GetInstance().QueryHighFrequencyPeriodBundle(
+        appFreqHours, g_defaultFormId);
+    EXPECT_EQ(ret, 0);
+    EXPECT_EQ(appFreqHours.size(), 0);
+    ret = BundleActiveClient::GetInstance().QueryHighFrequencyPeriodBundle(
+        appFreqHours, g_commonUserid);
+    EXPECT_EQ(ret, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest__QueryBundleTodayLatestUsedTime_001
+ * @tc.desc: _QueryBundleTodayLatestUsedTime
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryBundleTodayLatestUsedTime_001,
+    Function | MediumTest | Level0)
+{
+    int64_t latestUsedTime = 0;
+    ErrCode ret = BundleActiveClient::GetInstance().QueryBundleTodayLatestUsedTime(
+        latestUsedTime, g_defaultFormName, g_commonUserid);
+    EXPECT_NE(ret, 0);
+    EXPECT_EQ(latestUsedTime, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest__BundleActiveHighFrequencyPeriod_001
+ * @tc.desc: BundleActiveHighFrequencyPeriod
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveHighFrequencyPeriod_001,
+    Function | MediumTest | Level0)
+{
+    BundleActiveHighFrequencyPeriod originalBundle;
+    std::vector<int32_t> highFreqHour;
+    highFreqHour.push_back(1);
+    originalBundle.bundleName_ = g_defaultFormName;
+    originalBundle.highFreqHours_ = highFreqHour;
+    EXPECT_EQ(originalBundle.bundleName_, g_defaultFormName);
+
+    BundleActiveHighFrequencyPeriod copy(originalBundle);
+    EXPECT_EQ(copy.bundleName_, originalBundle.bundleName_);
+
+    BundleActiveHighFrequencyPeriod withPara(g_defaultFormName, highFreqHour);
+    EXPECT_EQ(withPara.bundleName_, g_defaultFormName);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest__BundleActiveHighFrequencyPeriod_002
+ * @tc.desc: BundleActiveHighFrequencyPeriod
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveHighFrequencyPeriod_002,
+    Function | MediumTest | Level0)
+{
+    BundleActiveHighFrequencyPeriod testShall;
+    MessageParcel parcel1;
+    EXPECT_TRUE(testShall.Marshalling(parcel1));
+    EXPECT_NE(testShall.Unmarshalling(parcel1), nullptr);
+
+    MessageParcel parcel2;
+    testShall.bundleName_ = g_defaultFormName;
+    testShall.highFreqHours_.push_back(1);
+    EXPECT_TRUE(testShall.Marshalling(parcel2));
+    EXPECT_NE(testShall.Unmarshalling(parcel2), nullptr);
+
+    MessageParcel parcel3;
+    parcel3.WriteString(g_defaultFormName);
+    parcel3.WriteUint32(3);
+    parcel3.WriteInt32(1);
+    parcel3.WriteInt32(2);
+    EXPECT_EQ(testShall.Unmarshalling(parcel3), nullptr);
+
+    MessageParcel parcel4;
+    parcel4.WriteString(g_defaultFormName);
+    parcel4.WriteUint32(2);
+    parcel4.WriteInt32(1);
+    parcel4.WriteInt32(2);
+    EXPECT_NE(testShall.Unmarshalling(parcel4), nullptr);
+
+    MessageParcel parcel5;
+    parcel5.WriteString(g_defaultFormName);
+    parcel5.WriteUint32(25);
+    parcel5.WriteInt32(1);
+    parcel5.WriteInt32(2);
+    EXPECT_EQ(testShall.Unmarshalling(parcel5), nullptr);
+
+    MessageParcel parcel6;
+    testShall.highFreqHours_.resize(25);
+    EXPECT_FALSE(testShall.Marshalling(parcel6));
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest__BundleActiveHighFrequencyPeriod_003
+ * @tc.desc: BundleActiveHighFrequencyPeriod
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveHighFrequencyPeriod_003,
+    Function | MediumTest | Level0)
+{
+    BundleActiveHighFrequencyPeriod originalBundle;
+    EXPECT_EQ(originalBundle.ToString(), "bundle name is , highFreqHours_ is \n");
+
+    originalBundle.bundleName_ = "test";
+    originalBundle.highFreqHours_.push_back(1);
+    EXPECT_EQ(originalBundle.ToString(), "bundle name is test, highFreqHours_ is 1\n");
+
+    originalBundle.highFreqHours_.push_back(2);
+    EXPECT_EQ(originalBundle.ToString(), "bundle name is test, highFreqHours_ is 1, 2\n");
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

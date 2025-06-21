@@ -55,8 +55,8 @@ namespace DeviceUsageStats {
         DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleIdle(result, inputBundlName, userId);
         DelayedSingleton<BundleActiveService>::GetInstance()->IsBundleUsePeriod(result, inputBundlName, userId);
         DelayedSingleton<BundleActiveConfigReader>::GetInstance()->GetApplicationUsePeriodicallyConfig();
-        DelayedSingleton<BundleActiveConfigReader>::GetInstance()->LoadApplicationUsePeriodically(
-            inputBundlName.c_str());
+        DelayedSingleton<BundleActiveConfigReader>::GetInstance()->GetAppHighFrequencyPeriodThresholdConfig();
+        DelayedSingleton<BundleActiveConfigReader>::GetInstance()->LoadConfigFile(inputBundlName.c_str());
         return true;
     }
 
@@ -80,6 +80,8 @@ namespace DeviceUsageStats {
         DelayedSingleton<BundleActiveService>::GetInstance()->DumpPackageUsage(dumpOption, dumpInfo);
         dumpInfo.clear();
         DelayedSingleton<BundleActiveService>::GetInstance()->DumpModuleUsage(dumpOption, dumpInfo);
+        dumpInfo.clear();
+        DelayedSingleton<BundleActiveService>::GetInstance()->DumpHighFreqHourUsage(dumpOption, dumpInfo);
         std::string result;
         DelayedSingleton<BundleActiveService>::GetInstance()->DumpUsage(result);
         return true;

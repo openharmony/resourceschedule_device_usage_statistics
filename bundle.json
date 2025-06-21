@@ -68,7 +68,8 @@
               "bundle_active_form_record.h",
               "bundle_active_group_map.h",
               "bundle_active_module_record.h",
-              "bundle_active_package_stats.h"
+              "bundle_active_package_stats.h",
+              "bundle_active_high_frequency_period.h"
             ]
           },
           "name": "//foundation/resourceschedule/device_usage_statistics:usagestatsinner"

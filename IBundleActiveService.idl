@@ -14,6 +14,7 @@
  */
 
 sequenceable OHOS.DeviceUsageStats.BundleActiveEvent;
+sequenceable OHOS.DeviceUsageStats.BundleActiveHighFrequencyPeriod;
 sequenceable OHOS.DeviceUsageStats.BundleActivePackageStats;
 sequenceable OHOS.DeviceUsageStats.BundleActiveModuleRecord;
 sequenceable OHOS.DeviceUsageStats.BundleActiveEventStats;
@@ -39,4 +40,6 @@ interface OHOS.DeviceUsageStats.IBundleActiveService {
         [out]List<BundleActiveEventStats> eventStats, [in] int userId);
     void QueryNotificationEventStats([in] long beginTime, [in] long endTime,
         [out]List<BundleActiveEventStats> eventStats, [in] int userId);
+    void QueryHighFrequencyPeriodBundle([out] List<BundleActiveHighFrequencyPeriod> bundleHighFreqPeriod, [in] int userId);
+    void QueryBundleTodayLatestUsedTime([out] long latestUsedTime, [in] String bundleName, [in] int userId);
 }
