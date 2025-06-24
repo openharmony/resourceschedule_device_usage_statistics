@@ -1170,13 +1170,12 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_005, Function | MediumTest |
 {
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     std::string taskName = "test";
-    int64_t timeStamp = 0;
-    std::string abilityId = "1";
+    int64_t timeStamp = 100;
     int32_t eventId = BundleActiveEvent::LONG_TIME_TASK_ENDED;
     packageStats->totalContiniousTaskUsedTime_ = 0;
-    packageStats->longTimeTasks_[taskName] = BundleActiveEvent::LONG_TIME_TASK_ENDED;
-    packageStats->UpdateAbility(timeStamp, eventId, abilityId);
-    EXPECT_EQ(packageStats->totalContiniousTaskUsedTime_, 0);
+    packageStats->longTimeTasks_[taskName] = BundleActiveEvent::LONG_TIME_TASK_STARTTED;
+    packageStats->UpdateLongTimeTask(taskName, timeStamp, eventId);
+    EXPECT_NE(packageStats->totalContiniousTaskUsedTime_, 0);
 }
 
 /*
