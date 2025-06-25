@@ -155,7 +155,8 @@ void MultiTestReportEvent(void)
     BundleActiveClient::GetInstance().ReportEvent(eventA, g_defaultUserId);
     BundleActiveEvent eventB(g_defaultBundleName, g_defaultMoudleName, g_defaultFormName,
         g_defaultDimension, g_defaultFormId, BundleActiveEvent::FORM_IS_REMOVED);
-    BundleActiveClient::GetInstance().ReportEvent(eventB, g_defaultUserId);
+    int32_t errorCode = BundleActiveClient::GetInstance().ReportEvent(eventB, g_defaultUserId);
+    EXPECT_EQ(errorCode, 0);
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_ReportEvent_001, Function | MediumTest | Level0)
