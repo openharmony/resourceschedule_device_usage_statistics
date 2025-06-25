@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,7 @@
 #include "bundle_active_app_state_observer.h"
 #include "bundle_active_continuous_task_observer.h"
 #include "bundle_active_account_helper.h"
+#include "bundle_active_high_frequency_period.h"
 #include "file_ex.h"
 #include "string_ex.h"
 #include "system_ability.h"
@@ -186,6 +187,27 @@ public:
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId) override;
 
     /**
+     * @brief QueryHighFrequencyPeriodBundle, query the high-frequency usage period of the app in the past week.
+     *
+     * @param appFreqHours .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
+    ErrCode QueryHighFrequencyPeriodBundle(
+        std::vector<BundleActiveHighFrequencyPeriod>& appFreqHours, int32_t userId) override;
+
+    /**
+     * @brief QueryBundleTodayLatestUsedTime, query the latest use time of the application on the current day.
+     *
+     * @param latestUsedTime .
+     * @param bundleName .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
+    ErrCode QueryBundleTodayLatestUsedTime(
+        int64_t& latestUsedTime, const std::string& bundleName, int32_t userId) override;
+
+    /**
      * @brief BundleActiveService, default constructor.
      *
      * @param systemAbilityId .
@@ -254,6 +276,7 @@ private:
     int32_t DumpEvents(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     int32_t DumpPackageUsage(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     int32_t DumpModuleUsage(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
+    int32_t DumpHighFreqHourUsage(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo);
     int32_t GetNameAndIndexForUid(int32_t uid);
     std::vector<BundleActivePackageStats> MergePackageStats(
         const std::vector<BundleActivePackageStats>& packageStats);

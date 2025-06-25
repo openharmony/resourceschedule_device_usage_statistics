@@ -26,6 +26,7 @@
 #include "bundle_active_constant.h"
 #include "bundle_active_usage_database.h"
 #include "bundle_active_test_util.h"
+#include "bundle_active_high_frequency_period.h"
 
 using namespace testing::ext;
 
@@ -114,6 +115,11 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     std::vector<BundleActiveModuleRecord> moduleRecord;
     int32_t maxNum = 1000;
     EXPECT_NE(BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, moduleRecord, g_defaultUserId), ERR_OK);
+    std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
+    EXPECT_NE(BundleActiveClient::GetInstance().QueryHighFrequencyPeriodBundle(appFreqHours, g_defaultUserId), ERR_OK);
+    int64_t latestUsedTime;
+    EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleTodayLatestUsedTime(
+        latestUsedTime, g_defaultBundleName, g_commonUserid), ERR_OK);
 }
 
 /*
@@ -460,6 +466,44 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
     std::string moduleName = "defaultMoudleName";
     std::string formName = "defaultFormName";
     database->RemoveFormData(userId, bundleName, moduleName, formName, 0, 0, uid);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_QueryHighFrequencyPeriodBundle_001
+ * @tc.desc: test QueryHighFrequencyPeriodBundle
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryHighFrequencyPeriodBundle_001,
+    Function | MediumTest | Level0)
+{
+    std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
+    ErrCode code =
+        DelayedSingleton<BundleActiveService>::GetInstance()->QueryHighFrequencyPeriodBundle(appFreqHours, 0);
+    EXPECT_NE(code, ERR_OK);
+
+    code =
+        DelayedSingleton<BundleActiveService>::GetInstance()->QueryHighFrequencyPeriodBundle(appFreqHours, -1);
+    EXPECT_NE(code, ERR_OK);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_QueryBundleTodayLatestUsedTime_001
+ * @tc.desc: test QueryHighFrequencyPeriodBundle
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleTodayLatestUsedTime_001,
+    Function | MediumTest | Level0)
+{
+    int64_t latestUsedTime = 0;
+    ErrCode code =
+        DelayedSingleton<BundleActiveService>::GetInstance()->QueryBundleTodayLatestUsedTime(latestUsedTime, "test", 0);
+    EXPECT_NE(code, ERR_OK);
+    EXPECT_EQ(latestUsedTime, 0);
+    code = DelayedSingleton<BundleActiveService>::GetInstance()->QueryBundleTodayLatestUsedTime(
+        latestUsedTime, "test", -1);
+    EXPECT_NE(code, ERR_OK);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

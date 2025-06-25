@@ -25,6 +25,7 @@
 #include "bundle_active_package_stats.h"
 #include "bundle_active_module_record.h"
 #include "bundle_state_inner_errors.h"
+#include "bundle_active_high_frequency_period.h"
 
 #include "system_ability_definition.h"
 #include "if_system_ability_manager.h"
@@ -36,7 +37,7 @@ class BundleActiveClient {
 public:
     // max number of query modules result.
     const int32_t MAXNUM_UP_LIMIT = 1000;
-    
+
     /**
      * @brief ReportEvent, used to report event.
      *
@@ -184,6 +185,27 @@ public:
      */
     ErrCode QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId = -1);
+
+    /**
+     * @brief QueryHighFrequencyPeriodBundle, query the high-frequency usage period of the application in the past week.
+     *
+     * @param appFreqHours .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
+    ErrCode QueryHighFrequencyPeriodBundle(
+        std::vector<BundleActiveHighFrequencyPeriod>& appFreqHours, int32_t userId = -1);
+
+    /**
+     * @brief QueryBundleTodayLatestUsedTime, query the latest use time of the application on the current day.
+     *
+     * @param latestUsedTime .
+     * @param bundleName .
+     * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
+     * @return errCode.
+     */
+    ErrCode QueryBundleTodayLatestUsedTime(int64_t& latestUsedTime, const std::string& bundleName, int32_t userId = -1);
+
     /*
     * function: GetInstance, get single instance of client.
     * return: object of BundleActiveClient.

@@ -4,5 +4,11 @@
         "MaxUseTimes" : 15,
         "MinUseDays" : 6
     },
+    "application_use_high_frequency_judge_threshold": {
+        "MinTotalUseDays" : 8,
+        "MinTopUseHoursLimit" : 5,
+        "MinHourUseDays" : 4,
+        "MaxHighFrequencyHourNum" : 3
+    },
     "MaxDataSize": "abc"
 }

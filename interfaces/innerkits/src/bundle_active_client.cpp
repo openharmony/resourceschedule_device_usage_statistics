@@ -104,6 +104,30 @@ ErrCode BundleActiveClient::QueryBundleStatsInfoByInterval(std::vector<BundleAct
     return bundleActiveProxy_->QueryBundleStatsInfoByInterval(PackageStats, intervalType, beginTime, endTime, userId);
 }
 
+ErrCode BundleActiveClient::QueryBundleTodayLatestUsedTime(
+    int64_t& latestUsedTime, const std::string& bundleName, int32_t userId)
+{
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    return bundleActiveProxy_->QueryBundleTodayLatestUsedTime(latestUsedTime, bundleName, userId);
+}
+
+ErrCode BundleActiveClient::QueryHighFrequencyPeriodBundle(
+    std::vector<BundleActiveHighFrequencyPeriod>& appFreqHours, int32_t userId)
+{
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    auto err = bundleActiveProxy_->QueryHighFrequencyPeriodBundle(appFreqHours, userId);
+    BUNDLE_ACTIVE_LOGI("QueryHighFrequencyPeriodBundle appFreqHour is %{public}zu", appFreqHours.size());
+    return err;
+}
+
 ErrCode BundleActiveClient::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
     const int64_t beginTime, const int64_t endTime, int32_t userId)
 {

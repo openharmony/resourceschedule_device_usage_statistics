@@ -187,6 +187,11 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump
     dumpOption = {"-A", "ModuleUsage", "1", "100"};
     bundleActiveService->ShellDump(dumpOption, dumpInfo);
 
+    dumpOption.clear();
+    dumpInfo.clear();
+    dumpOption = {"-A", "HighFreqHourUsage", "100"};
+    bundleActiveService->ShellDump(dumpOption, dumpInfo);
+
     std::vector<std::u16string> args;
     bundleActiveService->Dump(-1, args);
 
@@ -1524,8 +1529,9 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Conf
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
-    const char *path = "test";
-    bundleActiveConfigReader->LoadApplicationUsePeriodically(path);
+    cJSON* root = cJSON_CreateObject();
+    bundleActiveConfigReader->LoadApplicationUsePeriodically(root);
+    cJSON_Delete(root);
     EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseTimes, 0);
 }
 
@@ -1644,6 +1650,77 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetF
 }
 
 /*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadConfigFile_001
+ * @tc.desc: LoadConfigFile
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadConfigFile_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    std::string path = "test";
+    bundleActiveConfigReader->LoadConfigFile(path.c_str());
+    EXPECT_EQ(bundleActiveConfigReader->GetMaxDataSize(), 5 * 1024 * 1024);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseTimes, 0);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTotalUseDays, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadConfigFile_002
+ * @tc.desc: LoadConfigFile
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadConfigFile_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveConfigReader->maxDataSize_ = 1;
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    bundleActiveConfigReader->LoadConfigFile(CONFIG_PATH);
+    EXPECT_EQ(bundleActiveConfigReader->GetMaxDataSize(), 6);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseTimes, 5);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTotalUseDays, 5);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadConfigFile_003
+ * @tc.desc: LoadConfigFile
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadConfigFile_003,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveConfigReader->maxDataSize_ = 1;
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    bundleActiveConfigReader->LoadConfigFile(CONFIG_TEST1_PATH);
+    EXPECT_EQ(bundleActiveConfigReader->GetMaxDataSize(), 1);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseTimes, 5);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTotalUseDays, 4);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadConfigFile_004
+ * @tc.desc: LoadConfigFile
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadConfigFile_004,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    bundleActiveConfigReader->LoadConfigFile(nullptr);
+    EXPECT_EQ(bundleActiveConfigReader->GetMaxDataSize(), 5 * 1024 * 1024);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseTimes, 0);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTotalUseDays, 0);
+}
+
+/*
  * @tc.name: DeviceUsageStatisticsServiceTest_LoadMaxDataSize_001
  * @tc.desc: ConfigReader
  * @tc.type: FUNC
@@ -1653,11 +1730,16 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
     Function | MediumTest | Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
-    bundleActiveConfigReader->maxDataSize_ = 1;
+    bundleActiveConfigReader->maxDataSize_ = 0;
     EXPECT_NE(bundleActiveConfigReader, nullptr);
-    std::string path = "test";
-    bundleActiveConfigReader->LoadMaxDataSize(path.c_str());
-    EXPECT_EQ(bundleActiveConfigReader->maxDataSize_, 1);
+    cJSON* root = nullptr;
+    if (!bundleActiveConfigReader->GetJsonFromFile(CONFIG_PATH, root) || !root) {
+        cJSON_Delete(root);
+        FAIL() << "GetJsonFromFile failed";
+    }
+    bundleActiveConfigReader->LoadMaxDataSize(root);
+    cJSON_Delete(root);
+    EXPECT_EQ(bundleActiveConfigReader->maxDataSize_, 6);
 }
 
 /*
@@ -1672,8 +1754,14 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader->maxDataSize_ = 0;
     EXPECT_NE(bundleActiveConfigReader, nullptr);
-    bundleActiveConfigReader->LoadMaxDataSize(CONFIG_PATH);
-    EXPECT_EQ(bundleActiveConfigReader->maxDataSize_, 6);
+    cJSON* root = nullptr;
+    if (!bundleActiveConfigReader->GetJsonFromFile(CONFIG_TEST1_PATH, root) || !root) {
+        cJSON_Delete(root);
+        FAIL() << "GetJsonFromFile failed";
+    }
+    bundleActiveConfigReader->LoadMaxDataSize(root);
+    cJSON_Delete(root);
+    EXPECT_EQ(bundleActiveConfigReader->maxDataSize_, 0);
 }
 
 /*
@@ -1688,24 +1776,148 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader->maxDataSize_ = 0;
     EXPECT_NE(bundleActiveConfigReader, nullptr);
-    bundleActiveConfigReader->LoadMaxDataSize(CONFIG_TEST1_PATH);
+    cJSON* root = nullptr;
+    if (!bundleActiveConfigReader->GetJsonFromFile(CONFIG_TEST2_PATH, root) || !root) {
+        cJSON_Delete(root);
+        FAIL() << "GetJsonFromFile failed";
+    }
+    bundleActiveConfigReader->LoadMaxDataSize(root);
+    cJSON_Delete(root);
     EXPECT_EQ(bundleActiveConfigReader->maxDataSize_, 0);
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsServiceTest_LoadMaxDataSize_004
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadApplicationUsePeriodically_001
  * @tc.desc: ConfigReader
  * @tc.type: FUNC
- * @tc.require: issuesIC2FBU
+ * @tc.require: SR20250319441801 AR20250322520501
  */
-HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadMaxDataSize_004,
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadApplicationUsePeriodically_001,
     Function | MediumTest | Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
-    bundleActiveConfigReader->maxDataSize_ = 0;
     EXPECT_NE(bundleActiveConfigReader, nullptr);
-    bundleActiveConfigReader->LoadMaxDataSize(CONFIG_TEST2_PATH);
-    EXPECT_EQ(bundleActiveConfigReader->maxDataSize_, 0);
+    cJSON* root = cJSON_CreateObject();
+    bundleActiveConfigReader->LoadApplicationUsePeriodically(root);
+    cJSON_Delete(root);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseTimes, 0);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().maxUseTimes, 0);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseDays, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadApplicationUsePeriodically_002
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadApplicationUsePeriodically_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    cJSON* root = nullptr;
+    if (!bundleActiveConfigReader->GetJsonFromFile(CONFIG_PATH, root) || !root) {
+        cJSON_Delete(root);
+        FAIL() << "GetJsonFromFile failed";
+    }
+    bundleActiveConfigReader->LoadApplicationUsePeriodically(root);
+    cJSON_Delete(root);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseTimes, 5);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().maxUseTimes, 15);
+    EXPECT_EQ(bundleActiveConfigReader->GetApplicationUsePeriodicallyConfig().minUseDays, 6);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_001
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    cJSON* root = cJSON_CreateObject();
+    bundleActiveConfigReader->LoadAppHighFreqPeriodThresholdConfig(root);
+    cJSON_Delete(root);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTotalUseDays, 0);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTopUseHoursLimit, 0);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minHourUseDays, 0);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().maxHighFreqHourNum, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_002
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    cJSON* root = nullptr;
+    if (!bundleActiveConfigReader->GetJsonFromFile(CONFIG_PATH, root) || !root) {
+        cJSON_Delete(root);
+        FAIL() << "GetJsonFromFile failed";
+    }
+    bundleActiveConfigReader->LoadAppHighFreqPeriodThresholdConfig(root);
+    cJSON_Delete(root);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTotalUseDays, 5);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTopUseHoursLimit, 5);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minHourUseDays, 5);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().maxHighFreqHourNum, 3);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_003
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_003,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    cJSON* root = nullptr;
+    if (!bundleActiveConfigReader->GetJsonFromFile(CONFIG_TEST1_PATH, root) || !root) {
+        cJSON_Delete(root);
+        FAIL() << "GetJsonFromFile failed";
+    }
+    bundleActiveConfigReader->LoadAppHighFreqPeriodThresholdConfig(root);
+    cJSON_Delete(root);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTotalUseDays, 4);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTopUseHoursLimit, 5);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minHourUseDays, 4);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().maxHighFreqHourNum, 3);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_004
+ * @tc.desc: ConfigReader
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_004,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    cJSON* root = nullptr;
+    if (!bundleActiveConfigReader->GetJsonFromFile(CONFIG_TEST2_PATH, root) || !root) {
+        cJSON_Delete(root);
+        FAIL() << "GetJsonFromFile failed";
+    }
+    bundleActiveConfigReader->LoadAppHighFreqPeriodThresholdConfig(root);
+    cJSON_Delete(root);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTotalUseDays, 5);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minTopUseHoursLimit, 6);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().minHourUseDays, 4);
+    EXPECT_EQ(bundleActiveConfigReader->GetAppHighFrequencyPeriodThresholdConfig().maxHighFreqHourNum, 3);
 }
 
 /*
@@ -1812,5 +2024,267 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
     EXPECT_NE(bundleActiveCore, nullptr);
 }
 
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ProcessEvents_001
+ * @tc.desc: ProcessEvents
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ProcessEvents_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    std::vector<BundleActiveEvent> events;
+    events.emplace_back(2, 1750349685948);
+    events.emplace_back(3, 1750349694953);
+    events.emplace_back(2, 1750349705944);
+    events.emplace_back(4, 1750349715942);
+    std::unordered_map<std::string, BundleActiveCore::AppUsage> appUsages;
+    bundleActiveCore->ProcessEvents(appUsages, events);
+    EXPECT_EQ(appUsages.size(), 1);
+    const time_t timestampSeconds = 1750349685948 / 1000;
+    std::tm* timeTm = std::localtime(&timestampSeconds);
+    if (timeTm == nullptr) {
+        FAIL() << "localtime faild";
+    }
+    EXPECT_EQ(appUsages[""].dayUsage[timeTm->tm_wday], 2);
+    EXPECT_EQ(appUsages[""].hourUsage[timeTm->tm_wday][timeTm->tm_hour], 2);
+    EXPECT_EQ(appUsages[""].hourTotalUse[timeTm->tm_hour], 2);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ProcessEvents_002
+ * @tc.desc: ProcessEvents
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ProcessEvents_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    std::vector<BundleActiveEvent> events;
+    events.emplace_back(1, 1750349685948);
+    events.emplace_back(2, 0);
+    events.emplace_back(1, 1750349705944);
+    events.emplace_back(1, 1750349715942);
+    std::unordered_map<std::string, BundleActiveCore::AppUsage> appUsages;
+    bundleActiveCore->ProcessEvents(appUsages, events);
+    EXPECT_EQ(appUsages.size(), 1);
+    const time_t timestampSeconds = 1750349685948 / 1000;
+    std::tm* timeTm = std::localtime(&timestampSeconds);
+    if (timeTm == nullptr) {
+        FAIL() << "localtime faild";
+    }
+    EXPECT_EQ(appUsages[""].dayUsage[timeTm->tm_wday], 0);
+    EXPECT_EQ(appUsages[""].hourUsage[timeTm->tm_wday][timeTm->tm_hour], 0);
+    EXPECT_EQ(appUsages[""].hourTotalUse[timeTm->tm_hour], 0);
+    EXPECT_EQ(appUsages[""].startTime, 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ProcessEvents_003
+ * @tc.desc: ProcessEvents
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ProcessEvents_003,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    std::vector<BundleActiveEvent> events;
+    events.emplace_back(1, 1750349685948);
+    events.emplace_back(1, 1750349694953);
+    events.emplace_back(1, 1750349705944);
+    events.emplace_back(1, 1750349715942);
+    std::unordered_map<std::string, BundleActiveCore::AppUsage> appUsages;
+    bundleActiveCore->ProcessEvents(appUsages, events);
+    EXPECT_EQ(appUsages.size(), 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_ProcessEvents_004
+ * @tc.desc: ProcessEvents
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ProcessEvents_004,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    std::vector<BundleActiveEvent> events;
+    events.emplace_back(1, 1750349685948);
+    events.emplace_back(1, 1750349694953);
+    events.emplace_back(1, 1750349705944);
+    events.emplace_back(3, 1750349715942);
+    std::unordered_map<std::string, BundleActiveCore::AppUsage> appUsages;
+    bundleActiveCore->ProcessEvents(appUsages, events);
+    EXPECT_EQ(appUsages.size(), 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_GetTopHourUsage_001
+ * @tc.desc: GetTopHourUsage
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetTopHourUsage_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minTotalUseDays = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minTopUseHoursLimit = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minHourUseDays = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.maxHighFreqHourNum = 1;
+    std::vector<std::vector<int32_t>> topHoursUsage;
+    BundleActiveCore::AppUsage appUsage = {{300, 300, 300, 300, 300, 300, 300},
+        {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24}},
+        {7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105, 112, 119, 126, 133, 140, 147, 154, 161, 168},
+        1750349685948};
+    bundleActiveCore->GetTopHourUsage(topHoursUsage, appUsage);
+    EXPECT_EQ(topHoursUsage.size(), 1);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_GetTopHourUsage_002
+ * @tc.desc: GetTopHourUsage
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetTopHourUsage_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minTotalUseDays = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minTopUseHoursLimit = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minHourUseDays = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.maxHighFreqHourNum = 1;
+    std::vector<std::vector<int32_t>> topHoursUsage;
+    BundleActiveCore::AppUsage appUsage;
+    bundleActiveCore->GetTopHourUsage(topHoursUsage, appUsage);
+    EXPECT_EQ(topHoursUsage.size(), 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_GetFreqBundleHours_001
+ * @tc.desc: GetFreqBundleHours
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetFreqBundleHours_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minTotalUseDays = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minTopUseHoursLimit = 6;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minHourUseDays = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.maxHighFreqHourNum = 1;
+    std::unordered_map<std::string, BundleActiveCore::AppUsage> appUsages;
+    BundleActiveCore::AppUsage appUsage = {{300, 300, 300, 300, 300, 300, 300},
+        {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24}},
+        {7, 14, 21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105, 112, 119, 126, 133, 140, 147, 154, 161, 168},
+        1750349685948};
+    appUsages["bundleNameA"] = appUsage;
+    appUsages["bundleNameB"] = BundleActiveCore::AppUsage();
+    std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
+    bundleActiveCore->GetFreqBundleHours(appFreqHours, appUsages);
+    EXPECT_EQ(appFreqHours.size(), 1);
+    EXPECT_EQ(appFreqHours[0].bundleName_, "bundleNameA");
+    EXPECT_EQ(appFreqHours[0].highFreqHours_.size(), 1);
+    EXPECT_EQ(appFreqHours[0].highFreqHours_[0], 23);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_GetFreqBundleHours_002
+ * @tc.desc: GetFreqBundleHours
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetFreqBundleHours_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minTotalUseDays = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minTopUseHoursLimit = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.minHourUseDays = 1;
+    bundleActiveCore->bundleActiveConfigReader_->appHighFreqPeriodThresholdConfig_.maxHighFreqHourNum = 1;
+    std::unordered_map<std::string, BundleActiveCore::AppUsage> appUsages;
+    appUsages["bundleNameA"] = BundleActiveCore::AppUsage();
+    appUsages["bundleNameB"] = BundleActiveCore::AppUsage();
+    std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
+    bundleActiveCore->GetFreqBundleHours(appFreqHours, appUsages);
+    EXPECT_EQ(appFreqHours.size(), 0);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_DumpHighFreqHourUsage_001
+ * @tc.desc: DumpHighFreqHourUsage
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DumpHighFreqHourUsage_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveService = std::make_shared<BundleActiveService>();
+    std::vector<std::string> dumpOption = {"option1", "option2"};
+    std::vector<std::string> dumpInfo;
+    int32_t result = bundleActiveService->DumpHighFreqHourUsage(dumpOption, dumpInfo);
+    EXPECT_EQ(result, -1);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_DumpHighFreqHourUsage_002
+ * @tc.desc: DumpHighFreqHourUsage
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DumpHighFreqHourUsage_002,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveService = std::make_shared<BundleActiveService>();
+    bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    std::vector<std::string> dumpOption = {"option1", "option2", "0"};
+    std::vector<std::string> dumpInfo;
+
+    int32_t result = bundleActiveService->DumpHighFreqHourUsage(dumpOption, dumpInfo);
+    EXPECT_EQ(result, 0);
+    EXPECT_EQ(dumpInfo.size(), 1);
+    EXPECT_EQ(dumpInfo[0], "appFreqHour size 0\n");
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryBundleTodayLatestUsedTime_001
+ * @tc.desc: QueryBundleTodayLatestUsedTime
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryBundleTodayLatestUsedTime_001,
+    Function | MediumTest | Level0)
+{
+    auto bundleActiveService = std::make_shared<BundleActiveService>();
+    bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    int64_t latestUsedTime = 0;
+    ErrCode result = bundleActiveService->QueryBundleTodayLatestUsedTime(latestUsedTime, "testBundleName", -1);
+    EXPECT_NE(result, 0);
+    EXPECT_EQ(latestUsedTime, 0);
+    result = bundleActiveService->QueryBundleTodayLatestUsedTime(latestUsedTime, "testBundleName", 100);
+    EXPECT_NE(result, 0);
+    EXPECT_EQ(latestUsedTime, 0);
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

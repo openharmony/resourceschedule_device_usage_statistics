@@ -43,12 +43,7 @@ namespace DeviceUsageStats {
     {
         auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
         std::string filePath = fdp->ConsumeRandomLengthString();
-        bundleActiveConfigReader->LoadConfig();
-        bundleActiveConfigReader->LoadApplicationUsePeriodically(filePath.c_str());
-        bundleActiveConfigReader->LoadApplicationUsePeriodically(CONFIG_TEST1_PATH);
-        bundleActiveConfigReader->LoadApplicationUsePeriodically(CONFIG_TEST2_PATH);
-        bundleActiveConfigReader->LoadApplicationUsePeriodically(CONFIG_TEST3_PATH);
-        bundleActiveConfigReader->LoadApplicationUsePeriodically(CONFIG_TEST4_PATH);
+        bundleActiveConfigReader->LoadConfigFile(filePath.c_str());
         cJSON *root = nullptr;
         bundleActiveConfigReader->GetJsonFromFile(filePath.c_str(), root);
         bundleActiveConfigReader->GetJsonFromFile(CONFIG_TEST_PATH, root);
@@ -104,8 +99,9 @@ namespace DeviceUsageStats {
         fuzzData.RewindRead(0);
         MessageParcel fuzzReply;
         MessageOption fuzzOption;
-        bundleActiveService->OnRemoteRequest(fuzzCode % MAX_CODE,
-            fuzzData, fuzzReply, fuzzOption);
+        bundleActiveService->OnRemoteRequest(fuzzCode % MAX_CODE, fuzzData, fuzzReply, fuzzOption);
+        std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
+        bundleActiveService->QueryHighFrequencyPeriodBundle(appFreqHours, userId);
         return true;
     }
 

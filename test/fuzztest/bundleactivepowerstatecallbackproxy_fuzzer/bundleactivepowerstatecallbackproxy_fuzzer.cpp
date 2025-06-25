@@ -133,6 +133,11 @@ namespace DeviceUsageStats {
         eventStats, userId);
         DelayedSingleton<BundleActiveClient>::GetInstance()->QueryNotificationEventStats(beginTime, endTime,
         eventStats, userId);
+        std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
+        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryHighFrequencyPeriodBundle(appFreqHours, userId);
+        int64_t latestUsedTime;
+        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryBundleTodayLatestUsedTime(latestUsedTime,
+            bundleName, userId);
         return true;
     }
 

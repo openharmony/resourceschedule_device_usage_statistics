@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,6 @@
 #include "xcollie/watchdog.h"
 #include "bundle_active_util.h"
 #include "bundle_active_report_controller.h"
-
 #include "bundle_active_service.h"
 
 namespace OHOS {
@@ -50,6 +49,7 @@ const int32_t EVENTS_PARAM = 5;
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
 const int32_t PACKAGE_USAGE_PARAM = 6;
 const int32_t MODULE_USAGE_PARAM = 4;
+const int32_t HIGH_FREQUENCY_HOUR_USAGE_PARAM = 3;
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const bool REGISTER_RESULT =
@@ -400,6 +400,60 @@ ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& b
         ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, "");
         BUNDLE_ACTIVE_LOGI("QueryBundleEvents result is %{public}zu", bundleActiveEvents.size());
     }
+    return ret;
+}
+
+ErrCode BundleActiveService::QueryHighFrequencyPeriodBundle(
+    std::vector<BundleActiveHighFrequencyPeriod>& appFreqHours, int32_t userId)
+{
+    ErrCode ret = ERR_OK;
+    int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+    if (userId == -1) {
+        ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+        if (ret != ERR_OK || userId == -1) {
+            return ret;
+        }
+    }
+    BUNDLE_ACTIVE_LOGI("QueryHighFrequencyPeriodBundle userid is %{public}d", userId);
+    ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
+    if (ret == ERR_OK) {
+        ret = bundleActiveCore_->QueryHighFrequencyPeriodBundle(appFreqHours, userId);
+        BUNDLE_ACTIVE_LOGI("QueryHighFrequencyPeriodBundle result is %{public}zu", appFreqHours.size());
+    }
+    return ret;
+}
+
+ErrCode BundleActiveService::QueryBundleTodayLatestUsedTime(
+    int64_t& latestUsedTime, const std::string& bundleName, int32_t userId)
+{
+    ErrCode ret = ERR_OK;
+    int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+    if (userId == -1) {
+        ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+        if (ret != ERR_OK || userId == -1) {
+            return ret;
+        }
+    }
+    BUNDLE_ACTIVE_LOGI("QueryBundleTodayLatestUsedTime userid is %{public}d", userId);
+    ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    int64_t currentSystemTime = BundleActiveUtil::GetSystemTimeMs();
+    int64_t startTime = BundleActiveUtil::GetIntervalTypeStartTime(currentSystemTime, BundleActiveUtil::PERIOD_DAILY);
+    std::vector<BundleActivePackageStats> packageStats;
+    ret = bundleActiveCore_->QueryBundleStatsInfos(
+        packageStats, userId, BundleActiveUtil::PERIOD_DAILY, startTime, currentSystemTime, bundleName);
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    auto bundleActivePackageStats = MergePackageStats(packageStats);
+    if (bundleActivePackageStats.empty() || bundleActivePackageStats[0].bundleName_ != bundleName) {
+        return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
+    }
+    latestUsedTime = bundleActivePackageStats[0].lastTimeUsed_;
     return ret;
 }
 
@@ -775,6 +829,8 @@ int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOptio
         ret = DumpPackageUsage(dumpOption, dumpInfo);
     } else if (dumpOption[1] == "ModuleUsage") {
         ret = DumpModuleUsage(dumpOption, dumpInfo);
+    } else if (dumpOption[1] == "HighFreqHourUsage") {
+        ret = DumpHighFreqHourUsage(dumpOption, dumpInfo);
     }
     return ret;
 }
@@ -842,6 +898,23 @@ int32_t BundleActiveService::DumpModuleUsage(const std::vector<std::string> &dum
     return ret;
 }
 
+int32_t BundleActiveService::DumpHighFreqHourUsage(const std::vector<std::string>& dumpOption,
+    std::vector<std::string>& dumpInfo)
+{
+    int32_t ret = -1;
+    if (static_cast<int32_t>(dumpOption.size()) != HIGH_FREQUENCY_HOUR_USAGE_PARAM) {
+        return ret;
+    }
+    int32_t userId = BundleActiveUtil::StringToInt64(dumpOption[2]);
+    std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
+    ret = bundleActiveCore_->QueryHighFrequencyPeriodBundle(appFreqHours, userId);
+    dumpInfo.emplace_back("appFreqHour size " + std::to_string(appFreqHours.size()) + "\n");
+    for (auto& appFreqHour : appFreqHours) {
+        dumpInfo.emplace_back(appFreqHour.ToString());
+    }
+    return ret;
+}
+
 void BundleActiveService::DumpUsage(std::string &result)
 {
     std::string dumpHelpMsg =
@@ -880,7 +953,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::MergePackageStats(
     return tempPackageStats;
 }
 
-void BundleActiveService::MergeSamePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right)
+void BundleActiveService::MergeSamePackageStats(BundleActivePackageStats& left, const BundleActivePackageStats& right)
 {
     if (left.bundleName_ != right.bundleName_) {
         BUNDLE_ACTIVE_LOGE("Merge package stats failed, existing packageName : %{public}s,"

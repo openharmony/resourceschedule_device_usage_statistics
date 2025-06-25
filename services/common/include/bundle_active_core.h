@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,6 +43,7 @@
 #include "bundle_active_common_event_subscriber.h"
 #include "bundle_active_constant.h"
 #include "bundle_active_config_reader.h"
+#include "bundle_active_high_frequency_period.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -188,6 +189,15 @@ public:
     ErrCode QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
         std::vector<BundleActiveEventStats>& eventStats, int32_t userId);
 
+    /*
+    * function: QueryHighFrequencyPeriodBundle, query the high-frequency usage period of the app in the past week.
+    * parameters: appFreqHours, userId, default userId is -1 for JS API,
+    * if other SAs call this API, they should explicit define userId.
+    * return: errorcode.
+    */
+    ErrCode QueryHighFrequencyPeriodBundle(
+        std::vector<BundleActiveHighFrequencyPeriod>& appFreqHours, int32_t userId);
+
     // get the wall time and check if the wall time is changed.
     int64_t CheckTimeChangeAndGetWallTime(int32_t userId = 0);
 
@@ -242,6 +252,14 @@ public:
     void DeInit();
 
 private:
+    // 用于应用使用时段信息统计
+    struct AppUsage {
+        int32_t dayUsage[NUM_DAY_ONE_WEEK] = {};
+        int32_t hourUsage[NUM_DAY_ONE_WEEK][NUM_HOUR_ONE_DAY] = {};
+        int32_t hourTotalUse[NUM_HOUR_ONE_DAY] = {};
+        int64_t startTime = DEFAULT_INVALID_VALUE;
+    };
+
     void NotifOberserverGroupChanged(const AppGroupCallbackInfo& callbackInfo, AccessToken::HapTokenInfo tokenInfo);
     void AddObserverDeathRecipient(const sptr<IAppGroupCallback> &observer);
     void RemoveObserverDeathRecipient(const sptr<IAppGroupCallback> &observer);
@@ -253,6 +271,11 @@ private:
     void ProcessDataSize();
     bool IsFolderSizeLimit();
     void DeleteExcessiveTableData();
+    void ProcessEvents(std::unordered_map<std::string, AppUsage>& appUsages, std::vector<BundleActiveEvent>& events);
+    void GetFreqBundleHours(std::vector<BundleActiveHighFrequencyPeriod>& appFreqHours,
+        std::unordered_map<std::string, AppUsage>& appUsages);
+    void GetTopHourUsage(
+        std::vector<std::vector<int32_t>>& topHoursUsage, AppUsage& usage);
     int64_t flushInterval_;
     static const int64_t TIME_CHANGE_THRESHOLD_MILLIS = TEN_MINUTES;
     const int32_t DEFAULT_USER_ID = -1;
