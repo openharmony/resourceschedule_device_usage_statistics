@@ -143,6 +143,9 @@ namespace DeviceUsageStats {
     {
         DelayedSingleton<BundleActiveClient>::GetInstance()->GetBundleActiveProxy();
         auto bundleActiveServiceProxy = DelayedSingleton<BundleActiveClient>::GetInstance()->bundleActiveProxy_;
+        if (bundleActiveServiceProxy == nullptr) {
+            return true;
+        }
         std::vector<BundleActivePackageStats> bundleActivePackageStats;
         int32_t intervalType = fdp->ConsumeIntegral<int32_t>();
         int64_t beginTime = fdp->ConsumeIntegral<int64_t>();
