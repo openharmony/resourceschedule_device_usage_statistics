@@ -43,7 +43,8 @@ static const int32_t PERIOD_BEST_JS = 0;
 static const int32_t PERIOD_YEARLY_JS = 4;
 static const int32_t PERIOD_BEST_SERVICE = 4;
 static const int32_t DELAY_TIME = 2000 * 1000;
-static const std::string PERMITTED_PROCESS_NAME = "foundation";
+static const std::string PERMITTED_PROCESS_NAME_FOUNDATION = "foundation";
+static const std::string PERMITTED_PROCESS_NAME_RSS = "resource_schedule_service";
 static const int32_t MAXNUM_UP_LIMIT = 1000;
 const int32_t EVENTS_PARAM = 5;
 static constexpr int32_t NO_DUMP_PARAM_NUMS = 0;
@@ -248,7 +249,8 @@ ErrCode BundleActiveService::ReportEvent(const BundleActiveEvent& event, int32_t
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     BUNDLE_ACTIVE_LOGD("calling process name is %{public}s, uid is %{public}d",
         callingTokenInfo.processName.c_str(), callingUid);
-    if (callingTokenInfo.processName != PERMITTED_PROCESS_NAME) {
+    if (callingTokenInfo.processName != PERMITTED_PROCESS_NAME_FOUNDATION &&
+        callingTokenInfo.processName != PERMITTED_PROCESS_NAME_RSS) {
         BUNDLE_ACTIVE_LOGE("token does not belong to fms service process, return");
         return ERR_PERMISSION_DENIED;
     }
