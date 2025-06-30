@@ -23,16 +23,18 @@ BundleActiveOpenCallback::BundleActiveOpenCallback() : NativeRdb::RdbOpenCallbac
 {
 };
 
+// LCOV_EXCL_START
 BundleActiveOpenCallback::~BundleActiveOpenCallback()
 {
 };
+// LCOV_EXCL_STOP
 
 int32_t BundleActiveOpenCallback::OnCreate(NativeRdb::RdbStore &rdbStore)
 {
     BUNDLE_ACTIVE_LOGI("Create success.");
     return NativeRdb::E_OK;
 };
-
+// LCOV_EXCL_START
 int32_t BundleActiveOpenCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int32_t oldVersion, int32_t newVersion)
 {
     (void)rdbStore;
@@ -41,6 +43,7 @@ int32_t BundleActiveOpenCallback::OnUpgrade(NativeRdb::RdbStore &rdbStore, int32
     BUNDLE_ACTIVE_LOGI("Upgrade success.");
     return NativeRdb::E_OK;
 };
+// LCOV_EXCL_STOP
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 

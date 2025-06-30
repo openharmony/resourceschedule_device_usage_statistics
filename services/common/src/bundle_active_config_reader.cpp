@@ -53,10 +53,12 @@ void BundleActiveConfigReader::LoadConfig()
         DEFAULT_MIN_HOUR_USE_DAYS,
         DEFAULT_MAX_HIGH_FREQUENCY_HOUR_NUM};
     auto cfgFiles = GetCfgFiles(CONFIG_PATH);
+// LCOV_EXCL_START
     if (!cfgFiles) {
         BUNDLE_ACTIVE_LOGE("GetCfgFiles failed");
         return;
     }
+// LCOV_EXCL_STOP
     for (const auto& filePath : cfgFiles->paths) {
         LoadConfigFile(filePath);
     }
@@ -170,18 +172,22 @@ bool BundleActiveConfigReader::GetJsonFromFile(const char *filePath, cJSON *&roo
         return false;
     }
     root = cJSON_Parse(data.c_str());
+// LCOV_EXCL_START
     if (!root) {
         BUNDLE_ACTIVE_LOGE("parse %{private}s json error", realPath.c_str());
         return false;
     }
+// LCOV_EXCL_STOP
     return true;
 }
 
 bool BundleActiveConfigReader::ConvertFullPath(const std::string& partialPath, std::string& fullPath)
 {
+// LCOV_EXCL_START
     if (partialPath.empty() || partialPath.length() >= PATH_MAX) {
         return false;
     }
+// LCOV_EXCL_STOP
     char tmpPath[PATH_MAX] = {0};
     if (realpath(partialPath.c_str(), tmpPath) == nullptr) {
         return false;

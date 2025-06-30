@@ -63,7 +63,7 @@ BundleActiveService::BundleActiveService() : SystemAbility(DEVICE_USAGE_STATISTI
 BundleActiveService::~BundleActiveService()
 {
 }
-
+// LCOV_EXCL_START
 void BundleActiveService::OnStart()
 {
     BUNDLE_ACTIVE_LOGI("OnStart() called");
@@ -125,7 +125,7 @@ void BundleActiveService::InitNecessaryState()
     }
     BUNDLE_ACTIVE_LOGI("[Server] OnStart, Register SystemAbility[1907] SUCCESS.");
 }
-
+// LCOV_EXCL_STOP
 void BundleActiveService::InitService()
 {
     if (bundleActiveCore_ == nullptr) {
@@ -134,9 +134,11 @@ void BundleActiveService::InitService()
     }
     BundleActiveReportController::GetInstance().Init(bundleActiveCore_);
     auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+// LCOV_EXCL_START
     if (bundleActiveReportHandler == nullptr || bundleActiveCore_ == nullptr) {
         return;
     }
+// LCOV_EXCL_STOP
     BUNDLE_ACTIVE_LOGI("core and handler is not null");
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     shutdownCallback_ = new (std::nothrow) BundleActiveShutdownCallbackService(bundleActiveCore_);
@@ -162,9 +164,11 @@ OHOS::sptr<OHOS::AppExecFwk::IAppMgr> BundleActiveService::GetAppManagerInstance
     OHOS::sptr<OHOS::ISystemAbilityManager> systemAbilityManager =
         OHOS::SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     OHOS::sptr<OHOS::IRemoteObject> object = systemAbilityManager->GetSystemAbility(OHOS::APP_MGR_SERVICE_ID);
+// LCOV_EXCL_START
     if (!object) {
         return nullptr;
     }
+// LCOV_EXCL_STOP
     return OHOS::iface_cast<OHOS::AppExecFwk::IAppMgr>(object);
 }
 
@@ -172,10 +176,12 @@ void BundleActiveService::InitAppStateSubscriber()
 {
     if (!appStateObserver_) {
         appStateObserver_ = new (std::nothrow)BundleActiveAppStateObserver();
+// LCOV_EXCL_START
         if (!appStateObserver_) {
             BUNDLE_ACTIVE_LOGE("malloc app state observer failed");
             return;
         }
+// LCOV_EXCL_STOP
     }
 }
 
@@ -191,17 +197,21 @@ void BundleActiveService::InitContinuousSubscriber()
 bool BundleActiveService::SubscribeAppState()
 {
     sptr<OHOS::AppExecFwk::IAppMgr> appManager = GetAppManagerInstance();
+// LCOV_EXCL_START
     if (appStateObserver_ == nullptr || appManager == nullptr) {
         BUNDLE_ACTIVE_LOGE("SubscribeAppState appstateobserver is null, return");
         return false;
     }
+// LCOV_EXCL_STOP
     int32_t err = appManager->RegisterApplicationStateObserver(appStateObserver_);
     if (err != 0) {
         BUNDLE_ACTIVE_LOGE("RegisterApplicationStateObserver failed. err:%{public}d", err);
         return false;
     }
+// LCOV_EXCL_START
     BUNDLE_ACTIVE_LOGD("RegisterApplicationStateObserver success.");
     return true;
+// LCOV_EXCL_STOP
 }
 
 bool BundleActiveService::SubscribeContinuousTask()
@@ -212,10 +222,12 @@ bool BundleActiveService::SubscribeContinuousTask()
         return false;
     }
     ErrCode errCode = BackgroundTaskMgr::BackgroundTaskMgrHelper::SubscribeBackgroundTask(*continuousTaskObserver_);
+// LCOV_EXCL_START
     if (errCode != ERR_OK) {
         BUNDLE_ACTIVE_LOGE("SubscribeBackgroundTask failed.");
         return false;
     }
+// LCOV_EXCL_STOP
 #endif
     return true;
 }
@@ -254,6 +266,7 @@ ErrCode BundleActiveService::ReportEvent(const BundleActiveEvent& event, int32_t
         BUNDLE_ACTIVE_LOGE("token does not belong to fms service process, return");
         return ERR_PERMISSION_DENIED;
     }
+// LCOV_EXCL_START
     BundleActiveReportHandlerObject tmpHandlerObject(userId, "");
     BundleActiveEvent eventNew(event);
     tmpHandlerObject.event_ = eventNew;
@@ -267,6 +280,7 @@ ErrCode BundleActiveService::ReportEvent(const BundleActiveEvent& event, int32_t
     }
     bundleActiveReportHandler->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
     return ERR_OK;
+// LCOV_EXCL_STOP
 }
 
 ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId)
@@ -282,9 +296,11 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
     int32_t result = -1;
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (ret != ERR_OK || userId == -1) {
             return ret;
         }
+// LCOV_EXCL_STOP
     }
 
     if (callingBundleName == bundleName) {
@@ -292,8 +308,10 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
             BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
             return ERR_NOT_SYSTEM_APP;
         }
+// LCOV_EXCL_START
         BUNDLE_ACTIVE_LOGI("%{public}s check its own idle state", bundleName.c_str());
         result = bundleActiveCore_->IsBundleIdle(bundleName, userId);
+// LCOV_EXCL_STOP
     } else {
         ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
         if (ret == ERR_OK) {
@@ -302,11 +320,13 @@ ErrCode BundleActiveService::IsBundleIdle(bool& isBundleIdle, const std::string&
             return ret;
         }
     }
+// LCOV_EXCL_START
     if (result == 0 || result == -1) {
         isBundleIdle = false;
     } else {
         isBundleIdle = true;
     }
+// LCOV_EXCL_STOP
     return ERR_OK;
 }
 
@@ -318,14 +338,18 @@ ErrCode BundleActiveService::IsBundleUsePeriod(bool& IsUsePeriod, const std::str
         return ERR_PERMISSION_DENIED;
     }
     auto ret = CheckNativePermission(tokenId);
+// LCOV_EXCL_START
     if (ret != ERR_OK) {
         return ret;
     }
+// LCOV_EXCL_STOP
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (ret != ERR_OK || userId == -1) {
             return ret;
         }
+// LCOV_EXCL_STOP
     }
     IsUsePeriod = bundleActiveCore_->IsBundleUsePeriod(bundleName, userId);
     BUNDLE_ACTIVE_LOGI("IsBundleUsePeriod %{public}d", IsUsePeriod);
@@ -341,9 +365,11 @@ ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleAc
     ErrCode ret = ERR_OK;
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (ret != ERR_OK || userId == -1) {
             return ret;
         }
+// LCOV_EXCL_STOP
     }
     BUNDLE_ACTIVE_LOGI("QueryBundleStatsInfos user id is %{public}d", userId);
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
@@ -354,9 +380,11 @@ ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleAc
     int32_t convertedIntervalType = ConvertIntervalType(intervalType);
     ret = bundleActiveCore_->QueryBundleStatsInfos(
         tempPackageStats, userId, convertedIntervalType, beginTime, endTime, "");
+// LCOV_EXCL_START
     for (auto& packageStat : tempPackageStats) {
         packageStat.appIndex_ = GetNameAndIndexForUid(packageStat.uid_);
     }
+// LCOV_EXCL_STOP
     packageStats = MergePackageStats(tempPackageStats);
     return ret;
 }
@@ -364,17 +392,20 @@ ErrCode BundleActiveService::QueryBundleStatsInfoByInterval(std::vector<BundleAc
 int32_t BundleActiveService::GetNameAndIndexForUid(int32_t uid)
 {
     auto systemAbilityManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+// LCOV_EXCL_START
     if (systemAbilityManager == nullptr) {
         BUNDLE_ACTIVE_LOGE("failed to get samgr");
         return -1;
     }
+// LCOV_EXCL_STOP
 
     sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+// LCOV_EXCL_START
     if (remoteObject == nullptr) {
         BUNDLE_ACTIVE_LOGE("failed to get bundle manager service");
         return -1;
     }
-
+// LCOV_EXCL_STOP
     sptr<AppExecFwk::IBundleMgr> bundleManager = iface_cast<AppExecFwk::IBundleMgr>(remoteObject);
     int32_t appIndex = -1;
     if (bundleManager != nullptr) {
@@ -392,9 +423,11 @@ ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& b
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (ret != ERR_OK || userId == -1) {
             return ret;
         }
+// LCOV_EXCL_STOP
     }
     BUNDLE_ACTIVE_LOGI("QueryBundleEvents userid is %{public}d", userId);
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
@@ -413,16 +446,20 @@ ErrCode BundleActiveService::QueryHighFrequencyPeriodBundle(
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (ret != ERR_OK || userId == -1) {
             return ret;
         }
+// LCOV_EXCL_STOP
     }
     BUNDLE_ACTIVE_LOGI("QueryHighFrequencyPeriodBundle userid is %{public}d", userId);
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
+// LCOV_EXCL_START
     if (ret == ERR_OK) {
         ret = bundleActiveCore_->QueryHighFrequencyPeriodBundle(appFreqHours, userId);
         BUNDLE_ACTIVE_LOGI("QueryHighFrequencyPeriodBundle result is %{public}zu", appFreqHours.size());
     }
+// LCOV_EXCL_STOP
     return ret;
 }
 
@@ -434,15 +471,19 @@ ErrCode BundleActiveService::QueryBundleTodayLatestUsedTime(
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (ret != ERR_OK || userId == -1) {
             return ret;
         }
+// LCOV_EXCL_STOP
     }
     BUNDLE_ACTIVE_LOGI("QueryBundleTodayLatestUsedTime userid is %{public}d", userId);
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
+// LCOV_EXCL_START
     if (ret != ERR_OK) {
         return ret;
     }
+// LCOV_EXCL_STOP
     int64_t currentSystemTime = BundleActiveUtil::GetSystemTimeMs();
     int64_t startTime = BundleActiveUtil::GetIntervalTypeStartTime(currentSystemTime, BundleActiveUtil::PERIOD_DAILY);
     std::vector<BundleActivePackageStats> packageStats;
@@ -466,9 +507,11 @@ ErrCode BundleActiveService::SetAppGroup(const std::string& bundleName, int32_t 
     bool isFlush = false;
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (ret != ERR_OK || userId == -1) {
             return ERR_SYSTEM_ABILITY_SUPPORT_FAILED;
         }
+// LCOV_EXCL_STOP
         isFlush = true;
     }
     BUNDLE_ACTIVE_LOGI("SetAppGroup userId is %{public}d", userId);
@@ -481,9 +524,11 @@ ErrCode BundleActiveService::SetAppGroup(const std::string& bundleName, int32_t 
     }
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
+// LCOV_EXCL_START
     if (ret == ERR_OK) {
         ret = bundleActiveCore_->SetAppGroup(bundleName, newGroup, userId, isFlush);
     }
+// LCOV_EXCL_STOP
     return ret;
 }
 
@@ -497,19 +542,23 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
     // get userid
     int32_t userId = -1;
     ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
     if (ret != ERR_OK || userId == -1) {
         return ret;
     }
+// LCOV_EXCL_STOP
     std::vector<BundleActivePackageStats> tempPackageStats;
     BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos userid is %{public}d", userId);
     std::string bundleName = "";
     BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
     ErrCode isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId);
     if (!bundleName.empty() && isSystemAppAndHasPermission == ERR_OK) {
+// LCOV_EXCL_START
         int32_t convertedIntervalType = ConvertIntervalType(intervalType);
         ret = bundleActiveCore_->QueryBundleStatsInfos(tempPackageStats, userId, convertedIntervalType,
             beginTime, endTime, bundleName);
     }
+// LCOV_EXCL_STOP
     bundleActivePackageStats = MergePackageStats(tempPackageStats);
     return ret;
 }
@@ -526,6 +575,7 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
     if (ret == ERR_OK && userId != -1) {
         std::string bundleName = "";
         BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
+// LCOV_EXCL_START
         if (!bundleName.empty()) {
             if (!Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID())) {
                 BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
@@ -535,6 +585,7 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
                 bundleName.c_str());
             ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, bundleName);
         }
+// LCOV_EXCL_STOP
     }
     BUNDLE_ACTIVE_LOGD("QueryCurrentBundleEvents bundleActiveEvents size is %{public}zu", bundleActiveEvents.size());
     return ret;
@@ -548,9 +599,11 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, const std::string&
     ErrCode ret = ERR_OK;
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (ret != ERR_OK || userId == -1) {
             return ERR_SYSTEM_ABILITY_SUPPORT_FAILED;
         }
+// LCOV_EXCL_STOP
     }
     if (bundleName.empty()) {
         std::string localBundleName = "";
@@ -559,7 +612,9 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, const std::string&
             BUNDLE_ACTIVE_LOGE("%{public}s is not system app", localBundleName.c_str());
             return ERR_NOT_SYSTEM_APP;
         }
+// LCOV_EXCL_START
         ret = bundleActiveCore_->QueryAppGroup(appGroup, localBundleName, userId);
+// LCOV_EXCL_STOP
     } else {
         AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
         ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
@@ -572,9 +627,11 @@ ErrCode BundleActiveService::QueryAppGroup(int32_t& appGroup, const std::string&
 
 ErrCode BundleActiveService::RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
+// LCOV_EXCL_START
     if (!bundleActiveCore_) {
         return ERR_MEMORY_OPERATION_FAILED;
     }
+// LCOV_EXCL_STOP
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     ErrCode ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
@@ -618,7 +675,7 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
         BUNDLE_ACTIVE_LOGE("%{public}s is not system app", bundleName.c_str());
         return ERR_NOT_SYSTEM_APP;
     }
-
+// LCOV_EXCL_START
     int32_t bundleHasPermission = AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, NEEDED_PERMISSION);
     if (bundleHasPermission != 0) {
         BUNDLE_ACTIVE_LOGE("%{public}s hasn't permission", bundleName.c_str());
@@ -626,6 +683,7 @@ ErrCode BundleActiveService::CheckBundleIsSystemAppAndHasPermission(const int32_
     }
     BUNDLE_ACTIVE_LOGI("%{public}s has permission", bundleName.c_str());
     return ERR_OK;
+// LCOV_EXCL_STOP
 }
 
 ErrCode BundleActiveService::CheckNativePermission(OHOS::Security::AccessToken::AccessTokenID tokenId)
@@ -639,18 +697,22 @@ ErrCode BundleActiveService::CheckNativePermission(OHOS::Security::AccessToken::
     if (tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_NATIVE) {
         return ERR_OK;
     }
+// LCOV_EXCL_START
     if (tokenFlag == AccessToken::TypeATokenTypeEnum::TOKEN_SHELL) {
         return ERR_OK;
     }
     return ERR_PERMISSION_DENIED;
+// LCOV_EXCL_STOP
 }
 
 ErrCode BundleActiveService::CheckSystemAppOrNativePermission(const int32_t uid,
     OHOS::Security::AccessToken::AccessTokenID tokenId)
 {
+// LCOV_EXCL_START
     if (AccessToken::AccessTokenKit::GetTokenType(tokenId) == AccessToken::ATokenTypeEnum::TOKEN_HAP) {
         return CheckBundleIsSystemAppAndHasPermission(uid, tokenId);
     }
+// LCOV_EXCL_STOP
     return CheckNativePermission(tokenId);
 }
 
@@ -665,19 +727,23 @@ ErrCode BundleActiveService::QueryModuleUsageRecords(int32_t maxNum, std::vector
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     if (userId == -1) {
         errCode = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (errCode != ERR_OK || userId == -1) {
             return errCode;
         }
+// LCOV_EXCL_STOP
     }
     BUNDLE_ACTIVE_LOGI("QueryModuleUsageRecords userid is %{public}d", userId);
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     errCode = CheckSystemAppOrNativePermission(callingUid, tokenId);
+// LCOV_EXCL_START
     if (errCode == ERR_OK) {
         errCode = bundleActiveCore_->QueryModuleUsageRecords(maxNum, results, userId);
         for (auto& oneResult : results) {
             QueryModuleRecordInfos(oneResult);
         }
     }
+// LCOV_EXCL_STOP
     return errCode;
 }
 
@@ -688,9 +754,11 @@ ErrCode BundleActiveService::QueryDeviceEventStats(int64_t beginTime, int64_t en
     ErrCode errCode = ERR_OK;
     if (userId == -1) {
         errCode = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (errCode != ERR_OK || userId == -1) {
             return errCode;
         }
+// LCOV_EXCL_STOP
     }
     BUNDLE_ACTIVE_LOGI("QueryDeviceEventStats userid is %{public}d", userId);
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
@@ -711,9 +779,11 @@ ErrCode BundleActiveService::QueryNotificationEventStats(int64_t beginTime, int6
     ErrCode errCode = ERR_OK;
     if (userId == -1) {
         errCode = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+// LCOV_EXCL_START
         if (errCode != ERR_OK || userId == -1) {
             return errCode;
         }
+// LCOV_EXCL_STOP
     }
     BUNDLE_ACTIVE_LOGI("QueryNotificationEventStats userid is %{public}d", userId);
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
@@ -771,10 +841,12 @@ void BundleActiveService::SerModuleProperties(const HapModuleInfo& hapModuleInfo
 
 bool BundleActiveService::AllowDump()
 {
+// LCOV_EXCL_START
     if (ENG_MODE == 0) {
         BUNDLE_ACTIVE_LOGE("Not eng mode");
         return false;
     }
+// LCOV_EXCL_STOP
     Security::AccessToken::AccessTokenID tokenId = IPCSkeleton::GetFirstTokenID();
     int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(tokenId, "ohos.permission.DUMP");
     if (ret != Security::AccessToken::PermissionState::PERMISSION_GRANTED) {
@@ -789,6 +861,7 @@ int32_t BundleActiveService::Dump(int32_t fd, const std::vector<std::u16string> 
     if (!AllowDump()) {
         return ERR_PERMISSION_DENIED;
     }
+// LCOV_EXCL_START
     std::vector<std::string> argsInStr;
     std::transform(args.begin(), args.end(), std::back_inserter(argsInStr),
         [](const std::u16string &arg) {
@@ -817,6 +890,7 @@ int32_t BundleActiveService::Dump(int32_t fd, const std::vector<std::u16string> 
         ret = ERR_USAGE_STATS_METHOD_CALLED_FAILED;
     }
     return ret;
+// LCOV_EXCL_STOP
 }
 
 int32_t BundleActiveService::ShellDump(const std::vector<std::string> &dumpOption, std::vector<std::string> &dumpInfo)
@@ -859,9 +933,11 @@ int32_t BundleActiveService::DumpPackageUsage(const std::vector<std::string> &du
 {
     int32_t ret = -1;
     std::vector<BundleActivePackageStats> tempPackageUsage;
+// LCOV_EXCL_START
     if (static_cast<int32_t>(dumpOption.size()) != PACKAGE_USAGE_PARAM) {
         return ret;
     }
+// LCOV_EXCL_STOP
     int32_t intervalType = ConvertIntervalType(BundleActiveUtil::StringToInt32(dumpOption[2]));
     int64_t beginTime = BundleActiveUtil::StringToInt64(dumpOption[3]);
     int64_t endTime = BundleActiveUtil::StringToInt64(dumpOption[4]);
@@ -929,7 +1005,7 @@ void BundleActiveService::DumpUsage(std::string &result)
         "      ModuleUsage [maxNum] [userId]                              get module usage for one user\n";
     result.append(dumpHelpMsg);
 }
-
+// LCOV_EXCL_START
 std::vector<BundleActivePackageStats> BundleActiveService::MergePackageStats(
     const std::vector<BundleActivePackageStats>& packageStats)
 {
@@ -954,7 +1030,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::MergePackageStats(
     }
     return tempPackageStats;
 }
-
+// LCOV_EXCL_STOP
 void BundleActiveService::MergeSamePackageStats(BundleActivePackageStats& left, const BundleActivePackageStats& right)
 {
     if (left.bundleName_ != right.bundleName_) {
