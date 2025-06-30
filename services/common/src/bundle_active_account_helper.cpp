@@ -35,9 +35,11 @@ ErrCode BundleActiveAccountHelper::GetUserId(const int32_t uid, int32_t& userId)
 void BundleActiveAccountHelper::GetActiveUserId(std::vector<int32_t> &activatedOsAccountIds)
 {
 #ifdef OS_ACCOUNT_PART_ENABLED
+// LCOV_EXCL_START
     if (AccountSA::OsAccountManager::QueryActiveOsAccountIds(activatedOsAccountIds) != ERR_OK) {
         return;
     }
+// LCOV_EXCL_STOP
     if (activatedOsAccountIds.size() == 0) {
         return;
     }
