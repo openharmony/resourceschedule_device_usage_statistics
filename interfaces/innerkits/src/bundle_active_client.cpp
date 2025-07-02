@@ -148,7 +148,7 @@ ErrCode BundleActiveClient::QueryCurrentBundleEvents(std::vector<BundleActiveEve
     return bundleActiveProxy_->QueryCurrentBundleEvents(bundleActiveEvents, beginTime, endTime);
 }
 
-ErrCode BundleActiveClient::QueryAppGroup(int32_t& appGroup, std::string& bundleName, const int32_t userId)
+ErrCode BundleActiveClient::QueryAppGroup(int32_t& appGroup, const std::string& bundleName, const int32_t userId)
 {
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
