@@ -117,7 +117,7 @@ ErrCode TestServiceAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallb
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetServiceObject_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -135,7 +135,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetS
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetNameAndIndexForUid_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveService = std::make_shared<BundleActiveService>();
     int32_t uid = 10;
@@ -149,7 +149,8 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetN
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump_001,
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveService = std::make_shared<BundleActiveService>();
     bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
@@ -215,7 +216,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_dump
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryModuleUsageRecords_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveService = std::make_shared<BundleActiveService>();
     std::vector<BundleActiveModuleRecord> results;
@@ -235,7 +236,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppGroupCallback_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveService = std::make_shared<BundleActiveService>();
     BUNDLE_ACTIVE_LOGI("DeviceUsageStatisticsServiceTest create BundleActiveService!");
@@ -266,7 +267,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppG
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppGroupCallback_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     sptr<TestServiceAppGroupChangeCallback> observer = new (std::nothrow) TestServiceAppGroupChangeCallback();
     Security::AccessToken::AccessTokenID tokenId {};
@@ -287,7 +288,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_AppG
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_OnUserRemoved_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     bundleActiveCore_->RestoreToDatabase(userId);
@@ -309,7 +310,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_OnUs
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RestoreAllData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), false);
@@ -332,7 +333,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rest
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ObtainSystemEventName_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     BundleActiveEvent event;
     event.eventId_ = BundleActiveEvent::SYSTEM_LOCK;
@@ -356,7 +357,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Obta
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_JudgeQueryCondition_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int64_t beginTime = 0;
@@ -377,7 +378,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Judg
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetSystemEventName_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t userId = BundleActiveEvent::SYSTEM_LOCK;
@@ -403,7 +404,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetS
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetOverdueTableCreateTime_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     uint32_t databaseType = 4;
@@ -422,7 +423,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetO
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DeleteInvalidTable_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     uint32_t databaseType = 4;
@@ -441,7 +442,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_CreatePackageLogTable_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     uint32_t databaseType = 0;
@@ -457,7 +458,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Crea
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_CreateModuleRecordTable_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     uint32_t databaseType = 0;
@@ -473,7 +474,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Crea
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_CreateFormRecordTable_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     uint32_t databaseType = 0;
@@ -489,7 +490,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Crea
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_CreateDurationTable_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t databaseType = DAILY_DATABASE_INDEX;
@@ -505,7 +506,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Crea
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_CreateBundleHistoryTable_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     uint32_t databaseType = 0;
@@ -520,7 +521,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Crea
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_PutBundleHistoryData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t userId = 100;
@@ -541,7 +542,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_PutB
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetBundleHistoryData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t userId = 100;
@@ -556,7 +557,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetB
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_FlushPackageInfo_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     uint32_t databaseType = 0;
@@ -573,7 +574,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Flus
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetCurrentUsageData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t databaseType = -1;
@@ -595,7 +596,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetC
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetTableIndexSql_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     uint32_t databaseType = 0;
@@ -633,7 +634,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetT
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RenameTableName_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     uint32_t databaseType = 0;
@@ -656,7 +657,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rena
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RemoveOldData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int64_t currentTime = 20000000000000;
@@ -671,7 +672,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Remo
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryDatabaseUsageStats_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t databaseType = -1;
@@ -699,7 +700,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ReportEvent_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     bundleActiveCore->Init();
@@ -727,7 +728,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Repo
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_InitBundleGroupController_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     bundleActiveCore_->InitBundleGroupController();
 }
@@ -739,7 +740,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Init
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ReportEventToAllUserId_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), false);
@@ -762,7 +763,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Repo
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RestoreToDatabase_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto coreObject = std::make_shared<BundleActiveCore>();
     coreObject->Init();
@@ -786,7 +787,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rest
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), false);
@@ -804,7 +805,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_001,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), false);
@@ -823,7 +824,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_002,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_003,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), false);
@@ -840,7 +841,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_003,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_004,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     BundleActiveEvent event;
@@ -864,7 +865,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_004,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_005,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     int64_t timeStamp = 20000000000000;
@@ -879,7 +880,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_005,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_006,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     int64_t time = 20000000000000;
@@ -894,7 +895,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_006,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_007,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     EXPECT_EQ(BundleActiveGroupController::GetInstance().IsBundleIdle("test", userId), -1);
@@ -907,7 +908,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_007,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     bundleActiveCore_->InitBundleGroupController();
     int userId = 100;
@@ -922,7 +923,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_009,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_010,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     int64_t timeStamp = 20000000000000;
@@ -937,7 +938,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_010,
  * @tc.require: IssuesIA9M7I
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_011,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     bool isScreenOn = true;
     int64_t timeStamp = 0;
@@ -952,7 +953,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_011,
  * @tc.require: IssuesIA9M7I
  */
  HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_012,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     BundleActiveGroupController::GetInstance().ShutDown(1, 10);
     EXPECT_NE(BundleActiveGroupController::GetInstance().bundleUserHistory_, nullptr);
@@ -965,7 +966,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_011,
  * @tc.require: IssuesIA9M7I
  */
  HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_013,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     BundleActiveGroupController::GetInstance().OnUserRemoved(10);
     EXPECT_NE(BundleActiveGroupController::GetInstance().bundleUserHistory_, nullptr);
@@ -978,7 +979,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_011,
  * @tc.require: IssuesIA9M7I
  */
  HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_014,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     BundleActiveGroupController::GetInstance().OnUserSwitched(1, 10);
     EXPECT_NE(BundleActiveGroupController::GetInstance().bundleUserHistory_, nullptr);
@@ -991,7 +992,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveGroupControllerTest_011,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int64_t bootBasedTimeStamp = 2000;
     std::vector<int64_t> screenTimeLevel;
@@ -1007,7 +1008,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_001,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int64_t bootBasedTimeStamp = 2000;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore_);
@@ -1023,7 +1024,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_002,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_003,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int64_t bootBasedTimeStamp = 2000;
     auto oneBundleUsageHistory = std::make_shared<BundleActivePackageHistory>();
@@ -1048,7 +1049,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_003,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_004,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     int64_t bootBasedTimeStamp = 2000;
@@ -1069,7 +1070,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_004,
  * @tc.require: DTS2023121404861
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_005,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int64_t bootBasedTimeStamp = 2000;
     auto bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore_);
@@ -1084,7 +1085,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, BundleActiveUserHistoryTest_005,
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ShutDown_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     bundleActiveCore_->ShutDown();
     EXPECT_NE(bundleActiveCore_, nullptr);
@@ -1097,7 +1098,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Shut
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_CheckTimeChangeAndGetWallTime_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     bundleActiveCore_->OnUserRemoved(100);
@@ -1117,7 +1118,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Chec
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryAppGroup_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int32_t appGroup = 10;
     std::string bundleName = "";
@@ -1135,7 +1136,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ControllerReportEvent_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int64_t bootBasedTimeStamp = 20000000000000;
     BundleActiveEvent event;
@@ -1162,7 +1163,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Cont
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_CheckAndUpdateGroup_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::string bundleName = "com.ohos.camera";
     int32_t userId = 100;
@@ -1193,7 +1194,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Chec
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_PreservePowerStateInfo_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int32_t eventId = BundleActiveEvent::ABILITY_FOREGROUND;
     bundleActiveCore_->PreservePowerStateInfo(eventId);
@@ -1207,7 +1208,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Pres
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_UpdateModuleData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     auto moduleRecords = std::map<std::string, std::shared_ptr<BundleActiveModuleRecord>>();
@@ -1224,7 +1225,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Upda
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryNotificationEventStats_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
 
@@ -1245,7 +1246,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryDeviceEventStats_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
 
@@ -1266,7 +1267,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryDatabaseEvents_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
 
@@ -1289,7 +1290,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_UpdateEventData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
 
@@ -1309,7 +1310,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Upda
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_UpdateBundleUsageData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
 
@@ -1332,7 +1333,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Upda
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RenewTableTime_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
 
@@ -1361,7 +1362,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rene
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_SetNewIndexWhenTimeChanged_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
 
@@ -1383,7 +1384,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_SetN
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ReportContinuousTaskEvent_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     #ifdef BGTASKMGR_ENABLE
     auto bgtaskObserver = std::make_shared<BundleActiveContinuousTaskObserver>();
@@ -1407,7 +1408,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Repo
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RemoveFormData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t userId = 100;
@@ -1426,7 +1427,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Remo
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_UpdateFormData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t userId = 100;
@@ -1448,7 +1449,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Upda
  * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), false);
@@ -1474,7 +1475,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
  * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DeleteUninstalledBundleStats_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int userId = 100;
     auto userService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), false);
@@ -1510,7 +1511,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
  * @tc.require: issuesIBCE1G
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ConfigReader_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1525,7 +1526,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Conf
  * @tc.require: issuesIBCE1G
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ConfigReader_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1542,7 +1543,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Conf
  * @tc.require: issuesIBCE1G
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ConfigReader_003,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1559,7 +1560,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Conf
  * @tc.require: issuesIBCE1G
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ConfigReader_004,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1576,7 +1577,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Conf
  * @tc.require: IC0GWV
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_MergePackageStats_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::vector<BundleActivePackageStats> bundleActivePackageStatsVector;
     BundleActivePackageStats bundleActivePackageStats;
@@ -1603,7 +1604,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Merg
  * @tc.require: issuesICCZ27
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_IsUsedOverOneWeek_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::string bundleName = "test";
     int32_t userId = 100;
@@ -1633,7 +1634,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_IsUs
  * @tc.require: issuesICCZ27
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetFirstUseTime_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int64_t bootBasedTimeStamp = 2000;
     auto bundleUserHistory = std::make_shared<BundleActiveUserHistory>(bootBasedTimeStamp, bundleActiveCore_);
@@ -1656,7 +1657,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetF
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadConfigFile_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1674,7 +1675,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadConfigFile_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader->maxDataSize_ = 1;
@@ -1692,7 +1693,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadConfigFile_003,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader->maxDataSize_ = 1;
@@ -1710,7 +1711,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadConfigFile_004,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1727,7 +1728,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadMaxDataSize_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader->maxDataSize_ = 0;
@@ -1749,7 +1750,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadMaxDataSize_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader->maxDataSize_ = 0;
@@ -1771,7 +1772,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadMaxDataSize_003,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader->maxDataSize_ = 0;
@@ -1793,7 +1794,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadApplicationUsePeriodically_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1812,7 +1813,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadApplicationUsePeriodically_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1835,7 +1836,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1855,7 +1856,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1879,7 +1880,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_003,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1903,7 +1904,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadAppHighFreqPeriodThresholdConfig_004,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     EXPECT_NE(bundleActiveConfigReader, nullptr);
@@ -1927,7 +1928,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Load
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetMaxDataSize_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader->maxDataSize_ = 0;
@@ -1942,7 +1943,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetM
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetMaxDataSize_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
     bundleActiveConfigReader->maxDataSize_ = 10;
@@ -1957,7 +1958,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetM
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_RestoreToDatabase_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     bundleActiveCore->Init();
@@ -1987,7 +1988,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Rest
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ProcessDataSize_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     bundleActiveCore->Init();
@@ -2004,7 +2005,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Proc
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DeleteExcessiveTableData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     bundleActiveCore->DeleteExcessiveTableData();
@@ -2031,7 +2032,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dele
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ProcessEvents_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     std::vector<BundleActiveEvent> events;
@@ -2059,7 +2060,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Proc
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ProcessEvents_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     std::vector<BundleActiveEvent> events;
@@ -2088,7 +2089,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Proc
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ProcessEvents_003,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     std::vector<BundleActiveEvent> events;
@@ -2108,7 +2109,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Proc
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_ProcessEvents_004,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     std::vector<BundleActiveEvent> events;
@@ -2128,7 +2129,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Proc
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetTopHourUsage_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     bundleActiveCore->bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
@@ -2158,7 +2159,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetT
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetTopHourUsage_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     bundleActiveCore->bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
@@ -2179,7 +2180,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetT
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetFreqBundleHours_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     bundleActiveCore->bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
@@ -2215,7 +2216,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetF
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetFreqBundleHours_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
     bundleActiveCore->bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
@@ -2238,7 +2239,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetF
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DumpHighFreqHourUsage_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveService = std::make_shared<BundleActiveService>();
     std::vector<std::string> dumpOption = {"option1", "option2"};
@@ -2254,7 +2255,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dump
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_DumpHighFreqHourUsage_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveService = std::make_shared<BundleActiveService>();
     bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
@@ -2274,7 +2275,7 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Dump
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryBundleTodayLatestUsedTime_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveService = std::make_shared<BundleActiveService>();
     bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();

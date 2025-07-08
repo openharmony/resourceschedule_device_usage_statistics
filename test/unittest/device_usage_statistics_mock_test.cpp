@@ -77,7 +77,7 @@ void DeviceUsageStatisticsMockTest::TearDown(void)
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleActiveProxy_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     BundleActiveEvent eventA(g_defaultBundleName, g_defaultMoudleName, g_defaultFormName,
         g_defaultDimension, g_defaultFormId, BundleActiveEvent::FORM_IS_CLICKED);
@@ -129,7 +129,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleMgrProxy_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::string bundleName;
     bool isBundleIdle = false;
@@ -151,7 +151,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleM
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryDeviceEventStats_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::vector<BundleActiveEventStats> eventStats;
     ErrCode code =
@@ -166,7 +166,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryDevic
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryNotificationEventStats_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::vector<BundleActiveEventStats> eventStats;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()->QueryNotificationEventStats(
@@ -181,7 +181,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryNotif
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryModuleUsageRecords_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::vector<BundleActiveModuleRecord> records;
     EXPECT_NE(DelayedSingleton<BundleActiveService>::GetInstance()->QueryModuleUsageRecords(1000, records, -1), ERR_OK);
@@ -197,7 +197,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryModul
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryAppGroup_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int32_t appGroup;
     std::string bundleName;
@@ -212,7 +212,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryAppGr
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_SetAppGroup_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int32_t appGroup = 100;
     std::string bundleName;
@@ -227,7 +227,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_SetAppGrou
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_AppGroupCallback_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     sptr<IAppGroupCallback> observer = nullptr;
     DelayedSingleton<BundleActiveService>::GetInstance()->bundleActiveCore_ = nullptr;
@@ -242,7 +242,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_AppGroupCa
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleEvents_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::vector<BundleActiveEvent> bundleActiveEvents;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
@@ -260,7 +260,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundl
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleStatsInfoByInterval_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::vector<BundleActivePackageStats> packageStats;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
@@ -275,7 +275,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundl
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleStatsInfos_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::vector<BundleActivePackageStats> packageStats;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
@@ -290,7 +290,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundl
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_CheckTimeChangeAndGetWallTime_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveCore = std::make_shared<BundleActiveCore>();
 
@@ -345,7 +345,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_CheckTimeC
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_getUserHistory_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto groupController = std::make_shared<BundleActiveGroupController>();
     const int64_t timeStamp = g_largeNum;
@@ -365,7 +365,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_getUserHis
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_calculationTimeOut_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto groupController = std::make_shared<BundleActiveGroupController>();
 
@@ -383,7 +383,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_calculatio
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryStatsInfoByStep_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
 
@@ -428,7 +428,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryStats
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleActiveRdbStore_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t databaseType = EVENT_DATABASE_INDEX;
@@ -475,7 +475,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryHighFrequencyPeriodBundle_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
     ErrCode code =
@@ -494,7 +494,7 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryHighF
  * @tc.require: SR20250319441801 AR20250322520501
  */
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleTodayLatestUsedTime_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int64_t latestUsedTime = 0;
     ErrCode code =

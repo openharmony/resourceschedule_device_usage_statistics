@@ -53,7 +53,7 @@ void BundleActiveEventReporterTest::TearDown(void)
  * @tc.type: FUNC
  * @tc.require: issuesIC2FBU
  */
-HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeEvent_001, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeEvent_001, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveEventReporter::GetInstance().isTaskSubmit_ = false;
     BundleActiveEventReporter::GetInstance().ReportFileSizeEvent();
@@ -67,7 +67,7 @@ HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeEvent_001, Function | Medi
  * @tc.type: FUNC
  * @tc.require: issuesIC2FBU
  */
-HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeDaily_001, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeDaily_001, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveEventReporter::GetInstance().fileSizeRecorderName_ = "test";
     BundleActiveEventReporter::GetInstance().ReportFileSizeDaily();
@@ -90,7 +90,7 @@ HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeDaily_001, Function | Medi
  * @tc.type: FUNC
  * @tc.require: issuesIC2FBU
  */
-HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeDaily_002, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeDaily_002, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveEventReporter::GetInstance().ReportFileSizeInner();
     std::string lastReportTime;

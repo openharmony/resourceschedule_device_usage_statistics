@@ -78,7 +78,7 @@ void PackageUsageTest::TearDown(void)
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_Update_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_Update_001, Function | MediumTest | TestSize.Level0)
 {
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     std::string longTimeTaskName = "defaultLongTimeTaskName";
@@ -120,7 +120,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_Update_001, Function | MediumTest | 
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_UpdateLongTimeTask_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_UpdateLongTimeTask_001, Function | MediumTest | TestSize.Level0)
 {
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     std::string longTimeTaskName = "defaultLongTimeTaskName";
@@ -143,7 +143,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_UpdateLongTimeTask_001, Function | M
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_UpdateAbility_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_UpdateAbility_001, Function | MediumTest | TestSize.Level0)
 {
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     std::string abilityId = "defaultAbilityId";
@@ -169,7 +169,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_UpdateAbility_001, Function | Medium
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_Increment_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_Increment_001, Function | MediumTest | TestSize.Level0)
 {
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     int64_t largeNum = 20000000000000;
@@ -189,7 +189,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_Increment_001, Function | MediumTest
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveModuleRecord_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveModuleRecord_001, Function | MediumTest | TestSize.Level0)
 {
     auto moduleRecord = std::make_shared<BundleActiveModuleRecord>();
     std::string forName = "defaultformname";
@@ -211,7 +211,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveModuleRecord_001, Functi
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveEventTracker_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveEventTracker_001, Function | MediumTest | TestSize.Level0)
 {
     auto eventTracker = std::make_shared<BundleActiveEventTracker>();
     eventTracker->curStartTime_ = 0;
@@ -245,7 +245,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveEventTracker_001, Functi
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveFormRecord_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveFormRecord_001, Function | MediumTest | TestSize.Level0)
 {
     auto formRecord = std::make_shared<BundleActiveFormRecord>();
     int64_t timeStamp = 20000000000000;
@@ -260,7 +260,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveFormRecord_001, Function
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveEventStats_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveEventStats_001, Function | MediumTest | TestSize.Level0)
 {
     auto eventStats = std::make_shared<BundleActiveEventStats>();
     BundleActiveEventStats stat;
@@ -282,7 +282,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_BundleActiveEventStats_001, Function
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_ReportForShutdown_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_ReportForShutdown_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), false);
@@ -305,7 +305,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_ReportForShutdown_001, Function | Me
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_ReportFormEvent_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_ReportFormEvent_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -326,7 +326,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_ReportFormEvent_001, Function | Medi
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemFormStats_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemFormStats_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -346,7 +346,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemFormStats_001, Function | 
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_QueryDeviceEventStats_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_QueryDeviceEventStats_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -376,7 +376,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryDeviceEventStats_001, Function 
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_QueryNotificationEventStats_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_QueryNotificationEventStats_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -411,7 +411,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryNotificationEventStats_001, Fun
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleEvents_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleEvents_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -448,7 +448,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleEvents_001, Function | Me
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemPackageStats_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemPackageStats_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -468,7 +468,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_PrintInMemPackageStats_001, Function
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -512,7 +512,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_001, Function 
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_002, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_002, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -565,7 +565,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_QueryBundleStatsInfos_002, Function 
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_RestoreStats_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_RestoreStats_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -594,7 +594,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_RestoreStats_001, Function | MediumT
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_LoadActiveStats_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_LoadActiveStats_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -620,7 +620,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_LoadActiveStats_001, Function | Medi
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_IsBundleEvent_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_IsBundleEvent_001, Function | MediumTest | TestSize.Level0)
 {
     auto bundleEvent = std::make_shared<BundleActiveEvent>();
     EXPECT_EQ(bundleEvent->IsBundleEvent(BundleActiveEvent::END_OF_THE_DAY), true);
@@ -633,7 +633,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_IsBundleEvent_001, Function | Medium
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_combine_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_combine_001, Function | MediumTest | TestSize.Level0)
 {
     auto combiner = std::make_shared<BundleActiveStatsCombiner<BundleActivePackageStats>>();
     auto stats = std::make_shared<BundleActivePeriodStats>();
@@ -657,7 +657,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_combine_001, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_ReportEvent_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_ReportEvent_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -693,7 +693,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_ReportEvent_001, Function | MediumTe
  * @tc.type: FUNC
  * @tc.require: issuesI5SOZY
  */
-HWTEST_F(PackageUsageTest, PackageUsageTest_RenewStatsInMemory_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, PackageUsageTest_RenewStatsInMemory_001, Function | MediumTest | TestSize.Level0)
 {
     int32_t userId = 100;
     auto bundleUserService = std::make_shared<BundleActiveUserService>(userId, *(bundleActiveCore_.get()), true);
@@ -722,7 +722,7 @@ HWTEST_F(PackageUsageTest, PackageUsageTest_RenewStatsInMemory_001, Function | M
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupController_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupController_001, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveGroupController::GetInstance().Init(false);
     auto userHistory = std::make_shared<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>();
@@ -750,7 +750,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupController_001, Function | MediumTes
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupController_002, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupController_002, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveGroupController::GetInstance().Init(false);
     int userId = 100;
@@ -767,7 +767,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupController_002, Function | MediumTes
  * @tc.type: FUNC
  * @tc.require: issuesIAF8RF
 */
-HWTEST_F(PackageUsageTest, BundleActiveProcessRmoveUserEventTest_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveProcessRmoveUserEventTest_001, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveReportHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
@@ -784,7 +784,7 @@ HWTEST_F(PackageUsageTest, BundleActiveProcessRmoveUserEventTest_001, Function |
  * @tc.type: FUNC
  * @tc.require: issuesIAF8RF
 */
-HWTEST_F(PackageUsageTest, BundleActiveEventListTest_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveEventListTest_001, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveEventList right;
     auto combiner = std::make_shared<BundleActiveEventList>();
@@ -798,7 +798,7 @@ HWTEST_F(PackageUsageTest, BundleActiveEventListTest_001, Function | MediumTest 
  * @tc.type: FUNC
  * @tc.require: issuesIAF8RF
  */
-HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveReportHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
@@ -816,7 +816,7 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_001, Function | MediumT
  * @tc.type: FUNC
  * @tc.require: issuesIAF8RF
  */
-HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_002, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_002, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveReportHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
@@ -840,7 +840,7 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_002, Function | MediumT
  * @tc.type: FUNC
  * @tc.require: issuesIAF8RF
  */
-HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_003, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_003, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveReportHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveReportHandlerObject>(tmpObject);
@@ -857,7 +857,7 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_003, Function | MediumT
  * @tc.type: FUNC
  * @tc.require: IAHDJW
  */
-HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_004, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_004, Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveReportHandler = std::make_shared<BundleActiveReportHandler>();
     bundleActiveReportHandler->Init(bundleActiveCore_);
@@ -892,7 +892,7 @@ HWTEST_F(PackageUsageTest, BundleActiveReportHandlerTest_004, Function | MediumT
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_001, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveGroupHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveGroupHandlerObject>(tmpObject);
@@ -909,7 +909,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_001, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_002, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_002, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveGroupHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveGroupHandlerObject>(tmpObject);
@@ -929,7 +929,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_002, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_003, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_003, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveGroupHandlerObject tmpObject;
     tmpObject.bundleName_ = "test";
@@ -955,7 +955,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_003, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_004, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_004, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveGroupHandlerObject tmpObject;
     tmpObject.bundleName_ = "test";
@@ -975,7 +975,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_004, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_005, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_005, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveGroupHandlerObject tmpObject;
     auto handlerObject = std::make_shared<BundleActiveGroupHandlerObject>(tmpObject);
@@ -1002,7 +1002,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_005, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_006, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_006, Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
     
@@ -1019,7 +1019,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_006, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_007, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_007, Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
     bundleActiveGroupHandler->DeInit();
@@ -1032,7 +1032,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_007, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_008, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_008, Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
     int32_t eventId = 0;
@@ -1046,7 +1046,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_008, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_009, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_009, Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
     bundleActiveGroupHandler->Init();
@@ -1062,7 +1062,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_009, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_010, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_010, Function | MediumTest | TestSize.Level0)
 {
     auto bundleActiveGroupHandler = std::make_shared<BundleActiveGroupHandler>(true);
     bundleActiveGroupHandler->Init();
@@ -1083,7 +1083,7 @@ HWTEST_F(PackageUsageTest, BundleActiveGroupHandler_010, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActivePackageStats_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActivePackageStats_001, Function | MediumTest | TestSize.Level0)
 {
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     std::string taskName = "test";
@@ -1107,7 +1107,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_001, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActivePackageStats_002, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActivePackageStats_002, Function | MediumTest | TestSize.Level0)
 {
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     std::string taskName = "test";
@@ -1131,7 +1131,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_002, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActivePackageStats_003, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActivePackageStats_003, Function | MediumTest | TestSize.Level0)
 {
     MessageParcel reply;
     auto packageStats = std::make_shared<BundleActivePackageStats>();
@@ -1145,7 +1145,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_003, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActivePackageStats_004, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActivePackageStats_004, Function | MediumTest | TestSize.Level0)
 {
     MessageParcel reply;
     auto packageStats = std::make_shared<BundleActivePackageStats>();
@@ -1166,7 +1166,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_004, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IA4GZ0
  */
-HWTEST_F(PackageUsageTest, BundleActivePackageStats_005, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActivePackageStats_005, Function | MediumTest | TestSize.Level0)
 {
     auto packageStats = std::make_shared<BundleActivePackageStats>();
     std::string taskName = "test";
@@ -1184,7 +1184,7 @@ HWTEST_F(PackageUsageTest, BundleActivePackageStats_005, Function | MediumTest |
  * @tc.type: FUNC
  * @tc.require: IAHDJW
  */
-HWTEST_F(PackageUsageTest, BundleActiveCalendar_001, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveCalendar_001, Function | MediumTest | TestSize.Level0)
 {
     int64_t nowTime = BundleActiveUtil::GetSystemTimeMs();
     BundleActiveCalendar testCalendar(nowTime);
@@ -1207,7 +1207,7 @@ HWTEST_F(PackageUsageTest, BundleActiveCalendar_001, Function | MediumTest | Lev
  * @tc.type: FUNC
  * @tc.require: IAHDJW
  */
-HWTEST_F(PackageUsageTest, BundleActiveCalendar_002, Function | MediumTest | Level0)
+HWTEST_F(PackageUsageTest, BundleActiveCalendar_002, Function | MediumTest | TestSize.Level0)
 {
     int64_t nowTime = BundleActiveUtil::GetSystemTimeMs();
     BundleActiveCalendar testCalendar(nowTime);
