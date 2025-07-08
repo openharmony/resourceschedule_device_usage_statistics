@@ -57,7 +57,7 @@ void BundleActiveUsageDatabaseTest::TearDown(void)
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_OnPackageUninstalled_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int32_t userId = 0;
@@ -79,7 +79,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_OnPackageU
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetOptimalIntervalType_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int64_t beginTime = 0;
@@ -96,7 +96,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetOptimal
  * @tc.require: issuesI5SOZY
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_NearIndexOnOrBeforeCurrentTime_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     int64_t currentTime = 0;
@@ -112,7 +112,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_NearIndexO
  * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CheckDatabaseVersion_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     database->CheckDatabaseVersion();
@@ -126,7 +126,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CheckDatab
  * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetOldDbVersion_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     database->GetOldDbVersion();
@@ -140,7 +140,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetOldDbVe
  * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetVersionByFileInput_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     std::string fileInput = "";
@@ -157,7 +157,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetVersion
  * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpgradeDatabase_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     database->currentVersion_ = 0;
@@ -178,7 +178,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpgradeDat
  * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpgradeDatabase_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     database->currentVersion_ = 0;
@@ -203,7 +203,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpgradeDat
  * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_AddRdbColumn_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     std::shared_ptr<NativeRdb::RdbStore> store = database->GetBundleActiveRdbStore(0);
@@ -218,7 +218,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_AddRdbColu
  * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpdateOldDataUid_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::map<std::string, int32_t> bundleNameUidMap;
     bundleNameUidMap["111"] = 111;
@@ -236,7 +236,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_UpdateOldD
  * @tc.require: issuesI9Q9ZJ
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CreateRecordTable_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int64_t timeStamp = 10000;
     auto database = std::make_shared<BundleActiveUsageDatabase>();
@@ -253,7 +253,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CreateReco
  * @tc.require: issuesI9Q9ZJ
  */
  HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_GetQuerySqlCommand_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     std::vector<std::string> queryCondition;
     std::string queryPackageSql;
@@ -270,7 +270,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CreateReco
  * @tc.require: issuesI9Q9ZJ
  */
  HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUtil_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     int32_t result = BundleActiveUtil::StringToInt32("11");
     EXPECT_EQ(result, 11);
@@ -285,7 +285,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_CreateReco
  * @tc.require: issuesICCZ27
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, SupportFirstUseTime_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     
@@ -300,7 +300,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, SupportFirstUseTime_001,
  * @tc.require: issuesICCZ27
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, UpdateFirstUseTime_002,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     auto rdb = database->GetBundleActiveRdbStore(APP_GROUP_DATABASE_INDEX);
@@ -315,7 +315,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, UpdateFirstUseTime_002,
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_DeleteExcessiveEventTableData_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     auto database = std::make_shared<BundleActiveUsageDatabase>();
     database->DeleteExcessiveEventTableData(0);
@@ -337,7 +337,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_DeleteExce
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, GetSteadyTime_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     EXPECT_TRUE(BundleActiveUtil::GetSteadyTime() > 0);
 }
@@ -349,7 +349,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, GetSteadyTime_001,
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, GetFolderOrFileSize_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     EXPECT_EQ(BundleActiveUtil::GetFolderOrFileSize(""), 0);
     EXPECT_TRUE(BundleActiveUtil::GetFolderOrFileSize(BUNDLE_ACTIVE_DATABASE_DIR) > 0);
@@ -362,7 +362,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, GetFolderOrFileSize_001,
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, GetPartitionName_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     EXPECT_EQ(BundleActiveUtil::GetPartitionName(""), "/");
     EXPECT_EQ(BundleActiveUtil::GetPartitionName(BUNDLE_ACTIVE_DATABASE_DIR), "/data");
@@ -376,7 +376,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, GetPartitionName_001,
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, GetDeviceValidSize_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     EXPECT_EQ(BundleActiveUtil::GetDeviceValidSize(""), 0);
     EXPECT_TRUE(BundleActiveUtil::GetDeviceValidSize(BUNDLE_ACTIVE_DATABASE_DIR) > 0);
@@ -389,7 +389,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, GetDeviceValidSize_001,
  * @tc.require: issuesIC2FBU
  */
 HWTEST_F(BundleActiveUsageDatabaseTest, GetPercentOfAvailableUserSpace_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     EXPECT_EQ(BundleActiveUtil::GetPercentOfAvailableUserSpace(""), 0);
     EXPECT_TRUE(BundleActiveUtil::GetPercentOfAvailableUserSpace(BUNDLE_ACTIVE_DATABASE_DIR) > 0);

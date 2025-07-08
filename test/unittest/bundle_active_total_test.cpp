@@ -74,7 +74,7 @@ void BundleActiveTotalTest::TearDown(void)
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveAccountHelperTest_001, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveAccountHelperTest_001, Function | MediumTest | TestSize.Level0)
 {
     std::vector<int32_t> activatedOsAccountIds;
 
@@ -89,7 +89,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveAccountHelperTest_001, Function | Me
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Function | MediumTest | TestSize.Level0)
 {
 #ifdef BGTASKMGR_ENABLE
 #ifdef OS_ACCOUNT_PART_ENABLED
@@ -116,7 +116,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveContinuousTaskObserverTest_001, Func
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_001, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_001, Function | MediumTest | TestSize.Level0)
 {
     AppExecFwk::ApplicationFlag flag = AppExecFwk::GET_BASIC_APPLICATION_INFO;
     AppExecFwk::ApplicationInfo appInfo;
@@ -143,7 +143,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_001, Function | 
  * @tc.type: FUNC
  * @tc.require: issuesI9SQ6G
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_002, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_002, Function | MediumTest | TestSize.Level0)
 {
     AppExecFwk::ApplicationFlag flag = AppExecFwk::GET_BASIC_APPLICATION_INFO;
     std::vector<BundleActiveApplication> appInfos;
@@ -157,7 +157,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_002, Function | 
  * @tc.type: FUNC
  * @tc.require: issuesI9SQ6G
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveBundleMgrHelper::GetInstance()->InitLauncherAppMap();
     BundleActiveBundleMgrHelper::GetInstance()->IsLauncherApp("test", 0);
@@ -172,7 +172,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_003, Function | 
  * @tc.type: FUNC
  * @tc.require: issuesI9SQ6G
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_004, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_004, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveBundleMgrHelper::GetInstance()->packageContainUidMap_.clear();
     BundleActiveBundleMgrHelper::GetInstance()->InsertPackageUid("test", 0);
@@ -193,7 +193,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveBundleMgrHelperTest_004, Function | 
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveAppStateObserverTest_001, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveAppStateObserverTest_001, Function | MediumTest | TestSize.Level0)
 {
     std::shared_ptr<BundleActiveCore> bundleActiveCore = std::make_shared<BundleActiveCore>();
     BundleActiveReportController::GetInstance().Init(bundleActiveCore);
@@ -221,7 +221,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveAppStateObserverTest_001, Function |
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_001, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_001, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveUsageDatabase test;
     test.InitDatabaseTableInfo(test.ParseStartTime(test.eventTableName_)-1);
@@ -234,7 +234,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_001, Function | Me
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_002, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_002, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveUsageDatabase test;
     EXPECT_FALSE(test.debugDatabase_);
@@ -250,7 +250,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_002, Function | Me
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_003, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_003, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveUsageDatabase test;
     auto result = test.GetOverdueTableCreateTime(100, 0);
@@ -263,7 +263,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_003, Function | Me
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_005, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_005, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveUsageDatabase test;
     test.bundleHistoryTableName_ = "unknownTableName";
@@ -284,7 +284,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_005, Function | Me
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_006, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_006, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveUsageDatabase test;
     std::shared_ptr<NativeRdb::RdbStore> rdbStore;
@@ -301,7 +301,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_006, Function | Me
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_007, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_007, Function | MediumTest | TestSize.Level0)
 {
     BundleActiveUsageDatabase test;
     std::vector<NativeRdb::ValuesBucket> formValueBuckets;
@@ -320,7 +320,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActiveUsageDatabaseTest_007, Function | Me
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActivePowerStateCallbackServiceTest_001, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActivePowerStateCallbackServiceTest_001, Function | MediumTest | TestSize.Level0)
 {
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     BundleActivePowerStateCallbackService test1(nullptr);
@@ -341,7 +341,7 @@ HWTEST_F(BundleActiveTotalTest, BundleActivePowerStateCallbackServiceTest_001, F
  * @tc.type: FUNC
  * @tc.require: DTS2023121404861
  */
-HWTEST_F(BundleActiveTotalTest, BundleActiveBinarySearchTest_001, Function | MediumTest | Level0)
+HWTEST_F(BundleActiveTotalTest, BundleActiveBinarySearchTest_001, Function | MediumTest | TestSize.Level0)
 {
     std::vector<int64_t> tableNameArray;
     BundleActiveBinarySearch test;

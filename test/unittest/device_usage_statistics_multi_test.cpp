@@ -136,7 +136,7 @@ void MultiTestIsBundleIdle(void)
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_IsBundleIdle_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestIsBundleIdle);
@@ -159,7 +159,8 @@ void MultiTestReportEvent(void)
     EXPECT_EQ(errorCode, 0);
 }
 
-HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_ReportEvent_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_ReportEvent_001,
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestReportEvent);
@@ -180,7 +181,7 @@ void MultiTestQueryBundleEvents(void)
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryBundleEvents_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestQueryBundleEvents);
@@ -200,7 +201,7 @@ void MultiTestQueryCurrentBundleEvents(void)
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryCurrentBundleEvents_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestQueryCurrentBundleEvents);
@@ -222,7 +223,7 @@ void MultiTestQueryBundleStatsInfoByInterval(void)
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryPackagesStats_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestQueryBundleStatsInfoByInterval);
@@ -242,7 +243,7 @@ void MultiTestQueryBundleStatsInfos(void)
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryBundleStatsInfos_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestQueryBundleStatsInfos);
@@ -277,7 +278,7 @@ void MultiTestQueryModuleUsageRecords(void)
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryModuleUsageRecords_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestQueryModuleUsageRecords);
@@ -304,7 +305,8 @@ void MultiTestAppGroup(void)
     EXPECT_EQ(flag, true);
 }
 
-HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_AppGroup_001, Function | MediumTest | Level0)
+HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_AppGroup_001,
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestAppGroup);
@@ -326,7 +328,7 @@ void MultiTestQueryDeviceEventStats(void)
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryDeviceEventStats_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestQueryDeviceEventStats);
@@ -348,7 +350,7 @@ void MultiTestQueryNotificationEventStats(void)
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryNotificationEventStats_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestQueryNotificationEventStats);
@@ -380,7 +382,7 @@ void MultiTestDeviceUsageStatsGroupMap(void)
 }
 
 HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_BundleActiveGroupMap_001,
-    Function | MediumTest | Level0)
+    Function | MediumTest | TestSize.Level0)
 {
     SET_THREAD_NUM(100);
     GTEST_RUN_TASK(MultiTestDeviceUsageStatsGroupMap);
