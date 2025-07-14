@@ -30,6 +30,7 @@ void BundleActiveUserService::Init(const int64_t timeStamp)
     LoadActiveStats(timeStamp, false, false);
     LoadModuleAndFormStats();
     PrintInMemFormStats(debugUserService_, true);
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     PrintInMemPackageStats(0, debugUserService_);
     std::shared_ptr<BundleActivePeriodStats> currentDailyStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentDailyStats != nullptr) {
@@ -54,6 +55,7 @@ void BundleActiveUserService::OnUserRemoved()
 void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bundleName, const int32_t uid,
     const int32_t appIndex)
 {
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     for (auto it : currentStats_) {
         if (it != nullptr) {
             DeleteMemUsageStats(it, bundleName, uid, appIndex);
@@ -142,7 +144,7 @@ void BundleActiveUserService::DeleteMemPackageUidSet(const std::shared_ptr<Bundl
 
 void BundleActiveUserService::RenewTableTime(int64_t oldTime, int64_t newTime)
 {
-    BUNDLE_ACTIVE_LOGI("RenewTableTime called");
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     BUNDLE_ACTIVE_LOGI("RenewTableTime called current event size is %{public}d", currentStats_[0]->events_.Size());
     database_.RenewTableTime(newTime - oldTime);
 }
@@ -164,6 +166,7 @@ void BundleActiveUserService::NotifyNewUpdate()
 
 void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
 {
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     BUNDLE_ACTIVE_LOGD("ReportEvent, B time is %{public}lld, E time is %{public}lld, userId is %{public}d,",
         (long long)currentStats_[0]->beginTime_, (long long)dailyExpiryDate_.GetMilliseconds(), userId_);
     event.PrintEvent(debugUserService_);
@@ -185,6 +188,11 @@ void BundleActiveUserService::ReportEvent(const BundleActiveEvent& event)
             lastForegroundBundle_ = event.bundleName_;
         }
     }
+    UpdatePeriodStats(event, incrementBundleLaunch);
+}
+
+void BundleActiveUserService::UpdatePeriodStats(const BundleActiveEvent& event, const bool& incrementBundleLaunch)
+{
     for (auto it : currentStats_) {
         switch (event.eventId_) {
             case BundleActiveEvent::SCREEN_INTERACTIVE:
@@ -220,6 +228,7 @@ void BundleActiveUserService::ReportForShutdown(const BundleActiveEvent& event)
     if (event.eventId_ != BundleActiveEvent::SHUTDOWN) {
         return;
     }
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     currentStats_[BundleActivePeriodStats::PERIOD_DAILY]->AddEvent(event);
     if (event.timeStamp_ >= dailyExpiryDate_.GetMilliseconds()) {
         BUNDLE_ACTIVE_LOGI(" BundleActiveUserService::ReportEvent later than daily expire");
@@ -235,6 +244,7 @@ void BundleActiveUserService::ReportForShutdown(const BundleActiveEvent& event)
 
 void BundleActiveUserService::RestoreStats(bool forced)
 {
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     BUNDLE_ACTIVE_LOGI("RestoreStats() called, userId is %{public}d", userId_);
     if (statsChanged_ || forced) {
         BUNDLE_ACTIVE_LOGI("RestoreStats() stat changed is true");
@@ -266,6 +276,7 @@ void BundleActiveUserService::LoadActiveStats(const int64_t timeStamp, const boo
     if (debugUserService_ == true) {
         tmpCalendar.ChangeToDebug();
     }
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     for (uint32_t intervalType = 0; intervalType < periodLength_.size(); intervalType++) {
         tmpCalendar.SetMilliseconds(timeStamp);
         tmpCalendar.TruncateTo(static_cast<int32_t>(intervalType));
@@ -429,6 +440,7 @@ ErrCode BundleActiveUserService::QueryBundleStatsInfos(std::vector<BundleActiveP
             intervalType = BundleActivePeriodStats::PERIOD_DAILY;
         }
     }
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     if (intervalType < 0 || intervalType >= static_cast<int32_t>(currentStats_.size())) {
         return ERR_USAGE_STATS_INTERVAL_NUMBER;
     }
@@ -473,6 +485,7 @@ ErrCode BundleActiveUserService::QueryBundleEvents(std::vector<BundleActiveEvent
     const int64_t beginTime, const int64_t endTime, const int32_t userId, const std::string& bundleName)
 {
     BUNDLE_ACTIVE_LOGI("QueryBundleEvents called");
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     auto currentStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentStats == nullptr) {
         BUNDLE_ACTIVE_LOGE("current interval stat is null!");
@@ -529,6 +542,7 @@ int32_t BundleActiveUserService::QueryDeviceEventStats(int64_t beginTime, int64_
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("QueryDeviceEventStats called");
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     auto currentStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentStats == nullptr) {
         BUNDLE_ACTIVE_LOGE("current interval stat is null!");
@@ -587,6 +601,7 @@ int32_t BundleActiveUserService::QueryNotificationEventStats(int64_t beginTime, 
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("QueryNotificationEventStats called");
+    std::lock_guard<ffrt::recursive_mutex> lock(statsMutex_);
     auto currentStats = currentStats_[BundleActivePeriodStats::PERIOD_DAILY];
     if (currentStats == nullptr) {
         BUNDLE_ACTIVE_LOGE("current interval stat is null!");

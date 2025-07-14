@@ -27,6 +27,7 @@
 #include "bundle_active_usage_database.h"
 #include "bundle_active_constant.h"
 #include "bundle_active_module_record.h"
+#include "ffrt.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -89,6 +90,7 @@ private:
     std::string lastForegroundBundle_;
     BundleActiveCore& listener_;
     std::vector<int64_t> periodLength_ = {0, 0, 0, 0};
+    ffrt::recursive_mutex statsMutex_;
     void NotifyStatsChanged();
     void NotifyNewUpdate();
     std::shared_ptr<BundleActiveModuleRecord> GetOrCreateModuleRecord(const BundleActiveEvent& event);
@@ -117,6 +119,7 @@ private:
     void DeleteMemPackageUidSet(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
         const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex);
     void UpdateExpiryDate(const bool timeChanged, BundleActiveCalendar& tmpCalendar, const int64_t timeStamp);
+    void UpdatePeriodStats(const BundleActiveEvent& event, const bool& incrementBundleLaunch);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
