@@ -116,7 +116,7 @@ bool IsIdleStateSync(string bundleName)
     return isBundleIdle;
 }
 
-double QueryAppGroupSync()
+int32_t QueryAppGroupSync()
 {
     int32_t appGroup = 0;
     std::string bundleName = "";
@@ -125,7 +125,7 @@ double QueryAppGroupSync()
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return static_cast<double>(DeviceUsageStats::GroupType::NEVER_GROUP);
     }
-    return static_cast<double>(appGroup);
+    return appGroup;
 }
 
 int32_t QueryAppGroupSyncByBundleName(string bundleName)
@@ -136,32 +136,29 @@ int32_t QueryAppGroupSyncByBundleName(string bundleName)
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return static_cast<double>(DeviceUsageStats::GroupType::NEVER_GROUP);
     }
-    return static_cast<double>(appGroup);
+    return appGroup;
 }
 
-void SetAppGroupSync(string bundleName, double newGroup)
+void SetAppGroupSync(string bundleName, int32_t newGroup)
 {
-    int32_t intNewGroup = static_cast<int32_t>(newGroup);
-    if (!CheckNewGroupType(intNewGroup)) {
+    if (!CheckNewGroupType(newGroup)) {
         return;
     }
-    int32_t errCode = BundleActiveClient::GetInstance().SetAppGroup(std::string(bundleName.c_str()), intNewGroup);
+    int32_t errCode = BundleActiveClient::GetInstance().SetAppGroup(std::string(bundleName.c_str()), newGroup);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return;
     }
 }
 
-map<string, BundleStatsInfo> QueryBundleStatsInfosAsync(double beginTime, double endTime)
+map<string, BundleStatsInfo> QueryBundleStatsInfosAsync(int64_t beginTime, int64_t endTime)
 {
-    int64_t intBeginTime = static_cast<int64_t>(beginTime);
-    int64_t intEndTime = static_cast<int64_t>(endTime);
     map<string, BundleStatsInfo> bundleStatsInfoMap;
-    if (!CheckBeginTimeAndEndTime(intBeginTime, intEndTime)) {
+    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return bundleStatsInfoMap;
     }
     int32_t errCode = 0;
-    auto packageStatsMap = BundleStateIDLCommon::QueryBundleStatsInfos(intBeginTime, intEndTime, errCode);
+    auto packageStatsMap = BundleStateIDLCommon::QueryBundleStatsInfos(beginTime, endTime, errCode);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return bundleStatsInfoMap;
@@ -182,17 +179,15 @@ map<string, BundleStatsInfo> QueryBundleStatsInfosAsync(double beginTime, double
     return bundleStatsInfoMap;
 }
 
-map<string, array<BundleStatsInfo>> QueryAppStatsInfosAsync(double beginTime, double endTime)
+map<string, array<BundleStatsInfo>> QueryAppStatsInfosAsync(int64_t beginTime, int64_t endTime)
 {
-    int64_t intBeginTime = static_cast<int64_t>(beginTime);
-    int64_t intEndTime = static_cast<int64_t>(endTime);
     map<string, array<BundleStatsInfo>> appStatsInfosMap;
-    if (!CheckBeginTimeAndEndTime(intBeginTime, intEndTime)) {
+    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return appStatsInfosMap;
     }
     int32_t errCode = 0;
     std::shared_ptr<std::map<std::string, std::vector<BundleActivePackageStats>>> appStatsMap = nullptr;
-    appStatsMap = BundleStateIDLCommon::QueryAppStatsInfos(intBeginTime, intEndTime, errCode);
+    appStatsMap = BundleStateIDLCommon::QueryAppStatsInfos(beginTime, endTime, errCode);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return appStatsInfosMap;
@@ -206,7 +201,7 @@ map<string, array<BundleStatsInfo>> QueryAppStatsInfosAsync(double beginTime, do
         std::vector<BundleStatsInfo> packageStatsVector;
         for (auto packageStats: iter.second) {
             BundleStatsInfo bundleStatsInfo {
-                .id = static_cast<double>(packageStats.userId_),
+                .id = packageStats.userId_,
             };
             BundleStateIDLCommon::ParseBundleStatsInfo(packageStats, bundleStatsInfo);
             packageStatsVector.push_back(bundleStatsInfo);
@@ -217,7 +212,7 @@ map<string, array<BundleStatsInfo>> QueryAppStatsInfosAsync(double beginTime, do
     return appStatsInfosMap;
 }
 
-map<string, array<BundleStatsInfo>> QueryLastUseTimeAsync(map<string, array<double>> appInfos)
+map<string, array<BundleStatsInfo>> QueryLastUseTimeAsync(map<string, array<int64_t>> appInfos)
 {
     map<string, array<BundleStatsInfo>> appStatsInfosMap;
     std::map<std::string, std::vector<int64_t>> queryInfos;
@@ -238,7 +233,7 @@ map<string, array<BundleStatsInfo>> QueryLastUseTimeAsync(map<string, array<doub
         std::vector<BundleStatsInfo> packageStatsVector;
         for (auto packageStats: iter.second) {
             BundleStatsInfo bundleStatsInfo {
-                .id = static_cast<double>(packageStats.userId_),
+                .id = packageStats.userId_,
             };
             BundleStateIDLCommon::ParseBundleStatsInfo(packageStats, bundleStatsInfo);
             packageStatsVector.push_back(bundleStatsInfo);
@@ -250,12 +245,10 @@ map<string, array<BundleStatsInfo>> QueryLastUseTimeAsync(map<string, array<doub
 }
 
 array<BundleStatsInfo> QueryBundleStatsInfoByIntervalAsync(
-    ::ohos::resourceschedule::usageStatistics::IntervalType byInterval, double beginTime, double endTime)
+    ::ohos::resourceschedule::usageStatistics::IntervalType byInterval, int64_t beginTime, int64_t endTime)
 {
-    int64_t intBeginTime = static_cast<int64_t>(beginTime);
-    int64_t intEndTime = static_cast<int64_t>(endTime);
     std::vector<BundleStatsInfo> bundleStatsInfoVector;
-    if (!CheckBeginTimeAndEndTime(intBeginTime, intEndTime)) {
+    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return array<BundleStatsInfo>(bundleStatsInfoVector);
     }
     int32_t interval = static_cast<int32_t>(byInterval);
@@ -264,7 +257,7 @@ array<BundleStatsInfo> QueryBundleStatsInfoByIntervalAsync(
     }
     std::vector<BundleActivePackageStats> bundleActivePackageStats;
     int32_t errCode = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(bundleActivePackageStats,
-        interval, intBeginTime, intEndTime);
+        interval, beginTime, endTime);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return array<BundleStatsInfo>(bundleStatsInfoVector);
@@ -279,17 +272,15 @@ array<BundleStatsInfo> QueryBundleStatsInfoByIntervalAsync(
     return array<BundleStatsInfo>(bundleStatsInfoVector);
 }
 
-array<BundleEvents> QueryBundleEventsAsync(double beginTime, double endTime)
+array<BundleEvents> QueryBundleEventsAsync(int64_t beginTime, int64_t endTime)
 {
-    int64_t intBeginTime = static_cast<int64_t>(beginTime);
-    int64_t intEndTime = static_cast<int64_t>(endTime);
     std::vector<BundleEvents> bundleEventVector;
-    if (!CheckBeginTimeAndEndTime(intBeginTime, intEndTime)) {
+    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return array<BundleEvents>(bundleEventVector);
     }
     std::vector<BundleActiveEvent> bundleActiveEvents;
     int32_t errCode = BundleActiveClient::GetInstance().QueryBundleEvents(bundleActiveEvents,
-        intBeginTime, intEndTime);
+        beginTime, endTime);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return array<BundleEvents>(bundleEventVector);
@@ -302,17 +293,15 @@ array<BundleEvents> QueryBundleEventsAsync(double beginTime, double endTime)
     return array<BundleEvents>(bundleEventVector);
 }
 
-array<BundleEvents> QueryCurrentBundleEventsAsync(double beginTime, double endTime)
+array<BundleEvents> QueryCurrentBundleEventsAsync(int64_t beginTime, int64_t endTime)
 {
-    int64_t intBeginTime = static_cast<int64_t>(beginTime);
-    int64_t intEndTime = static_cast<int64_t>(endTime);
     std::vector<BundleEvents> bundleEventVector;
-    if (!CheckBeginTimeAndEndTime(intBeginTime, intEndTime)) {
+    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return array<BundleEvents>(bundleEventVector);
     }
     std::vector<BundleActiveEvent> bundleActiveEvents;
     int32_t errCode = BundleActiveClient::GetInstance().QueryCurrentBundleEvents(bundleActiveEvents,
-        intBeginTime, intEndTime);
+        beginTime, endTime);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return array<BundleEvents>(bundleEventVector);
@@ -325,16 +314,14 @@ array<BundleEvents> QueryCurrentBundleEventsAsync(double beginTime, double endTi
     return array<BundleEvents>(bundleEventVector);
 }
 
-array<DeviceEventStats> QueryDeviceEventStatsAsync(double beginTime, double endTime)
+array<DeviceEventStats> QueryDeviceEventStatsAsync(int64_t beginTime, int64_t endTime)
 {
-    int64_t intBeginTime = static_cast<int64_t>(beginTime);
-    int64_t intEndTime = static_cast<int64_t>(endTime);
     std::vector<DeviceEventStats> deviceEventStatsVector;
-    if (!CheckBeginTimeAndEndTime(intBeginTime, intEndTime)) {
+    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return array<DeviceEventStats>(deviceEventStatsVector);
     }
     std::vector<BundleActiveEventStats> bundleActiveEventStatsVector;
-    int32_t errCode = BundleActiveClient::GetInstance().QueryDeviceEventStats(intBeginTime, intEndTime,
+    int32_t errCode = BundleActiveClient::GetInstance().QueryDeviceEventStats(beginTime, endTime,
         bundleActiveEventStatsVector);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
@@ -343,25 +330,23 @@ array<DeviceEventStats> QueryDeviceEventStatsAsync(double beginTime, double endT
     for (auto &bundleActiveEventStats: bundleActiveEventStatsVector) {
         DeviceEventStats deviceEventStats {
             .name = bundleActiveEventStats.name_,
-            .eventId = static_cast<double>(bundleActiveEventStats.eventId_),
-            .count = static_cast<double>(bundleActiveEventStats.count_),
+            .eventId = bundleActiveEventStats.eventId_,
+            .count = bundleActiveEventStats.count_,
         };
         deviceEventStatsVector.push_back(deviceEventStats);
     }
     return array<DeviceEventStats>(deviceEventStatsVector);
 }
 
-array<DeviceEventStats> QueryNotificationEventStatsAsync(double beginTime, double endTime)
+array<DeviceEventStats> QueryNotificationEventStatsAsync(int64_t beginTime, int64_t endTime)
 {
-    int64_t intBeginTime = static_cast<int64_t>(beginTime);
-    int64_t intEndTime = static_cast<int64_t>(endTime);
     std::vector<DeviceEventStats> deviceEventStatsVector;
-    if (!CheckBeginTimeAndEndTime(intBeginTime, intEndTime)) {
+    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return array<DeviceEventStats>(deviceEventStatsVector);
     }
     std::vector<BundleActiveEventStats> bundleActiveEventStatsVector;
     
-    int32_t errCode = BundleActiveClient::GetInstance().QueryNotificationEventStats(intBeginTime, intEndTime,
+    int32_t errCode = BundleActiveClient::GetInstance().QueryNotificationEventStats(beginTime, endTime,
         bundleActiveEventStatsVector);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
@@ -370,8 +355,8 @@ array<DeviceEventStats> QueryNotificationEventStatsAsync(double beginTime, doubl
     for (auto &bundleActiveEventStats: bundleActiveEventStatsVector) {
         DeviceEventStats deviceEventStats {
             .name = bundleActiveEventStats.name_,
-            .eventId = static_cast<double>(bundleActiveEventStats.eventId_),
-            .count = static_cast<double>(bundleActiveEventStats.count_),
+            .eventId = bundleActiveEventStats.eventId_,
+            .count = bundleActiveEventStats.count_,
         };
         deviceEventStatsVector.push_back(deviceEventStats);
     }
@@ -392,8 +377,8 @@ array<HapModuleInfo> QueryModuleUsageRecordsAsync()
         HapModuleInfo hapModuleInfo {
             .bundleName = moduleRecord.bundleName_,
             .moduleName = moduleRecord.moduleName_,
-            .launchedCount = static_cast<double>(moduleRecord.launchedCount_),
-            .lastModuleUsedTime = static_cast<double>(moduleRecord.lastModuleUsedTime_),
+            .launchedCount = moduleRecord.launchedCount_,
+            .lastModuleUsedTime = moduleRecord.lastModuleUsedTime_,
             .formRecords = hapFromInfos,
         };
         hapModuleInfos.emplace_back(hapModuleInfo);
@@ -401,15 +386,14 @@ array<HapModuleInfo> QueryModuleUsageRecordsAsync()
     return array<HapModuleInfo>(hapModuleInfos);
 }
 
-array<HapModuleInfo> QueryModuleUsageRecordsAsyncByMaxNum(double maxNum)
+array<HapModuleInfo> QueryModuleUsageRecordsAsyncByMaxNum(int32_t maxNum)
 {
-    int32_t intMaxNum = static_cast<int32_t>(maxNum);
     std::vector<HapModuleInfo> hapModuleInfos;
-    if (!CheckMaxNum(intMaxNum)) {
+    if (!CheckMaxNum(maxNum)) {
         return array<HapModuleInfo>(hapModuleInfos);
     }
     std::vector<BundleActiveModuleRecord> moduleRecords;
-    int32_t errCode = BundleActiveClient::GetInstance().QueryModuleUsageRecords(intMaxNum, moduleRecords);
+    int32_t errCode = BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, moduleRecords);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return array<HapModuleInfo>(hapModuleInfos);
@@ -419,8 +403,8 @@ array<HapModuleInfo> QueryModuleUsageRecordsAsyncByMaxNum(double maxNum)
         HapModuleInfo hapModuleInfo {
             .bundleName = moduleRecord.bundleName_,
             .moduleName = moduleRecord.moduleName_,
-            .launchedCount = static_cast<double>(moduleRecord.launchedCount_),
-            .lastModuleUsedTime = static_cast<double>(moduleRecord.lastModuleUsedTime_),
+            .launchedCount = moduleRecord.launchedCount_,
+            .lastModuleUsedTime = moduleRecord.lastModuleUsedTime_,
             .formRecords = hapFromInfos,
         };
         hapModuleInfos.emplace_back(hapModuleInfo);
@@ -432,10 +416,10 @@ ErrCode GroupChangeObserver::OnAppGroupChanged(const DeviceUsageStats::AppGroupC
 {
     std::lock_guard<std::mutex> autoLock(GroupChangeObserver::callbackMutex_);
     ohos::resourceschedule::usageStatistics::AppGroupCallbackInfo innerGroupInfo {
-        .appOldGroup = static_cast<double>(appGroupCallbackInfo.GetOldGroup()),
-        .appNewGroup = static_cast<double>(appGroupCallbackInfo.GetNewGroup()),
-        .userId = static_cast<double>(appGroupCallbackInfo.GetUserId()),
-        .changeReason = static_cast<double>(appGroupCallbackInfo.GetChangeReason()),
+        .appOldGroup = appGroupCallbackInfo.GetOldGroup(),
+        .appNewGroup = appGroupCallbackInfo.GetNewGroup(),
+        .userId = appGroupCallbackInfo.GetUserId(),
+        .changeReason = static_cast<int64_t>(appGroupCallbackInfo.GetChangeReason()),
         .bundleName = appGroupCallbackInfo.GetBundleName(),
     };
     if (innerCallback_ != nullptr) {
