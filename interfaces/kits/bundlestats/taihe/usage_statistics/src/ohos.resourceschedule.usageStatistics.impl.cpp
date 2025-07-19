@@ -123,7 +123,7 @@ int32_t QueryAppGroupSync()
     int32_t errCode = BundleActiveClient::GetInstance().QueryAppGroup(appGroup, bundleName);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
-        return static_cast<double>(DeviceUsageStats::GroupType::NEVER_GROUP);
+        return DeviceUsageStats::GroupType::NEVER_GROUP;
     }
     return appGroup;
 }
@@ -134,7 +134,7 @@ int32_t QueryAppGroupSyncByBundleName(string bundleName)
     int32_t errCode = BundleActiveClient::GetInstance().QueryAppGroup(appGroup, std::string(bundleName.c_str()));
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
-        return static_cast<double>(DeviceUsageStats::GroupType::NEVER_GROUP);
+        return DeviceUsageStats::GroupType::NEVER_GROUP;
     }
     return appGroup;
 }
@@ -251,13 +251,12 @@ array<BundleStatsInfo> QueryBundleStatsInfoByIntervalAsync(
     if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return array<BundleStatsInfo>(bundleStatsInfoVector);
     }
-    int32_t interval = static_cast<int32_t>(byInterval);
-    if (!CheckInterval(interval)) {
+    if (!CheckInterval(byInterval)) {
         return array<BundleStatsInfo>(bundleStatsInfoVector);
     }
     std::vector<BundleActivePackageStats> bundleActivePackageStats;
     int32_t errCode = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(bundleActivePackageStats,
-        interval, beginTime, endTime);
+        byInterval, beginTime, endTime);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return array<BundleStatsInfo>(bundleStatsInfoVector);
