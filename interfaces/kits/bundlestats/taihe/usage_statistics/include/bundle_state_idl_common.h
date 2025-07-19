@@ -33,7 +33,7 @@ public:
     static void ParseBundleEvents(const BundleActiveEvent& bundleActiveEvent,
         ::ohos::resourceschedule::usageStatistics::BundleEvents& bundleEvent);
     static void MergePackageStats(BundleActivePackageStats& left, const BundleActivePackageStats& right);
-    static void ParseQueryInfosMap(const taihe::map<taihe::string, taihe::array<double>>& appInfos,
+    static void ParseQueryInfosMap(const taihe::map<taihe::string, taihe::array<int64_t>>& appInfos,
         std::map<std::string, std::vector<int64_t>>& queryInfos);
     static taihe::array<::ohos::resourceschedule::usageStatistics::HapFormInfo> ParseformRecords(
         const std::vector<BundleActiveFormRecord>& formRecords);

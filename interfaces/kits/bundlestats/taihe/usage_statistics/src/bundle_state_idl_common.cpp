@@ -58,11 +58,11 @@ void BundleStateIDLCommon::ParseBundleStatsInfo(const BundleActivePackageStats& 
     bundleStatsInfo.bundleName =
         taihe::optional<string>(std::in_place, taihe::string(bundleActivePackageStats.bundleName_));
     bundleStatsInfo.abilityPrevAccessTime =
-        taihe::optional<double>(std::in_place, bundleActivePackageStats.lastTimeUsed_);
+        taihe::optional<int64_t>(std::in_place, bundleActivePackageStats.lastTimeUsed_);
     bundleStatsInfo.abilityInFgTotalTime =
-        taihe::optional<double>(std::in_place, bundleActivePackageStats.totalInFrontTime_);
+        taihe::optional<int64_t>(std::in_place, bundleActivePackageStats.totalInFrontTime_);
     bundleStatsInfo.appIndex =
-        taihe::optional<double>(std::in_place, bundleActivePackageStats.appIndex_);
+        taihe::optional<int32_t>(std::in_place, bundleActivePackageStats.appIndex_);
 }
 
 void BundleStateIDLCommon::ParseBundleEvents(const BundleActiveEvent& bundleActiveEvent,
@@ -71,9 +71,9 @@ void BundleStateIDLCommon::ParseBundleEvents(const BundleActiveEvent& bundleActi
     bundleEvent.bundleName =
         taihe::optional<string>(std::in_place, taihe::string(bundleActiveEvent.bundleName_));
     bundleEvent.eventId =
-        taihe::optional<double>(std::in_place, bundleActiveEvent.eventId_);
+        taihe::optional<int32_t>(std::in_place, bundleActiveEvent.eventId_);
     bundleEvent.eventOccurredTime =
-        taihe::optional<double>(std::in_place, bundleActiveEvent.timeStamp_);
+        taihe::optional<int64_t>(std::in_place, bundleActiveEvent.timeStamp_);
 }
 
 void BundleStateIDLCommon::MergePackageStats(BundleActivePackageStats& left, const BundleActivePackageStats& right)
@@ -90,13 +90,13 @@ void BundleStateIDLCommon::MergePackageStats(BundleActivePackageStats& left, con
     left.bundleStartedCount_ += right.bundleStartedCount_;
 }
 
-void BundleStateIDLCommon::ParseQueryInfosMap(const taihe::map<taihe::string, taihe::array<double>>& appInfos,
+void BundleStateIDLCommon::ParseQueryInfosMap(const taihe::map<taihe::string, taihe::array<int64_t>>& appInfos,
     std::map<std::string, std::vector<int64_t>>& queryInfos)
 {
     for (const auto& iter : appInfos) {
         std::vector<int64_t> appIndexVector;
-        for (double appIndex : iter.second) {
-            appIndexVector.push_back(static_cast<int64_t>(appIndex));
+        for (int64_t appIndex : iter.second) {
+            appIndexVector.push_back(appIndex);
         }
         queryInfos.emplace(std::string(iter.first.c_str()), appIndexVector);
     }
@@ -108,10 +108,10 @@ array<HapFormInfo> BundleStateIDLCommon::ParseformRecords(const std::vector<Bund
     for (auto& formRecord : formRecords) {
         HapFormInfo HapFormInfo {
             .formName = formRecord.formName_,
-            .formDimension = static_cast<double>(formRecord.formDimension_),
-            .formId = static_cast<double>(formRecord.formId_),
-            .formLastUsedTime = static_cast<double>(formRecord.formLastUsedTime_),
-            .count = static_cast<double>(formRecord.count_),
+            .formDimension = formRecord.formDimension_,
+            .formId = formRecord.formId_,
+            .formLastUsedTime = formRecord.formLastUsedTime_,
+            .count = formRecord.count_,
         };
         HapFormInfoVector.push_back(HapFormInfo);
     }
