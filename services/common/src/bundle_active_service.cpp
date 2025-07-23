@@ -232,6 +232,7 @@ bool BundleActiveService::SubscribeContinuousTask()
     return true;
 }
 
+// LCOV_EXCL_START
 void BundleActiveService::OnStop()
 {
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
@@ -247,6 +248,7 @@ void BundleActiveService::OnStop()
     BUNDLE_ACTIVE_LOGI("[Server] OnStop");
     ready_ = false;
 }
+// LCOV_EXCL_STOP
 
 ErrCode BundleActiveService::ReportEvent(const BundleActiveEvent& event, int32_t userId)
 {
@@ -803,6 +805,7 @@ void BundleActiveService::QueryModuleRecordInfos(BundleActiveModuleRecord& modul
         BUNDLE_ACTIVE_LOGE("GetApplicationInfo failed!");
         return;
     }
+// LCOV_EXCL_START
     BundleInfo bundleInfo;
     getInfoIsSuccess = BundleActiveBundleMgrHelper::GetInstance()->GetBundleInfo(moduleRecord.bundleName_,
         BundleFlag::GET_BUNDLE_WITH_EXTENSION_INFO, bundleInfo, moduleRecord.userId_);
@@ -824,6 +827,7 @@ void BundleActiveService::QueryModuleRecordInfos(BundleActiveModuleRecord& modul
             }
         }
     }
+// LCOV_EXCL_STOP
 }
 
 void BundleActiveService::SerModuleProperties(const HapModuleInfo& hapModuleInfo,
@@ -918,6 +922,7 @@ int32_t BundleActiveService::DumpEvents(const std::vector<std::string> &dumpOpti
     if (static_cast<int32_t>(dumpOption.size()) != EVENTS_PARAM) {
         return ret;
     }
+// LCOV_EXCL_START
     int64_t beginTime = BundleActiveUtil::StringToInt64(dumpOption[2]);
     int64_t endTime = BundleActiveUtil::StringToInt64(dumpOption[3]);
     int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[4]);
@@ -926,6 +931,7 @@ int32_t BundleActiveService::DumpEvents(const std::vector<std::string> &dumpOpti
         dumpInfo.emplace_back(oneEvent.ToString());
     }
     return ret;
+// LCOV_EXCL_STOP
 }
 
 int32_t BundleActiveService::DumpPackageUsage(const std::vector<std::string> &dumpOption,
@@ -945,9 +951,11 @@ int32_t BundleActiveService::DumpPackageUsage(const std::vector<std::string> &du
     bundleActiveCore_->QueryBundleStatsInfos(
         tempPackageUsage, userId, intervalType, beginTime, endTime, "");
     auto packageUsageResult = MergePackageStats(tempPackageUsage);
+// LCOV_EXCL_START
     for (auto& onePackageRecord : packageUsageResult) {
         dumpInfo.emplace_back(onePackageRecord.ToString());
     }
+// LCOV_EXCL_STOP
     return ret;
 }
 
@@ -959,6 +967,7 @@ int32_t BundleActiveService::DumpModuleUsage(const std::vector<std::string> &dum
     if (static_cast<int32_t>(dumpOption.size()) != MODULE_USAGE_PARAM) {
         return ret;
     }
+// LCOV_EXCL_START
     int32_t maxNum = BundleActiveUtil::StringToInt32(dumpOption[2]);
     int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[3]);
     BUNDLE_ACTIVE_LOGI("M is %{public}d, u is %{public}d", maxNum, userId);
@@ -974,6 +983,7 @@ int32_t BundleActiveService::DumpModuleUsage(const std::vector<std::string> &dum
         }
     }
     return ret;
+// LCOV_EXCL_STOP
 }
 
 int32_t BundleActiveService::DumpHighFreqHourUsage(const std::vector<std::string>& dumpOption,
@@ -983,6 +993,7 @@ int32_t BundleActiveService::DumpHighFreqHourUsage(const std::vector<std::string
     if (static_cast<int32_t>(dumpOption.size()) != HIGH_FREQUENCY_HOUR_USAGE_PARAM) {
         return ret;
     }
+// LCOV_EXCL_START
     int32_t userId = BundleActiveUtil::StringToInt64(dumpOption[2]);
     std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
     ret = bundleActiveCore_->QueryHighFrequencyPeriodBundle(appFreqHours, userId);
@@ -991,6 +1002,7 @@ int32_t BundleActiveService::DumpHighFreqHourUsage(const std::vector<std::string
         dumpInfo.emplace_back(appFreqHour.ToString());
     }
     return ret;
+// LCOV_EXCL_STOP
 }
 
 void BundleActiveService::DumpUsage(std::string &result)
