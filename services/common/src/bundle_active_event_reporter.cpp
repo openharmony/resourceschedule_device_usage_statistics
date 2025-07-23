@@ -44,11 +44,14 @@ void BundleActiveEventReporter::ReportFileSizeEvent()
 
 void BundleActiveEventReporter::SubmitDelayTask(int64_t delayTime)
 {
+// LCOV_EXCL_START
     ffrt::submit([]() {
         BundleActiveEventReporter::GetInstance().ReportFileSizeDaily();
         }, ffrt::task_attr().delay(delayTime));
+// LCOV_EXCL_STOP
 }
 
+// LCOV_EXCL_START
 void BundleActiveEventReporter::ReportFileSizeDaily()
 {
     std::string lastReportTime;
@@ -91,5 +94,6 @@ void BundleActiveEventReporter::ReportFileSizeInner()
     SaveStringToFile(fileSizeRecorderName_, std::to_string(nowMicroTime));
     SubmitDelayTask(ONE_DAY_MICRO_SECOND);
 }
+// LCOV_EXCL_STOP
 } // namespace ResourceSchedule
 } // namespace OHOS

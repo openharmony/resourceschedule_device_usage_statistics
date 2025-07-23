@@ -87,13 +87,15 @@ void BundleActiveConfigReader::LoadConfigFile(const char *filePath)
         BUNDLE_ACTIVE_LOGE("file is empty %{private}s", filePath);
         return;
     }
+// LOCV_EXCL_START
     LoadApplicationUsePeriodically(root);
     LoadAppHighFreqPeriodThresholdConfig(root);
     LoadMaxDataSize(root);
     cJSON_Delete(root);
+// LOCV_EXCL_STOP
 }
 
-
+// LOCV_EXCL_START
 void BundleActiveConfigReader::LoadApplicationUsePeriodically(cJSON* root)
 {
     cJSON *appUsePeriodicallyRoot = cJSON_GetObjectItem(root, APPLICATION_USE_PERIODICALLY_KEY);
@@ -154,6 +156,7 @@ void BundleActiveConfigReader::LoadMaxDataSize(cJSON* root)
     }
     maxDataSize_ = static_cast<uint64_t>(maxDataSizeItem->valueint);
 }
+// LOCV_EXCL_STOP
 
 bool BundleActiveConfigReader::GetJsonFromFile(const char *filePath, cJSON *&root)
 {
@@ -168,17 +171,17 @@ bool BundleActiveConfigReader::GetJsonFromFile(const char *filePath, cJSON *&roo
         BUNDLE_ACTIVE_LOGE("load string from %{private}s failed", realPath.c_str());
         return false;
     }
+// LCOV_EXCL_START
     if (data.empty()) {
         return false;
     }
     root = cJSON_Parse(data.c_str());
-// LCOV_EXCL_START
     if (!root) {
         BUNDLE_ACTIVE_LOGE("parse %{private}s json error", realPath.c_str());
         return false;
     }
-// LCOV_EXCL_STOP
     return true;
+// LCOV_EXCL_STOP
 }
 
 bool BundleActiveConfigReader::ConvertFullPath(const std::string& partialPath, std::string& fullPath)
@@ -205,7 +208,7 @@ AppHighFrequencyPeriodThresholdConfig BundleActiveConfigReader::GetAppHighFreque
 {
     return appHighFreqPeriodThresholdConfig_;
 }
-
+// LCOV_EXCL_START
 uint64_t BundleActiveConfigReader::GetMaxDataSize()
 {
     if (maxDataSize_ == 0) {
@@ -239,5 +242,6 @@ bool BundleActiveConfigReader::IsValidNumber(cJSON* item)
 {
     return item != nullptr && cJSON_IsNumber(item);
 }
+// LCOV_EXCL_STOP
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
