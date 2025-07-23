@@ -87,15 +87,15 @@ void BundleActiveConfigReader::LoadConfigFile(const char *filePath)
         BUNDLE_ACTIVE_LOGE("file is empty %{private}s", filePath);
         return;
     }
-// LOCV_EXCL_START
+// LCOV_EXCL_START
     LoadApplicationUsePeriodically(root);
     LoadAppHighFreqPeriodThresholdConfig(root);
     LoadMaxDataSize(root);
     cJSON_Delete(root);
-// LOCV_EXCL_STOP
+// LCOV_EXCL_STOP
 }
 
-// LOCV_EXCL_START
+// LCOV_EXCL_START
 void BundleActiveConfigReader::LoadApplicationUsePeriodically(cJSON* root)
 {
     cJSON *appUsePeriodicallyRoot = cJSON_GetObjectItem(root, APPLICATION_USE_PERIODICALLY_KEY);
@@ -156,7 +156,7 @@ void BundleActiveConfigReader::LoadMaxDataSize(cJSON* root)
     }
     maxDataSize_ = static_cast<uint64_t>(maxDataSizeItem->valueint);
 }
-// LOCV_EXCL_STOP
+// LCOV_EXCL_STOP
 
 bool BundleActiveConfigReader::GetJsonFromFile(const char *filePath, cJSON *&root)
 {
