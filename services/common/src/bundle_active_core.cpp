@@ -522,6 +522,11 @@ int64_t WEAK_FUNC BundleActiveCore::CheckTimeChangeAndGetWallTime(int32_t userId
         "diff is %{public}lld", (long long)actualSystemTime,
         (long long)actualRealTime, (long long)expectedSystemTime, (long long)diffSystemTime);
     if (std::abs(diffSystemTime) < TIME_CHANGE_THRESHOLD_MILLIS) {
+        //系统时间同步后，需要更新记录的开机时间戳
+        if (std::abs(diffSystemTime) > TWO_SECONDS) {
+            realTimeShot_ = actualRealTime;
+            systemTimeShot_ = actualSystemTime;
+        }
         return actualSystemTime;
     }
 
