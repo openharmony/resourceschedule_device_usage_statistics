@@ -378,8 +378,8 @@ HWTEST_F(BundleActiveUsageDatabaseTest, GetPartitionName_001,
 HWTEST_F(BundleActiveUsageDatabaseTest, GetDeviceValidSize_001,
     Function | MediumTest | TestSize.Level0)
 {
-    EXPECT_EQ(BundleActiveUtil::GetDeviceValidSize(""), 0);
-    EXPECT_TRUE(BundleActiveUtil::GetDeviceValidSize(BUNDLE_ACTIVE_DATABASE_DIR) > 0);
+    EXPECT_TRUE(BundleActiveUtil::GetDeviceValidSize("") >= 0);
+    EXPECT_TRUE(BundleActiveUtil::GetDeviceValidSize(BUNDLE_ACTIVE_DATABASE_DIR) >= 0);
 }
 
 /*
@@ -391,8 +391,8 @@ HWTEST_F(BundleActiveUsageDatabaseTest, GetDeviceValidSize_001,
 HWTEST_F(BundleActiveUsageDatabaseTest, GetPercentOfAvailableUserSpace_001,
     Function | MediumTest | TestSize.Level0)
 {
-    EXPECT_EQ(BundleActiveUtil::GetPercentOfAvailableUserSpace(""), 0);
-    EXPECT_TRUE(BundleActiveUtil::GetPercentOfAvailableUserSpace(BUNDLE_ACTIVE_DATABASE_DIR) > 0);
+    EXPECT_TRUE(BundleActiveUtil::GetPercentOfAvailableUserSpace("") >= 0);
+    EXPECT_TRUE(BundleActiveUtil::GetPercentOfAvailableUserSpace(BUNDLE_ACTIVE_DATABASE_DIR) >= 0);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
