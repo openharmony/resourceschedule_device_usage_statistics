@@ -35,6 +35,7 @@
 #include "string_ex.h"
 #include "system_ability.h"
 #include "ffrt.h"
+#include "bundle_active_event_vec_raw_data.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -105,7 +106,7 @@ public:
      * @param userId default userId is -1 for JS API, if other SAs call this API, they should explicit define userId.
      * @return errCode.
      */
-    ErrCode QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents, const int64_t beginTime,
+    ErrCode QueryBundleEvents(BundleActiveEventVecRawData& bundleActiveEventVecRawData, const int64_t beginTime,
         const int64_t endTime, int32_t userId) override;
 
     /**
@@ -138,7 +139,7 @@ public:
      * @param endTime .
      * @return errCode.
      */
-    ErrCode QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
+    ErrCode QueryCurrentBundleEvents(BundleActiveEventVecRawData& bundleActiveEventVecRawData,
         const int64_t beginTime, const int64_t endTime) override;
 
     /**

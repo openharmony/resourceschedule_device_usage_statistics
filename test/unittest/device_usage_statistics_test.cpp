@@ -35,6 +35,7 @@
 #include "nativetoken_kit.h"
 #include "bundle_active_test_util.h"
 #include "bundle_active_high_frequency_period.h"
+#include "bundle_active_event_vec_raw_data.h"
 
 using namespace testing::ext;
 
@@ -725,6 +726,74 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveHighFr
 
     originalBundle.highFreqHours_.push_back(2);
     EXPECT_EQ(originalBundle.ToString(), "bundle name is test, highFreqHours_ is 1, 2\n");
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_BundleActiveEventVecRawData_001
+ * @tc.desc: BundleActiveEventVecRawData
+ * @tc.type: FUNC
+ * @tc.require: rawdata
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveEventVecRawData_001,
+    Function | MediumTest | TestSize.Level0)
+{
+    BundleActiveEventVecRawData bundleActiveEventVecRawData;
+    std::vector<BundleActiveEvent> data;
+    BundleActiveEvent bundleActiveEvent = {"test", "test"};
+    data.push_back(bundleActiveEvent);
+    bundleActiveEventVecRawData.Marshalling(data);
+    std::vector<BundleActiveEvent> out;
+    bundleActiveEventVecRawData.Unmarshalling(out);
+
+    EXPECT_EQ(out.size(), 1);
+    EXPECT_EQ(out[0].bundleName_, "test");
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_BundleActiveEventVecRawData_002
+ * @tc.desc: BundleActiveEventVecRawData
+ * @tc.type: FUNC
+ * @tc.require: rawdata
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveEventVecRawData_002,
+    Function | MediumTest | TestSize.Level0)
+{
+    BundleActiveEventVecRawData bundleActiveEventVecRawData;
+    std::vector<BundleActiveEvent> out;
+    ErrCode ret = bundleActiveEventVecRawData.Unmarshalling(out);
+    EXPECT_EQ(ret, ERR_INVALID_VALUE);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_BundleActiveEventVecRawData_003
+ * @tc.desc: BundleActiveEventVecRawData
+ * @tc.type: FUNC
+ * @tc.require: rawdata
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveEventVecRawData_003,
+    Function | MediumTest | TestSize.Level0)
+{
+    BundleActiveEventVecRawData bundleActiveEventVecRawData;
+    std::vector<BundleActiveEvent> data;
+    BundleActiveEvent bundleActiveEvent = {"test", "test"};
+    data.push_back(bundleActiveEvent);
+    bundleActiveEventVecRawData.Marshalling(data);
+    ErrCode ret = bundleActiveEventVecRawData.RawDataCpy(bundleActiveEventVecRawData.data);
+    EXPECT_EQ(ret, ERR_OK);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsTest_BundleActiveEventVecRawData_004
+ * @tc.desc: BundleActiveEventVecRawData
+ * @tc.type: FUNC
+ * @tc.require: rawdata
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_BundleActiveEventVecRawData_004,
+    Function | MediumTest | TestSize.Level0)
+{
+    BundleActiveEventVecRawData bundleActiveEventVecRawData;
+    ErrCode ret = bundleActiveEventVecRawData.RawDataCpy(bundleActiveEventVecRawData.data);
+    EXPECT_EQ(ret, ERR_INVALID_VALUE);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
