@@ -417,7 +417,7 @@ int32_t BundleActiveService::GetNameAndIndexForUid(int32_t uid)
     return appIndex;
 }
 
-ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
+ErrCode BundleActiveService::QueryBundleEvents(BundleActiveEventVecRawData& bundleActiveEventVecRawData,
     const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
     ErrCode ret = ERR_OK;
@@ -433,9 +433,13 @@ ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& b
     }
     BUNDLE_ACTIVE_LOGI("QueryBundleEvents userid is %{public}d", userId);
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
+    std::vector<BundleActiveEvent> bundleActiveEvents;
     if (ret == ERR_OK) {
         ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, "");
         BUNDLE_ACTIVE_LOGI("QueryBundleEvents result is %{public}zu", bundleActiveEvents.size());
+    }
+    if (ret == ERR_OK) {
+        ret = bundleActiveEventVecRawData.Marshalling(bundleActiveEvents);
     }
     return ret;
 }
@@ -565,7 +569,7 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
     return ret;
 }
 
-ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
+ErrCode BundleActiveService::QueryCurrentBundleEvents(BundleActiveEventVecRawData& bundleActiveEventVecRawData,
     const int64_t beginTime, const int64_t endTime)
 {
     // get uid
@@ -574,6 +578,7 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
     // get userid
     int32_t userId = -1;
     ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
+    std::vector<BundleActiveEvent> bundleActiveEvents;
     if (ret == ERR_OK && userId != -1) {
         std::string bundleName = "";
         BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
@@ -586,6 +591,9 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
             BUNDLE_ACTIVE_LOGI("QueryCurrentBundleEvents buindle name is %{public}s",
                 bundleName.c_str());
             ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, bundleName);
+            if (ret == ERR_OK) {
+                ret = bundleActiveEventVecRawData.Marshalling(bundleActiveEvents);
+            }
         }
 // LCOV_EXCL_STOP
     }

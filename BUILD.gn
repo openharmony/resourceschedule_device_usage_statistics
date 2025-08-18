@@ -55,6 +55,7 @@ ohos_source_set("bundle_active_service_stub") {
   }
   output_values = get_target_outputs(":bundle_active_interface")
   sources = filter_include(output_values, [ "*_stub.cpp" ])
+  sources += [ "interfaces/innerkits/src/bundle_active_event_vec_raw_data.cpp" ]
   public_configs = []
   deps = [ ":bundle_active_interface" ]
   external_deps = [
@@ -72,6 +73,7 @@ ohos_shared_library("usagestatsinner") {
     "interfaces/innerkits/src/app_group_callback_info.cpp",
     "interfaces/innerkits/src/bundle_active_client.cpp",
     "interfaces/innerkits/src/bundle_active_event.cpp",
+    "interfaces/innerkits/src/bundle_active_event_vec_raw_data.cpp",
     "interfaces/innerkits/src/bundle_active_event_stats.cpp",
     "interfaces/innerkits/src/bundle_active_form_record.cpp",
     "interfaces/innerkits/src/bundle_active_module_record.cpp",
@@ -395,6 +397,7 @@ ohos_static_library("usagestatsinner_static") {
     "interfaces/innerkits/src/app_group_callback_info.cpp",
     "interfaces/innerkits/src/bundle_active_client.cpp",
     "interfaces/innerkits/src/bundle_active_event.cpp",
+    "interfaces/innerkits/src/bundle_active_event_vec_raw_data.cpp",
     "interfaces/innerkits/src/bundle_active_event_stats.cpp",
     "interfaces/innerkits/src/bundle_active_form_record.cpp",
     "interfaces/innerkits/src/bundle_active_module_record.cpp",
