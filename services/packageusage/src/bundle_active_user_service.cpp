@@ -60,10 +60,10 @@ void BundleActiveUserService::DeleteUninstalledBundleStats(const std::string& bu
         if (it != nullptr) {
             DeleteMemUsageStats(it, bundleName, uid, appIndex);
             DeleteMemEvent(it, bundleName, uid, appIndex);
-            DeleteMemRecords(it, bundleName, uid, appIndex);
-            DeleteMemPackageUidSet(it, bundleName, uid, appIndex);
         }
     }
+    DeleteMemRecords(bundleName, uid, appIndex);
+    DeleteMemPackageUidSet(bundleName, uid, appIndex);
     database_.OnPackageUninstalled(userId_, bundleName, uid, appIndex);
 }
 
@@ -109,8 +109,8 @@ void BundleActiveUserService::DeleteMemEvent(const std::shared_ptr<BundleActiveP
     }
 }
 
-void BundleActiveUserService::DeleteMemRecords(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
-    const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex)
+void BundleActiveUserService::DeleteMemRecords(const std::string& bundleName, const int32_t deletedUid,
+    const int32_t appIndex)
 {
     if (appIndex != MAIN_APP_INDEX) {
         for (auto it = moduleRecords_.begin(); it != moduleRecords_.end();) {
@@ -132,8 +132,8 @@ void BundleActiveUserService::DeleteMemRecords(const std::shared_ptr<BundleActiv
     }
 }
 
-void BundleActiveUserService::DeleteMemPackageUidSet(const std::shared_ptr<BundleActivePeriodStats>& currentStats,
-    const std::string& bundleName, const int32_t deletedUid, const int32_t appIndex)
+void BundleActiveUserService::DeleteMemPackageUidSet(const std::string& bundleName,
+    const int32_t deletedUid, const int32_t appIndex)
 {
     if (appIndex != MAIN_APP_INDEX) {
         BundleActiveBundleMgrHelper::GetInstance()->DeletePackageUid(bundleName, deletedUid);
