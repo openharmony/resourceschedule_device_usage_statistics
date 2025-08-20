@@ -210,6 +210,20 @@ HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryBundleStatsIn
 }
 
 /*
+ * @tc.name: DeviceUsageStatisticsTest_QueryHighFrequencyUsageBundleInfos_001
+ * @tc.desc: QueryHighFrequencyUsageBundleInfos
+ * @tc.type: FUNC
+ * @tc.require: issuesI5QJD9
+ */
+HWTEST_F(DeviceUsageStatisticsTest, DeviceUsageStatisticsTest_QueryHighFrequencyUsageBundleInfos_001,
+    Function | MediumTest | TestSize.Level0)
+{
+    std::vector<BundleActivePackageStats> result;
+    BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(result, 100, 20);
+    EXPECT_EQ(result.size(), 0);
+}
+
+/*
  * @tc.name: DeviceUsageStatisticsTest_IsBundleIdle_001
  * @tc.desc: isbundleidle
  * @tc.type: FUNC

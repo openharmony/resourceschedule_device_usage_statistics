@@ -167,6 +167,17 @@ ErrCode BundleActiveClient::QueryBundleStatsInfos(std::vector<BundleActivePackag
     return bundleActiveProxy_->QueryBundleStatsInfos(bundleActivePackageStats, intervalType, beginTime, endTime);
 }
 
+ErrCode BundleActiveClient::QueryHighFrequencyUsageBundleInfos(std::vector<BundleActivePackageStats>& packageStats,
+    const int32_t userId, const int32_t maxNum)
+{
+    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
+    ErrCode ret = GetBundleActiveProxy();
+    if (ret != ERR_OK) {
+        return ret;
+    }
+    return bundleActiveProxy_->QueryHighFrequencyUsageBundleInfos(packageStats, userId, maxNum);
+}
+
 ErrCode BundleActiveClient::QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
     const int64_t beginTime, const int64_t endTime)
 {
