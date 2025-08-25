@@ -110,6 +110,9 @@ namespace DeviceUsageStats {
         auto bundleActiveService = std::make_shared<BundleActiveService>();
         BundleActiveEvent event;
         int32_t userId = fdp->ConsumeIntegral<int32_t>();
+        int32_t maxNum = fdp->ConsumeIntegral<int32_t>();
+        constexpr int32_t defaultNum = 20;
+        maxNum = maxNum > 0 ? maxNum : defaultNum;
         std::string bundleName = fdp->ConsumeRandomLengthString();
         std::vector<BundleActivePackageStats> packageStats;
         int32_t intervalType = fdp->ConsumeIntegral<int32_t>();
@@ -123,6 +126,8 @@ namespace DeviceUsageStats {
         eventStats.clear();
         int32_t appGroup = 0;
         bundleActiveService->QueryAppGroup(appGroup, bundleName, userId);
+        packageStats.clear();
+        bundleActiveService->QueryHighFrequencyUsageBundleInfos(packageStats, userId, maxNum);
         packageStats.clear();
         bundleActiveService->QueryBundleStatsInfos(packageStats, intervalType, beginTime, endTime);
         bundleActiveService->QueryDeviceEventStats(beginTime, endTime, eventStats, userId);

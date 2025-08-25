@@ -115,6 +115,17 @@ public:
         const int32_t intervalType, const int64_t beginTime, const int64_t endTime);
 
     /**
+     * @brief Query the bundle stats data for the last 7 days
+     *
+     * @param packageStats bundleActivePackageStats, The result of QueryHighFrequencyUsageBundleInfos.
+     * @param userId the user id.
+     * @param maxNum packageStats max size
+     * @return errCode.
+     */
+    ErrCode QueryHighFrequencyUsageBundleInfos(std::vector<BundleActivePackageStats>& packageStats,
+        const int32_t userId, const int32_t maxNum = 20);
+
+    /**
      * @brief QueryCurrentBundleEvents, query bundle usage statistics in specific time span for calling bundle.
      *
      * @param bundleActiveEvents the std::vector<BundleActiveEvent>, as the result of QueryCurrentBundleEvents.

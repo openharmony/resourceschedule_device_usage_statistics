@@ -30,6 +30,8 @@ interface OHOS.DeviceUsageStats.IBundleActiveService {
         [in] long endTime, [in] int userId);
     void QueryBundleStatsInfos([out] List<BundleActivePackageStats> bundleActivePackageStats,
         [in] int intervalType, [in] long beginTime, [in] long endTime);
+    void QueryHighFrequencyUsageBundleInfos([out] List<BundleActivePackageStats> packageStats,
+        [in] int userId, [in] int maxNum);
     void QueryCurrentBundleEvents([out] BundleActiveEventVecRawData bundleActiveEventVecRawData,
         [in] long beginTime, [in]long endTime);
     void QueryAppGroup([out] int appGroup, [in] String bundleName, [in] int userId);

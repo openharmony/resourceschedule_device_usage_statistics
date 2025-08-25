@@ -95,6 +95,8 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_GetBundleA
         g_intervalType, 0, g_largeNum), ERR_OK);
     EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleStatsInfos(packageStats,
         g_intervalType, 0, g_largeNum), ERR_OK);
+    EXPECT_NE(BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(packageStats,
+        100, 20), ERR_OK);
 
     std::vector<BundleActiveEvent> event;
     EXPECT_NE(BundleActiveClient::GetInstance().QueryBundleEvents(event, 0, g_largeNum, 100), ERR_OK);
@@ -281,6 +283,21 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundl
     std::vector<BundleActivePackageStats> packageStats;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
         ->QueryBundleStatsInfos(packageStats, 0, 0, g_largeNum);
+    EXPECT_NE(code, ERR_OK);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsMockTest_QueryBundleStatsInfos_001
+ * @tc.desc: test service queryBundleStatsInfos boundary condition
+ * @tc.type: FUNC
+ * @tc.require: issuesI5SOZY
+ */
+HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryHighFrequencyUsageBundleInfos_001,
+    Function | MediumTest | TestSize.Level0)
+{
+    std::vector<BundleActivePackageStats> packageStats;
+    ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
+        ->QueryHighFrequencyUsageBundleInfos(packageStats, 100, 20);
     EXPECT_NE(code, ERR_OK);
 }
 

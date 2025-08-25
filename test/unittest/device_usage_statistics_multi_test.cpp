@@ -246,6 +246,28 @@ HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryBun
 }
 
 /*
+ * @tc.name: DeviceUsageStatisticsMultiTest_QueryHighFrequencyUsageBundleInfos_001
+ * @tc.desc: QueryHighFrequencyUsageBundleInfos
+ * @tc.type: FUNC
+ * @tc.require: issuesI5QJD9
+ */
+void MultiTestQueryHighFrequencyUsageBundleInfos(void)
+{
+    std::vector<BundleActivePackageStats> result;
+    constexpr int32_t userId = 100;
+    constexpr int32_t maxNum = 20;
+    BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(result, userId, maxNum);
+    EXPECT_EQ(result.size(), 0);
+}
+
+HWTEST_F(DeviceUsageStatisticsMultiTest, DeviceUsageStatisticsMultiTest_QueryHighFrequencyUsageBundleInfos_001,
+    Function | MediumTest | TestSize.Level0)
+{
+    SET_THREAD_NUM(100);
+    GTEST_RUN_TASK(MultiTestQueryHighFrequencyUsageBundleInfos);
+}
+
+/*
  * @tc.name: DeviceUsageStatisticsMultiTest_QueryModuleUsageRecords_001
  * @tc.desc: QueryModuleUsageRecords
  * @tc.type: FUNC

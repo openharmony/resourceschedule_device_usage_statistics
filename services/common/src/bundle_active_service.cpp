@@ -569,6 +569,38 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
     return ret;
 }
 
+ErrCode BundleActiveService::QueryHighFrequencyUsageBundleInfos(std::vector<BundleActivePackageStats>& packageStats,
+    const int32_t userId, const int32_t maxNum)
+{
+    // get uid
+    int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
+    AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
+    int32_t ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
+    if (ret != ERR_OK) {
+        BUNDLE_ACTIVE_LOGE("no premission.");
+        return ERR_PERMISSION_DENIED;
+    }
+    BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos userid is %{public}d", userId);
+    std::vector<BundleActivePackageStats> tempPackageStats;
+    constexpr int64_t SEVEN_DAYS = static_cast<int64_t>(7) * 24 * 60 * 60 * 1000;
+    int64_t endTime = BundleActiveUtil::GetSystemTimeMs();
+    int64_t beginTime = endTime - SEVEN_DAYS;
+    ret = bundleActiveCore_->QueryBundleStatsInfos(tempPackageStats, userId, BundleActiveUtil::PERIOD_DAILY,
+        beginTime, endTime, "");
+    std::vector<BundleActivePackageStats> results;
+    results = MergePackageStats(tempPackageStats);
+    std::sort(results.begin(), results.end(),
+        [](const BundleActivePackageStats& lhs, const BundleActivePackageStats& rhs) {
+            return lhs.startCount_ > rhs.startCount_;
+        });
+    if (static_cast<int32_t>(results.size()) > maxNum) {
+        packageStats.assign(results.begin(), results.begin() + maxNum);
+    } else {
+        packageStats = std::move(results);
+    }
+    return ret;
+}
+
 ErrCode BundleActiveService::QueryCurrentBundleEvents(BundleActiveEventVecRawData& bundleActiveEventVecRawData,
     const int64_t beginTime, const int64_t endTime)
 {
