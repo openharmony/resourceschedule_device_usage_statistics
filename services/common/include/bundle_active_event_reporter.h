@@ -44,7 +44,6 @@ private:
     ffrt::mutex mutex_;
     bool isTaskSubmit_ = false;
     std::string fileSizeRecorderName_;
-    int64_t lastReportTime_ = -1;
 };
 } // namespace DeviceUsageStats
 } // namespace OHOS

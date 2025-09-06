@@ -44,7 +44,6 @@ constexpr int32_t INDEX_USE_TIME = 1;
 constexpr int32_t INDEX_HOUR = 0;
 constexpr double DEFAULT_PERCENT_USER_SPACE_LIMIT = 0.1;
 static constexpr char RSS[] = "RSS";
-static constexpr char FILEMANAGEMENT[] = "FILEMANAGEMENT";
 static constexpr char DATA_PATH[] = "/data";
 
 // 用于根据使用次数对时段进行降序的数据结构

@@ -183,7 +183,6 @@ void BundleActiveUserHistory::ReportUsage(shared_ptr<BundleActivePackageHistory>
     const int64_t bootBasedTimeStamp, const int64_t timeUntilNextCheck, const int32_t userId)
 {
     string bundleName = event.bundleName_;
-    int32_t uid = event.uid_;
     oneBundleUsageHistory->bundlefirstUseTimeStamp_ =
         std::min(oneBundleUsageHistory->bundlefirstUseTimeStamp_, event.timeStamp_);
     if ((oneBundleUsageHistory->reasonInGroup_ & GROUP_CONTROL_REASON_MASK) == GROUP_CONTROL_REASON_FORCED) {
