@@ -43,7 +43,6 @@ using namespace std;
 namespace {
     const int32_t MAX_FILES_EVERY_INTERVAL_TYPE[SORTED_TABLE_ARRAY_NUMBER] = {30, 30, 12, 10};
     const int32_t MAIN_APP_INDEX = 0;
-    const int32_t FILE_VERSION_LINE_NUM = 50;
     static constexpr char RSS[] = "RSS";
 }
 BundleActiveUsageDatabase::BundleActiveUsageDatabase()
