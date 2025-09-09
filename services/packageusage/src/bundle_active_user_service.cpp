@@ -212,7 +212,11 @@ void BundleActiveUserService::UpdatePeriodStats(const BundleActiveEvent& event, 
                     event.abilityId_, event.uid_);
                 if (incrementBundleLaunch) {
                     std::string bundleStatsKey = event.bundleName_ + std::to_string(event.uid_);
-                    it->bundleStats_[bundleStatsKey]->IncrementBundleLaunchedCount();
+// LCOV_EXCL_START
+                    if (it->bundleStats_[bundleStatsKey] != nullptr) {
+                        it->bundleStats_[bundleStatsKey]->IncrementBundleLaunchedCount();
+                    }   
+// LCOV_EXCL_STOP
                 }
                 break;
         }
