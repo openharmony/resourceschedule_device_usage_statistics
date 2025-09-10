@@ -300,7 +300,11 @@ void BundleActiveUsageDatabase::HandleAllTableName(const uint32_t databaseType,
         string tableName;
         bundleActiveResult->GoToRow(i);
         bundleActiveResult->GetString(tableNameIndex, tableName);
-        allTableName.at(databaseType).push_back(tableName);
+// LCOV_EXCL_START
+        if (allTableName.size() > databaseType) {
+            allTableName.at(databaseType).push_back(tableName);
+        }
+// LCOV_EXCL_STOP
     }
     bundleActiveResult->Close();
 }

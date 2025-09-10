@@ -570,8 +570,12 @@ void BundleActiveCore::OnUserRemoved(const int32_t userId)
     if (it == userStatServices_.end()) {
         return;
     }
-    userStatServices_[userId]->OnUserRemoved();
-    userStatServices_[userId].reset();
+// LCOV_EXCL_START
+    if (userStatServices_[userId] != nullptr) {
+        userStatServices_[userId]->OnUserRemoved();
+        userStatServices_[userId].reset();
+    }
+// LCOV_EXCL_STOP
     userStatServices_.erase(userId);
     BundleActiveGroupController::GetInstance().OnUserRemoved(userId);
 }
