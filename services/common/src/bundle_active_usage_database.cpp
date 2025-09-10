@@ -304,7 +304,7 @@ void BundleActiveUsageDatabase::HandleAllTableName(const uint32_t databaseType,
         if (allTableName.size() > databaseType) {
             allTableName.at(databaseType).push_back(tableName);
         }
-// LCOV_EXCL_STOP   
+// LCOV_EXCL_STOP
     }
     bundleActiveResult->Close();
 }
