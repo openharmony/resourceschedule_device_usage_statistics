@@ -121,8 +121,8 @@ void BundleActiveGroupController::OnUserSwitched(const int32_t userId, const int
 {
     BUNDLE_ACTIVE_LOGI("last time check for user %{public}d", currentUsedUser);
     CheckEachBundleState(currentUsedUser);
-    bundleUserHistory_->WriteBundleUsage(currentUsedUser);
     std::lock_guard<ffrt::mutex> lock(mutex_);
+    bundleUserHistory_->WriteBundleUsage(currentUsedUser);
     if (activeGroupHandler_ != nullptr) {
         activeGroupHandler_->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
         activeGroupHandler_->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_DEFAULT_BUNDLE_STATE);
@@ -476,6 +476,7 @@ bool BundleActiveGroupController::IsScreenOn()
 }
 bool BundleActiveGroupController::IsUsedOverOneWeek(const std::string& bundleName, const int32_t userId)
 {
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     if (bundleUserHistory_ == nullptr) {
         return false;
     }
