@@ -1,0 +1,150 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@!sts_inject("""
+    loadLibrary("usageStatistics_taihe_native.z");
+""")
+@!namespace("@ohos.resourceschedule.usageStatistics", "usageStatistics")
+enum IntervalType: i32 {BY_OPTIMIZED = 0, BY_DAILY = 1, BY_WEEKLY = 2, BY_MONTHLY = 3, BY_ANNUALLY = 4}
+enum GroupType: i32 {ALIVE_GROUP = 10, DAILY_GROUP = 20, FIXED_GROUP = 30, RARE_GROUP = 40, LIMITED_GROUP = 50, NEVER_GROUP = 60}
+
+struct BundleStatsInfo {
+    id: i32;
+    abilityInFgTotalTime: Optional<i64>;
+    abilityPrevAccessTime: Optional<i64>;
+    abilityPrevSeenTime: Optional<i64>;
+    abilitySeenTotalTime: Optional<i64>;
+    bundleName: Optional<String>;
+    fgAbilityAccessTotalTime: Optional<i64>;
+    fgAbilityPrevAccessTime: Optional<i64>;
+    infosBeginTime: Optional<i64>;
+    infosEndTime: Optional<i64>;
+    appIndex: Optional<i32>;
+}
+struct HapFormInfo {
+    formName: String;
+    formDimension: i32;
+    formId: i64;
+    formLastUsedTime: i64;
+    count: i32;
+}
+
+struct HapModuleInfo {
+    deviceId: Optional<String>;
+    bundleName: String;
+    moduleName: String;
+    abilityName: Optional<String>;
+    appLabelId: Optional<i64>;
+    labelId: Optional<i64>;
+    descriptionId: Optional<i64>;
+    abilityLableId: Optional<i64>;
+    abilityDescriptionId: Optional<i64>;
+    abilityIconId: Optional<i64>;
+    launchedCount: i32;
+    lastModuleUsedTime: i64;
+    formRecords: Array<HapFormInfo>;
+}
+
+struct DeviceEventStats {
+    name: String;
+    eventId: i32;
+    count: i32;
+}
+
+struct BundleEvents {
+    appGroup: Optional<i32>;
+    bundleName: Optional<String>;
+    indexOfLink: Optional<String>;
+    nameOfClass: Optional<String>;
+    eventOccurredTime: Optional<i64>;
+    eventId: Optional<i32>;
+}
+
+struct AppGroupCallbackInfo {
+    appOldGroup: i32;
+    appNewGroup: i32;
+    userId: i32;
+    changeReason: i64;
+    bundleName: String;
+}
+
+
+@gen_async("isIdleState")
+@gen_promise("isIdleState")
+function IsIdleStateSync(bundleName: String): bool;
+
+@gen_async("queryAppGroup")
+@gen_promise("queryAppGroup")
+@overload("queryAppGroupSync")
+function QueryAppGroupSync(): i32;
+
+@gen_async("queryAppGroup")
+@gen_promise("queryAppGroup")
+@overload("queryAppGroupSync")
+function QueryAppGroupSyncByBundleName(bundleName: String): i32;
+
+@gen_async("setAppGroup")
+@gen_promise("setAppGroup")
+function SetAppGroupSync(bundleName: String, newGroup: GroupType): void;
+
+@gen_async("queryBundleStatsInfos")
+@gen_promise("queryBundleStatsInfos")
+function QueryBundleStatsInfosAsync(beginTime: i64, endTime: i64): @record Map<String, BundleStatsInfo>;
+
+@gen_async("queryAppStatsInfos")
+@gen_promise("queryAppStatsInfos")
+function QueryAppStatsInfosAsync(beginTime: i64, endTime: i64): @record Map<String, Array<BundleStatsInfo>>;
+
+@gen_async("queryLastUseTime")
+@gen_promise("queryLastUseTime")
+function QueryLastUseTimeAsync(appInfos: @record Map<String, Array<i64>>): @record Map<String, Array<BundleStatsInfo>>;
+
+@gen_async("queryBundleStatsInfoByInterval")
+@gen_promise("queryBundleStatsInfoByInterval")
+function QueryBundleStatsInfoByIntervalAsync(byInterval: IntervalType, beginTime: i64, endTime: i64): Array<BundleStatsInfo>;
+
+@gen_async("queryBundleEvents")
+@gen_promise("queryBundleEvents")
+function QueryBundleEventsAsync(beginTime: i64, endTime: i64): Array<BundleEvents>;
+
+@gen_async("queryCurrentBundleEvents")
+@gen_promise("queryCurrentBundleEvents")
+function QueryCurrentBundleEventsAsync(beginTime: i64, endTime: i64): Array<BundleEvents>;
+
+@gen_async("queryDeviceEventStats")
+@gen_promise("queryDeviceEventStats")
+function QueryDeviceEventStatsAsync(beginTime: i64, endTime: i64): Array<DeviceEventStats>;
+
+@gen_async("queryNotificationEventStats")
+@gen_promise("queryNotificationEventStats")
+function QueryNotificationEventStatsAsync(beginTime: i64, endTime: i64): Array<DeviceEventStats>;
+
+@gen_async("queryModuleUsageRecords")
+@gen_promise("queryModuleUsageRecords")
+@overload("queryModuleUsageRecordsAsync")
+function QueryModuleUsageRecordsAsync(): Array<HapModuleInfo>;
+
+@gen_async("queryModuleUsageRecords")
+@gen_promise("queryModuleUsageRecords")
+@overload("queryModuleUsageRecordsAsync")
+function QueryModuleUsageRecordsAsyncByMaxNum(maxNum: i32): Array<HapModuleInfo>;
+
+@gen_async("registerAppGroupCallBack")
+@gen_promise("registerAppGroupCallBack")
+function RegisterAppGroupCallBackAsync(registerCallback: (groupCallback: AppGroupCallbackInfo) => void): void;
+
+@gen_async("unregisterAppGroupCallBack")
+@gen_promise("unregisterAppGroupCallBack")
+function UnregisterAppGroupCallBackAsync(): void;
+
