@@ -299,6 +299,9 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryHighF
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
         ->QueryHighFrequencyUsageBundleInfos(packageStats, 100, 20);
     EXPECT_NE(code, ERR_OK);
+    code = DelayedSingleton<BundleActiveService>::GetInstance()
+        ->QueryHighFrequencyUsageBundleInfos(packageStats, 100, -20);
+    EXPECT_EQ(code, ERR_PARAM_ERROR);
 }
 
 /*
