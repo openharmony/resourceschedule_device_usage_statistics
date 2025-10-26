@@ -1,12 +1,67 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ */
+
 #include "bundleactiveclient_fuzzer.h"
 #include "bundle_active_client.h"
 #include "bundle_active_event.h"
-#include <cstring>
-#include <stdexcept>
+
+#include <string>
+#include <vector>
+#include <algorithm>
 
 using namespace OHOS::DeviceUsageStats;
 
 namespace OHOS {
+
+namespace {
+constexpr int32_t DEFAULT_USER_ID = 100;
+constexpr int32_t DEFAULT_MAX_NUM = 10;
+constexpr int64_t DEFAULT_BEGIN_TIME = 0;
+constexpr int64_t DEFAULT_END_TIME = 1000;
+constexpr size_t MAX_BUNDLE_NAME_LEN = 128;
+
+enum FuzzCase {
+    REPORT_EVENT = 0,
+    IS_BUNDLE_IDLE,
+    QUERY_STATS_INTERVAL,
+    QUERY_EVENTS,
+    SET_APP_GROUP,
+    QUERY_ALL_STATS,
+    QUERY_HIGH_FREQ,
+    QUERY_APP_GROUP,
+    QUERY_MODULE_USAGE,
+    QUERY_DEVICE_STATS,
+    FUZZ_CASE_COUNT
+};
+
+template<typename T>
+bool SafeRead(const uint8_t*& data, size_t& size, T& out)
+{
+    if (size < sizeof(T)) {
+        return false;
+    }
+    std::memcpy(&out, data, sizeof(T));
+    data += sizeof(T);
+    size -= sizeof(T);
+    return true;
+}
+
+std::string ExtractBundleName(const uint8_t*& data, size_t& size)
+{
+    size_t len = std::min(size, MAX_BUNDLE_NAME_LEN);
+    std::string name(reinterpret_cast<const char*>(data), len);
+    data += len;
+    size -= len;
+    return name;
+}
+} // namespace
+
 bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
 {
     if (data == nullptr || size < sizeof(int32_t)) {
@@ -15,50 +70,25 @@ bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
 
     try {
         int32_t choice = 0;
-        if (size < sizeof(int32_t)) return false;
-        std::memcpy(&choice, data, sizeof(int32_t));
-        data += sizeof(int32_t);
-        size -= sizeof(int32_t);
+        if (!SafeRead(data, size, choice)) {
+            return false;
+        }
 
         BundleActiveClient& client = BundleActiveClient::GetInstance();
 
-        std::string bundleName;
-        int32_t userId = 100;
+        std::string bundleName = ExtractBundleName(data, size);
         int32_t intervalType = 0;
-        int64_t beginTime = 0;
-        int64_t endTime = 1000;
         int32_t newGroup = 0;
-        int32_t maxNum = 10;
+        int32_t maxNum = DEFAULT_MAX_NUM;
+        int64_t beginTime = DEFAULT_BEGIN_TIME;
+        int64_t endTime = DEFAULT_END_TIME;
 
-        size_t nameLen = std::min(size, static_cast<size_t>(128));
-        bundleName = std::string(reinterpret_cast<const char*>(data), nameLen);
-        data += nameLen;
-        size -= nameLen;
-        if (size >= sizeof(int32_t)) {
-            std::memcpy(&intervalType, data, sizeof(int32_t));
-            data += sizeof(int32_t);
-            size -= sizeof(int32_t);
-        }
-        if (size >= sizeof(int32_t)) {
-            std::memcpy(&newGroup, data, sizeof(int32_t));
-            data += sizeof(int32_t);
-            size -= sizeof(int32_t);
-        }
-        if (size >= sizeof(int32_t)) {
-            std::memcpy(&maxNum, data, sizeof(int32_t));
-            data += sizeof(int32_t);
-            size -= sizeof(int32_t);
-        }
-        if (size >= sizeof(int64_t)) {
-            std::memcpy(&beginTime, data, sizeof(int64_t));
-            data += sizeof(int64_t);
-            size -= sizeof(int64_t);
-        }
-        if (size >= sizeof(int64_t)) {
-            std::memcpy(&endTime, data, sizeof(int64_t));
-            data += sizeof(int64_t);
-            size -= sizeof(int64_t);
-        }
+        SafeRead(data, size, intervalType);
+        SafeRead(data, size, newGroup);
+        SafeRead(data, size, maxNum);
+        SafeRead(data, size, beginTime);
+        SafeRead(data, size, endTime);
+
         if (beginTime > endTime) {
             std::swap(beginTime, endTime);
         }
@@ -66,68 +96,65 @@ bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
             maxNum = 1;
         }
 
-        switch (choice % 10) {
-            case 0: {
+        switch (choice % FUZZ_CASE_COUNT) {
+            case REPORT_EVENT: {
                 BundleActiveEvent event;
-                if (size >= sizeof(int32_t)) {
-                    std::memcpy(&event.eventId_, data, sizeof(int32_t));
-                } else {
+                if (!SafeRead(data, size, event.eventId_)) {
                     event.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
                 }
                 event.bundleName_ = bundleName;
                 event.timeStamp_ = endTime;
-                client.ReportEvent(event, userId);
+                client.ReportEvent(event, DEFAULT_USER_ID);
                 break;
             }
-            case 1: {
-                bool isBundleIdle = false;
-                client.IsBundleIdle(isBundleIdle, bundleName, userId);
+            case IS_BUNDLE_IDLE: {
+                bool isIdle = false;
+                client.IsBundleIdle(isIdle, bundleName, DEFAULT_USER_ID);
                 break;
             }
-            case 2: {
+            case QUERY_STATS_INTERVAL: {
                 std::vector<BundleActivePackageStats> stats;
-                client.QueryBundleStatsInfoByInterval(stats, intervalType, beginTime, endTime, userId);
+                client.QueryBundleStatsInfoByInterval(stats, intervalType, beginTime, endTime, DEFAULT_USER_ID);
                 break;
             }
-            case 3: {
+            case QUERY_EVENTS: {
                 std::vector<BundleActiveEvent> events;
-                client.QueryBundleEvents(events, beginTime, endTime, userId);
+                client.QueryBundleEvents(events, beginTime, endTime, DEFAULT_USER_ID);
                 break;
             }
-            case 4: {
-                client.SetAppGroup(bundleName, newGroup, userId);
+            case SET_APP_GROUP: {
+                client.SetAppGroup(bundleName, newGroup, DEFAULT_USER_ID);
                 break;
             }
-            case 5: {
+            case QUERY_ALL_STATS: {
                 std::vector<BundleActivePackageStats> stats;
                 client.QueryBundleStatsInfos(stats, intervalType, beginTime, endTime);
                 break;
             }
-            case 6: {
+            case QUERY_HIGH_FREQ: {
                 std::vector<BundleActivePackageStats> stats;
-                client.QueryHighFrequencyUsageBundleInfos(stats, userId, maxNum);
+                client.QueryHighFrequencyUsageBundleInfos(stats, DEFAULT_USER_ID, maxNum);
                 break;
             }
-            case 7: {
+            case QUERY_APP_GROUP: {
                 int32_t appGroup = 0;
-                client.QueryAppGroup(appGroup, bundleName, userId);
+                client.QueryAppGroup(appGroup, bundleName, DEFAULT_USER_ID);
                 break;
             }
-            case 8: {
+            case QUERY_MODULE_USAGE: {
                 std::vector<BundleActiveModuleRecord> results;
-                client.QueryModuleUsageRecords(maxNum, results, userId);
+                client.QueryModuleUsageRecords(maxNum, results, DEFAULT_USER_ID);
                 break;
             }
-            case 9: {
-                std::vector<BundleActiveEventStats> eventStats;
-                client.QueryDeviceEventStats(beginTime, endTime, eventStats, userId);
+            case QUERY_DEVICE_STATS: {
+                std::vector<BundleActiveEventStats> stats;
+                client.QueryDeviceEventStats(beginTime, endTime, stats, DEFAULT_USER_ID);
                 break;
             }
             default:
                 break;
         }
-    } catch (const std::exception& e) {
-        // 捕获异常防止崩溃
+    } catch (...) {
         return false;
     }
 
