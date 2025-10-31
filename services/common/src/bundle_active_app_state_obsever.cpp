@@ -68,7 +68,7 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         return;
     }
     BUNDLE_ACTIVE_LOGI("GetUserId failed type:%{public}d,bunldeName:%{public}s,userid:%{public}d,ret:%{public}d",
-            abilityStateData.abilityType, abilityStateData.bundleName.c_str(), userId, ret);
+        abilityStateData.abilityType, abilityStateData.bundleName.c_str(), userId, ret);
     return;
 }
 }  // namespace DeviceUsageStats
