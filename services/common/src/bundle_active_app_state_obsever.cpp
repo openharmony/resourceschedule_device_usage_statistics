@@ -32,8 +32,6 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         return;
     }
     if (abilityStateData.abilityType != 1) {
-        BUNDLE_ACTIVE_LOGI("abilityType is invalid abilityType:%{public}d,bunldeName:%{public}s",
-            abilityStateData.abilityType, abilityStateData.bundleName.c_str());
         return;
     }
     int32_t userId = -1;
