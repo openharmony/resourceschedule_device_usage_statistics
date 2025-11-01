@@ -278,6 +278,7 @@ ErrCode BundleActiveService::ReportEvent(const BundleActiveEvent& event, int32_t
         std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
     auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
     if (bundleActiveReportHandler == nullptr) {
+        BUNDLE_ACTIVE_LOGE("bundleActiveReportHandler is null, return");
         return ERR_OK;
     }
     bundleActiveReportHandler->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
