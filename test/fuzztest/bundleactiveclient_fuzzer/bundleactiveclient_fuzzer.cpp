@@ -49,10 +49,11 @@ enum FuzzCase {
 template<typename T>
 bool SafeRead(const uint8_t*& data, size_t& size, T& out)
 {
+    static_assert(std::is_trivially_copyable_v<T>, "T must be trivially copyable");
     if (size < sizeof(T)) {
         return false;
     }
-    std::memcpy(&out, data, sizeof(T));
+    out = std::bit_cast<T>(*reinterpret_cast<const T*>(data));
     data += sizeof(T);
     size -= sizeof(T);
     return true;
@@ -68,7 +69,7 @@ std::string ExtractBundleName(const uint8_t*& data, size_t& size)
 }
 } // namespace
 
-bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+bool DoSomethingWithMyAPI(const uint8_t* data, size_t size)
 {
     if (data == nullptr || size < sizeof(int32_t)) {
         return false;
@@ -170,5 +171,5 @@ bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
-    return OHOS::DoSomethingInterestingWithMyAPI(data, size) ? 0 : 1;
+    return OHOS::DoSomethingWithMyAPI(data, size) ? 0 : 1;
 }
