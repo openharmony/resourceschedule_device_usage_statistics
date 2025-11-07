@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#ifndef BUNDLEACTIVECLIENT_FUZZER_H
+#define BUNDLEACTIVECLIENT_FUZZER_H
+
 #include <cstdint>
 #include <unistd.h>
 #include <climits>
@@ -25,3 +28,4 @@
 
 #define FUZZ_PROJECT_NAME "bundleactiveclient_fuzzer"
 
+#endif // BUNDLEACTIVECLIENT_FUZZER_H
