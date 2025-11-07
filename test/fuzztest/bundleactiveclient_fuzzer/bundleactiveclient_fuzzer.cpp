@@ -4,7 +4,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +16,11 @@
 #include "bundleactiveclient_fuzzer.h"
 #include "bundle_active_client.h"
 #include "bundle_active_event.h"
-
 #include <string>
 #include <vector>
 #include <algorithm>
 
 using namespace OHOS::DeviceUsageStats;
-
 namespace OHOS {
 namespace {
 constexpr int32_t DEFAULT_USER_ID = 100;
@@ -30,7 +28,6 @@ constexpr int32_t DEFAULT_MAX_NUM = 10;
 constexpr int64_t DEFAULT_BEGIN_TIME = 0;
 constexpr int64_t DEFAULT_END_TIME = 1000;
 constexpr size_t MAX_BUNDLE_NAME_LEN = 128;
-
 enum FuzzCase {
     REPORT_EVENT = 0,
     IS_BUNDLE_IDLE,
@@ -44,7 +41,6 @@ enum FuzzCase {
     QUERY_DEVICE_STATS,
     FUZZ_CASE_COUNT
 };
-
 template<typename T>
 bool SafeRead(const uint8_t*& data, size_t& size, T& out)
 {
@@ -57,7 +53,6 @@ bool SafeRead(const uint8_t*& data, size_t& size, T& out)
     size -= sizeof(T);
     return true;
 }
-
 std::string ExtractBundleName(const uint8_t*& data, size_t& size)
 {
     size_t len = std::min(size, MAX_BUNDLE_NAME_LEN);
@@ -66,7 +61,6 @@ std::string ExtractBundleName(const uint8_t*& data, size_t& size)
     size -= len;
     return name;
 }
-
 void HandleReportEvent(const std::string& bundleName, int64_t endTime,
                        const uint8_t*& data, size_t& size)
 {
@@ -78,145 +72,134 @@ void HandleReportEvent(const std::string& bundleName, int64_t endTime,
     event.timeStamp_ = endTime;
     BundleActiveClient::GetInstance().ReportEvent(event, DEFAULT_USER_ID);
 }
-
 void HandleIsBundleIdle(const std::string& bundleName)
 {
     bool isIdle = false;
     BundleActiveClient::GetInstance().IsBundleIdle(isIdle, bundleName, DEFAULT_USER_ID);
 }
-
 void HandleQueryStatsInterval(int32_t intervalType, int64_t beginTime, int64_t endTime)
 {
     std::vector<BundleActivePackageStats> stats;
     BundleActiveClient::GetInstance()
         .QueryBundleStatsInfoByInterval(stats, intervalType, beginTime, endTime, DEFAULT_USER_ID);
 }
-
 void HandleQueryEvents(int64_t beginTime, int64_t endTime)
 {
     std::vector<BundleActiveEvent> events;
     BundleActiveClient::GetInstance().QueryBundleEvents(events, beginTime, endTime, DEFAULT_USER_ID);
 }
-
 void HandleSetAppGroup(const std::string& bundleName, int32_t newGroup)
 {
     BundleActiveClient::GetInstance().SetAppGroup(bundleName, newGroup, DEFAULT_USER_ID);
 }
-
 void HandleQueryAllStats(int32_t intervalType, int64_t beginTime, int64_t endTime)
 {
     std::vector<BundleActivePackageStats> stats;
     BundleActiveClient::GetInstance().QueryBundleStatsInfos(stats, intervalType, beginTime, endTime);
 }
-
 void HandleQueryHighFreq(int32_t maxNum)
 {
     std::vector<BundleActivePackageStats> stats;
     BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(stats, DEFAULT_USER_ID, maxNum);
 }
-
 void HandleQueryAppGroup(const std::string& bundleName)
 {
     int32_t appGroup = 0;
     BundleActiveClient::GetInstance().QueryAppGroup(appGroup, bundleName, DEFAULT_USER_ID);
 }
-
 void HandleQueryModuleUsage(int32_t maxNum)
 {
     std::vector<BundleActiveModuleRecord> results;
     BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, results, DEFAULT_USER_ID);
 }
-
 void HandleQueryDeviceStats(int64_t beginTime, int64_t endTime)
 {
     std::vector<BundleActiveEventStats> stats;
     BundleActiveClient::GetInstance().QueryDeviceEventStats(beginTime, endTime, stats, DEFAULT_USER_ID);
 }
-
-void DispatchFuzzCase(int32_t choice, const std::string& bundleName, int32_t intervalType,
-                      int32_t newGroup, int32_t maxNum, int64_t beginTime, int64_t endTime,
-                      const uint8_t*& data, size_t& size)
+struct FuzzContext {
+    std::string bundleName;
+    int32_t intervalType;
+    int32_t newGroup;
+    int32_t maxNum;
+    int64_t beginTime;
+    int64_t endTime;
+    const uint8_t*& data;
+    size_t& size;
+};
+void DispatchFuzzCase(int32_t choice, FuzzContext& context)
 {
     switch (choice % FUZZ_CASE_COUNT) {
         case REPORT_EVENT:
-            HandleReportEvent(bundleName, endTime, data, size);
+            HandleReportEvent(context.bundleName, context.endTime, context.data, context.size);
             break;
         case IS_BUNDLE_IDLE:
-            HandleIsBundleIdle(bundleName);
+            HandleIsBundleIdle(context.bundleName);
             break;
         case QUERY_STATS_INTERVAL:
-            HandleQueryStatsInterval(intervalType, beginTime, endTime);
+            HandleQueryStatsInterval(context.intervalType, context.beginTime, context.endTime);
             break;
         case QUERY_EVENTS:
-            HandleQueryEvents(beginTime, endTime);
+            HandleQueryEvents(context.beginTime, context.endTime);
             break;
         case SET_APP_GROUP:
-            HandleSetAppGroup(bundleName, newGroup);
+            HandleSetAppGroup(context.bundleName, context.newGroup);
             break;
         case QUERY_ALL_STATS:
-            HandleQueryAllStats(intervalType, beginTime, endTime);
+            HandleQueryAllStats(context.intervalType, context.beginTime, context.endTime);
             break;
         case QUERY_HIGH_FREQ:
-            HandleQueryHighFreq(maxNum);
+            HandleQueryHighFreq(context.maxNum);
             break;
         case QUERY_APP_GROUP:
-            HandleQueryAppGroup(bundleName);
+            HandleQueryAppGroup(context.bundleName);
             break;
         case QUERY_MODULE_USAGE:
-            HandleQueryModuleUsage(maxNum);
+            HandleQueryModuleUsage(context.maxNum);
             break;
         case QUERY_DEVICE_STATS:
-            HandleQueryDeviceStats(beginTime, endTime);
+            HandleQueryDeviceStats(context.beginTime, context.endTime);
             break;
         default:
             break;
     }
 }
-
 } // namespace
-
 bool DoSomethingWithMyAPI(const uint8_t* data, size_t size)
 {
     if (data == nullptr || size < sizeof(int32_t)) {
         return false;
     }
-
     try {
         int32_t choice = 0;
         if (!SafeRead(data, size, choice)) {
             return false;
         }
-
         std::string bundleName = ExtractBundleName(data, size);
         int32_t intervalType = 0;
         int32_t newGroup = 0;
         int32_t maxNum = DEFAULT_MAX_NUM;
         int64_t beginTime = DEFAULT_BEGIN_TIME;
         int64_t endTime = DEFAULT_END_TIME;
-
         SafeRead(data, size, intervalType);
         SafeRead(data, size, newGroup);
         SafeRead(data, size, maxNum);
         SafeRead(data, size, beginTime);
         SafeRead(data, size, endTime);
-
         if (beginTime > endTime) {
             std::swap(beginTime, endTime);
         }
         if (maxNum <= 0) {
             maxNum = 1;
         }
-
-        DispatchFuzzCase(choice, bundleName, intervalType, newGroup, maxNum, beginTime, endTime, data, size);
+        FuzzContext context { bundleName, intervalType, newGroup, maxNum, beginTime, endTime, data, size };
+        DispatchFuzzCase(choice, context);
     } catch (...) {
         return false;
     }
-
     return true;
 }
-
 } // namespace OHOS
-
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     return OHOS::DoSomethingWithMyAPI(data, size) ? 0 : 1;
