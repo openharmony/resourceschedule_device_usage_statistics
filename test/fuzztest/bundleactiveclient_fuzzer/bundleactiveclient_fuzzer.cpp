@@ -24,7 +24,6 @@
 using namespace OHOS::DeviceUsageStats;
 
 namespace OHOS {
-
 namespace {
 constexpr int32_t DEFAULT_USER_ID = 100;
 constexpr int32_t DEFAULT_MAX_NUM = 10;
@@ -68,71 +67,112 @@ std::string ExtractBundleName(const uint8_t*& data, size_t& size)
     return name;
 }
 
+void HandleReportEvent(const std::string& bundleName, int64_t endTime,
+                       const uint8_t*& data, size_t& size)
+{
+    BundleActiveEvent event;
+    if (!SafeRead(data, size, event.eventId_)) {
+        event.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
+    }
+    event.bundleName_ = bundleName;
+    event.timeStamp_ = endTime;
+    BundleActiveClient::GetInstance().ReportEvent(event, DEFAULT_USER_ID);
+}
+
+void HandleIsBundleIdle(const std::string& bundleName)
+{
+    bool isIdle = false;
+    BundleActiveClient::GetInstance().IsBundleIdle(isIdle, bundleName, DEFAULT_USER_ID);
+}
+
+void HandleQueryStatsInterval(int32_t intervalType, int64_t beginTime, int64_t endTime)
+{
+    std::vector<BundleActivePackageStats> stats;
+    BundleActiveClient::GetInstance()
+        .QueryBundleStatsInfoByInterval(stats, intervalType, beginTime, endTime, DEFAULT_USER_ID);
+}
+
+void HandleQueryEvents(int64_t beginTime, int64_t endTime)
+{
+    std::vector<BundleActiveEvent> events;
+    BundleActiveClient::GetInstance().QueryBundleEvents(events, beginTime, endTime, DEFAULT_USER_ID);
+}
+
+void HandleSetAppGroup(const std::string& bundleName, int32_t newGroup)
+{
+    BundleActiveClient::GetInstance().SetAppGroup(bundleName, newGroup, DEFAULT_USER_ID);
+}
+
+void HandleQueryAllStats(int32_t intervalType, int64_t beginTime, int64_t endTime)
+{
+    std::vector<BundleActivePackageStats> stats;
+    BundleActiveClient::GetInstance().QueryBundleStatsInfos(stats, intervalType, beginTime, endTime);
+}
+
+void HandleQueryHighFreq(int32_t maxNum)
+{
+    std::vector<BundleActivePackageStats> stats;
+    BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(stats, DEFAULT_USER_ID, maxNum);
+}
+
+void HandleQueryAppGroup(const std::string& bundleName)
+{
+    int32_t appGroup = 0;
+    BundleActiveClient::GetInstance().QueryAppGroup(appGroup, bundleName, DEFAULT_USER_ID);
+}
+
+void HandleQueryModuleUsage(int32_t maxNum)
+{
+    std::vector<BundleActiveModuleRecord> results;
+    BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, results, DEFAULT_USER_ID);
+}
+
+void HandleQueryDeviceStats(int64_t beginTime, int64_t endTime)
+{
+    std::vector<BundleActiveEventStats> stats;
+    BundleActiveClient::GetInstance().QueryDeviceEventStats(beginTime, endTime, stats, DEFAULT_USER_ID);
+}
+
 void DispatchFuzzCase(int32_t choice, const std::string& bundleName, int32_t intervalType,
                       int32_t newGroup, int32_t maxNum, int64_t beginTime, int64_t endTime,
                       const uint8_t*& data, size_t& size)
 {
-    BundleActiveClient& client = BundleActiveClient::GetInstance();
-
     switch (choice % FUZZ_CASE_COUNT) {
-        case REPORT_EVENT: {
-            BundleActiveEvent event;
-            if (!SafeRead(data, size, event.eventId_)) {
-                event.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
-            }
-            event.bundleName_ = bundleName;
-            event.timeStamp_ = endTime;
-            client.ReportEvent(event, DEFAULT_USER_ID);
+        case REPORT_EVENT:
+            HandleReportEvent(bundleName, endTime, data, size);
             break;
-        }
-        case IS_BUNDLE_IDLE: {
-            bool isIdle = false;
-            client.IsBundleIdle(isIdle, bundleName, DEFAULT_USER_ID);
+        case IS_BUNDLE_IDLE:
+            HandleIsBundleIdle(bundleName);
             break;
-        }
-        case QUERY_STATS_INTERVAL: {
-            std::vector<BundleActivePackageStats> stats;
-            client.QueryBundleStatsInfoByInterval(stats, intervalType, beginTime, endTime, DEFAULT_USER_ID);
+        case QUERY_STATS_INTERVAL:
+            HandleQueryStatsInterval(intervalType, beginTime, endTime);
             break;
-        }
-        case QUERY_EVENTS: {
-            std::vector<BundleActiveEvent> events;
-            client.QueryBundleEvents(events, beginTime, endTime, DEFAULT_USER_ID);
+        case QUERY_EVENTS:
+            HandleQueryEvents(beginTime, endTime);
             break;
-        }
-        case SET_APP_GROUP: {
-            client.SetAppGroup(bundleName, newGroup, DEFAULT_USER_ID);
+        case SET_APP_GROUP:
+            HandleSetAppGroup(bundleName, newGroup);
             break;
-        }
-        case QUERY_ALL_STATS: {
-            std::vector<BundleActivePackageStats> stats;
-            client.QueryBundleStatsInfos(stats, intervalType, beginTime, endTime);
+        case QUERY_ALL_STATS:
+            HandleQueryAllStats(intervalType, beginTime, endTime);
             break;
-        }
-        case QUERY_HIGH_FREQ: {
-            std::vector<BundleActivePackageStats> stats;
-            client.QueryHighFrequencyUsageBundleInfos(stats, DEFAULT_USER_ID, maxNum);
+        case QUERY_HIGH_FREQ:
+            HandleQueryHighFreq(maxNum);
             break;
-        }
-        case QUERY_APP_GROUP: {
-            int32_t appGroup = 0;
-            client.QueryAppGroup(appGroup, bundleName, DEFAULT_USER_ID);
+        case QUERY_APP_GROUP:
+            HandleQueryAppGroup(bundleName);
             break;
-        }
-        case QUERY_MODULE_USAGE: {
-            std::vector<BundleActiveModuleRecord> results;
-            client.QueryModuleUsageRecords(maxNum, results, DEFAULT_USER_ID);
+        case QUERY_MODULE_USAGE:
+            HandleQueryModuleUsage(maxNum);
             break;
-        }
-        case QUERY_DEVICE_STATS: {
-            std::vector<BundleActiveEventStats> stats;
-            client.QueryDeviceEventStats(beginTime, endTime, stats, DEFAULT_USER_ID);
+        case QUERY_DEVICE_STATS:
+            HandleQueryDeviceStats(beginTime, endTime);
             break;
-        }
         default:
             break;
     }
 }
+
 } // namespace
 
 bool DoSomethingWithMyAPI(const uint8_t* data, size_t size)
