@@ -67,6 +67,72 @@ std::string ExtractBundleName(const uint8_t*& data, size_t& size)
     size -= len;
     return name;
 }
+
+void DispatchFuzzCase(int32_t choice, const std::string& bundleName, int32_t intervalType,
+                      int32_t newGroup, int32_t maxNum, int64_t beginTime, int64_t endTime,
+                      const uint8_t*& data, size_t& size)
+{
+    BundleActiveClient& client = BundleActiveClient::GetInstance();
+
+    switch (choice % FUZZ_CASE_COUNT) {
+        case REPORT_EVENT: {
+            BundleActiveEvent event;
+            if (!SafeRead(data, size, event.eventId_)) {
+                event.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
+            }
+            event.bundleName_ = bundleName;
+            event.timeStamp_ = endTime;
+            client.ReportEvent(event, DEFAULT_USER_ID);
+            break;
+        }
+        case IS_BUNDLE_IDLE: {
+            bool isIdle = false;
+            client.IsBundleIdle(isIdle, bundleName, DEFAULT_USER_ID);
+            break;
+        }
+        case QUERY_STATS_INTERVAL: {
+            std::vector<BundleActivePackageStats> stats;
+            client.QueryBundleStatsInfoByInterval(stats, intervalType, beginTime, endTime, DEFAULT_USER_ID);
+            break;
+        }
+        case QUERY_EVENTS: {
+            std::vector<BundleActiveEvent> events;
+            client.QueryBundleEvents(events, beginTime, endTime, DEFAULT_USER_ID);
+            break;
+        }
+        case SET_APP_GROUP: {
+            client.SetAppGroup(bundleName, newGroup, DEFAULT_USER_ID);
+            break;
+        }
+        case QUERY_ALL_STATS: {
+            std::vector<BundleActivePackageStats> stats;
+            client.QueryBundleStatsInfos(stats, intervalType, beginTime, endTime);
+            break;
+        }
+        case QUERY_HIGH_FREQ: {
+            std::vector<BundleActivePackageStats> stats;
+            client.QueryHighFrequencyUsageBundleInfos(stats, DEFAULT_USER_ID, maxNum);
+            break;
+        }
+        case QUERY_APP_GROUP: {
+            int32_t appGroup = 0;
+            client.QueryAppGroup(appGroup, bundleName, DEFAULT_USER_ID);
+            break;
+        }
+        case QUERY_MODULE_USAGE: {
+            std::vector<BundleActiveModuleRecord> results;
+            client.QueryModuleUsageRecords(maxNum, results, DEFAULT_USER_ID);
+            break;
+        }
+        case QUERY_DEVICE_STATS: {
+            std::vector<BundleActiveEventStats> stats;
+            client.QueryDeviceEventStats(beginTime, endTime, stats, DEFAULT_USER_ID);
+            break;
+        }
+        default:
+            break;
+    }
+}
 } // namespace
 
 bool DoSomethingWithMyAPI(const uint8_t* data, size_t size)
@@ -80,8 +146,6 @@ bool DoSomethingWithMyAPI(const uint8_t* data, size_t size)
         if (!SafeRead(data, size, choice)) {
             return false;
         }
-
-        BundleActiveClient& client = BundleActiveClient::GetInstance();
 
         std::string bundleName = ExtractBundleName(data, size);
         int32_t intervalType = 0;
@@ -103,70 +167,14 @@ bool DoSomethingWithMyAPI(const uint8_t* data, size_t size)
             maxNum = 1;
         }
 
-        switch (choice % FUZZ_CASE_COUNT) {
-            case REPORT_EVENT: {
-                BundleActiveEvent event;
-                if (!SafeRead(data, size, event.eventId_)) {
-                    event.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
-                }
-                event.bundleName_ = bundleName;
-                event.timeStamp_ = endTime;
-                client.ReportEvent(event, DEFAULT_USER_ID);
-                break;
-            }
-            case IS_BUNDLE_IDLE: {
-                bool isIdle = false;
-                client.IsBundleIdle(isIdle, bundleName, DEFAULT_USER_ID);
-                break;
-            }
-            case QUERY_STATS_INTERVAL: {
-                std::vector<BundleActivePackageStats> stats;
-                client.QueryBundleStatsInfoByInterval(stats, intervalType, beginTime, endTime, DEFAULT_USER_ID);
-                break;
-            }
-            case QUERY_EVENTS: {
-                std::vector<BundleActiveEvent> events;
-                client.QueryBundleEvents(events, beginTime, endTime, DEFAULT_USER_ID);
-                break;
-            }
-            case SET_APP_GROUP: {
-                client.SetAppGroup(bundleName, newGroup, DEFAULT_USER_ID);
-                break;
-            }
-            case QUERY_ALL_STATS: {
-                std::vector<BundleActivePackageStats> stats;
-                client.QueryBundleStatsInfos(stats, intervalType, beginTime, endTime);
-                break;
-            }
-            case QUERY_HIGH_FREQ: {
-                std::vector<BundleActivePackageStats> stats;
-                client.QueryHighFrequencyUsageBundleInfos(stats, DEFAULT_USER_ID, maxNum);
-                break;
-            }
-            case QUERY_APP_GROUP: {
-                int32_t appGroup = 0;
-                client.QueryAppGroup(appGroup, bundleName, DEFAULT_USER_ID);
-                break;
-            }
-            case QUERY_MODULE_USAGE: {
-                std::vector<BundleActiveModuleRecord> results;
-                client.QueryModuleUsageRecords(maxNum, results, DEFAULT_USER_ID);
-                break;
-            }
-            case QUERY_DEVICE_STATS: {
-                std::vector<BundleActiveEventStats> stats;
-                client.QueryDeviceEventStats(beginTime, endTime, stats, DEFAULT_USER_ID);
-                break;
-            }
-            default:
-                break;
-        }
+        DispatchFuzzCase(choice, bundleName, intervalType, newGroup, maxNum, beginTime, endTime, data, size);
     } catch (...) {
         return false;
     }
 
     return true;
 }
+
 } // namespace OHOS
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
