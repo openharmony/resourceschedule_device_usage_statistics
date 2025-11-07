@@ -48,6 +48,51 @@ enum class ActionType : uint8_t {
     ACTION_MAX
 };
 
+// Helper: ADD_FORM
+static void HandleAddForm(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
+{
+    std::string formName = fdp.ConsumeRandomLengthString(MAX_FORM_NAME_LEN);
+    int32_t dimension = fdp.ConsumeIntegral<int32_t>();
+    int64_t formId = fdp.ConsumeIntegral<int64_t>();
+    int64_t timeStamp = fdp.ConsumeIntegral<int64_t>();
+    int32_t uid = fdp.ConsumeIntegral<int32_t>();
+    record.AddOrUpdateOneFormRecord(formName, dimension, formId, timeStamp, uid);
+}
+
+// Helper: REMOVE_FORM
+static void HandleRemoveForm(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
+{
+    std::string formName = fdp.ConsumeRandomLengthString(MAX_FORM_NAME_LEN);
+    int32_t dimension = fdp.ConsumeIntegral<int32_t>();
+    int64_t formId = fdp.ConsumeIntegral<int64_t>();
+    record.RemoveOneFormRecord(formName, dimension, formId);
+}
+
+// Helper: UPDATE_MODULE
+static void HandleUpdateModule(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
+{
+    int64_t timeStamp = fdp.ConsumeIntegral<int64_t>();
+    record.UpdateModuleRecord(timeStamp);
+}
+
+// Helper: COPY_AND_COMPARE
+static void HandleCopyAndCompare(BundleActiveModuleRecord &record)
+{
+    BundleActiveModuleRecord copy(record);
+    copy = record;
+    (void)BundleActiveModuleRecord::cmp(copy, record);
+    (void)copy.ToString();
+}
+
+// Helper: UPDATE_INFO
+static void HandleUpdateInfo(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
+{
+    record.bundleName_ = fdp.ConsumeRandomLengthString(MAX_DEVICE_ID_LEN);
+    record.moduleName_ = fdp.ConsumeRandomLengthString(MAX_DEVICE_ID_LEN);
+    record.userId_ = fdp.ConsumeIntegral<int32_t>();
+    record.uid_ = fdp.ConsumeIntegral<int32_t>();
+}
+
 // ======= 构建记录对象 =======
 BundleActiveModuleRecord BuildRecord(FuzzedDataProvider &fdp)
 {
@@ -76,7 +121,7 @@ void FuzzMarshalling(BundleActiveModuleRecord &record)
     }
 }
 
-// ======= 模块记录驱动函数 =======
+// ======= 模块记录驱动函数（已拆成更小的 helper，以满足 nbnc <= 50 的限制） =======
 void DriveModuleRecord(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
 {
     size_t ops = fdp.ConsumeIntegralInRange<size_t>(1, MAX_OPS);
@@ -85,42 +130,23 @@ void DriveModuleRecord(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp
         ActionType action = static_cast<ActionType>(actionValue);
 
         switch (action) {
-            case ActionType::ADD_FORM: {
-                std::string formName = fdp.ConsumeRandomLengthString(MAX_FORM_NAME_LEN);
-                int32_t dimension = fdp.ConsumeIntegral<int32_t>();
-                int64_t formId = fdp.ConsumeIntegral<int64_t>();
-                int64_t timeStamp = fdp.ConsumeIntegral<int64_t>();
-                int32_t uid = fdp.ConsumeIntegral<int32_t>();
-                record.AddOrUpdateOneFormRecord(formName, dimension, formId, timeStamp, uid);
+            case ActionType::ADD_FORM:
+                HandleAddForm(record, fdp);
                 break;
-            }
-            case ActionType::REMOVE_FORM: {
-                std::string formName = fdp.ConsumeRandomLengthString(MAX_FORM_NAME_LEN);
-                int32_t dimension = fdp.ConsumeIntegral<int32_t>();
-                int64_t formId = fdp.ConsumeIntegral<int64_t>();
-                record.RemoveOneFormRecord(formName, dimension, formId);
+            case ActionType::REMOVE_FORM:
+                HandleRemoveForm(record, fdp);
                 break;
-            }
-            case ActionType::UPDATE_MODULE: {
-                int64_t timeStamp = fdp.ConsumeIntegral<int64_t>();
-                record.UpdateModuleRecord(timeStamp);
+            case ActionType::UPDATE_MODULE:
+                HandleUpdateModule(record, fdp);
                 break;
-            }
-            case ActionType::COPY_AND_COMPARE: {
-                BundleActiveModuleRecord copy(record);
-                copy = record;
-                (void)BundleActiveModuleRecord::cmp(copy, record);
-                (void)copy.ToString();
+            case ActionType::COPY_AND_COMPARE:
+                HandleCopyAndCompare(record);
                 break;
-            }
             case ActionType::FUZZ_MARSHALLING:
                 FuzzMarshalling(record);
                 break;
             case ActionType::UPDATE_INFO:
-                record.bundleName_ = fdp.ConsumeRandomLengthString(MAX_DEVICE_ID_LEN);
-                record.moduleName_ = fdp.ConsumeRandomLengthString(MAX_DEVICE_ID_LEN);
-                record.userId_ = fdp.ConsumeIntegral<int32_t>();
-                record.uid_ = fdp.ConsumeIntegral<int32_t>();
+                HandleUpdateInfo(record, fdp);
                 break;
             default:
                 break;
