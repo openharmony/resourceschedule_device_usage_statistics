@@ -48,51 +48,6 @@ enum class ActionType : uint8_t {
     ACTION_MAX
 };
 
-// Helper: ADD_FORM
-static void HandleAddForm(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
-{
-    std::string formName = fdp.ConsumeRandomLengthString(MAX_FORM_NAME_LEN);
-    int32_t dimension = fdp.ConsumeIntegral<int32_t>();
-    int64_t formId = fdp.ConsumeIntegral<int64_t>();
-    int64_t timeStamp = fdp.ConsumeIntegral<int64_t>();
-    int32_t uid = fdp.ConsumeIntegral<int32_t>();
-    record.AddOrUpdateOneFormRecord(formName, dimension, formId, timeStamp, uid);
-}
-
-// Helper: REMOVE_FORM
-static void HandleRemoveForm(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
-{
-    std::string formName = fdp.ConsumeRandomLengthString(MAX_FORM_NAME_LEN);
-    int32_t dimension = fdp.ConsumeIntegral<int32_t>();
-    int64_t formId = fdp.ConsumeIntegral<int64_t>();
-    record.RemoveOneFormRecord(formName, dimension, formId);
-}
-
-// Helper: UPDATE_MODULE
-static void HandleUpdateModule(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
-{
-    int64_t timeStamp = fdp.ConsumeIntegral<int64_t>();
-    record.UpdateModuleRecord(timeStamp);
-}
-
-// Helper: COPY_AND_COMPARE
-static void HandleCopyAndCompare(BundleActiveModuleRecord &record)
-{
-    BundleActiveModuleRecord copy(record);
-    copy = record;
-    (void)BundleActiveModuleRecord::cmp(copy, record);
-    (void)copy.ToString();
-}
-
-// Helper: UPDATE_INFO
-static void HandleUpdateInfo(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
-{
-    record.bundleName_ = fdp.ConsumeRandomLengthString(MAX_DEVICE_ID_LEN);
-    record.moduleName_ = fdp.ConsumeRandomLengthString(MAX_DEVICE_ID_LEN);
-    record.userId_ = fdp.ConsumeIntegral<int32_t>();
-    record.uid_ = fdp.ConsumeIntegral<int32_t>();
-}
-
 // ======= 构建记录对象 =======
 BundleActiveModuleRecord BuildRecord(FuzzedDataProvider &fdp)
 {
@@ -121,7 +76,53 @@ void FuzzMarshalling(BundleActiveModuleRecord &record)
     }
 }
 
-// ======= 模块记录驱动函数（已拆成更小的 helper，以满足 nbnc <= 50 的限制） =======
+// ======= 各种动作处理函数 =======
+static void HandleAddFormAction(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
+{
+    std::string formName = fdp.ConsumeRandomLengthString(MAX_FORM_NAME_LEN);
+    int32_t dimension = fdp.ConsumeIntegral<int32_t>();
+    int64_t formId = fdp.ConsumeIntegral<int64_t>();
+    int64_t timeStamp = fdp.ConsumeIntegral<int64_t>();
+    int32_t uid = fdp.ConsumeIntegral<int32_t>();
+    record.AddOrUpdateOneFormRecord(formName, dimension, formId, timeStamp, uid);
+}
+
+static void HandleRemoveFormAction(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
+{
+    std::string formName = fdp.ConsumeRandomLengthString(MAX_FORM_NAME_LEN);
+    int32_t dimension = fdp.ConsumeIntegral<int32_t>();
+    int64_t formId = fdp.ConsumeIntegral<int64_t>();
+    record.RemoveOneFormRecord(formName, dimension, formId);
+}
+
+static void HandleUpdateModuleAction(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
+{
+    int64_t timeStamp = fdp.ConsumeIntegral<int64_t>();
+    record.UpdateModuleRecord(timeStamp);
+}
+
+static void HandleCopyAndCompareAction(BundleActiveModuleRecord &record)
+{
+    BundleActiveModuleRecord copy(record);
+    copy = record;
+    (void)BundleActiveModuleRecord::cmp(copy, record);
+    (void)copy.ToString();
+}
+
+static void HandleFuzzMarshallingAction(BundleActiveModuleRecord &record)
+{
+    FuzzMarshalling(record);
+}
+
+static void HandleUpdateInfoAction(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
+{
+    record.bundleName_ = fdp.ConsumeRandomLengthString(MAX_NAME_LEN);
+    record.moduleName_ = fdp.ConsumeRandomLengthString(MAX_NAME_LEN);
+    record.userId_ = fdp.ConsumeIntegral<int32_t>();
+    record.uid_ = fdp.ConsumeIntegral<int32_t>();
+}
+
+// ======= 模块记录驱动函数（主逻辑 < 50 行） =======
 void DriveModuleRecord(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
 {
     size_t ops = fdp.ConsumeIntegralInRange<size_t>(1, MAX_OPS);
@@ -131,22 +132,22 @@ void DriveModuleRecord(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp
 
         switch (action) {
             case ActionType::ADD_FORM:
-                HandleAddForm(record, fdp);
+                HandleAddFormAction(record, fdp);
                 break;
             case ActionType::REMOVE_FORM:
-                HandleRemoveForm(record, fdp);
+                HandleRemoveFormAction(record, fdp);
                 break;
             case ActionType::UPDATE_MODULE:
-                HandleUpdateModule(record, fdp);
+                HandleUpdateModuleAction(record, fdp);
                 break;
             case ActionType::COPY_AND_COMPARE:
-                HandleCopyAndCompare(record);
+                HandleCopyAndCompareAction(record);
                 break;
             case ActionType::FUZZ_MARSHALLING:
-                FuzzMarshalling(record);
+                HandleFuzzMarshallingAction(record);
                 break;
             case ActionType::UPDATE_INFO:
-                HandleUpdateInfo(record, fdp);
+                HandleUpdateInfoAction(record, fdp);
                 break;
             default:
                 break;
