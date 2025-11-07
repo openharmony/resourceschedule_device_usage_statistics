@@ -47,11 +47,13 @@ enum FuzzCase {
 
 struct FuzzParams {
     std::string bundleName;
-    int32_t intervalType = 0;
-    int32_t newGroup = 0;
-    int32_t maxNum = DEFAULT_MAX_NUM;
-    int64_t beginTime = DEFAULT_BEGIN_TIME;
-    int64_t endTime = DEFAULT_END_TIME;
+    int32_t intervalType;
+    int32_t newGroup;
+    int32_t maxNum;
+    int64_t beginTime;
+    int64_t endTime;
+    const uint8_t* data;
+    size_t size;
 };
 
 template<typename T>
@@ -76,10 +78,10 @@ std::string ExtractBundleName(const uint8_t*& data, size_t& size)
     return name;
 }
 
-void HandleReportEvent(const FuzzParams& params, const uint8_t*& data, size_t& size)
+void HandleReportEvent(const FuzzParams& params)
 {
     BundleActiveEvent event;
-    if (!SafeRead(data, size, event.eventId_)) {
+    if (!SafeRead(params.data, params.size, event.eventId_)) {
         event.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
     }
     event.bundleName_ = params.bundleName;
@@ -97,30 +99,35 @@ void HandleQueryStatsInterval(const FuzzParams& params)
 {
     std::vector<BundleActivePackageStats> stats;
     BundleActiveClient::GetInstance()
-        .QueryBundleStatsInfoByInterval(stats, params.intervalType, params.beginTime, params.endTime, DEFAULT_USER_ID);
+        .QueryBundleStatsInfoByInterval(stats, params.intervalType, 
+                                       params.beginTime, params.endTime, DEFAULT_USER_ID);
 }
 
 void HandleQueryEvents(const FuzzParams& params)
 {
     std::vector<BundleActiveEvent> events;
-    BundleActiveClient::GetInstance().QueryBundleEvents(events, params.beginTime, params.endTime, DEFAULT_USER_ID);
+    BundleActiveClient::GetInstance().QueryBundleEvents(events, params.beginTime, 
+                                                        params.endTime, DEFAULT_USER_ID);
 }
 
 void HandleSetAppGroup(const FuzzParams& params)
 {
-    BundleActiveClient::GetInstance().SetAppGroup(params.bundleName, params.newGroup, DEFAULT_USER_ID);
+    BundleActiveClient::GetInstance().SetAppGroup(params.bundleName, 
+                                                  params.newGroup, DEFAULT_USER_ID);
 }
 
 void HandleQueryAllStats(const FuzzParams& params)
 {
     std::vector<BundleActivePackageStats> stats;
-    BundleActiveClient::GetInstance().QueryBundleStatsInfos(stats, params.intervalType, params.beginTime, params.endTime);
+    BundleActiveClient::GetInstance().QueryBundleStatsInfos(stats, params.intervalType, 
+                                                            params.beginTime, params.endTime);
 }
 
 void HandleQueryHighFreq(const FuzzParams& params)
 {
     std::vector<BundleActivePackageStats> stats;
-    BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(stats, DEFAULT_USER_ID, params.maxNum);
+    BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(stats, DEFAULT_USER_ID, 
+                                                                         params.maxNum);
 }
 
 void HandleQueryAppGroup(const FuzzParams& params)
@@ -138,18 +145,15 @@ void HandleQueryModuleUsage(const FuzzParams& params)
 void HandleQueryDeviceStats(const FuzzParams& params)
 {
     std::vector<BundleActiveEventStats> stats;
-    BundleActiveClient::GetInstance().QueryDeviceEventStats(params.beginTime, params.endTime, stats, DEFAULT_USER_ID);
+    BundleActiveClient::GetInstance().QueryDeviceEventStats(params.beginTime, params.endTime, 
+                                                            stats, DEFAULT_USER_ID);
 }
 
-/*
- * Split dispatch into two parts to keep single-function size under 50 lines.
- * Part1 handles cases: REPORT_EVENT .. SET_APP_GROUP (0..4)
- */
-void DispatchFuzzCasePart1(int32_t choice, const FuzzParams& params, const uint8_t*& data, size_t& size)
+void DispatchFuzzCase(int32_t choice, FuzzParams& params)
 {
-    switch (choice) {
+    switch (choice % FUZZ_CASE_COUNT) {
         case REPORT_EVENT:
-            HandleReportEvent(params, data, size);
+            HandleReportEvent(params);
             break;
         case IS_BUNDLE_IDLE:
             HandleIsBundleIdle(params);
@@ -163,17 +167,6 @@ void DispatchFuzzCasePart1(int32_t choice, const FuzzParams& params, const uint8
         case SET_APP_GROUP:
             HandleSetAppGroup(params);
             break;
-        default:
-            break;
-    }
-}
-
-/*
- * Part2 handles remaining cases: QUERY_ALL_STATS .. QUERY_DEVICE_STATS (5..9)
- */
-void DispatchFuzzCasePart2(int32_t choice, const FuzzParams& params, const uint8_t*& data, size_t& size)
-{
-    switch (choice) {
         case QUERY_ALL_STATS:
             HandleQueryAllStats(params);
             break;
@@ -194,19 +187,6 @@ void DispatchFuzzCasePart2(int32_t choice, const FuzzParams& params, const uint8
     }
 }
 
-/*
- * Minimal wrapper: decides which part to call. Keeps wrapper very small.
- */
-void DispatchFuzzCase(int32_t choice, const FuzzParams& params, const uint8_t*& data, size_t& size)
-{
-    int32_t idx = choice % FUZZ_CASE_COUNT;
-    if (idx >= 0 && idx <= SET_APP_GROUP) {
-        DispatchFuzzCasePart1(idx, params, data, size);
-    } else {
-        DispatchFuzzCasePart2(idx, params, data, size);
-    }
-}
-
 } // namespace
 
 bool DoSomethingWithMyAPI(const uint8_t* data, size_t size)
@@ -223,6 +203,14 @@ bool DoSomethingWithMyAPI(const uint8_t* data, size_t size)
 
         FuzzParams params;
         params.bundleName = ExtractBundleName(data, size);
+        params.intervalType = 0;
+        params.newGroup = 0;
+        params.maxNum = DEFAULT_MAX_NUM;
+        params.beginTime = DEFAULT_BEGIN_TIME;
+        params.endTime = DEFAULT_END_TIME;
+        params.data = data;
+        params.size = size;
+
         SafeRead(data, size, params.intervalType);
         SafeRead(data, size, params.newGroup);
         SafeRead(data, size, params.maxNum);
@@ -236,7 +224,7 @@ bool DoSomethingWithMyAPI(const uint8_t* data, size_t size)
             params.maxNum = 1;
         }
 
-        DispatchFuzzCase(choice, params, data, size);
+        DispatchFuzzCase(choice, params);
     } catch (...) {
         return false;
     }
