@@ -30,15 +30,32 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 namespace {
-constexpr size_t MAX_OPS = 32;
 
+// ======= 常量定义区 =======
+constexpr size_t MAX_OPS = 32;
+constexpr size_t MAX_NAME_LEN = 32;
+constexpr size_t MAX_DEVICE_ID_LEN = 16;
+constexpr size_t MAX_FORM_NAME_LEN = 16;
+
+// ======= 动作类型枚举 =======
+enum class ActionType : uint8_t {
+    ADD_FORM = 0,
+    REMOVE_FORM,
+    UPDATE_MODULE,
+    COPY_AND_COMPARE,
+    FUZZ_MARSHALLING,
+    UPDATE_INFO,
+    ACTION_MAX
+};
+
+// ======= 构建记录对象 =======
 BundleActiveModuleRecord BuildRecord(FuzzedDataProvider &fdp)
 {
     BundleActiveModuleRecord record;
-    record.bundleName_ = fdp.ConsumeRandomLengthString(32);
-    record.moduleName_ = fdp.ConsumeRandomLengthString(32);
-    record.deviceId_ = fdp.ConsumeRandomLengthString(16);
-    record.abilityName_ = fdp.ConsumeRandomLengthString(32);
+    record.bundleName_ = fdp.ConsumeRandomLengthString(MAX_NAME_LEN);
+    record.moduleName_ = fdp.ConsumeRandomLengthString(MAX_NAME_LEN);
+    record.deviceId_ = fdp.ConsumeRandomLengthString(MAX_DEVICE_ID_LEN);
+    record.abilityName_ = fdp.ConsumeRandomLengthString(MAX_NAME_LEN);
     record.uid_ = fdp.ConsumeIntegral<int32_t>();
     record.userId_ = fdp.ConsumeIntegral<int32_t>();
     record.lastModuleUsedTime_ = fdp.ConsumeIntegral<int64_t>();
@@ -46,6 +63,7 @@ BundleActiveModuleRecord BuildRecord(FuzzedDataProvider &fdp)
     return record;
 }
 
+// ======= 序列化与反序列化测试 =======
 void FuzzMarshalling(BundleActiveModuleRecord &record)
 {
     MessageParcel parcel;
@@ -58,14 +76,17 @@ void FuzzMarshalling(BundleActiveModuleRecord &record)
     }
 }
 
+// ======= 模块记录驱动函数 =======
 void DriveModuleRecord(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp)
 {
     size_t ops = fdp.ConsumeIntegralInRange<size_t>(1, MAX_OPS);
     for (size_t i = 0; i < ops && fdp.remaining_bytes() > 0; i++) {
-        uint8_t action = fdp.ConsumeIntegral<uint8_t>() % 6; // six actions
+        uint8_t actionValue = fdp.ConsumeIntegral<uint8_t>() % static_cast<uint8_t>(ActionType::ACTION_MAX);
+        ActionType action = static_cast<ActionType>(actionValue);
+
         switch (action) {
-            case 0: {
-                std::string formName = fdp.ConsumeRandomLengthString(16);
+            case ActionType::ADD_FORM: {
+                std::string formName = fdp.ConsumeRandomLengthString(MAX_FORM_NAME_LEN);
                 int32_t dimension = fdp.ConsumeIntegral<int32_t>();
                 int64_t formId = fdp.ConsumeIntegral<int64_t>();
                 int64_t timeStamp = fdp.ConsumeIntegral<int64_t>();
@@ -73,31 +94,31 @@ void DriveModuleRecord(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp
                 record.AddOrUpdateOneFormRecord(formName, dimension, formId, timeStamp, uid);
                 break;
             }
-            case 1: {
-                std::string formName = fdp.ConsumeRandomLengthString(16);
+            case ActionType::REMOVE_FORM: {
+                std::string formName = fdp.ConsumeRandomLengthString(MAX_FORM_NAME_LEN);
                 int32_t dimension = fdp.ConsumeIntegral<int32_t>();
                 int64_t formId = fdp.ConsumeIntegral<int64_t>();
                 record.RemoveOneFormRecord(formName, dimension, formId);
                 break;
             }
-            case 2: {
+            case ActionType::UPDATE_MODULE: {
                 int64_t timeStamp = fdp.ConsumeIntegral<int64_t>();
                 record.UpdateModuleRecord(timeStamp);
                 break;
             }
-            case 3: {
+            case ActionType::COPY_AND_COMPARE: {
                 BundleActiveModuleRecord copy(record);
                 copy = record;
                 (void)BundleActiveModuleRecord::cmp(copy, record);
                 (void)copy.ToString();
                 break;
             }
-            case 4:
+            case ActionType::FUZZ_MARSHALLING:
                 FuzzMarshalling(record);
                 break;
-            case 5:
-                record.bundleName_ = fdp.ConsumeRandomLengthString(16);
-                record.moduleName_ = fdp.ConsumeRandomLengthString(16);
+            case ActionType::UPDATE_INFO:
+                record.bundleName_ = fdp.ConsumeRandomLengthString(MAX_DEVICE_ID_LEN);
+                record.moduleName_ = fdp.ConsumeRandomLengthString(MAX_DEVICE_ID_LEN);
                 record.userId_ = fdp.ConsumeIntegral<int32_t>();
                 record.uid_ = fdp.ConsumeIntegral<int32_t>();
                 break;
@@ -105,12 +126,15 @@ void DriveModuleRecord(BundleActiveModuleRecord &record, FuzzedDataProvider &fdp
                 break;
         }
     }
+
     if (fdp.ConsumeBool()) {
         FuzzMarshalling(record);
     }
 }
+
 } // namespace
 
+// ======= 模糊测试主入口 =======
 bool BundleActiveModuleRecordFuzzTest(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size == 0) {
@@ -121,6 +145,7 @@ bool BundleActiveModuleRecordFuzzTest(const uint8_t *data, size_t size)
     DriveModuleRecord(record, fdp);
     return true;
 }
+
 } // namespace DeviceUsageStats
 } // namespace OHOS
 
