@@ -27,7 +27,6 @@
 #include "bundle_active_usage_database.h"
 #include "bundle_active_test_util.h"
 #include "bundle_active_high_frequency_period.h"
-#include "bundle_active_event_vec_raw_data.h"
 
 using namespace testing::ext;
 
@@ -247,12 +246,12 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_AppGroupCa
 HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_QueryBundleEvents_001,
     Function | MediumTest | TestSize.Level0)
 {
-    BundleActiveEventVecRawData bundleActiveEventVecRawData;
+    std::vector<BundleActiveEvent> bundleActiveEvents;
     ErrCode code = DelayedSingleton<BundleActiveService>::GetInstance()
-        ->QueryBundleEvents(bundleActiveEventVecRawData, 0, g_largeNum, -1);
+        ->QueryBundleEvents(bundleActiveEvents, 0, g_largeNum, -1);
     EXPECT_NE(code, ERR_OK);
     code = DelayedSingleton<BundleActiveService>::GetInstance()
-        ->QueryCurrentBundleEvents(bundleActiveEventVecRawData, 0, g_largeNum);
+        ->QueryCurrentBundleEvents(bundleActiveEvents, 0, g_largeNum);
     EXPECT_NE(code, ERR_OK);
 }
 

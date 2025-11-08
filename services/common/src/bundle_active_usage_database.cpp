@@ -1498,11 +1498,12 @@ vector<BundleActiveEvent> BundleActiveUsageDatabase::QueryDatabaseEvents(int64_t
     queryCondition.push_back(to_string(userId));
     string queryEventSql;
     if (bundleName.empty()) {
-        queryEventSql = "select * from " + eventTableName_ + " where timeStamp >= ? and timeStamp <= ? and userId = ?";
+        queryEventSql = "select * from " + eventTableName_ +
+            " where timeStamp >= ? and timeStamp <= ? and userId = ? order by timeStamp asc";
     } else {
         queryCondition.push_back(bundleName);
         queryEventSql = "select * from " + eventTableName_ +
-            " where timeStamp >= ? and timeStamp <= ? and userId = ? and bundleName = ?";
+            " where timeStamp >= ? and timeStamp <= ? and userId = ? and bundleName = ? order by timeStamp asc";
     }
     auto bundleActiveResult = QueryStatsInfoByStep(EVENT_DATABASE_INDEX,
         queryEventSql, queryCondition);
