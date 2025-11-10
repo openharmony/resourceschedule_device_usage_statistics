@@ -118,6 +118,7 @@ int64_t BundleActiveUserHistory::GetScreenOnTimeStamp(int64_t bootBasedTimeStamp
 shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> BundleActiveUserHistory::GetUserHistory(
     const int32_t userId, const bool create)
 {
+    std::lock_guard<ffrt::mutex> lock(userHistoryMutex_);
     auto it = userHistory_.find(userId);
     if ((it == userHistory_.end()) && create) {
         shared_ptr<map<string, shared_ptr<BundleActivePackageHistory>>> usageHistoryInserted =
