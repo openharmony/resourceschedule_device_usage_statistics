@@ -67,6 +67,7 @@ public:
 
 private:
     ffrt::mutex setGroupMutex_;
+    ffrt::mutex userHistoryMutex_;
     bool isScreenOn_;
     std::weak_ptr<BundleActiveCore> bundleActiveCore_;
 };
