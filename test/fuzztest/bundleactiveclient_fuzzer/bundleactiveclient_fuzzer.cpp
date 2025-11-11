@@ -52,8 +52,8 @@ struct FuzzParams {
     int32_t maxNum;
     int64_t beginTime;
     int64_t endTime;
-    const uint8_t* data;
-    size_t size;
+    const uint8_t*& data;
+    size_t& size;
 };
 
 template<typename T>
@@ -78,109 +78,104 @@ std::string ExtractBundleName(const uint8_t*& data, size_t& size)
     return name;
 }
 
-void HandleReportEvent(const FuzzParams& params)
+void HandleReportEvent(const std::string& bundleName, int64_t endTime,
+                       const uint8_t*& data, size_t& size)
 {
     BundleActiveEvent event;
-    if (!SafeRead(params.data, params.size, event.eventId_)) {
+    if (!SafeRead(data, size, event.eventId_)) {
         event.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
     }
-    event.bundleName_ = params.bundleName;
-    event.timeStamp_ = params.endTime;
+    event.bundleName_ = bundleName;
+    event.timeStamp_ = endTime;
     BundleActiveClient::GetInstance().ReportEvent(event, DEFAULT_USER_ID);
 }
 
-void HandleIsBundleIdle(const FuzzParams& params)
+void HandleIsBundleIdle(const std::string& bundleName)
 {
     bool isIdle = false;
-    BundleActiveClient::GetInstance().IsBundleIdle(isIdle, params.bundleName, DEFAULT_USER_ID);
+    BundleActiveClient::GetInstance().IsBundleIdle(isIdle, bundleName, DEFAULT_USER_ID);
 }
 
-void HandleQueryStatsInterval(const FuzzParams& params)
+void HandleQueryStatsInterval(int32_t intervalType, int64_t beginTime, int64_t endTime)
 {
     std::vector<BundleActivePackageStats> stats;
     BundleActiveClient::GetInstance()
-        .QueryBundleStatsInfoByInterval(stats, params.intervalType, 
-                                       params.beginTime, params.endTime, DEFAULT_USER_ID);
+        .QueryBundleStatsInfoByInterval(stats, intervalType, beginTime, endTime, DEFAULT_USER_ID);
 }
 
-void HandleQueryEvents(const FuzzParams& params)
+void HandleQueryEvents(int64_t beginTime, int64_t endTime)
 {
     std::vector<BundleActiveEvent> events;
-    BundleActiveClient::GetInstance().QueryBundleEvents(events, params.beginTime, 
-                                                        params.endTime, DEFAULT_USER_ID);
+    BundleActiveClient::GetInstance().QueryBundleEvents(events, beginTime, endTime, DEFAULT_USER_ID);
 }
 
-void HandleSetAppGroup(const FuzzParams& params)
+void HandleSetAppGroup(const std::string& bundleName, int32_t newGroup)
 {
-    BundleActiveClient::GetInstance().SetAppGroup(params.bundleName, 
-                                                  params.newGroup, DEFAULT_USER_ID);
+    BundleActiveClient::GetInstance().SetAppGroup(bundleName, newGroup, DEFAULT_USER_ID);
 }
 
-void HandleQueryAllStats(const FuzzParams& params)
+void HandleQueryAllStats(int32_t intervalType, int64_t beginTime, int64_t endTime)
 {
     std::vector<BundleActivePackageStats> stats;
-    BundleActiveClient::GetInstance().QueryBundleStatsInfos(stats, params.intervalType, 
-                                                            params.beginTime, params.endTime);
+    BundleActiveClient::GetInstance().QueryBundleStatsInfos(stats, intervalType, beginTime, endTime);
 }
 
-void HandleQueryHighFreq(const FuzzParams& params)
+void HandleQueryHighFreq(int32_t maxNum)
 {
     std::vector<BundleActivePackageStats> stats;
-    BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(stats, DEFAULT_USER_ID, 
-                                                                         params.maxNum);
+    BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(stats, DEFAULT_USER_ID, maxNum);
 }
 
-void HandleQueryAppGroup(const FuzzParams& params)
+void HandleQueryAppGroup(const std::string& bundleName)
 {
     int32_t appGroup = 0;
-    BundleActiveClient::GetInstance().QueryAppGroup(appGroup, params.bundleName, DEFAULT_USER_ID);
+    BundleActiveClient::GetInstance().QueryAppGroup(appGroup, bundleName, DEFAULT_USER_ID);
 }
 
-void HandleQueryModuleUsage(const FuzzParams& params)
+void HandleQueryModuleUsage(int32_t maxNum)
 {
     std::vector<BundleActiveModuleRecord> results;
-    BundleActiveClient::GetInstance().QueryModuleUsageRecords(params.maxNum, results, DEFAULT_USER_ID);
+    BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, results, DEFAULT_USER_ID);
 }
 
-void HandleQueryDeviceStats(const FuzzParams& params)
+void HandleQueryDeviceStats(int64_t beginTime, int64_t endTime)
 {
     std::vector<BundleActiveEventStats> stats;
-    BundleActiveClient::GetInstance().QueryDeviceEventStats(params.beginTime, params.endTime, 
-                                                            stats, DEFAULT_USER_ID);
+    BundleActiveClient::GetInstance().QueryDeviceEventStats(beginTime, endTime, stats, DEFAULT_USER_ID);
 }
 
 void DispatchFuzzCase(int32_t choice, FuzzParams& params)
 {
     switch (choice % FUZZ_CASE_COUNT) {
         case REPORT_EVENT:
-            HandleReportEvent(params);
+            HandleReportEvent(params.bundleName, params.endTime, params.data, params.size);
             break;
         case IS_BUNDLE_IDLE:
-            HandleIsBundleIdle(params);
+            HandleIsBundleIdle(params.bundleName);
             break;
         case QUERY_STATS_INTERVAL:
-            HandleQueryStatsInterval(params);
+            HandleQueryStatsInterval(params.intervalType, params.beginTime, params.endTime);
             break;
         case QUERY_EVENTS:
-            HandleQueryEvents(params);
+            HandleQueryEvents(params.beginTime, params.endTime);
             break;
         case SET_APP_GROUP:
-            HandleSetAppGroup(params);
+            HandleSetAppGroup(params.bundleName, params.newGroup);
             break;
         case QUERY_ALL_STATS:
-            HandleQueryAllStats(params);
+            HandleQueryAllStats(params.intervalType, params.beginTime, params.endTime);
             break;
         case QUERY_HIGH_FREQ:
-            HandleQueryHighFreq(params);
+            HandleQueryHighFreq(params.maxNum);
             break;
         case QUERY_APP_GROUP:
-            HandleQueryAppGroup(params);
+            HandleQueryAppGroup(params.bundleName);
             break;
         case QUERY_MODULE_USAGE:
-            HandleQueryModuleUsage(params);
+            HandleQueryModuleUsage(params.maxNum);
             break;
         case QUERY_DEVICE_STATS:
-            HandleQueryDeviceStats(params);
+            HandleQueryDeviceStats(params.beginTime, params.endTime);
             break;
         default:
             break;
@@ -201,29 +196,27 @@ bool DoSomethingWithMyAPI(const uint8_t* data, size_t size)
             return false;
         }
 
-        FuzzParams params;
-        params.bundleName = ExtractBundleName(data, size);
-        params.intervalType = 0;
-        params.newGroup = 0;
-        params.maxNum = DEFAULT_MAX_NUM;
-        params.beginTime = DEFAULT_BEGIN_TIME;
-        params.endTime = DEFAULT_END_TIME;
-        params.data = data;
-        params.size = size;
+        std::string bundleName = ExtractBundleName(data, size);
+        int32_t intervalType = 0;
+        int32_t newGroup = 0;
+        int32_t maxNum = DEFAULT_MAX_NUM;
+        int64_t beginTime = DEFAULT_BEGIN_TIME;
+        int64_t endTime = DEFAULT_END_TIME;
 
-        SafeRead(data, size, params.intervalType);
-        SafeRead(data, size, params.newGroup);
-        SafeRead(data, size, params.maxNum);
-        SafeRead(data, size, params.beginTime);
-        SafeRead(data, size, params.endTime);
+        SafeRead(data, size, intervalType);
+        SafeRead(data, size, newGroup);
+        SafeRead(data, size, maxNum);
+        SafeRead(data, size, beginTime);
+        SafeRead(data, size, endTime);
 
-        if (params.beginTime > params.endTime) {
-            std::swap(params.beginTime, params.endTime);
+        if (beginTime > endTime) {
+            std::swap(beginTime, endTime);
         }
-        if (params.maxNum <= 0) {
-            params.maxNum = 1;
+        if (maxNum <= 0) {
+            maxNum = 1;
         }
 
+        FuzzParams params = {bundleName, intervalType, newGroup, maxNum, beginTime, endTime, data, size};
         DispatchFuzzCase(choice, params);
     } catch (...) {
         return false;
