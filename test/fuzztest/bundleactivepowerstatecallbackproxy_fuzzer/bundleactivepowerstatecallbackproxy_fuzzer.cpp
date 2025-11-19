@@ -43,6 +43,9 @@ namespace DeviceUsageStats {
     static std::string g_defaultFormName = "defaultformname";
     static int32_t DEFAULT_DIMENSION = 4;
     static int64_t DEFAULT_FORMID = 1;
+    const int32_t INTERVAL_TYPE_COUNT = 5;
+    const int32_t APP_TYPE_COUNT = 6;
+    const int32_t APP_TYPE_INTERVAL = 10;
     constexpr uint32_t U32_AT_SIZE = 4;
     
     const uint8_t* g_data = nullptr;
@@ -104,6 +107,7 @@ namespace DeviceUsageStats {
         std::string inputBundleName = GetStringFromData(size);
         sptr<IAppGroupCallback> appGroupCallback = nullptr;
         int32_t intervalType = GetData<int32_t>();
+        intervalType = intervalType % INTERVAL_TYPE_COUNT;
         int64_t beginTime = GetData<int64_t>();
         int64_t endTime = GetData<int64_t>();
 
@@ -125,6 +129,7 @@ namespace DeviceUsageStats {
         beginTime, endTime, userId);
 
         int32_t newGroup = GetData<int32_t>();
+        newGroup = (newGroup % APP_TYPE_COUNT + 1) * APP_TYPE_INTERVAL;
         std::string bundleName = GetStringFromData(size);
         DelayedSingleton<BundleActiveClient>::GetInstance()->SetAppGroup(bundleName, newGroup, userId);
 
