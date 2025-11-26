@@ -171,10 +171,9 @@ ErrCode AppGroupObserver::OnAppGroupChanged(const AppGroupCallbackInfo &appGroup
     callbackReceiveDataWorker->ref = bundleGroupCallbackInfo_.ref;
     delete callBackInfo;
     work->data = static_cast<void*>(callbackReceiveDataWorker);
-    auto task = [work]() {
-        UvQueueWorkOnAppGroupChanged(work);
-    };
-    if (napi_status::napi_ok != napi_send_event(callbackReceiveDataWorker->env, task, napi_eprio_high)) {
+    auto task = [work]() { UvQueueWorkOnAppGroupChanged(work); };
+    if (napi_status::napi_ok != napi_send_event(callbackReceiveDataWorker->env, task, napi_eprio_high,
+        "deviceUsageAppGroupChanged")) {
         BUNDLE_ACTIVE_LOGE("failed to napi_send_event");
         delete callbackReceiveDataWorker;
         callbackReceiveDataWorker = nullptr;
