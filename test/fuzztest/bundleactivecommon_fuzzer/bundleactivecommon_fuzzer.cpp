@@ -70,8 +70,7 @@ namespace DeviceUsageStats {
         bool isBundleUserPeriod = false;
         bundleActiveService->IsBundleUsePeriod(isBundleUserPeriod, bundleName, userId);
         std::vector<BundleActivePackageStats> packageStats;
-        int32_t intervalType = fdp->ConsumeIntegral<int32_t>();
-        intervalType = intervalType % INTERVAL_TYPE_COUNT;
+        int32_t intervalType = fdp->ConsumeIntegral<int32_t>() % INTERVAL_TYPE_COUNT;
         int64_t beginTime = fdp->ConsumeIntegral<int64_t>();
         int64_t endTime = fdp->ConsumeIntegral<int64_t>();
         bundleActiveService->QueryBundleStatsInfoByInterval(packageStats, intervalType, beginTime, endTime, userId);
@@ -79,8 +78,7 @@ namespace DeviceUsageStats {
         bundleActiveService->QueryBundleEvents(bundleActiveEventVecRawData, beginTime, endTime, userId);
         std::vector<BundleActiveEventStats> eventStats;
         eventStats.clear();
-        int32_t newGroup = fdp->ConsumeIntegral<int32_t>();
-        newGroup = (newGroup % APP_TYPE_COUNT + 1) * APP_TYPE_INTERVAL;
+        int32_t newGroup = (fdp->ConsumeIntegral<int32_t>() % APP_TYPE_COUNT + 1) * APP_TYPE_INTERVAL;
         bundleActiveService->SetAppGroup(bundleName, newGroup, userId);
         packageStats.clear();
         bundleActiveService->QueryBundleStatsInfos(packageStats, intervalType, beginTime, endTime);
