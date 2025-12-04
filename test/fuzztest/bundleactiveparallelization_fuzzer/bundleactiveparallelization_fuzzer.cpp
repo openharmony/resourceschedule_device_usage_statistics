@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -69,8 +69,8 @@ namespace DeviceUsageStats {
         int64_t beginTime = provider->ConsumeIntegral<int64_t>();
         int64_t endTime = provider->ConsumeIntegral<int64_t>();
         int32_t userId = provider->ConsumeIntegral<int32_t>();
-        std::vector<BundleActivePackageStats> packageStat;
-        bundleActiveService->QueryBundleStatsInfoByInterval(packageStat,
+        std::vector<BundleActivePackageStats> packageStats;
+        bundleActiveService->QueryBundleStatsInfoByInterval(packageStats,
             intervalType, beginTime, endTime, userId);
         return true;
     }
@@ -81,7 +81,6 @@ namespace DeviceUsageStats {
         int64_t beginTime = provider->ConsumeIntegral<int64_t>();
         int64_t endTime = provider->ConsumeIntegral<int64_t>();
         int32_t userId = provider->ConsumeIntegral<int32_t>();
-        std::vector<BundleActivePackageStats> packageStat;
         bundleActiveService->QueryBundleEvents(bundleActiveEvent,
             beginTime, endTime, userId);
         return true;
@@ -89,23 +88,23 @@ namespace DeviceUsageStats {
 
     bool QueryBundleStatsInfosFuzzTest(FuzzedDataProvider *provider)
     {
+        std::vector<BundleActivePackageStats> packageStats;
         int32_t intervalType = provider->ConsumeIntegral<int32_t>();
         int64_t beginTime = provider->ConsumeIntegral<int64_t>();
         int64_t endTime = provider->ConsumeIntegral<int64_t>();
-        std::vector<BundleActivePackageStats> packageStat;
-        bundleActiveService->QueryBundleStatsInfos(packageStat,
+        bundleActiveService->QueryBundleStatsInfos(packageStats,
             intervalType, beginTime, endTime);
         return true;
     }
 
     bool QueryHighFrequencyUsageBundleInfosFuzzTest(FuzzedDataProvider *provider)
     {
-        std::vector<BundleActivePackageStats> packageStat;
+        std::vector<BundleActivePackageStats> packageStats;
         int32_t maxNum = provider->ConsumeIntegral<int32_t>();
         constexpr int32_t defaultNum = 20;
         maxNum = maxNum > 0 ? maxNum : defaultNum;
         int32_t userId = provider->ConsumeIntegral<int32_t>();
-        bundleActiveService->QueryHighFrequencyUsageBundleInfos(packageStat,
+        bundleActiveService->QueryHighFrequencyUsageBundleInfos(packageStats,
             userId, maxNum);
         return true;
     }
@@ -133,7 +132,7 @@ namespace DeviceUsageStats {
         int32_t newGroup = provider->ConsumeIntegral<int32_t>();
         std::string bundleName = provider->ConsumeRandomLengthString();
         int32_t userId = provider->ConsumeIntegral<int32_t>();
-        bundleActiveService->SetAppGroup(newGroup, bundleName, userId);
+        bundleActiveService->SetAppGroup(bundleName, newGroup, userId);
         return true;
     }
 
@@ -149,9 +148,9 @@ namespace DeviceUsageStats {
     class TestAppGroupChangeCallback : public AppGroupCallbackStub {
     public:
         ErrCode OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo) override;
-    }
+    };
 
-    ErrCode OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
+    ErrCode TestAppGroupChangeCallback::OnAppGroupChanged(const AppGroupCallbackInfo &appGroupCallbackInfo)
     {
         return ERR_OK;
     }
