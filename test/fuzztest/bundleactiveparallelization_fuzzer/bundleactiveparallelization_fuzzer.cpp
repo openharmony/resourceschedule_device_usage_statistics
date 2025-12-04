@@ -208,7 +208,6 @@ namespace DeviceUsageStats {
         int64_t latestUsedTime;
         std::string bundleName = provider->ConsumeRandomLengthString();
         int32_t userId = provider->ConsumeIntegral<int32_t>();
-        std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
         bundleActiveService->QueryBundleTodayLatestUsedTime(latestUsedTime,
             bundleName, userId);
         return true;
