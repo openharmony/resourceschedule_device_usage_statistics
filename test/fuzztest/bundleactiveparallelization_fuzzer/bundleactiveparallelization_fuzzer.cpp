@@ -52,7 +52,6 @@ namespace DeviceUsageStats {
     constexpr int32_t FUZZ_CODE_14 = 14;
     constexpr int32_t FUZZ_CODE_15 = 15;
     constexpr int32_t FUZZ_CODE_16 = 16;
-    constexpr int32_t OFFSET = 32;
 
     bool ReportEventFuzzTest(FuzzedDataProvider *provider)
     {
@@ -233,15 +232,6 @@ namespace DeviceUsageStats {
     }
 } // namespace DeviceUsageStats
 } // namespace OHOS
-
-extern "C" int LLVMFuzzerInitialize(int *argc, char ***argv)
-{
-    if (SetSelfTokenID(718336240ULL | (1ULL << OHOS::DeviceUsageStats::OFFSET)) < 0) {
-        return -1;
-    }
-    bundleActiveService->OnStart();
-    return 0;
-}
 
 extern "C" int FuzzIBundleActiveService(FuzzedDataProvider &provider)
 {
