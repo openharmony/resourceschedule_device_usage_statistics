@@ -74,8 +74,8 @@ namespace DeviceUsageStats {
         int64_t beginTime = fdp->ConsumeIntegral<int64_t>();
         int64_t endTime = fdp->ConsumeIntegral<int64_t>();
         bundleActiveService->QueryBundleStatsInfoByInterval(packageStats, intervalType, beginTime, endTime, userId);
-        BundleActiveEventVecRawData bundleActiveEventVecRawData;
-        bundleActiveService->QueryBundleEvents(bundleActiveEventVecRawData, beginTime, endTime, userId);
+        std::vector<BundleActiveEvent> events;
+        bundleActiveService->QueryBundleEvents(events, beginTime, endTime, userId);
         std::vector<BundleActiveEventStats> eventStats;
         eventStats.clear();
         int32_t newGroup = (fdp->ConsumeIntegral<int32_t>() % APP_TYPE_COUNT + 1) * APP_TYPE_INTERVAL;
@@ -124,9 +124,7 @@ namespace DeviceUsageStats {
         int64_t endTime = fdp->ConsumeIntegral<int64_t>();
         std::vector<BundleActiveEvent> events;
         std::vector<BundleActiveEventStats> eventStats;
-        BundleActiveEventVecRawData bundleActiveEventVecRawData;
-        bundleActiveService->QueryCurrentBundleEvents(bundleActiveEventVecRawData, beginTime, endTime);
-        bundleActiveEventVecRawData.Unmarshalling(events);
+        bundleActiveService->QueryCurrentBundleEvents(events, beginTime, endTime);
         eventStats.clear();
         int32_t appGroup = 0;
         bundleActiveService->QueryAppGroup(appGroup, bundleName, userId);
@@ -160,9 +158,7 @@ namespace DeviceUsageStats {
         int64_t endTime = fdp->ConsumeIntegral<int64_t>();
         bundleActiveServiceProxy->QueryBundleStatsInfos(bundleActivePackageStats, intervalType, beginTime, endTime);
         std::vector<BundleActiveEvent> bundleActiveEvent;
-        BundleActiveEventVecRawData bundleActiveEventVecRawData;
-        bundleActiveServiceProxy->QueryCurrentBundleEvents(bundleActiveEventVecRawData, beginTime, endTime);
-        bundleActiveEventVecRawData.Unmarshalling(bundleActiveEvent);
+        bundleActiveServiceProxy->QueryCurrentBundleEvents(bundleActiveEvent, beginTime, endTime);
         int32_t appGroup = fdp->ConsumeIntegral<int32_t>();
         std::string bundleName = fdp->ConsumeRandomLengthString();
         int32_t userId = fdp->ConsumeIntegral<int32_t>();

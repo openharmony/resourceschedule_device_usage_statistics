@@ -53,6 +53,7 @@ const int32_t MODULE_USAGE_PARAM = 4;
 const int32_t HIGH_FREQUENCY_HOUR_USAGE_PARAM = 3;
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
+const size_t QUERY_EVENT_MAX_RETURN_COUNT = 1000;
 const bool REGISTER_RESULT =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<BundleActiveService>::GetInstance().get());
 
@@ -418,7 +419,15 @@ int32_t BundleActiveService::GetNameAndIndexForUid(int32_t uid)
     return appIndex;
 }
 
-ErrCode BundleActiveService::QueryBundleEvents(BundleActiveEventVecRawData& bundleActiveEventVecRawData,
+void BundleActiveService::DeleteOutOfLimitEvents(std::vector<BundleActiveEvent>& bundleActiveEvents)
+{
+    if (bundleActiveEvents.size() > QUERY_EVENT_MAX_RETURN_COUNT) {
+        size_t eraseCount = bundleActiveEvents.size() - QUERY_EVENT_MAX_RETURN_COUNT;
+        bundleActiveEvents.erase(bundleActiveEvents.begin(), bundleActiveEvents.begin() + eraseCount);
+    }
+}
+
+ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
     const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
     ErrCode ret = ERR_OK;
@@ -434,13 +443,10 @@ ErrCode BundleActiveService::QueryBundleEvents(BundleActiveEventVecRawData& bund
     }
     BUNDLE_ACTIVE_LOGI("QueryBundleEvents userid is %{public}d", userId);
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
-    std::vector<BundleActiveEvent> bundleActiveEvents;
     if (ret == ERR_OK) {
         ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, "");
+        DeleteOutOfLimitEvents(bundleActiveEvents);
         BUNDLE_ACTIVE_LOGI("QueryBundleEvents result is %{public}zu", bundleActiveEvents.size());
-    }
-    if (ret == ERR_OK) {
-        ret = bundleActiveEventVecRawData.Marshalling(bundleActiveEvents);
     }
     return ret;
 }
@@ -605,7 +611,7 @@ ErrCode BundleActiveService::QueryHighFrequencyUsageBundleInfos(std::vector<Bund
     return ret;
 }
 
-ErrCode BundleActiveService::QueryCurrentBundleEvents(BundleActiveEventVecRawData& bundleActiveEventVecRawData,
+ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
     const int64_t beginTime, const int64_t endTime)
 {
     // get uid
@@ -614,7 +620,6 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(BundleActiveEventVecRawDat
     // get userid
     int32_t userId = -1;
     ErrCode ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
-    std::vector<BundleActiveEvent> bundleActiveEvents;
     if (ret == ERR_OK && userId != -1) {
         std::string bundleName = "";
         BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
@@ -627,9 +632,7 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(BundleActiveEventVecRawDat
             BUNDLE_ACTIVE_LOGI("QueryCurrentBundleEvents buindle name is %{public}s",
                 bundleName.c_str());
             ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, bundleName);
-            if (ret == ERR_OK) {
-                ret = bundleActiveEventVecRawData.Marshalling(bundleActiveEvents);
-            }
+            DeleteOutOfLimitEvents(bundleActiveEvents);
         }
 // LCOV_EXCL_STOP
     }

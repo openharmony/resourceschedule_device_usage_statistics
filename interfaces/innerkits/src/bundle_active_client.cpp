@@ -16,7 +16,6 @@
 #include "ffrt.h"
 #include "bundle_active_log.h"
 #include "bundle_active_client.h"
-#include "bundle_active_event_vec_raw_data.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -137,11 +136,7 @@ ErrCode BundleActiveClient::QueryBundleEvents(std::vector<BundleActiveEvent>& bu
     if (ret != ERR_OK) {
         return ret;
     }
-    BundleActiveEventVecRawData bundleActiveEventVecRawData;
-    auto err = bundleActiveProxy_->QueryBundleEvents(bundleActiveEventVecRawData, beginTime, endTime, userId);
-    if (err == ERR_OK) {
-        err = bundleActiveEventVecRawData.Unmarshalling(bundleActiveEvents);
-    }
+    auto err = bundleActiveProxy_->QueryBundleEvents(bundleActiveEvents, beginTime, endTime, userId);
     BUNDLE_ACTIVE_LOGI("QueryBundleEvents bundleActiveEvents is %{public}zu", bundleActiveEvents.size());
     return err;
 }
@@ -186,12 +181,7 @@ ErrCode BundleActiveClient::QueryCurrentBundleEvents(std::vector<BundleActiveEve
     if (ret != ERR_OK) {
         return ret;
     }
-    BundleActiveEventVecRawData bundleActiveEventVecRawData;
-    ret = bundleActiveProxy_->QueryCurrentBundleEvents(bundleActiveEventVecRawData, beginTime, endTime);
-    if (ret == ERR_OK) {
-        ret = bundleActiveEventVecRawData.Unmarshalling(bundleActiveEvents);
-    }
-    return ret;
+    return bundleActiveProxy_->QueryCurrentBundleEvents(bundleActiveEvents, beginTime, endTime);
 }
 
 ErrCode BundleActiveClient::QueryAppGroup(int32_t& appGroup, const std::string& bundleName, const int32_t userId)
