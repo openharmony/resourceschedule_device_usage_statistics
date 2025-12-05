@@ -35,6 +35,24 @@ namespace DeviceUsageStats {
     static std::string g_defaultFormName = "defaultformname";
     static int32_t DEFAULT_DIMENSION = 4;
     static int64_t DEFAULT_FORMID = 1;
+    constexpr int32_t FUZZ_CODE_0 = 0;
+    constexpr int32_t FUZZ_CODE_1 = 1;
+    constexpr int32_t FUZZ_CODE_2 = 2;
+    constexpr int32_t FUZZ_CODE_3 = 3;
+    constexpr int32_t FUZZ_CODE_4 = 4;
+    constexpr int32_t FUZZ_CODE_5 = 5;
+    constexpr int32_t FUZZ_CODE_6 = 6;
+    constexpr int32_t FUZZ_CODE_7 = 7;
+    constexpr int32_t FUZZ_CODE_8 = 8;
+    constexpr int32_t FUZZ_CODE_9 = 9;
+    constexpr int32_t FUZZ_CODE_10 = 10;
+    constexpr int32_t FUZZ_CODE_11 = 11;
+    constexpr int32_t FUZZ_CODE_12 = 12;
+    constexpr int32_t FUZZ_CODE_13 = 13;
+    constexpr int32_t FUZZ_CODE_14 = 14;
+    constexpr int32_t FUZZ_CODE_15 = 15;
+    constexpr int32_t FUZZ_CODE_16 = 16;
+    constexpr int32_t OFFSET = 32;
 
     bool ReportEventFuzzTest(FuzzedDataProvider *provider)
     {
@@ -155,7 +173,8 @@ namespace DeviceUsageStats {
         return ERR_OK;
     }
 
-    sptr<IAppGroupCallback> GetMockAppGroupChangeCallback() {
+    sptr<IAppGroupCallback> GetMockAppGroupChangeCallback()
+    {
         sptr<TestAppGroupChangeCallback> impl =
             sptr<TestAppGroupChangeCallback>::MakeSptr();
         return impl;
@@ -217,7 +236,7 @@ namespace DeviceUsageStats {
 
 extern "C" int LLVMFuzzerInitialize(int *argc, char ***argv)
 {
-    if (SetSelfTokenID(718336240ull | (1ull << 32)) < 0) {
+    if (SetSelfTokenID(718336240ULL | (1ULL << OFFSET)) < 0) {
         return -1;
     }
     bundleActiveService->OnStart();
@@ -226,76 +245,73 @@ extern "C" int LLVMFuzzerInitialize(int *argc, char ***argv)
 
 extern "C" int FuzzIBundleActiveService(FuzzedDataProvider &provider)
 {
-    static const int fuzzcodes[] = {
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
-    };
-    int code = provider.PickValueInArray(fuzzcodes);
+    int code = provider.provider.ConsumeIntegralInRange(FUZZ_CODE_0, FUZZ_CODE_16);
     switch (code) {
-        case 0: {
+        case FUZZ_CODE_0: {
             OHOS::DeviceUsageStats::ReportEventFuzzTest(&provider);
             break;
         }
-        case 1: {
+        case FUZZ_CODE_1: {
             OHOS::DeviceUsageStats::IsBundleIdleFuzzTest(&provider);
             break;
         }
-        case 2: {
+        case FUZZ_CODE_2: {
             OHOS::DeviceUsageStats::IsBundleUsePeriodFuzzTest(&provider);
             break;
         }
-        case 3: {
+        case FUZZ_CODE_3: {
             OHOS::DeviceUsageStats::QueryBundleStatsInfoByIntervalFuzzTest(&provider);
             break;
         }
-        case 4: {
+        case FUZZ_CODE_4: {
             OHOS::DeviceUsageStats::QueryBundleEventsFuzzTest(&provider);
             break;
         }
-        case 5: {
+        case FUZZ_CODE_5: {
             OHOS::DeviceUsageStats::QueryBundleStatsInfosFuzzTest(&provider);
             break;
         }
-        case 6: {
+        case FUZZ_CODE_6: {
             OHOS::DeviceUsageStats::QueryHighFrequencyUsageBundleInfosFuzzTest(&provider);
             break;
         }
-        case 7: {
+        case FUZZ_CODE_7: {
             OHOS::DeviceUsageStats::QueryCurrentBundleEventsFuzzTest(&provider);
             break;
         }
-        case 8: {
+        case FUZZ_CODE_8: {
             OHOS::DeviceUsageStats::QueryAppGroupFuzzTest(&provider);
             break;
         }
-        case 9: {
+        case FUZZ_CODE_9: {
             OHOS::DeviceUsageStats::SetAppGroupFuzzTest(&provider);
             break;
         }
-        case 10: {
+        case FUZZ_CODE_10: {
             OHOS::DeviceUsageStats::QueryModuleUsageRecordsFuzzTest(&provider);
             break;
         }
-        case 11: {
+        case FUZZ_CODE_11: {
             OHOS::DeviceUsageStats::RegisterAppGroupCallBackFuzzTest(&provider);
             break;
         }
-        case 12: {
+        case FUZZ_CODE_12: {
             OHOS::DeviceUsageStats::UnRegisterAppGroupCallBackFuzzTest(&provider);
             break;
         }
-        case 13: {
+        case FUZZ_CODE_13: {
             OHOS::DeviceUsageStats::QueryDeviceEventStatsFuzzTest(&provider);
             break;
         }
-        case 14: {
+        case FUZZ_CODE_14: {
             OHOS::DeviceUsageStats::QueryNotificationEventStatsFuzzTest(&provider);
             break;
         }
-        case 15: {
+        case FUZZ_CODE_15: {
             OHOS::DeviceUsageStats::QueryHighFrequencyPeriodBundleFuzzTest(&provider);
             break;
         }
-        case 16: {
+        case FUZZ_CODE_16: {
             OHOS::DeviceUsageStats::QueryBundleTodayLatestUsedTimeFuzzTest(&provider);
             break;
         }
