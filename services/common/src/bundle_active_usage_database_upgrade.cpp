@@ -136,6 +136,10 @@ void BundleActiveUsageDatabase::UpdateOldDataUid(const shared_ptr<NativeRdb::Rdb
     string querySql = "select * from " + tableName;
     shared_ptr<NativeRdb::ResultSet> bundleActiveResult;
     bundleActiveResult = store->QueryByStep(querySql);
+    if (!bundleActiveResult) {
+        BUNDLE_ACTIVE_LOGE("query by step failed");
+        return;
+    }
     int32_t tableRowNumber = 0;
     bundleActiveResult->GetRowCount(tableRowNumber);
     string bundleName;
@@ -176,6 +180,10 @@ void BundleActiveUsageDatabase::UpdateFirstUseTime(const shared_ptr<NativeRdb::R
     string querySql = "select * from " + tableName;
     shared_ptr<NativeRdb::ResultSet> bundleActiveResult;
     bundleActiveResult = store->QueryByStep(querySql);
+    if (!bundleActiveResult) {
+        BUNDLE_ACTIVE_LOGE("query by step failed");
+        return;
+    }
     int32_t tableRowNumber = 0;
     bundleActiveResult->GetRowCount(tableRowNumber);
     int32_t uid;
