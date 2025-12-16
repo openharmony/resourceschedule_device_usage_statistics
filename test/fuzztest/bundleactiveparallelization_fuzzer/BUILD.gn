@@ -17,7 +17,7 @@ import("//build/test.gni")
 import("../../../device_usage_statistics.gni")
 
 ##############################fuzztest##########################################
-module_output_path = "device_usage_statistics/device_usage_statistics"
+module_output_path = "device_usage_statistics/device_usage_statistics/concurrent"
 
 config("module_private_config") {
   include_dirs = [
