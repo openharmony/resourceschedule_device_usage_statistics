@@ -106,10 +106,11 @@ namespace DeviceUsageStats {
         int32_t userId = GetData<int32_t>();
         std::string inputBundleName = GetStringFromData(size);
         sptr<IAppGroupCallback> appGroupCallback = nullptr;
-        int32_t intervalType = GetData<int32_t>();
-        intervalType = intervalType % INTERVAL_TYPE_COUNT;
+        int32_t intervalType = GetData<int32_t>() % INTERVAL_TYPE_COUNT;
         int64_t beginTime = GetData<int64_t>();
         int64_t endTime = GetData<int64_t>();
+        int32_t appGroup = GetData<int32_t>();
+        int32_t maxNum = GetData<int32_t>();
 
         DelayedSingleton<BundleActiveClient>::GetInstance()->GetBundleActiveProxy();
         DelayedSingleton<BundleActiveClient>::GetInstance()->RegisterAppGroupCallBack(appGroupCallback);
@@ -143,6 +144,14 @@ namespace DeviceUsageStats {
         int64_t latestUsedTime;
         DelayedSingleton<BundleActiveClient>::GetInstance()->QueryBundleTodayLatestUsedTime(latestUsedTime,
             bundleName, userId);
+        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryBundleStatsInfos(packageStats,
+            intervalType, beginTime, endTime);
+        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryHighFrequencyUsageBundleInfos(packageStats, userId);
+        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryCurrentBundleEvents(bundleActiveEvent,
+            beginTime, endTime);
+        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryAppGroup(appGroup, bundleName);
+        std::vector<BundleActiveModuleRecord> results;
+        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryModuleUsageRecords(maxNum, results);
         return true;
     }
 

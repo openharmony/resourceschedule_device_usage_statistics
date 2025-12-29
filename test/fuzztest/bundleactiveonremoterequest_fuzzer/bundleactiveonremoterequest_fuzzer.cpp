@@ -53,7 +53,6 @@ namespace DeviceUsageStats {
             DelayedSingleton<BundleActiveService>::GetInstance()->InitService();
             isInited = true;
         }
-        DelayedSingleton<BundleActiveService>::GetInstance()->OnRemoteRequest(code % MAX_CODE, datas, reply, option);
         return true;
     }
 } // namespace DeviceUsageStats
