@@ -143,6 +143,7 @@ namespace DeviceUsageStats {
         int64_t latestUsedTime;
         DelayedSingleton<BundleActiveClient>::GetInstance()->QueryBundleTodayLatestUsedTime(latestUsedTime,
             bundleName, userId);
+        // 增加用例调用
         return true;
     }
 
