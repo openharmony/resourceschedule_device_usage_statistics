@@ -106,8 +106,7 @@ namespace DeviceUsageStats {
         int32_t userId = GetData<int32_t>();
         std::string inputBundleName = GetStringFromData(size);
         sptr<IAppGroupCallback> appGroupCallback = nullptr;
-        int32_t intervalType = GetData<int32_t>();
-        intervalType = intervalType % INTERVAL_TYPE_COUNT;
+        int32_t intervalType = GetData<int32_t>() % INTERVAL_TYPE_COUNT;
         int64_t beginTime = GetData<int64_t>();
         int64_t endTime = GetData<int64_t>();
         int32_t appGroup = GetData<int32_t>();
@@ -147,8 +146,7 @@ namespace DeviceUsageStats {
             bundleName, userId);
         DelayedSingleton<BundleActiveClient>::GetInstance()->QueryBundleStatsInfos(packageStats,
             intervalType, beginTime, endTime);
-        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryHighFrequencyUsageBundleInfos(packageStats,
-            userId);
+        DelayedSingleton<BundleActiveClient>::GetInstance()->QueryHighFrequencyUsageBundleInfos(packageStats, userId);
         DelayedSingleton<BundleActiveClient>::GetInstance()->QueryCurrentBundleEvents(bundleActiveEvent,
             beginTime, endTime);
         DelayedSingleton<BundleActiveClient>::GetInstance()->QueryAppGroup(appGroup, bundleName);
