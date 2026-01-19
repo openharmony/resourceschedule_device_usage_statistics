@@ -146,7 +146,8 @@ inline const std::string BUNDLE_ACTIVE_DB_FIRST_USE_TIME = "firstUseTime";
 inline const std::string REFRESH_DATABASE_RUNNER_NAME = "RefreshDatabase";
 inline const std::string BUNDLE_ACTIVE_DATABASE_DIR = "/data/service/el1/public/bundle_usage/";
 inline const std::string BUNDLE_ACTIVE_VERSION_FILE = "/version";
-inline const std::string BUNDLE_ACTIVE_VERSION_DIRECTORY_PATH = BUNDLE_ACTIVE_DATABASE_DIR + BUNDLE_ACTIVE_VERSION_FILE;
+inline const std::string BUNDLE_ACTIVE_VERSION_DIRECTORY_PATH =
+    BUNDLE_ACTIVE_DATABASE_DIR + BUNDLE_ACTIVE_VERSION_FILE;
 inline const std::string DATABASE_FILE_TABLE_NAME = "table";
 inline const std::string SQLITE_MASTER_NAME = "name";
 inline const std::string COMMON_EVENT_UNLOCK_SCREEN = "common.event.UNLOCK_SCREEN";
@@ -157,7 +158,7 @@ inline const std::string OPERATION_SYSTEM_LOCK = "SYSTEM_LOCK";
 inline const std::string OPERATION_SYSTEM_UNLOCK = "SYSTEM_UNLOCK";
 inline const std::string OPERATION_SYSTEM_SLEEP = "SYSTEM_SLEEP";
 inline const std::string OPERATION_SYSTEM_WAKEUP = "SYSTEM_WAKEUP";
-inline }  // namespace DeviceUsageStats
+}  // namespace DeviceUsageStats
 }  // namespace OHOS
 #endif  // BUNDLE_ACTIVE_CONSTANT_H
 
