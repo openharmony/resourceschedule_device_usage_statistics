@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace DeviceUsageStats {
 namespace DeviceUsageStatsGroupMap {
-    std::map<int32_t, int64_t> groupIntervalMap_ = {
+    inline std::map<int32_t, int64_t> groupIntervalMap_ = {
         {DeviceUsageStatsGroupConst::ACTIVE_GROUP_FORCED_SET, 0},
         {DeviceUsageStatsGroupConst::ACTIVE_GROUP_ALIVE, DeviceUsageStatsGroupConst::TWO_HOUR},
         {DeviceUsageStatsGroupConst::ACTIVE_GROUP_DAILY, 2 * DeviceUsageStatsGroupConst::TWO_HOUR},
