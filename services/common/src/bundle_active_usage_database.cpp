@@ -43,6 +43,7 @@ using namespace std;
 namespace {
     const int32_t MAX_FILES_EVERY_INTERVAL_TYPE[SORTED_TABLE_ARRAY_NUMBER] = {30, 30, 12, 10};
     const int32_t MAIN_APP_INDEX = 0;
+    const int64_t MIN_BEGIN_TIME = 0;
     static constexpr char RSS[] = "RSS";
 }
 BundleActiveUsageDatabase::BundleActiveUsageDatabase()
@@ -221,7 +222,6 @@ shared_ptr<NativeRdb::ResultSet> WEAK_FUNC BundleActiveUsageDatabase::QueryStats
     } else {
         result = rdbStore->QueryByStep(sql, selectionArgs);
     }
-    result->Close();
     return result;
 }
 
@@ -1306,19 +1306,19 @@ void BundleActiveUsageDatabase::UpdateEventData(int32_t databaseType, BundleActi
     }
 }
 
-void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, BundleActivePeriodStats &stats)
+void BundleActiveUsageDatabase::BundleActiveHiSysEventWrite(int32_t databaseType, BundleActivePeriodStats &stats)
 {
-    if (databaseType == 0) {
-        int32_t bundleStatsSize = 0;
+    if (databaseType == DAILY_DATABASE_INDEX) {
+        int32_t noUpdateBundleSize = 0;
         vector<BundleActivePackageStats> bundleActivePackageStats =
-            QueryDatabaseUsageStats(databaseType, 0, MAX_END_TIME, stats.userId_, "");
+            QueryDatabaseUsageStats(databaseType, MIN_BEGIN_TIME, MAX_END_TIME, stats.userId_, "");
         for (uint32_t i = 0; i < bundleActivePackageStats.size(); i++) {
             std::map<std::string, std::shared_ptr<BundleActivePackageStats>>::iterator iter =
                 stats.bundleStats_.find(bundleActivePackageStats[i].bundleName_ + to_string(
                     bundleActivePackageStats[i].uid_));
             if (iter != stats.bundleStats_.end() &&
                 iter->second->lastTimeUsed_ == bundleActivePackageStats[i].lastTimeUsed_) {
-                    bundleStatsSize++;
+                    noUpdateBundleSize++;
             }
         }
         std::shared_ptr<BundleActiveCore> bundleActiveCore = std::make_shared<BundleActiveCore>();
@@ -1329,10 +1329,15 @@ void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, Bund
         HiSysEventWrite(RSS,
             "UPDATE_BUNDLE_USAGE_SCENE", HiviewDFX::HiSysEvent::EventType::STATISTIC,
             "UPDATE_BUNDLE_USAGE_EVENT_SIZE", stats.events_.Size(),
-            "UPDATE_BUNDLE_USAGE_STATS_SIZE", stats.bundleStats_.size() - bundleStatsSize,
+            "UPDATE_BUNDLE_USAGE_STATS_SIZE", stats.bundleStats_.size() - noUpdateBundleSize,
             "UPDATE_BUNDLE_USAGE_USERID", stats.userId_,
             "UPDATE_BUNDLE_USAGE_TIME", BundleActiveUtil::GetSystemTimeMs());
     }
+}
+
+void BundleActiveUsageDatabase::UpdateBundleUsageData(int32_t databaseType, BundleActivePeriodStats &stats)
+{
+    BundleActiveHiSysEventWrite(databaseType, stats);
     lock_guard<ffrt::mutex> lock(databaseMutex_);
     if (databaseType < 0 || databaseType >= EVENT_DATABASE_INDEX) {
         BUNDLE_ACTIVE_LOGE("databaseType is invalid : %{public}d", databaseType);
@@ -1445,7 +1450,6 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
         auto bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
             queryCondition);
         if (bundleActiveResult == nullptr) {
-            bundleActiveResult->Close();
             return databaseUsageStats;
         }
         int32_t tableRowNumber;

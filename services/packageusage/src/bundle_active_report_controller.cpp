@@ -46,10 +46,10 @@ void BundleActiveReportController::Init(const std::shared_ptr<BundleActiveCore>&
 
 void BundleActiveReportController::DeInit()
 {
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     if (!isInit_) {
         return;
     }
-    std::lock_guard<ffrt::mutex> lock(mutex_);
     isInit_ = false;
     activeReportHandler_->DeInit();
 }

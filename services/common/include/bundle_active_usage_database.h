@@ -126,11 +126,12 @@ private:
         const int64_t endTime, const int32_t databaseType,
         const int32_t index, const int32_t startIndex, const int32_t endIndex, const int32_t userId,
         std::vector<std::string> &queryCondition, std::string &queryPackageSql);
+    bool GetDbIndex(const int64_t beginTime, const int64_t endTime,
+        const int32_t databaseType, int32_t &startIndex, int32_t &endIndex);
+    void BundleActiveHiSysEventWrite(int32_t databaseType, BundleActivePeriodStats &stats);
     void GetCurrentBundleStats(int64_t currentPackageTime,
         std::shared_ptr<NativeRdb::ResultSet>& bundleActiveResult,
         std::shared_ptr<BundleActivePeriodStats>& intervalStats);
-    bool GetDbIndex(const int64_t beginTime, const int64_t endTime,
-        const int32_t databaseType, int32_t &startIndex, int32_t &endIndex);
 
 private:
     int32_t GetOldDbVersion();
@@ -147,11 +148,11 @@ private:
     void UpdateFirstUseTime(const std::shared_ptr<NativeRdb::RdbStore> store,
         const std::string& tableName, const int32_t userId);
     std::map<std::string, int64_t> GetAllBundleFirstUseTime(const int32_t userId);
+    void CheckDatabaseFileAndTable();
     std::vector<std::string> databaseFiles_;
     std::vector<std::vector<int64_t>> sortedTableArray_;
     std::map<std::string, std::shared_ptr<NativeRdb::RdbStore>> bundleActiveRdbStoreCache_;
     std::shared_ptr<BundleActiveCalendar> calendar_;
-    void CheckDatabaseFileAndTable();
     std::string eventTableName_;
     std::string durationTableName_;
     std::string bundleHistoryTableName_;

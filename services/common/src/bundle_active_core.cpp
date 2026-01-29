@@ -30,7 +30,6 @@
 #include "bundle_active_high_frequency_period.h"
 #include "bundle_active_report_controller.h"
 #include "bundle_active_event_reporter.h"
-#include "os_account_constants.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -563,7 +562,7 @@ void BundleActiveCore::OnUserRemoved(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGD("OnUserRemoved called");
     std::lock_guard<ffrt::mutex> lock(mutex_);
-    if (MIN_USER_ID > userId || userId > AccountSA::Constants::MAX_USER_ID) {
+    if (MIN_USER_ID > userId || userId > INT32_MAX) {
         return;
     }
     auto it = userStatServices_.find(userId);
