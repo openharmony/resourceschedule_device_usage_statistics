@@ -411,7 +411,6 @@ ohos_static_library("usagestatsinner_static") {
     "c_utils:utils",
     "ffrt:libffrt",
     "hilog:libhilog",
-    "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "ipc:ipc_single",
     "samgr:samgr_proxy",

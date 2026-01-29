@@ -83,7 +83,7 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfos(const AppExecFwk::Applicat
     if (bundleMgr_ == nullptr || !bundleMgr_->GetApplicationInfos(flag, userId, appInfos)) {
         return false;
     }
-    for (auto appInfo : appInfos) {
+    for (const auto& appInfo : appInfos) {
         bundleActiveApplicationInfos.emplace_back(appInfo.bundleName, appInfo.uid, appInfo.isLauncherApp);
     }
     return true;
