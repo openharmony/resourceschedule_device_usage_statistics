@@ -1309,7 +1309,7 @@ void BundleActiveUsageDatabase::UpdateEventData(int32_t databaseType, BundleActi
 void BundleActiveUsageDatabase::BundleActiveHiSysEventWrite(int32_t databaseType, BundleActivePeriodStats &stats)
 {
     if (databaseType == DAILY_DATABASE_INDEX) {
-        int32_t noUpdateBundleSize = 0;
+        int32_t notUpdateBundleSize = 0;
         vector<BundleActivePackageStats> bundleActivePackageStats =
             QueryDatabaseUsageStats(databaseType, MIN_BEGIN_TIME, MAX_END_TIME, stats.userId_, "");
         for (uint32_t i = 0; i < bundleActivePackageStats.size(); i++) {
@@ -1318,18 +1318,13 @@ void BundleActiveUsageDatabase::BundleActiveHiSysEventWrite(int32_t databaseType
                     bundleActivePackageStats[i].uid_));
             if (iter != stats.bundleStats_.end() &&
                 iter->second->lastTimeUsed_ == bundleActivePackageStats[i].lastTimeUsed_) {
-                    noUpdateBundleSize++;
+                    notUpdateBundleSize++;
             }
-        }
-        std::shared_ptr<BundleActiveCore> bundleActiveCore = std::make_shared<BundleActiveCore>();
-        if (bundleActiveCore == nullptr) {
-            BUNDLE_ACTIVE_LOGE("UpdateBundleUsageData bundleActiveCore is nullptr");
-            return;
         }
         HiSysEventWrite(RSS,
             "UPDATE_BUNDLE_USAGE_SCENE", HiviewDFX::HiSysEvent::EventType::STATISTIC,
             "UPDATE_BUNDLE_USAGE_EVENT_SIZE", stats.events_.Size(),
-            "UPDATE_BUNDLE_USAGE_STATS_SIZE", stats.bundleStats_.size() - noUpdateBundleSize,
+            "UPDATE_BUNDLE_USAGE_STATS_SIZE", stats.bundleStats_.size() - notUpdateBundleSize,
             "UPDATE_BUNDLE_USAGE_USERID", stats.userId_,
             "UPDATE_BUNDLE_USAGE_TIME", BundleActiveUtil::GetSystemTimeMs());
     }

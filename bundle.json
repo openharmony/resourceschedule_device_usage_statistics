@@ -39,6 +39,7 @@
         "napi",
         "background_task_mgr",
         "power_manager",
+        "selinux_adapter",
         "time_service",
         "init",
         "ffrt",
