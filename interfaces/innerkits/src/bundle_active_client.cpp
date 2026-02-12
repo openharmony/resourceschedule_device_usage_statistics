@@ -287,9 +287,11 @@ void BundleActiveClient::BundleActiveClientDeathRecipient::OnRemoteDied(const wp
 
 void BundleActiveClient::BundleActiveClientDeathRecipient::OnServiceDiedInner()
 {
-    std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
+    std::unique_lock<ffrt::recursive_mutex> lock(mutex_);
     while (BundleActiveClient::GetInstance().GetBundleActiveProxy() != ERR_OK) {
+        lock.unlock();
         sleep(SLEEP_TIME_SECOND);
+        lock.lock();
     }
     if (observer_) {
         BundleActiveClient::GetInstance().RegisterAppGroupCallBack(observer_);
