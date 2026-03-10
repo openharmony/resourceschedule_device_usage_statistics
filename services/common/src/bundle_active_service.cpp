@@ -459,20 +459,16 @@ ErrCode BundleActiveService::QueryHighFrequencyPeriodBundle(
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
-// LCOV_EXCL_START
         if (ret != ERR_OK || userId == -1) {
             return ret;
         }
-// LCOV_EXCL_STOP
     }
     BUNDLE_ACTIVE_LOGI("QueryHighFrequencyPeriodBundle userid is %{public}d", userId);
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
-// LCOV_EXCL_START
     if (ret == ERR_OK) {
         ret = bundleActiveCore_->QueryHighFrequencyPeriodBundle(appFreqHours, userId);
         BUNDLE_ACTIVE_LOGI("QueryHighFrequencyPeriodBundle result is %{public}zu", appFreqHours.size());
     }
-// LCOV_EXCL_STOP
     return ret;
 }
 
@@ -484,19 +480,15 @@ ErrCode BundleActiveService::QueryBundleTodayLatestUsedTime(
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
     if (userId == -1) {
         ret = BundleActiveAccountHelper::GetUserId(callingUid, userId);
-// LCOV_EXCL_START
         if (ret != ERR_OK || userId == -1) {
             return ret;
         }
-// LCOV_EXCL_STOP
     }
     BUNDLE_ACTIVE_LOGI("QueryBundleTodayLatestUsedTime userid is %{public}d", userId);
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
-// LCOV_EXCL_START
     if (ret != ERR_OK) {
         return ret;
     }
-// LCOV_EXCL_STOP
     int64_t currentSystemTime = BundleActiveUtil::GetSystemTimeMs();
     int64_t startTime = BundleActiveUtil::GetIntervalTypeStartTime(currentSystemTime, BundleActiveUtil::PERIOD_DAILY);
     std::vector<BundleActivePackageStats> packageStats;
@@ -1089,7 +1081,7 @@ std::vector<BundleActivePackageStats> BundleActiveService::MergePackageStats(
     }
     return tempPackageStats;
 }
-// LCOV_EXCL_STOP
+
 void BundleActiveService::MergeSamePackageStats(BundleActivePackageStats& left, const BundleActivePackageStats& right)
 {
     if (left.bundleName_ != right.bundleName_) {
