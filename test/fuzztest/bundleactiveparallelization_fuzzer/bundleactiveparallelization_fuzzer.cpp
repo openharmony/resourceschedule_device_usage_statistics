@@ -179,20 +179,6 @@ namespace DeviceUsageStats {
         return impl;
     }
 
-    bool RegisterAppGroupCallBackFuzzTest(FuzzedDataProvider *provider)
-    {
-        sptr<IAppGroupCallback> appGroupCallback = GetMockAppGroupChangeCallback();
-        bundleActiveService->RegisterAppGroupCallBack(appGroupCallback);
-        return true;
-    }
-
-    bool UnRegisterAppGroupCallBackFuzzTest(FuzzedDataProvider *provider)
-    {
-        sptr<IAppGroupCallback> appGroupCallback = GetMockAppGroupChangeCallback();
-        bundleActiveService->UnRegisterAppGroupCallBack(appGroupCallback);
-        return true;
-    }
-
     bool QueryDeviceEventStatsFuzzTest(FuzzedDataProvider *provider)
     {
         std::vector<BundleActiveEventStats> eventStats;
@@ -280,14 +266,6 @@ extern "C" int FuzzIBundleActiveService(FuzzedDataProvider &provider)
         }
         case OHOS::DeviceUsageStats::FUZZ_CODE_10: {
             OHOS::DeviceUsageStats::QueryModuleUsageRecordsFuzzTest(&provider);
-            break;
-        }
-        case OHOS::DeviceUsageStats::FUZZ_CODE_11: {
-            OHOS::DeviceUsageStats::RegisterAppGroupCallBackFuzzTest(&provider);
-            break;
-        }
-        case OHOS::DeviceUsageStats::FUZZ_CODE_12: {
-            OHOS::DeviceUsageStats::UnRegisterAppGroupCallBackFuzzTest(&provider);
             break;
         }
         case OHOS::DeviceUsageStats::FUZZ_CODE_13: {
