@@ -1442,7 +1442,6 @@ vector<BundleActivePackageStats> BundleActiveUsageDatabase::QueryDatabaseUsageSt
         auto bundleActiveResult = QueryStatsInfoByStep(databaseType, queryPackageSql,
             queryCondition);
         if (bundleActiveResult == nullptr) {
-            bundleActiveResult->Close();
             return databaseUsageStats;
         }
         int32_t tableRowNumber;
