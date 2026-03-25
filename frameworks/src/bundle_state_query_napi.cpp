@@ -330,11 +330,19 @@ napi_value ParseQueryCurrentBundleEventsParameters(const napi_env &env, const na
     if (argc == STATES_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
-        if (valuetype != napi_function) {
-            params.errorCode = ERR_CALL_BACK_TYPE;
-            return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
+        if (valuetype = napi_function) {
+            napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
+        } else if (BundleStateCommon::GetInt64NumberValue(env, argv[STATES_PARAMS], params.maxNum) == nullptr) {
+            BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, SECOND_ARG type is invalid.");
+            params.errorCode = ERR_PARAMETERS_TYPE;
+            return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_TYPE, "");
         }
-        napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
+        if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
+            BUNDLE_ACTIVE_LOGE("parse failed, maxNum is larger than 1000 or less/equal than 0");
+            params.errorCode = ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
+            return BundleStateCommon::HandleParamErr(env, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND, "");
+        }
+        
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);
@@ -346,7 +354,7 @@ void QueryCurrentBundleEventsAsync(napi_env env, void *data)
     if (asyncCallbackInfo != nullptr) {
         asyncCallbackInfo->errorCode =
             BundleActiveClient::GetInstance().QueryCurrentBundleEvents(asyncCallbackInfo->BundleActiveState,
-                asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime);
+                asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime, asyncCallbackInfo->maxNum);
     } else {
         BUNDLE_ACTIVE_LOGE("QueryCurrentBundleEvents, asyncCallbackInfo == nullptr");
     }
@@ -381,6 +389,9 @@ napi_value QueryCurrentBundleEvents(napi_env env, napi_callback_info info)
     callbackPtr->endTime = params.endTime;
     BUNDLE_ACTIVE_LOGD("QueryCurrentBundleEvents callbackPtr->endTime: %{public}lld",
         (long long)callbackPtr->endTime);
+    callbackPtr->maxNum = params.maxNum;
+    BUNDLE_ACTIVE_LOGD("QueryCurrentBundleEvents callbackPtr->maxNum: %{public}d",
+        callbackPtr->maxNum);
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
 
     napi_value resourceName = nullptr;
@@ -403,7 +414,7 @@ void QueryBundleEventsAsync(napi_env env, void *data)
     if (asyncCallbackInfo != nullptr) {
         asyncCallbackInfo->errorCode =
             BundleActiveClient::GetInstance().QueryBundleEvents(asyncCallbackInfo->BundleActiveState,
-                asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime);
+                asyncCallbackInfo->beginTime, asyncCallbackInfo->endTime, -1, asyncCallbackInfo->maxNum);
     } else {
         BUNDLE_ACTIVE_LOGE("QueryBundleEvents, asyncCallbackInfo == nullptr");
     }
@@ -438,6 +449,9 @@ napi_value QueryBundleEvents(napi_env env, napi_callback_info info)
     callbackPtr->endTime = params.endTime;
     BUNDLE_ACTIVE_LOGD("QueryBundleEvents callbackPtr->endTime: %{public}lld",
         (long long)callbackPtr->endTime);
+    callbackPtr->maxNum = params.maxNum;
+    BUNDLE_ACTIVE_LOGD("QueryBundleEvents callbackPtr->maxNum: %{public}d",
+        callbackPtr->maxNum);
     BundleStateCommon::SettingAsyncWorkData(env, params.callback, *asyncCallbackInfo, promise);
 
     napi_value resourceName = nullptr;

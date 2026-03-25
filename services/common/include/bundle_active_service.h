@@ -106,7 +106,7 @@ public:
      * @return errCode.
      */
     ErrCode QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents, const int64_t beginTime,
-        const int64_t endTime, int32_t userId) override;
+        const int64_t endTime, int32_t userId, const int32_t maxNum = 1000) override;
 
     /**
      * @brief SetAppGroup, set specific bundle of specific user to a priority group.
@@ -139,7 +139,7 @@ public:
      * @return errCode.
      */
     ErrCode QueryHighFrequencyUsageBundleInfos(std::vector<BundleActivePackageStats>& packageStats,
-        const int32_t userId, const int32_t maxNum) override;
+        const int32_t userId, const int32_t maxNum,  const int32_t queryDayRange = 7) override;
 
     /**
      * @brief QueryCurrentBundleEvents, query bundle usage statistics in specific time span for calling bundle.
@@ -150,7 +150,7 @@ public:
      * @return errCode.
      */
     ErrCode QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
-        const int64_t beginTime, const int64_t endTime) override;
+        const int64_t beginTime, const int64_t endTime, const int32_t maxNum = 1000) override;
 
     /**
      * @brief QueryAppGroup, query appGroup by bundleName and userId.
@@ -292,7 +292,7 @@ private:
     std::vector<BundleActivePackageStats> MergePackageStats(
         const std::vector<BundleActivePackageStats>& packageStats);
     void MergeSamePackageStats(BundleActivePackageStats &left, const BundleActivePackageStats &right);
-    void DeleteOutOfLimitEvents(std::vector<BundleActiveEvent>& bundleActiveEvents);
+    void DeleteOutOfLimitEvents(std::vector<BundleActiveEvent>& bundleActiveEvents, size_t reserveCount);
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

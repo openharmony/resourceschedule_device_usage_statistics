@@ -419,17 +419,22 @@ int32_t BundleActiveService::GetNameAndIndexForUid(int32_t uid)
     return appIndex;
 }
 
-void BundleActiveService::DeleteOutOfLimitEvents(std::vector<BundleActiveEvent>& bundleActiveEvents)
+void BundleActiveService::DeleteOutOfLimitEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
+    size_t reserveCount)
 {
-    if (bundleActiveEvents.size() > QUERY_EVENT_MAX_RETURN_COUNT) {
-        size_t eraseCount = bundleActiveEvents.size() - QUERY_EVENT_MAX_RETURN_COUNT;
+    if (bundleActiveEvents.size() > reserveCount) {
+        size_t eraseCount = bundleActiveEvents.size() - reserveCount;
         bundleActiveEvents.erase(bundleActiveEvents.begin(), bundleActiveEvents.begin() + eraseCount);
     }
 }
 
 ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
-    const int64_t beginTime, const int64_t endTime, int32_t userId)
+    const int64_t beginTime, const int64_t endTime, int32_t userId, const int32_t maxNum)
 {
+    if (maxNum <= 0 || static_cast<size_t>(maxNum) > QUERY_EVENT_MAX_RETURN_COUNT) {
+        return ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
+    }
+    size_t reserveCount = static_cast<size_t>(maxNum);
     ErrCode ret = ERR_OK;
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
@@ -445,7 +450,7 @@ ErrCode BundleActiveService::QueryBundleEvents(std::vector<BundleActiveEvent>& b
     ret = CheckSystemAppOrNativePermission(callingUid, tokenId);
     if (ret == ERR_OK) {
         ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, "");
-        DeleteOutOfLimitEvents(bundleActiveEvents);
+        DeleteOutOfLimitEvents(bundleActiveEvents, reserveCount);
         BUNDLE_ACTIVE_LOGI("QueryBundleEvents result is %{public}zu", bundleActiveEvents.size());
     }
     return ret;
@@ -577,9 +582,9 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
 }
 
 ErrCode BundleActiveService::QueryHighFrequencyUsageBundleInfos(std::vector<BundleActivePackageStats>& packageStats,
-    const int32_t userId, const int32_t maxNum)
+    const int32_t userId, const int32_t maxNum, const int32_t queryDayRange)
 {
-    if (maxNum <= 0) {
+    if (maxNum <= 0 || queryDayRange<= 0 || queryDayRange > 7) {
         return ERR_PARAM_ERROR;
     }
     // get uid
@@ -592,9 +597,9 @@ ErrCode BundleActiveService::QueryHighFrequencyUsageBundleInfos(std::vector<Bund
     }
     BUNDLE_ACTIVE_LOGD("QueryBundleStatsInfos userid is %{public}d", userId);
     std::vector<BundleActivePackageStats> tempPackageStats;
-    constexpr int64_t SEVEN_DAYS = static_cast<int64_t>(7) * 24 * 60 * 60 * 1000;
+    int64_t timeRange = static_cast<int64_t>(queryDayRange) * 24 * 60 * 60 * 1000;
     int64_t endTime = BundleActiveUtil::GetSystemTimeMs();
-    int64_t beginTime = endTime - SEVEN_DAYS;
+    int64_t beginTime = endTime - timeRange;
     ret = bundleActiveCore_->QueryBundleStatsInfos(tempPackageStats, userId, BundleActiveUtil::PERIOD_DAILY,
         beginTime, endTime, "");
     std::vector<BundleActivePackageStats> results;
@@ -614,6 +619,10 @@ ErrCode BundleActiveService::QueryHighFrequencyUsageBundleInfos(std::vector<Bund
 ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
     const int64_t beginTime, const int64_t endTime)
 {
+    if (maxNum <= 0 || static_cast<size_t>(maxNum) > QUERY_EVENT_MAX_RETURN_COUNT) {
+        return ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
+    }
+    size_t reserveCount = static_cast<size_t>(maxNum);
     // get uid
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     BUNDLE_ACTIVE_LOGD("QueryCurrentBundleEvents UID is %{public}d", callingUid);
@@ -632,7 +641,7 @@ ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEv
             BUNDLE_ACTIVE_LOGI("QueryCurrentBundleEvents buindle name is %{public}s",
                 bundleName.c_str());
             ret = bundleActiveCore_->QueryBundleEvents(bundleActiveEvents, userId, beginTime, endTime, bundleName);
-            DeleteOutOfLimitEvents(bundleActiveEvents);
+            DeleteOutOfLimitEvents(bundleActiveEvents, reserveCount);
         }
 // LCOV_EXCL_STOP
     }

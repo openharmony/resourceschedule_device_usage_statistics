@@ -16,6 +16,7 @@
 #include "ffrt.h"
 #include "bundle_active_log.h"
 #include "bundle_active_client.h"
+#include "hitrace_meter.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -64,6 +65,9 @@ ErrCode BundleActiveClient::GetBundleActiveProxy()
 
 ErrCode BundleActiveClient::ReportEvent(BundleActiveEvent event, const int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     BUNDLE_ACTIVE_LOGD("BundleActiveClient::ReportEvent called");
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
@@ -75,6 +79,10 @@ ErrCode BundleActiveClient::ReportEvent(BundleActiveEvent event, const int32_t u
 
 ErrCode BundleActiveClient::IsBundleIdle(bool& isBundleIdle, const std::string& bundleName, int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",bundleName:" + bundleName
+        + ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -85,6 +93,10 @@ ErrCode BundleActiveClient::IsBundleIdle(bool& isBundleIdle, const std::string& 
 
 ErrCode BundleActiveClient::IsBundleUsePeriod(bool& IsUsePeriod, const std::string& bundleName, int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",bundleName:" + bundleName
+        + ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -96,6 +108,12 @@ ErrCode BundleActiveClient::IsBundleUsePeriod(bool& IsUsePeriod, const std::stri
 ErrCode BundleActiveClient::QueryBundleStatsInfoByInterval(std::vector<BundleActivePackageStats>& PackageStats,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime, int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",intervalType:" + std::to_string(intervalType)
+        + ",beginTime:" + std::to_string(beginTime)
+        + ",endTime:" + std::to_string(endTime)
+        + ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -107,6 +125,10 @@ ErrCode BundleActiveClient::QueryBundleStatsInfoByInterval(std::vector<BundleAct
 ErrCode BundleActiveClient::QueryBundleTodayLatestUsedTime(
     int64_t& latestUsedTime, const std::string& bundleName, int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",bundleName:" + bundleName
+        + ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -118,6 +140,9 @@ ErrCode BundleActiveClient::QueryBundleTodayLatestUsedTime(
 ErrCode BundleActiveClient::QueryHighFrequencyPeriodBundle(
     std::vector<BundleActiveHighFrequencyPeriod>& appFreqHours, int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -129,20 +154,31 @@ ErrCode BundleActiveClient::QueryHighFrequencyPeriodBundle(
 }
 
 ErrCode BundleActiveClient::QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
-    const int64_t beginTime, const int64_t endTime, int32_t userId)
+    const int64_t beginTime, const int64_t endTime, int32_t userId, const int32_t maxNum)
 {
+    std::string traceStr(__func__);
+    traceStr += ",maxNum:" + std::to_string(maxNum)
+        + ",beginTime:" + std::to_string(beginTime)
+        + ",endTime:" + std::to_string(endTime)
+        + ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
     }
-    auto err = bundleActiveProxy_->QueryBundleEvents(bundleActiveEvents, beginTime, endTime, userId);
+    auto err = bundleActiveProxy_->QueryBundleEvents(bundleActiveEvents, beginTime, endTime, userId, maxNum);
     BUNDLE_ACTIVE_LOGI("QueryBundleEvents bundleActiveEvents is %{public}zu", bundleActiveEvents.size());
     return err;
 }
 
 ErrCode BundleActiveClient::SetAppGroup(std::string bundleName, const int32_t newGroup, int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",bundleName:" + bundleName
+        + ",newGroup:" + std::to_string(newGroup)
+        + ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -154,6 +190,11 @@ ErrCode BundleActiveClient::SetAppGroup(std::string bundleName, const int32_t ne
 ErrCode BundleActiveClient::QueryBundleStatsInfos(std::vector<BundleActivePackageStats>& bundleActivePackageStats,
     const int32_t intervalType, const int64_t beginTime, const int64_t endTime)
 {
+    std::string traceStr(__func__);
+    traceStr += ",intervalType:" + std::to_string(intervalType)
+        + ",beginTime:" + std::to_string(beginTime)
+        + ",endTime:" + std::to_string(endTime);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -163,29 +204,43 @@ ErrCode BundleActiveClient::QueryBundleStatsInfos(std::vector<BundleActivePackag
 }
 
 ErrCode BundleActiveClient::QueryHighFrequencyUsageBundleInfos(std::vector<BundleActivePackageStats>& packageStats,
-    const int32_t userId, const int32_t maxNum)
+    const int32_t userId, const int32_t maxNum, const int32_t queryDayRange)
 {
+    std::string traceStr(__func__);
+    traceStr += ",userId:" + std::to_string(userId)
+        + ",maxNum:" + std::to_string(maxNum)
+        + ",queryDayRange:" + std::to_string(queryDayRange);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
     }
-    return bundleActiveProxy_->QueryHighFrequencyUsageBundleInfos(packageStats, userId, maxNum);
+    return bundleActiveProxy_->QueryHighFrequencyUsageBundleInfos(packageStats, userId, maxNum, queryDayRange);
 }
 
 ErrCode BundleActiveClient::QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
-    const int64_t beginTime, const int64_t endTime)
+    const int64_t beginTime, const int64_t endTime, const int32_t maxNum)
 {
+    std::string traceStr(__func__);
+    traceStr += ",beginTime:" + std::to_string(beginTime)
+        + ",endTime:" + std::to_string(endTime)
+        + ",maxNum:" + std::to_string(maxNum);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
         return ret;
     }
-    return bundleActiveProxy_->QueryCurrentBundleEvents(bundleActiveEvents, beginTime, endTime);
+    return bundleActiveProxy_->QueryCurrentBundleEvents(bundleActiveEvents, beginTime, endTime, maxNum);
 }
 
 ErrCode BundleActiveClient::QueryAppGroup(int32_t& appGroup, const std::string& bundleName, const int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",bundleName:" + bundleName
+        + ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -197,6 +252,10 @@ ErrCode BundleActiveClient::QueryAppGroup(int32_t& appGroup, const std::string& 
 ErrCode BundleActiveClient::QueryModuleUsageRecords(int32_t maxNum, std::vector<BundleActiveModuleRecord>& results,
     int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",maxNum:" + std::to_string(maxNum)
+        + ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     if (maxNum <= 0 || maxNum > MAXNUM_UP_LIMIT) {
         BUNDLE_ACTIVE_LOGI("maxNum is illegal, maxNum is %{public}d", maxNum);
         return ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
@@ -211,6 +270,8 @@ ErrCode BundleActiveClient::QueryModuleUsageRecords(int32_t maxNum, std::vector<
 
 ErrCode BundleActiveClient::RegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
+    std::string traceStr(__func__);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -225,6 +286,8 @@ ErrCode BundleActiveClient::RegisterAppGroupCallBack(const sptr<IAppGroupCallbac
 
 ErrCode BundleActiveClient::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallback> &observer)
 {
+    std::string traceStr(__func__);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -240,6 +303,11 @@ ErrCode BundleActiveClient::UnRegisterAppGroupCallBack(const sptr<IAppGroupCallb
 ErrCode BundleActiveClient::QueryDeviceEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",beginTime:" + std::to_string(beginTime)
+        + ",endTime:" + std::to_string(endTime)
+        + ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {
@@ -251,6 +319,11 @@ ErrCode BundleActiveClient::QueryDeviceEventStats(int64_t beginTime, int64_t end
 ErrCode BundleActiveClient::QueryNotificationEventStats(int64_t beginTime, int64_t endTime,
     std::vector<BundleActiveEventStats>& eventStats, int32_t userId)
 {
+    std::string traceStr(__func__);
+    traceStr += ",beginTime:" + std::to_string(beginTime)
+        + ",endTime:" + std::to_string(endTime)
+        + ",userId:" + std::to_string(userId);
+    HitraceScoped traceScoped(HITRACE_TAG_OHOS, traceStr);
     std::lock_guard<ffrt::recursive_mutex> lock(mutex_);
     ErrCode ret = GetBundleActiveProxy();
     if (ret != ERR_OK) {

@@ -90,7 +90,7 @@ public:
      * @return errCode.
      */
     ErrCode QueryBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents, const int64_t beginTime,
-        const int64_t endTime, int32_t userId = -1);
+        const int64_t endTime, int32_t userId = -1, const int32_t maxNum = 1000);
 
     /**
      * @brief SetAppGroup, set specific bundle of specific user to a priority group.
@@ -123,7 +123,7 @@ public:
      * @return errCode.
      */
     ErrCode QueryHighFrequencyUsageBundleInfos(std::vector<BundleActivePackageStats>& packageStats,
-        const int32_t userId, const int32_t maxNum = 20);
+        const int32_t userId, const int32_t maxNum = 20, const int32_t queryDayRange = 7);
 
     /**
      * @brief QueryCurrentBundleEvents, query bundle usage statistics in specific time span for calling bundle.
@@ -134,7 +134,7 @@ public:
      * @return errCode.
      */
     ErrCode QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
-        const int64_t beginTime, const int64_t endTime);
+        const int64_t beginTime, const int64_t endTime, const int32_t maxNum = 1000);
 
     /**
      * @brief QueryAppGroup, query appGroup by bundleName and userId.
