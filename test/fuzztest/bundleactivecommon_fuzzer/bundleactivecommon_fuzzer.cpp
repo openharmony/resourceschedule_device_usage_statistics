@@ -42,6 +42,7 @@ namespace DeviceUsageStats {
     const int32_t INTERVAL_TYPE_COUNT = 5;
     const int32_t APP_TYPE_COUNT = 6;
     const int32_t APP_TYPE_INTERVAL = 10;
+    const int32_t QUERY_EVENT_MAX_NUM = 1000;
     bool BundleActiveConfigReaderTest(FuzzedDataProvider* fdp)
     {
         auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
@@ -158,7 +159,7 @@ namespace DeviceUsageStats {
         int64_t endTime = fdp->ConsumeIntegral<int64_t>();
         bundleActiveServiceProxy->QueryBundleStatsInfos(bundleActivePackageStats, intervalType, beginTime, endTime);
         std::vector<BundleActiveEvent> bundleActiveEvent;
-        bundleActiveServiceProxy->QueryCurrentBundleEvents(bundleActiveEvent, beginTime, endTime);
+        bundleActiveServiceProxy->QueryCurrentBundleEvents(bundleActiveEvent, beginTime, endTime, QUERY_EVENT_MAX_NUM);
         int32_t appGroup = fdp->ConsumeIntegral<int32_t>();
         std::string bundleName = fdp->ConsumeRandomLengthString();
         int32_t userId = fdp->ConsumeIntegral<int32_t>();
