@@ -494,6 +494,7 @@ group("test_all") {
       "${usage_statistics_path}/test/fuzztest/bundleactiveparallelization_fuzzer:fuzztest",
       "${usage_statistics_path}/test/fuzztest/bundleactivepowerstatecallbackproxy_fuzzer:fuzztest",
       "${usage_statistics_path}/test/unittest:unittest",
+      "${usage_statistics_path}/test/fuzztest:fuzztest",
     ]
   }
 }
