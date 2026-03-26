@@ -14,5 +14,7 @@
 group("fuzztest") {
   testonly = true
 
-  deps = [ "bundleactivepowerstatecallbackproxy_fuzzer:fuzztest" ]
+  deps = [ "bundleactivehighfrequencyperiod_fuzzer:fuzztest",
+           "bundleactiveformrecord_fuzzer:fuzztest",
+           "bundleactivepackagestats_fuzzer:fuzztest" ]
 }
