@@ -330,9 +330,9 @@ napi_value ParseQueryCurrentBundleEventsParameters(const napi_env &env, const na
     if (argc == STATES_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
-        if (valuetype = napi_function) {
+        if (valuetype == napi_function) {
             napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
-        } else if (BundleStateCommon::GetInt64NumberValue(env, argv[STATES_PARAMS], params.maxNum) == nullptr) {
+        } else if (BundleStateCommon::GetInt32NumberValue(env, argv[SECOND_ARG], params.maxNum) == nullptr) {
             BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, SECOND_ARG type is invalid.");
             params.errorCode = ERR_PARAMETERS_TYPE;
             return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_TYPE, "");
@@ -342,7 +342,6 @@ napi_value ParseQueryCurrentBundleEventsParameters(const napi_env &env, const na
             params.errorCode = ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
             return BundleStateCommon::HandleParamErr(env, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND, "");
         }
-        
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);

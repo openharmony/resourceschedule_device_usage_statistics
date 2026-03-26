@@ -297,7 +297,7 @@ array<BundleEvents> QueryBundleEventsAsyncByLimit(int64_t beginTime, int64_t end
 
 array<BundleEvents> QueryBundleEventsAsync(int64_t beginTime, int64_t endTime)
 {
-    return QueryBundleEventsAsyncByLimit(beginTime, endTime, 1000);
+    return QueryBundleEventsAsyncByLimit(beginTime, endTime, MAXNUM_UP_LIMIT);
 }
 
 array<BundleEvents> QueryCurrentBundleEventsAsyncByLimit(int64_t beginTime, int64_t endTime, int32_t maxNum)
@@ -326,7 +326,7 @@ array<BundleEvents> QueryCurrentBundleEventsAsyncByLimit(int64_t beginTime, int6
 
 array<BundleEvents> QueryCurrentBundleEventsAsync(int64_t beginTime, int64_t endTime)
 {
-    return QueryCurrentBundleEventsAsyncByLimit(beginTime, endTime, 1000);
+    return QueryCurrentBundleEventsAsyncByLimit(beginTime, endTime, MAXNUM_UP_LIMIT);
 }
 
 array<DeviceEventStats> QueryDeviceEventStatsAsync(int64_t beginTime, int64_t endTime)

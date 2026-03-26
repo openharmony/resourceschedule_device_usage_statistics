@@ -54,6 +54,7 @@ const int32_t HIGH_FREQUENCY_HOUR_USAGE_PARAM = 3;
 const std::string NEEDED_PERMISSION = "ohos.permission.BUNDLE_ACTIVE_INFO";
 const int32_t ENG_MODE = OHOS::system::GetIntParameter("const.debuggable", 0);
 const size_t QUERY_EVENT_MAX_RETURN_COUNT = 1000;
+const int32_t TOPN_QUERY_MAX_DAY_RANGE = 7;
 const bool REGISTER_RESULT =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<BundleActiveService>::GetInstance().get());
 
@@ -584,7 +585,7 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
 ErrCode BundleActiveService::QueryHighFrequencyUsageBundleInfos(std::vector<BundleActivePackageStats>& packageStats,
     const int32_t userId, const int32_t maxNum, const int32_t queryDayRange)
 {
-    if (maxNum <= 0 || queryDayRange<= 0 || queryDayRange > 7) {
+    if (maxNum <= 0 || queryDayRange<= 0 || queryDayRange > TOPN_QUERY_MAX_DAY_RANGE) {
         return ERR_PARAM_ERROR;
     }
     // get uid
@@ -617,7 +618,7 @@ ErrCode BundleActiveService::QueryHighFrequencyUsageBundleInfos(std::vector<Bund
 }
 
 ErrCode BundleActiveService::QueryCurrentBundleEvents(std::vector<BundleActiveEvent>& bundleActiveEvents,
-    const int64_t beginTime, const int64_t endTime)
+    const int64_t beginTime, const int64_t endTime, const int32_t maxNum)
 {
     if (maxNum <= 0 || static_cast<size_t>(maxNum) > QUERY_EVENT_MAX_RETURN_COUNT) {
         return ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;

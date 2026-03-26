@@ -130,7 +130,7 @@ function QueryCurrentBundleEventsAsync(beginTime: i64, endTime: i64): Array<Bund
 
 @gen_promise("queryCurrentBundleEvents")
 @overload("queryCurrentBundleEventsAsync")
-function QueryCurrentBundleEventsAsync(beginTime: i64, endTime: i64, maxNum: i32): Array<BundleEvents>;
+function QueryCurrentBundleEventsAsyncByLimit(beginTime: i64, endTime: i64, maxNum: i32): Array<BundleEvents>;
 
 
 @gen_async("queryDeviceEventStats")
