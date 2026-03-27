@@ -60,7 +60,8 @@ napi_value BundleStateCommon::HandleParamErr(const napi_env &env, int32_t errCod
     return nullptr;
 }
 
-napi_value BundleStateCommon::HandleParamOutOfRangeErr(const napi_env &env, int32_t errCode, const std::string& operation)
+napi_value BundleStateCommon::HandleParamOutOfRangeErr(const napi_env &env, int32_t errCode,
+    const std::string& operation)
 {
     if (errCode == ERR_OK) {
         return nullptr;
