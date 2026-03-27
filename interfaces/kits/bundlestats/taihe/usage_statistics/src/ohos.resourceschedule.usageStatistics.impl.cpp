@@ -92,6 +92,17 @@ bool CheckMaxNum(int32_t maxNum)
     return true;
 }
 
+bool CheckEventMaxNum(int32_t maxNum)
+{
+    if (maxNum > MAXNUM_UP_LIMIT || maxNum <= 0) {
+        BUNDLE_ACTIVE_LOGE("CheckMaxNum failed, maxNum is larger than 1000 or less/equal than 0");
+        int32_t errCode = ERR_PARAM_OUT_OF_RANGE;
+        set_business_error(errCode, BundleStateIDLErrCode::HandleParamOutOfRangeErr(errCode, ""));
+        return false;
+    }
+    return true;
+}
+
 bool CheckNewGroupType(int32_t newGroupType)
 {
     for (const auto& item : GROUP_TYPE_VALUE) {
@@ -277,7 +288,7 @@ array<BundleEvents> QueryBundleEventsAsyncByLimit(int64_t beginTime, int64_t end
     if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return array<BundleEvents>(bundleEventVector);
     }
-    if (!CheckMaxNum(maxNum)) {
+    if (!CheckEventMaxNum(maxNum)) {
         return array<BundleEvents>(bundleEventVector);
     }
     std::vector<BundleActiveEvent> bundleActiveEvents;
@@ -306,7 +317,7 @@ array<BundleEvents> QueryCurrentBundleEventsAsyncByLimit(int64_t beginTime, int6
     if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return array<BundleEvents>(bundleEventVector);
     }
-    if (!CheckMaxNum(maxNum)) {
+    if (!CheckEventMaxNum(maxNum)) {
         return array<BundleEvents>(bundleEventVector);
     }
     std::vector<BundleActiveEvent> bundleActiveEvents;

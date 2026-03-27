@@ -340,7 +340,7 @@ napi_value ParseQueryCurrentBundleEventsParameters(const napi_env &env, const na
         if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
             BUNDLE_ACTIVE_LOGE("parse failed, maxNum is larger than 1000 or less/equal than 0");
             params.errorCode = ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
-            return BundleStateCommon::HandleParamErr(env, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND, "");
+            return BundleStateCommon::HandleParamOutOfRangeErr(env, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND, "");
         }
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
