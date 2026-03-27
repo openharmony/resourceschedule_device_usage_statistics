@@ -2287,5 +2287,110 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_Quer
     EXPECT_NE(result, 0);
     EXPECT_EQ(latestUsedTime, 0);
 }
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryBundleEvents_MaxNum_LessThanZero
+ * @tc.desc: QueryBundleEvents with maxNum <= 0
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryBundleEvents_MaxNum_LessThanZero,
+    Function | MediumTest | TestSize.Level0)
+{
+    auto bundleActiveService = std::make_shared<BundleActiveService>();
+    bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    std::vector<BundleActiveEvent> bundleActiveEvents;
+    ErrCode result = bundleActiveService->QueryBundleEvents(bundleActiveEvents, 0, 1000, 100, 0);
+    EXPECT_EQ(result, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND);
+    result = bundleActiveService->QueryBundleEvents(bundleActiveEvents, 0, 1000, 100, -1);
+    EXPECT_EQ(result, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryBundleEvents_MaxNum_ExceedLimit
+ * @tc.desc: QueryBundleEvents with maxNum > 1000
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryBundleEvents_MaxNum_ExceedLimit,
+    Function | MediumTest | TestSize.Level0)
+{
+    auto bundleActiveService = std::make_shared<BundleActiveService>();
+    bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    std::vector<BundleActiveEvent> bundleActiveEvents;
+    ErrCode result = bundleActiveService->QueryBundleEvents(bundleActiveEvents, 0, 1000, 100, 1001);
+    EXPECT_EQ(result, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryCurrentBundleEvents_MaxNum_LessThanZero
+ * @tc.desc: QueryCurrentBundleEvents with maxNum <= 0
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest,
+    DeviceUsageStatisticsServiceTest_QueryCurrentBundleEvents_MaxNum_LessThanZero,
+    Function | MediumTest | TestSize.Level0)
+{
+    auto bundleActiveService = std::make_shared<BundleActiveService>();
+    bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    std::vector<BundleActiveEvent> bundleActiveEvents;
+    ErrCode result = bundleActiveService->QueryCurrentBundleEvents(bundleActiveEvents, 0, 1000, 0);
+    EXPECT_EQ(result, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND);
+    result = bundleActiveService->QueryCurrentBundleEvents(bundleActiveEvents, 0, 1000, -1);
+    EXPECT_EQ(result, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryCurrentBundleEvents_MaxNum_ExceedLimit
+ * @tc.desc: QueryCurrentBundleEvents with maxNum > 1000
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_QueryCurrentBundleEvents_MaxNum_ExceedLimit,
+    Function | MediumTest | TestSize.Level0)
+{
+    auto bundleActiveService = std::make_shared<BundleActiveService>();
+    bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    std::vector<BundleActiveEvent> bundleActiveEvents;
+    ErrCode result = bundleActiveService->QueryCurrentBundleEvents(bundleActiveEvents, 0, 1000, 1001);
+    EXPECT_EQ(result, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryHighFrequencyUsageBundleInfos_QueryDayRange_LessThanZero
+ * @tc.desc: QueryHighFrequencyUsageBundleInfos with QueryDayRange <= 0
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest,
+    DeviceUsageStatisticsServiceTest_QueryHighFrequencyUsageBundleInfos_MaxNum_LessThanZero,
+    Function | MediumTest | TestSize.Level0)
+{
+    auto bundleActiveService = std::make_shared<BundleActiveService>();
+    bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    std::vector<BundleActivePackageStats> packageStats;
+    ErrCode result = bundleActiveService->QueryHighFrequencyUsageBundleInfos(packageStats, 100, 20, 0);
+    EXPECT_EQ(result, ERR_PARAM_ERROR);
+    result = bundleActiveService->QueryHighFrequencyUsageBundleInfos(packageStats, 100, 20, -1);
+    EXPECT_EQ(result, ERR_PARAM_ERROR);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_QueryHighFrequencyUsageBundleInfos_QueryDayRange_ExceedLimit
+ * @tc.desc: QueryHighFrequencyUsageBundleInfos with QueryDayRange > 10007
+ * @tc.type: FUNC
+ * @tc.require: SR20250319441801 AR20250322520501
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest,
+    DeviceUsageStatisticsServiceTest_QueryHighFrequencyUsageBundleInfos_QueryDayRange_ExceedLimit,
+    Function | MediumTest | TestSize.Level0)
+{
+    auto bundleActiveService = std::make_shared<BundleActiveService>();
+    bundleActiveService->bundleActiveCore_ = std::make_shared<BundleActiveCore>();
+    std::vector<BundleActivePackageStats> packageStats;
+    ErrCode result = bundleActiveService->QueryHighFrequencyUsageBundleInfos(packageStats, 100, 20, 8);
+    EXPECT_EQ(result, ERR_PARAM_ERROR);
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

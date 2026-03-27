@@ -64,6 +64,21 @@ std::string BundleStateIDLErrCode::HandleParamErr(int32_t errCode, const std::st
     return errMessage;
 }
 
+std::string BundleStateIDLErrCode::HandleParamOutOfRangeErr(int32_t errCode, const std::string& operation)
+{
+    if (errCode == ERR_OK) {
+        return "";
+    }
+    BUNDLE_ACTIVE_LOGE("HandleParamErr %{public}d", errCode);
+    std::string errMessage = "BussinessError 10000008: Parameter error. ";
+    auto iter = paramErrCodeMsgMap.find(errCode);
+    if (iter != paramErrCodeMsgMap.end()) {
+        errMessage.append(operation);
+        errMessage.append(iter->second);
+    }
+    return errMessage;
+}
+
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
    

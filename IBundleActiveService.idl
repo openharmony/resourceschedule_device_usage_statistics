@@ -26,13 +26,13 @@ interface OHOS.DeviceUsageStats.IBundleActiveService {
     void QueryBundleStatsInfoByInterval([out] List<BundleActivePackageStats> packageStats,
         [in] int intervalType, [in] long beginTime, [in] long endTime, [in] int userId);
     void QueryBundleEvents([out] List<BundleActiveEvent> bundleActiveEvents, [in] long beginTime,
-        [in] long endTime, [in] int userId);
+        [in] long endTime, [in] int userId, [in] int maxNum);
     void QueryBundleStatsInfos([out] List<BundleActivePackageStats> bundleActivePackageStats,
         [in] int intervalType, [in] long beginTime, [in] long endTime);
     void QueryHighFrequencyUsageBundleInfos([out] List<BundleActivePackageStats> packageStats,
-        [in] int userId, [in] int maxNum);
+        [in] int userId, [in] int maxNum, [in] int queryDayRange);
     void QueryCurrentBundleEvents([out] List<BundleActiveEvent> bundleActiveEvents,
-        [in] long beginTime, [in]long endTime);
+        [in] long beginTime, [in]long endTime, [in] int maxNum);
     void QueryAppGroup([out] int appGroup, [in] String bundleName, [in] int userId);
     void SetAppGroup([in] String bundleName, [in] int newGroup, [in] int userId);
     void QueryModuleUsageRecords([in] int maxNum, [out] List<BundleActiveModuleRecord> results, [in] int userId);

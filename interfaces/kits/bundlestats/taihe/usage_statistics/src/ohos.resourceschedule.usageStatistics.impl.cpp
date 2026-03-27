@@ -92,6 +92,17 @@ bool CheckMaxNum(int32_t maxNum)
     return true;
 }
 
+bool CheckEventMaxNum(int32_t maxNum)
+{
+    if (maxNum > MAXNUM_UP_LIMIT || maxNum <= 0) {
+        BUNDLE_ACTIVE_LOGE("CheckMaxNum failed, maxNum is larger than 1000 or less/equal than 0");
+        int32_t errCode = ERR_PARAM_OUT_OF_RANGE;
+        set_business_error(errCode, BundleStateIDLErrCode::HandleParamOutOfRangeErr(errCode, ""));
+        return false;
+    }
+    return true;
+}
+
 bool CheckNewGroupType(int32_t newGroupType)
 {
     for (const auto& item : GROUP_TYPE_VALUE) {
@@ -271,15 +282,47 @@ array<BundleStatsInfo> QueryBundleStatsInfoByIntervalAsync(
     return array<BundleStatsInfo>(bundleStatsInfoVector);
 }
 
-array<BundleEvents> QueryBundleEventsAsync(int64_t beginTime, int64_t endTime)
+array<BundleEvents> QueryBundleEventsAsyncByLimit(int64_t beginTime, int64_t endTime, int32_t maxNum)
 {
     std::vector<BundleEvents> bundleEventVector;
     if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
         return array<BundleEvents>(bundleEventVector);
     }
+    if (!CheckEventMaxNum(maxNum)) {
+        return array<BundleEvents>(bundleEventVector);
+    }
     std::vector<BundleActiveEvent> bundleActiveEvents;
     int32_t errCode = BundleActiveClient::GetInstance().QueryBundleEvents(bundleActiveEvents,
-        beginTime, endTime);
+        beginTime, endTime, -1, maxNum);
+    if (errCode != ERR_OK) {
+        set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
+        return array<BundleEvents>(bundleEventVector);
+    }
+    for (auto &bundleActiveEvent: bundleActiveEvents) {
+        BundleEvents bundleEvent;
+        BundleStateIDLCommon::ParseBundleEvents(bundleActiveEvent, bundleEvent);
+        bundleEventVector.push_back(bundleEvent);
+    }
+    return array<BundleEvents>(bundleEventVector);
+}
+
+array<BundleEvents> QueryBundleEventsAsync(int64_t beginTime, int64_t endTime)
+{
+    return QueryBundleEventsAsyncByLimit(beginTime, endTime, MAXNUM_UP_LIMIT);
+}
+
+array<BundleEvents> QueryCurrentBundleEventsAsyncByLimit(int64_t beginTime, int64_t endTime, int32_t maxNum)
+{
+    std::vector<BundleEvents> bundleEventVector;
+    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
+        return array<BundleEvents>(bundleEventVector);
+    }
+    if (!CheckEventMaxNum(maxNum)) {
+        return array<BundleEvents>(bundleEventVector);
+    }
+    std::vector<BundleActiveEvent> bundleActiveEvents;
+    int32_t errCode = BundleActiveClient::GetInstance().QueryCurrentBundleEvents(bundleActiveEvents,
+        beginTime, endTime, maxNum);
     if (errCode != ERR_OK) {
         set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
         return array<BundleEvents>(bundleEventVector);
@@ -294,23 +337,7 @@ array<BundleEvents> QueryBundleEventsAsync(int64_t beginTime, int64_t endTime)
 
 array<BundleEvents> QueryCurrentBundleEventsAsync(int64_t beginTime, int64_t endTime)
 {
-    std::vector<BundleEvents> bundleEventVector;
-    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
-        return array<BundleEvents>(bundleEventVector);
-    }
-    std::vector<BundleActiveEvent> bundleActiveEvents;
-    int32_t errCode = BundleActiveClient::GetInstance().QueryCurrentBundleEvents(bundleActiveEvents,
-        beginTime, endTime);
-    if (errCode != ERR_OK) {
-        set_business_error(errCode, BundleStateIDLErrCode::GetErrorCode(errCode));
-        return array<BundleEvents>(bundleEventVector);
-    }
-    for (auto &bundleActiveEvent: bundleActiveEvents) {
-        BundleEvents bundleEvent;
-        BundleStateIDLCommon::ParseBundleEvents(bundleActiveEvent, bundleEvent);
-        bundleEventVector.push_back(bundleEvent);
-    }
-    return array<BundleEvents>(bundleEventVector);
+    return QueryCurrentBundleEventsAsyncByLimit(beginTime, endTime, MAXNUM_UP_LIMIT);
 }
 
 array<DeviceEventStats> QueryDeviceEventStatsAsync(int64_t beginTime, int64_t endTime)
@@ -490,7 +517,9 @@ TH_EXPORT_CPP_API_QueryAppStatsInfosAsync(QueryAppStatsInfosAsync);
 TH_EXPORT_CPP_API_QueryLastUseTimeAsync(QueryLastUseTimeAsync);
 TH_EXPORT_CPP_API_QueryBundleStatsInfoByIntervalAsync(QueryBundleStatsInfoByIntervalAsync);
 TH_EXPORT_CPP_API_QueryBundleEventsAsync(QueryBundleEventsAsync);
+TH_EXPORT_CPP_API_QueryBundleEventsAsyncByLimit(QueryBundleEventsAsyncByLimit);
 TH_EXPORT_CPP_API_QueryCurrentBundleEventsAsync(QueryCurrentBundleEventsAsync);
+TH_EXPORT_CPP_API_QueryCurrentBundleEventsAsyncByLimit(QueryCurrentBundleEventsAsyncByLimit);
 TH_EXPORT_CPP_API_QueryDeviceEventStatsAsync(QueryDeviceEventStatsAsync);
 TH_EXPORT_CPP_API_QueryNotificationEventStatsAsync(QueryNotificationEventStatsAsync);
 TH_EXPORT_CPP_API_QueryModuleUsageRecordsAsync(QueryModuleUsageRecordsAsync);

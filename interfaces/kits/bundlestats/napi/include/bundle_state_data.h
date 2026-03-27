@@ -84,6 +84,7 @@ struct AsyncCallbackInfoStates : public AsyncWorkData {
     explicit AsyncCallbackInfoStates(napi_env env) : AsyncWorkData(env) {}
     int64_t beginTime = -1;
     int64_t endTime = -1;
+    int32_t maxNum = -1;
     std::vector<BundleActiveEvent> BundleActiveState;
 };
 
@@ -158,6 +159,7 @@ struct StatesParamsInfo {
     int64_t endTime = -1;
     napi_ref callback = nullptr;
     int32_t errorCode = 0;
+    int32_t maxNum = 1000;
 };
 
 struct AppUsageParamsByIntervalInfo {

@@ -36,6 +36,8 @@ public:
 
     static napi_value HandleParamErr(const napi_env &env, int32_t errCode, const std::string& operation);
 
+    static napi_value HandleParamOutOfRangeErr(const napi_env &env, int32_t errCode, const std::string& operation);
+
     static napi_value GetErrorValue(napi_env env, int32_t errCode);
 
     static std::string GetSaErrCodeMsg(int32_t errCode, int32_t reflectCode);

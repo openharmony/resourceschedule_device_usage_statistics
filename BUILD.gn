@@ -92,6 +92,7 @@ ohos_shared_library("usagestatsinner") {
     "ipc:ipc_core",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
+    "hitrace:hitrace_meter",
   ]
 
   bundle_active_output_values = get_target_outputs(":bundle_active_interface")
@@ -414,6 +415,7 @@ ohos_static_library("usagestatsinner_static") {
     "ipc:ipc_core",
     "ipc:ipc_single",
     "samgr:samgr_proxy",
+    "hitrace:hitrace_meter",
   ]
 
   bundle_active_output_values = get_target_outputs(":bundle_active_interface")

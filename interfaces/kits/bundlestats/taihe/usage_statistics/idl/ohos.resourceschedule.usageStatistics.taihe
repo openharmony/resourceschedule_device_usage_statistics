@@ -116,11 +116,22 @@ function QueryBundleStatsInfoByIntervalAsync(byInterval: IntervalType, beginTime
 
 @gen_async("queryBundleEvents")
 @gen_promise("queryBundleEvents")
+@overload("queryBundleEventsAsync")
 function QueryBundleEventsAsync(beginTime: i64, endTime: i64): Array<BundleEvents>;
+
+@gen_promise("queryBundleEvents")
+@overload("queryBundleEventsAsync")
+function QueryBundleEventsAsyncByLimit(beginTime: i64, endTime: i64, maxNum: i32): Array<BundleEvents>;
 
 @gen_async("queryCurrentBundleEvents")
 @gen_promise("queryCurrentBundleEvents")
+@overload("queryCurrentBundleEventsAsync")
 function QueryCurrentBundleEventsAsync(beginTime: i64, endTime: i64): Array<BundleEvents>;
+
+@gen_promise("queryCurrentBundleEvents")
+@overload("queryCurrentBundleEventsAsync")
+function QueryCurrentBundleEventsAsyncByLimit(beginTime: i64, endTime: i64, maxNum: i32): Array<BundleEvents>;
+
 
 @gen_async("queryDeviceEventStats")
 @gen_promise("queryDeviceEventStats")
