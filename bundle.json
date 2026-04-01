@@ -5,17 +5,20 @@
   "license": "Apache License 2.0",
   "publishAs": "code-segment",
   "segment": {
-    "destPath" : "foundation/resourceschedule/device_usage_statistics"
+    "destPath": "foundation/resourceschedule/device_usage_statistics"
   },
   "dirs": {},
   "scripts": {},
   "component": {
     "name": "device_usage_statistics",
     "subsystem": "resourceschedule",
-    "syscap": [ "SystemCapability.ResourceSchedule.UsageStatistics.AppGroup",
-                "SystemCapability.ResourceSchedule.UsageStatistics.App"
-              ],
-    "features": [ "device_usage_statistics_device_enable" ],
+    "syscap": [
+      "SystemCapability.ResourceSchedule.UsageStatistics.AppGroup",
+      "SystemCapability.ResourceSchedule.UsageStatistics.App"
+    ],
+    "features": [
+      "device_usage_statistics_device_enable"
+    ],
     "adapted_system_type": [
       "standard"
     ],
@@ -49,7 +52,7 @@
       "third_party": []
     },
     "build": {
-      "group_type" : {
+      "group_type": {
         "base_group": [],
         "fwk_group": [
           "//foundation/resourceschedule/device_usage_statistics:bfwk_group_all",
@@ -81,7 +84,8 @@
         }
       ],
       "test": [
-        "//foundation/resourceschedule/device_usage_statistics:test_all"
+       "//foundation/resourceschedule/device_usage_statistics:test_all",
+       "//foundation/resourceschedule/device_usage_statistics/test/fuzztest/bundle_fuzzer:BundleActiveEventFuzzTest"
       ]
     }
   }
