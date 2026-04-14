@@ -34,9 +34,8 @@ public:
 
     static napi_value NapiGetUndefined(napi_env env);
 
-    static napi_value HandleParamErr(const napi_env &env, int32_t errCode, const std::string& operation);
-
-    static napi_value HandleParamOutOfRangeErr(const napi_env &env, int32_t errCode, const std::string& operation);
+    static napi_value HandleParamErr(const napi_env &env, int32_t errCode, const std::string& operation,
+        const bool newParamErr = false);
 
     static napi_value GetErrorValue(napi_env env, int32_t errCode);
 

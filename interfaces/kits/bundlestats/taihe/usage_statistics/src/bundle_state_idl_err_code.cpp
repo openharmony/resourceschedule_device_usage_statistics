@@ -64,7 +64,7 @@ std::string BundleStateIDLErrCode::HandleParamErr(int32_t errCode, const std::st
     return errMessage;
 }
 
-std::string BundleStateIDLErrCode::HandleParamOutOfRangeErr(int32_t errCode, const std::string& operation)
+std::string BundleStateIDLErrCode::HandleNewParamErr(int32_t errCode, const std::string& operation)
 {
     if (errCode == ERR_OK) {
         return "";

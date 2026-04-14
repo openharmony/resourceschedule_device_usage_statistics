@@ -51,20 +51,28 @@ private:
 sptr<GroupChangeObserver> groupChangeObserver_;
 std::mutex GroupChangeObserver::callbackMutex_;
 
-bool CheckBeginTimeAndEndTime(int64_t beginTime, int64_t endTime)
+bool CheckBeginTimeAndEndTime(int64_t beginTime, int64_t endTime, bool newParamCode = false)
 {
     int32_t errCode = 0;
     if (beginTime < TIME_NUMBER_MIN) {
         BUNDLE_ACTIVE_LOGE("CheckBeginTimeAndEndTime failed, beginTime value is invalid.");
         errCode = ParamError::ERR_BEGIN_TIME_LESS_THEN_ZERO;
-        set_business_error(errCode, BundleStateIDLErrCode::HandleParamErr(errCode, ""));
+        if (newParamCode) {
+            set_business_error(ERR_NEW_PARAM_ERROR, BundleStateIDLErrCode::HandleNewParamErr(errCode, ""));
+        } else {
+            set_business_error(ERR_PARAM_ERROR, BundleStateIDLErrCode::HandleParamErr(errCode, ""));
+        }
         return false;
     }
     if (endTime <= beginTime) {
         BUNDLE_ACTIVE_LOGE("CheckBeginTimeAndEndTime endTime(%{public}lld) <= beginTime(%{public}lld)",
             static_cast<long long>(endTime), static_cast<long long>(beginTime));
         errCode = ParamError::ERR_END_TIME_LESS_THEN_BEGIN_TIME;
-        set_business_error(errCode, BundleStateIDLErrCode::HandleParamErr(errCode, ""));
+        if (newParamCode) {
+            set_business_error(ERR_NEW_PARAM_ERROR, BundleStateIDLErrCode::HandleNewParamErr(errCode, ""));
+        } else {
+            set_business_error(ERR_PARAM_ERROR, BundleStateIDLErrCode::HandleParamErr(errCode, ""));
+        }
         return false;
     }
     return true;
@@ -96,8 +104,8 @@ bool CheckEventMaxNum(int32_t maxNum)
 {
     if (maxNum > MAXNUM_UP_LIMIT || maxNum <= 0) {
         BUNDLE_ACTIVE_LOGE("CheckMaxNum failed, maxNum is larger than 1000 or less/equal than 0");
-        int32_t errCode = ERR_PARAM_OUT_OF_RANGE;
-        set_business_error(errCode, BundleStateIDLErrCode::HandleParamOutOfRangeErr(errCode, ""));
+        int32_t errCode = ParamError::ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
+        set_business_error(ERR_NEW_PARAM_ERROR, BundleStateIDLErrCode::HandleNewParamErr(errCode, ""));
         return false;
     }
     return true;
@@ -285,7 +293,7 @@ array<BundleStatsInfo> QueryBundleStatsInfoByIntervalAsync(
 array<BundleEvents> QueryBundleEventsAsyncByLimit(int64_t beginTime, int64_t endTime, int32_t maxNum)
 {
     std::vector<BundleEvents> bundleEventVector;
-    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
+    if (!CheckBeginTimeAndEndTime(beginTime, endTime, true)) {
         return array<BundleEvents>(bundleEventVector);
     }
     if (!CheckEventMaxNum(maxNum)) {
@@ -314,7 +322,7 @@ array<BundleEvents> QueryBundleEventsAsync(int64_t beginTime, int64_t endTime)
 array<BundleEvents> QueryCurrentBundleEventsAsyncByLimit(int64_t beginTime, int64_t endTime, int32_t maxNum)
 {
     std::vector<BundleEvents> bundleEventVector;
-    if (!CheckBeginTimeAndEndTime(beginTime, endTime)) {
+    if (!CheckBeginTimeAndEndTime(beginTime, endTime, true)) {
         return array<BundleEvents>(bundleEventVector);
     }
     if (!CheckEventMaxNum(maxNum)) {
