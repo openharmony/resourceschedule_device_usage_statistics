@@ -303,45 +303,47 @@ napi_value ParseQueryCurrentBundleEventsParameters(const napi_env &env, const na
         params.errorCode = ERR_PARAMETERS_NUMBER;
         return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_NUMBER, "");
     }
-    // argv[0] : beginTime
-    if (BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
-        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, beginTime type is invalid.");
-        params.errorCode = ERR_BEGIN_TIME_TYPE;
-        return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_TYPE, "");
-    }
-    if (params.beginTime < TIME_NUMBER_MIN) {
-        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, beginTime value is invalid.");
-        params.errorCode = ERR_BEGIN_TIME_LESS_THEN_ZERO;
-        return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
-    }
-    // argv[1] : endTime
-    if (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr) {
-        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, endTime type is invalid.");
-        params.errorCode = ERR_END_TIME_TYPE;
-        return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_TYPE, "");
-    }
-    if (params.endTime <= params.beginTime) {
-        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
-            (long long)params.endTime, (long long)params.beginTime);
-        params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
-        return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_LESS_THEN_BEGIN_TIME, "");
-    }
+    bool hasMaxNumParam = false;
     // argv[SECOND_ARG]: callback
     if (argc == STATES_PARAMS) {
         napi_valuetype valuetype = napi_undefined;
         NAPI_CALL(env, napi_typeof(env, argv[SECOND_ARG], &valuetype));
         if (valuetype == napi_function) {
             napi_create_reference(env, argv[SECOND_ARG], 1, &params.callback);
-        } else if (BundleStateCommon::GetInt32NumberValue(env, argv[SECOND_ARG], params.maxNum) == nullptr) {
-            BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, SECOND_ARG type is invalid.");
-            params.errorCode = ERR_PARAMETERS_TYPE;
-            return BundleStateCommon::HandleParamErr(env, ERR_PARAMETERS_TYPE, "");
+        } else if (valuetype == napi_number) {
+            hasMaxNumParam = true;
+            napi_get_value_int32(env, argv[SECOND_ARG], &params.maxNum);
+        } else {
+            params.errorCode = ERR_CALL_BACK_TYPE;
+            return BundleStateCommon::HandleParamErr(env, ERR_CALL_BACK_TYPE, "");
         }
         if (params.maxNum > MAXNUM_UP_LIMIT || params.maxNum <= 0) {
             BUNDLE_ACTIVE_LOGE("parse failed, maxNum is larger than 1000 or less/equal than 0");
             params.errorCode = ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND;
-            return BundleStateCommon::HandleParamOutOfRangeErr(env, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND, "");
+            return BundleStateCommon::HandleParamErr(env, ERR_MAX_RECORDS_NUM_BIGER_THEN_ONE_THOUSAND, "", true);
         }
+    }
+    // argv[0] : beginTime
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[0], params.beginTime) == nullptr) {
+        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, beginTime type is invalid.");
+        params.errorCode = ERR_BEGIN_TIME_TYPE;
+        return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_TYPE, "", hasMaxNumParam);
+    }
+    if (params.beginTime < TIME_NUMBER_MIN) {
+        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, beginTime value is invalid.");
+        params.errorCode = ERR_BEGIN_TIME_LESS_THEN_ZERO;
+        return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "", hasMaxNumParam);
+    }
+    // argv[1] : endTime
+    if (BundleStateCommon::GetInt64NumberValue(env, argv[1], params.endTime) == nullptr) {
+        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters failed, endTime type is invalid.");
+        params.errorCode = ERR_END_TIME_TYPE;
+        return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_TYPE, "", hasMaxNumParam);
+    }
+    if (params.endTime <= params.beginTime) {
+        BUNDLE_ACTIVE_LOGE("ParseQueryCurrentBundleEventsParameters endTime <= beginTime");
+        params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
+        return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_LESS_THEN_BEGIN_TIME, "", hasMaxNumParam);
     }
     BundleStateCommon::AsyncInit(env, params, asyncCallbackInfo);
     return BundleStateCommon::NapiGetNull(env);

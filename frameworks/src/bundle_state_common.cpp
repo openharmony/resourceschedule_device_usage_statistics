@@ -44,7 +44,8 @@ AsyncWorkData::~AsyncWorkData()
     }
 }
 
-napi_value BundleStateCommon::HandleParamErr(const napi_env &env, int32_t errCode, const std::string& operation)
+napi_value BundleStateCommon::HandleParamErr(const napi_env &env, int32_t errCode, const std::string& operation,
+    const bool newParamErr)
 {
     if (errCode == ERR_OK) {
         return nullptr;
@@ -52,27 +53,15 @@ napi_value BundleStateCommon::HandleParamErr(const napi_env &env, int32_t errCod
     BUNDLE_ACTIVE_LOGE("HandleParamErr %{public}d", errCode);
     auto iter = paramErrCodeMsgMap.find(errCode);
     if (iter != paramErrCodeMsgMap.end()) {
-        std::string errMessage = "BussinessError 401: Parameter error. ";
+        std::string errMessage = newParamErr ? "BussinessError 10000008: Parameter error. "
+            : "BussinessError 401: Parameter error. ";
         errMessage.append(operation);
         errMessage.append(iter->second);
-        napi_throw_error(env, std::to_string(ERR_PARAM_ERROR).c_str(), errMessage.c_str());
-    }
-    return nullptr;
-}
-
-napi_value BundleStateCommon::HandleParamOutOfRangeErr(const napi_env &env, int32_t errCode,
-    const std::string& operation)
-{
-    if (errCode == ERR_OK) {
-        return nullptr;
-    }
-    BUNDLE_ACTIVE_LOGE("HandleParamErr %{public}d", errCode);
-    auto iter = paramErrCodeMsgMap.find(errCode);
-    if (iter != paramErrCodeMsgMap.end()) {
-        std::string errMessage = "BussinessError 10000008: Parameter error. ";
-        errMessage.append(operation);
-        errMessage.append(iter->second);
-        napi_throw_error(env, std::to_string(ERR_PARAM_OUT_OF_RANGE).c_str(), errMessage.c_str());
+        if (newParamErr) {
+            napi_throw_error(env, std::to_string(ERR_NEW_PARAM_ERROR).c_str(), errMessage.c_str());
+        } else {
+            napi_throw_error(env, std::to_string(ERR_PARAM_ERROR).c_str(), errMessage.c_str());
+        }
     }
     return nullptr;
 }

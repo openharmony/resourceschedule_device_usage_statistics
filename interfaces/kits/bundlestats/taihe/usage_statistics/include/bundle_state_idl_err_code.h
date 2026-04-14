@@ -27,7 +27,7 @@ public:
     static int32_t GetReflectErrCode(int32_t errCode);
     static std::string GetErrorCode(int32_t errCode);
     static std::string HandleParamErr(int32_t errCode, const std::string& operation);
-    static std::string HandleParamOutOfRangeErr(int32_t errCode, const std::string& operation);
+    static std::string HandleNewParamErr(int32_t errCode, const std::string& operation);
 };
 
 }  // namespace DeviceUsageStats
