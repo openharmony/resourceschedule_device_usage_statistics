@@ -58,6 +58,7 @@ ohos_fuzztest("BundleActiveParallelizationFuzzTest") {
     "access_token:libtokenid_sdk",
     "cJSON:cjson",
     "cJSON:cjson_static",
+    "c_utils:utils", 
     "ffrt:libffrt",
     "hilog:libhilog",
     "init:libbegetutil",
