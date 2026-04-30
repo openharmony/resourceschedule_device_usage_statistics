@@ -63,6 +63,7 @@ ohos_fuzztest("BundleActivePowerstateCallbackproxyFuzzTest") {
     "access_token:libtokenid_sdk",
     "cJSON:cjson",
     "cJSON:cjson_static",
+    "c_utils:utils", 
     "ffrt:libffrt",
     "hilog:libhilog",
     "init:libbegetutil",
