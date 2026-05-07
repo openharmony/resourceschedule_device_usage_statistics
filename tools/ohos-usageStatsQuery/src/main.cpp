@@ -42,6 +42,8 @@ using OHOS::ERR_OK;
 #define DEFAULT_DAY_RANGE (7)
 #define DEFAULT_HIGH_FREQ_COUNT (20)
 #define MIN_ARG_COUNT (2)
+#define HELP_ARGC_MINIMAL (2)
+#define HELP_ARGC_WITH_CMD (3)
 
 typedef std::function<int(int, char**)> CommandHandler;
 
@@ -126,12 +128,12 @@ int64_t ParseArgLong(int argc, char** argv, const std::string& key, int64_t defa
 
 bool CheckHelpFlag(int argc, char** argv)
 {
-for (int i = 0; i < argc; i++) {
-    if (strcmp(argv[i], "--help") == 0) {
-        return true;
+    for (int i = 0; i < argc; i++) {
+        if (strcmp(argv[i], "--help") == 0) {
+            return true;
+        }
     }
-}
-return false;
+    return false;
 }
 
 void ShowQueryStatsIntervalHelp()
@@ -391,92 +393,92 @@ int CmdCheckBundlePeriod(int argc, char** argv)
 
 int CmdQueryStatsInterval(int argc, char** argv)
 {
-if (CheckHelpFlag(argc, argv)) {
-    ShowQueryStatsIntervalHelp();
-    return 0;
-}
-int32_t intervalType = ParseArgInt(argc, argv, "interval", DEFAULT_INTERVAL_TYPE);
-if (intervalType < 0 || intervalType > MAX_INTERVAL_TYPE) {
-    return OutputError("ERR_INTERVAL_TYPE", "intervalType参数无效",
-        "请使用有效的 --interval 参数（0-3），0=按天，1=按周，2=按月，3=按年");
-}
-int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
-int64_t endTime = ParseArgLong(argc, argv, "end", 0);
-if (beginTime <= 0 || endTime <= 0) {
-    return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
-        "请提供有效的 --begin 和 --end 时间戳参数（单位：毫秒），"
-        "例如：--begin 1609459200000 --end 1609545600000");
-}
-if (endTime <= beginTime) {
-    return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
-        "结束时间必须大于开始时间，请调整时间范围");
-}
-int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
-std::vector<BundleActivePackageStats> packageStats;
-ErrCode ret = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(
-    packageStats, intervalType, beginTime, endTime, userId);
-if (ret != ERR_OK) {
-    return OutputError("ERR_QUERY_FAILED", "查询使用统计失败",
-        "请检查：1. BundleActiveService是否正常运行；"
-        "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
-}
-cJSON* data = cJSON_CreateObject();
-cJSON_AddNumberToObject(data, "intervalType", intervalType);
-cJSON_AddNumberToObject(data, "beginTime", beginTime);
-cJSON_AddNumberToObject(data, "endTime", endTime);
-cJSON_AddNumberToObject(data, "userId", userId);
-cJSON* statsArray = cJSON_CreateArray();
-for (const auto& stats : packageStats) {
-    cJSON_AddItemToArray(statsArray, PackageStatsToJson(stats));
-}
-cJSON_AddItemToObject(data, "packageStats", statsArray);
-cJSON_AddNumberToObject(data, "count", packageStats.size());
-return OutputSuccess(data);
+    if (CheckHelpFlag(argc, argv)) {
+        ShowQueryStatsIntervalHelp();
+        return 0;
+    }
+    int32_t intervalType = ParseArgInt(argc, argv, "interval", DEFAULT_INTERVAL_TYPE);
+    if (intervalType < 0 || intervalType > MAX_INTERVAL_TYPE) {
+        return OutputError("ERR_INTERVAL_TYPE", "intervalType参数无效",
+            "请使用有效的 --interval 参数（0-3），0=按天，1=按周，2=按月，3=按年");
+    }
+    int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
+    int64_t endTime = ParseArgLong(argc, argv, "end", 0);
+    if (beginTime <= 0 || endTime <= 0) {
+        return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
+            "请提供有效的 --begin 和 --end 时间戳参数（单位：毫秒），"
+            "例如：--begin 1609459200000 --end 1609545600000");
+    }
+    if (endTime <= beginTime) {
+        return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
+            "结束时间必须大于开始时间，请调整时间范围");
+    }
+    int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
+    std::vector<BundleActivePackageStats> packageStats;
+    ErrCode ret = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(
+        packageStats, intervalType, beginTime, endTime, userId);
+    if (ret != ERR_OK) {
+        return OutputError("ERR_QUERY_FAILED", "查询使用统计失败",
+            "请检查：1. BundleActiveService是否正常运行；"
+            "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
+    }
+    cJSON* data = cJSON_CreateObject();
+    cJSON_AddNumberToObject(data, "intervalType", intervalType);
+    cJSON_AddNumberToObject(data, "beginTime", beginTime);
+    cJSON_AddNumberToObject(data, "endTime", endTime);
+    cJSON_AddNumberToObject(data, "userId", userId);
+    cJSON* statsArray = cJSON_CreateArray();
+    for (const auto& stats : packageStats) {
+        cJSON_AddItemToArray(statsArray, PackageStatsToJson(stats));
+    }
+    cJSON_AddItemToObject(data, "packageStats", statsArray);
+    cJSON_AddNumberToObject(data, "count", packageStats.size());
+    return OutputSuccess(data);
 }
 
 int CmdQueryEvents(int argc, char** argv)
 {
-if (CheckHelpFlag(argc, argv)) {
-    ShowQueryEventsHelp();
-    return 0;
-}
-int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
-int64_t endTime = ParseArgLong(argc, argv, "end", 0);
-if (beginTime <= 0 || endTime <= 0) {
-    return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
-        "请提供有效的 --begin 和 --end 时间戳参数（单位：毫秒），"
-        "例如：--begin 1609459200000 --end 1609545600000");
-}
-if (endTime <= beginTime) {
-    return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
-        "结束时间必须大于开始时间，请调整时间范围");
-}
-int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
-int32_t maxNum = ParseArgInt(argc, argv, "max", MAX_RETURN_COUNT);
+    if (CheckHelpFlag(argc, argv)) {
+        ShowQueryEventsHelp();
+        return 0;
+    }
+    int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
+    int64_t endTime = ParseArgLong(argc, argv, "end", 0);
+    if (beginTime <= 0 || endTime <= 0) {
+        return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
+            "请提供有效的 --begin 和 --end 时间戳参数（单位：毫秒），"
+            "例如：--begin 1609459200000 --end 1609545600000");
+    }
+    if (endTime <= beginTime) {
+        return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
+            "结束时间必须大于开始时间，请调整时间范围");
+    }
+    int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
+    int32_t maxNum = ParseArgInt(argc, argv, "max", MAX_RETURN_COUNT);
     if (maxNum < 1 || maxNum > MAX_RETURN_COUNT) {
-    return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
-        "请使用有效的 --max 参数（范围：1-1000），例如：--max 500");
-}
-std::vector<BundleActiveEvent> events;
-ErrCode ret = BundleActiveClient::GetInstance().QueryBundleEvents(
-    events, beginTime, endTime, userId, maxNum);
-if (ret != ERR_OK) {
-    return OutputError("ERR_QUERY_FAILED", "查询应用事件失败",
-        "请检查：1. BundleActiveService是否正常运行；"
-        "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
-}
-cJSON* data = cJSON_CreateObject();
-cJSON_AddNumberToObject(data, "beginTime", beginTime);
-cJSON_AddNumberToObject(data, "endTime", endTime);
-cJSON_AddNumberToObject(data, "userId", userId);
-cJSON_AddNumberToObject(data, "maxNum", maxNum);
-cJSON* eventsArray = cJSON_CreateArray();
-for (const auto& event : events) {
-    cJSON_AddItemToArray(eventsArray, EventToJson(event));
-}
-cJSON_AddItemToObject(data, "events", eventsArray);
-cJSON_AddNumberToObject(data, "count", events.size());
-return OutputSuccess(data);
+        return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
+            "请使用有效的 --max 参数（范围：1-1000），例如：--max 500");
+    }
+    std::vector<BundleActiveEvent> events;
+    ErrCode ret = BundleActiveClient::GetInstance().QueryBundleEvents(
+        events, beginTime, endTime, userId, maxNum);
+    if (ret != ERR_OK) {
+        return OutputError("ERR_QUERY_FAILED", "查询应用事件失败",
+            "请检查：1. BundleActiveService是否正常运行；"
+            "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
+    }
+    cJSON* data = cJSON_CreateObject();
+    cJSON_AddNumberToObject(data, "beginTime", beginTime);
+    cJSON_AddNumberToObject(data, "endTime", endTime);
+    cJSON_AddNumberToObject(data, "userId", userId);
+    cJSON_AddNumberToObject(data, "maxNum", maxNum);
+    cJSON* eventsArray = cJSON_CreateArray();
+    for (const auto& event : events) {
+        cJSON_AddItemToArray(eventsArray, EventToJson(event));
+    }
+    cJSON_AddItemToObject(data, "events", eventsArray);
+    cJSON_AddNumberToObject(data, "count", events.size());
+    return OutputSuccess(data);
 }
 
 int CmdQueryAppGroup(int argc, char** argv)
@@ -522,36 +524,36 @@ int CmdQueryAppGroup(int argc, char** argv)
 
 int CmdQueryHighFreqBundle(int argc, char** argv)
 {
-if (CheckHelpFlag(argc, argv)) {
-    ShowQueryHighFreqBundleHelp();
-    return 0;
-}
-int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
-int32_t maxNum = ParseArgInt(argc, argv, "max", DEFAULT_HIGH_FREQ_COUNT);
-int32_t queryDayRange = ParseArgInt(argc, argv, "days", DEFAULT_DAY_RANGE);
-if (maxNum < 1 || maxNum > MAX_RETURN_COUNT) {
-    return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
-        "请使用有效的 --max 参数（范围：1-1000），例如：--max 50");
-}
-std::vector<BundleActivePackageStats> packageStats;
-ErrCode ret = BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(
-    packageStats, userId, maxNum, queryDayRange);
-if (ret != ERR_OK) {
-    return OutputError("ERR_QUERY_FAILED", "查询高频使用应用失败",
-        "请检查：1. BundleActiveService是否正常运行；"
-        "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
-}
-cJSON* data = cJSON_CreateObject();
-cJSON_AddNumberToObject(data, "userId", userId);
-cJSON_AddNumberToObject(data, "maxNum", maxNum);
-cJSON_AddNumberToObject(data, "queryDayRange", queryDayRange);
-cJSON* statsArray = cJSON_CreateArray();
-for (const auto& stats : packageStats) {
-    cJSON_AddItemToArray(statsArray, PackageStatsToJson(stats));
-}
-cJSON_AddItemToObject(data, "packageStats", statsArray);
-cJSON_AddNumberToObject(data, "count", packageStats.size());
-return OutputSuccess(data);
+    if (CheckHelpFlag(argc, argv)) {
+        ShowQueryHighFreqBundleHelp();
+        return 0;
+    }
+    int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
+    int32_t maxNum = ParseArgInt(argc, argv, "max", DEFAULT_HIGH_FREQ_COUNT);
+    int32_t queryDayRange = ParseArgInt(argc, argv, "days", DEFAULT_DAY_RANGE);
+    if (maxNum < 1 || maxNum > MAX_RETURN_COUNT) {
+        return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
+            "请使用有效的 --max 参数（范围：1-1000），例如：--max 50");
+    }
+    std::vector<BundleActivePackageStats> packageStats;
+    ErrCode ret = BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(
+        packageStats, userId, maxNum, queryDayRange);
+    if (ret != ERR_OK) {
+        return OutputError("ERR_QUERY_FAILED", "查询高频使用应用失败",
+            "请检查：1. BundleActiveService是否正常运行；"
+            "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
+    }
+    cJSON* data = cJSON_CreateObject();
+    cJSON_AddNumberToObject(data, "userId", userId);
+    cJSON_AddNumberToObject(data, "maxNum", maxNum);
+    cJSON_AddNumberToObject(data, "queryDayRange", queryDayRange);
+    cJSON* statsArray = cJSON_CreateArray();
+    for (const auto& stats : packageStats) {
+        cJSON_AddItemToArray(statsArray, PackageStatsToJson(stats));
+    }
+    cJSON_AddItemToObject(data, "packageStats", statsArray);
+    cJSON_AddNumberToObject(data, "count", packageStats.size());
+    return OutputSuccess(data);
 }
 
 int CmdQueryModuleRecords(int argc, char** argv)
@@ -606,41 +608,41 @@ int CmdQueryModuleRecords(int argc, char** argv)
 
 int CmdQueryNotificationStats(int argc, char** argv)
 {
-if (CheckHelpFlag(argc, argv)) {
-    ShowQueryNotificationStatsHelp();
-    return 0;
-}
-int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
-int64_t endTime = ParseArgLong(argc, argv, "end", 0);
-if (beginTime <= 0 || endTime <= 0) {
-    return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
-        "请提供有效的 --begin 和 --end 时间戳参数（单位：毫秒），"
-        "例如：--begin 1609459200000 --end 1609545600000");
-}
-if (endTime <= beginTime) {
-    return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
-        "结束时间必须大于开始时间，请调整时间范围");
-}
-int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
-std::vector<BundleActiveEventStats> eventStats;
-ErrCode ret = BundleActiveClient::GetInstance().QueryNotificationEventStats(
-    beginTime, endTime, eventStats, userId);
-if (ret != ERR_OK) {
-    return OutputError("ERR_QUERY_FAILED", "查询通知事件统计失败",
-        "请检查：1. BundleActiveService是否正常运行；"
-        "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
-}
-cJSON* data = cJSON_CreateObject();
-cJSON_AddNumberToObject(data, "beginTime", beginTime);
-cJSON_AddNumberToObject(data, "endTime", endTime);
-cJSON_AddNumberToObject(data, "userId", userId);
-cJSON* statsArray = cJSON_CreateArray();
-for (const auto& stats : eventStats) {
-    cJSON_AddItemToArray(statsArray, EventStatsToJson(stats));
-}
-cJSON_AddItemToObject(data, "eventStats", statsArray);
-cJSON_AddNumberToObject(data, "count", eventStats.size());
-return OutputSuccess(data);
+    if (CheckHelpFlag(argc, argv)) {
+        ShowQueryNotificationStatsHelp();
+        return 0;
+    }
+    int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
+    int64_t endTime = ParseArgLong(argc, argv, "end", 0);
+    if (beginTime <= 0 || endTime <= 0) {
+        return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
+            "请提供有效的 --begin 和 --end 时间戳参数（单位：毫秒），"
+            "例如：--begin 1609459200000 --end 1609545600000");
+    }
+    if (endTime <= beginTime) {
+        return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
+            "结束时间必须大于开始时间，请调整时间范围");
+    }
+    int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
+    std::vector<BundleActiveEventStats> eventStats;
+    ErrCode ret = BundleActiveClient::GetInstance().QueryNotificationEventStats(
+        beginTime, endTime, eventStats, userId);
+    if (ret != ERR_OK) {
+        return OutputError("ERR_QUERY_FAILED", "查询通知事件统计失败",
+            "请检查：1. BundleActiveService是否正常运行；"
+            "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
+    }
+    cJSON* data = cJSON_CreateObject();
+    cJSON_AddNumberToObject(data, "beginTime", beginTime);
+    cJSON_AddNumberToObject(data, "endTime", endTime);
+    cJSON_AddNumberToObject(data, "userId", userId);
+    cJSON* statsArray = cJSON_CreateArray();
+    for (const auto& stats : eventStats) {
+        cJSON_AddItemToArray(statsArray, EventStatsToJson(stats));
+    }
+    cJSON_AddItemToObject(data, "eventStats", statsArray);
+    cJSON_AddNumberToObject(data, "count", eventStats.size());
+    return OutputSuccess(data);
 }
 
 int CmdQueryHighFreqPeriod(int argc, char** argv)
@@ -773,52 +775,52 @@ int CmdHelp(int argc, char** argv)
     }
 
     char* helpArgv[2] = {const_cast<char*>(PROGRAM_NAME), nullptr};
-    return it->second.handler(2, helpArgv);
+    return it->second.handler(HELP_ARGC_MINIMAL, helpArgv);
 }
 
 void InitCommands()
 {
-g_commands["check-bundle-idle"] = {
-    "check-bundle-idle", "检查应用是否空闲", nullptr, nullptr, nullptr, CmdCheckBundleIdle
-};
-g_commands["check-bundle-period"] = {
-    "check-bundle-period", "检查应用是否在使用时段（仅Native Token）",
-    nullptr, nullptr, nullptr, CmdCheckBundlePeriod
-};
-g_commands["query-stats-interval"] = {
-    "query-stats-interval", "按时间间隔查询使用统计",
-    nullptr, nullptr, nullptr, CmdQueryStatsInterval
-};
-g_commands["query-events"] = {
-    "query-events", "查询应用事件记录", nullptr, nullptr, nullptr, CmdQueryEvents
-};
-g_commands["query-app-group"] = {
-    "query-app-group", "查询应用优先级分组",
-    nullptr, nullptr, nullptr, CmdQueryAppGroup
-};
-g_commands["query-high-freq-bundle"] = {
-    "query-high-freq-bundle", "查询高频使用应用",
-    nullptr, nullptr, nullptr, CmdQueryHighFreqBundle
-};
-g_commands["query-module-records"] = {
-    "query-module-records", "查询模块使用记录",
-    nullptr, nullptr, nullptr, CmdQueryModuleRecords
-};
-g_commands["query-notification-stats"] = {
-    "query-notification-stats", "查询通知事件统计",
-    nullptr, nullptr, nullptr, CmdQueryNotificationStats
-};
-g_commands["query-high-freq-period"] = {
-    "query-high-freq-period", "查询高频使用时段",
-    nullptr, nullptr, nullptr, CmdQueryHighFreqPeriod
-};
-g_commands["query-latest-used-time"] = {
-    "query-latest-used-time", "查询应用今日最后使用时间",
-    nullptr, nullptr, nullptr, CmdQueryLatestUsedTime
-};
-g_commands["help"] = {
-    "help", "显示帮助信息", nullptr, nullptr, nullptr, CmdHelp
-};
+    g_commands["check-bundle-idle"] = {
+        "check-bundle-idle", "检查应用是否空闲", nullptr, nullptr, nullptr, CmdCheckBundleIdle
+    };
+    g_commands["check-bundle-period"] = {
+        "check-bundle-period", "检查应用是否在使用时段（仅Native Token）",
+        nullptr, nullptr, nullptr, CmdCheckBundlePeriod
+    };
+    g_commands["query-stats-interval"] = {
+        "query-stats-interval", "按时间间隔查询使用统计",
+        nullptr, nullptr, nullptr, CmdQueryStatsInterval
+    };
+    g_commands["query-events"] = {
+        "query-events", "查询应用事件记录", nullptr, nullptr, nullptr, CmdQueryEvents
+    };
+    g_commands["query-app-group"] = {
+        "query-app-group", "查询应用优先级分组",
+        nullptr, nullptr, nullptr, CmdQueryAppGroup
+    };
+    g_commands["query-high-freq-bundle"] = {
+        "query-high-freq-bundle", "查询高频使用应用",
+        nullptr, nullptr, nullptr, CmdQueryHighFreqBundle
+    };
+    g_commands["query-module-records"] = {
+        "query-module-records", "查询模块使用记录",
+        nullptr, nullptr, nullptr, CmdQueryModuleRecords
+    };
+    g_commands["query-notification-stats"] = {
+        "query-notification-stats", "查询通知事件统计",
+        nullptr, nullptr, nullptr, CmdQueryNotificationStats
+    };
+    g_commands["query-high-freq-period"] = {
+        "query-high-freq-period", "查询高频使用时段",
+        nullptr, nullptr, nullptr, CmdQueryHighFreqPeriod
+    };
+    g_commands["query-latest-used-time"] = {
+        "query-latest-used-time", "查询应用今日最后使用时间",
+        nullptr, nullptr, nullptr, CmdQueryLatestUsedTime
+    };
+    g_commands["help"] = {
+        "help", "显示帮助信息", nullptr, nullptr, nullptr, CmdHelp
+    };
 }
 
 void PrintUsage(const char* prog)
@@ -832,7 +834,7 @@ int main(int argc, char** argv)
     if (argc >= MIN_ARG_COUNT && strcmp(argv[1], "--help") == 0) {
         InitCommands();
         char* helpArgv[2] = {const_cast<char*>(PROGRAM_NAME), nullptr};
-        CmdHelp(2, helpArgv);
+        CmdHelp(HELP_ARGC_MINIMAL, helpArgv);
         return 0;
     }
 
@@ -851,7 +853,7 @@ int main(int argc, char** argv)
             if (it != g_commands.end()) {
                 char* helpArgv[3] = {const_cast<char*>(PROGRAM_NAME),
                     const_cast<char*>(cmdName.c_str()), nullptr};
-                return CmdHelp(3, helpArgv);
+                return CmdHelp(HELP_ARGC_WITH_CMD, helpArgv);
             }
         }
     }

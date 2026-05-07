@@ -62,7 +62,7 @@ ohos-usageStatsQuery <command> [options]
 
 ### userId参数
 - -1: 当前用户（默认值）
-- 其他值：指定用户ID
+- 非默认值：指定用户ID
 
 ### maxNum参数
 - 范围：1-1000
