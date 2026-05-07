@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,7 +50,8 @@
  static std::unordered_map<std::string, Command> g_commands;
  static const char* g_programName = "ohos-usageStatsQuery";
  static const char* g_toolDescription = 
-    "Application usage statistics query tool，提供应用使用时长、事件记录、高频使用时段等查询功能。"
+    "Application usage statistics query tool，"
+    "提供应用使用时长、事件记录、高频使用时段等查询功能。"
     "用于开发者或系统管理员分析应用使用情况。"
     "仅支持具有ohos.permission.BUNDLE_ACTIVE_INFO权限的系统应用调用。";
  
@@ -116,17 +117,111 @@
      return std::stoll(value);
  }
  
- bool CheckHelpFlag(int argc, char** argv)
- {
-     for (int i = 0; i < argc; i++) {
-         if (strcmp(argv[i], "--help") == 0) {
-             return true;
-         }
-     }
-     return false;
- }
- 
- cJSON* PackageStatsToJson(const BundleActivePackageStats& stats)
+bool CheckHelpFlag(int argc, char** argv)
+{
+    for (int i = 0; i < argc; i++) {
+        if (strcmp(argv[i], "--help") == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void ShowQueryStatsIntervalHelp()
+{
+    CLI_LOG("%s query-stats-interval - 按时间间隔查询应用使用统计。"
+        "用于分析应用在特定时间范围内的使用时长和启动次数。"
+        "仅支持有效的时间范围查询。", g_programName);
+    CLI_LOG("");
+    CLI_LOG("Usage:");
+    CLI_LOG("  %s query-stats-interval --interval <type> --begin <timestamp> "
+        "--end <timestamp> [--user <userId>]", g_programName);
+    CLI_LOG("");
+    CLI_LOG("Parameters:");
+    CLI_LOG("  --interval <integer>   时间间隔类型（必需，范围：0-3，"
+        "0=按天，1=按周，2=按月，3=按年）");
+    CLI_LOG("  --begin <number>       开始时间戳（必需，单位：毫秒）");
+    CLI_LOG("  --end <number>         结束时间戳（必需，单位：毫秒）");
+    CLI_LOG("  --user <integer>       用户ID（可选，默认：-1 表示当前用户）");
+    CLI_LOG("  --help                 显示帮助信息");
+    CLI_LOG("");
+    CLI_LOG("Examples:");
+    CLI_LOG("  %s query-stats-interval --interval 0 --begin 1609459200000 "
+        "--end 1609545600000", g_programName);
+    CLI_LOG("  %s query-stats-interval --interval 1 --begin 1609459200000 "
+        "--end 1610064000000 --user 100", g_programName);
+}
+
+void ShowQueryEventsHelp()
+{
+    CLI_LOG("%s query-events - 查询应用事件记录。"
+        "用于获取应用在特定时间范围内的使用事件（如启动、切换等）。"
+        "仅支持有效的时间范围查询。", g_programName);
+    CLI_LOG("");
+    CLI_LOG("Usage:");
+    CLI_LOG("  %s query-events --begin <timestamp> --end <timestamp> "
+        "[--user <userId>] [--max <count>]", g_programName);
+    CLI_LOG("");
+    CLI_LOG("Parameters:");
+    CLI_LOG("  --begin <number>       开始时间戳（必需，单位：毫秒）");
+    CLI_LOG("  --end <number>         结束时间戳（必需，单位：毫秒）");
+    CLI_LOG("  --user <integer>       用户ID（可选，默认：-1 表示当前用户）");
+    CLI_LOG("  --max <integer>        最大返回数量（可选，范围：1-1000，默认：1000）");
+    CLI_LOG("  --help                 显示帮助信息");
+    CLI_LOG("");
+    CLI_LOG("Examples:");
+    CLI_LOG("  %s query-events --begin 1609459200000 --end 1609545600000", 
+        g_programName);
+    CLI_LOG("  %s query-events --begin 1609459200000 --end 1609545600000 "
+        "--max 500 --user 100", g_programName);
+}
+
+void ShowQueryHighFreqBundleHelp()
+{
+    CLI_LOG("%s query-high-freq-bundle - 查询高频使用应用列表。"
+        "用于获取最近一段时间内使用频率最高的应用。"
+        "仅支持有效的查询参数。", g_programName);
+    CLI_LOG("");
+    CLI_LOG("Usage:");
+    CLI_LOG("  %s query-high-freq-bundle [--user <userId>] [--max <count>] "
+        "[--days <range>]", g_programName);
+    CLI_LOG("");
+    CLI_LOG("Parameters:");
+    CLI_LOG("  --user <integer>       用户ID（可选，默认：-1 表示当前用户）");
+    CLI_LOG("  --max <integer>        最大返回数量（可选，范围：1-1000，默认：20）");
+    CLI_LOG("  --days <integer>       查询天数范围（可选，默认：7）");
+    CLI_LOG("  --help                 显示帮助信息");
+    CLI_LOG("");
+    CLI_LOG("Examples:");
+    CLI_LOG("  %s query-high-freq-bundle", g_programName);
+    CLI_LOG("  %s query-high-freq-bundle --max 50 --days 14", g_programName);
+    CLI_LOG("  %s query-high-freq-bundle --user 100 --max 50 --days 14", g_programName);
+}
+
+void ShowQueryNotificationStatsHelp()
+{
+    CLI_LOG("%s query-notification-stats - 查询通知事件统计。"
+        "用于获取应用在特定时间范围内的通知使用情况。"
+        "仅支持有效的时间范围查询。", g_programName);
+    CLI_LOG("");
+    CLI_LOG("Usage:");
+    CLI_LOG("  %s query-notification-stats --begin <timestamp> --end <timestamp> "
+        "[--user <userId>]", g_programName);
+    CLI_LOG("");
+    CLI_LOG("Parameters:");
+    CLI_LOG("  --begin <number>       开始时间戳（必需，单位：毫秒）");
+    CLI_LOG("  --end <number>         结束时间戳（必需，单位：毫秒）");
+    CLI_LOG("  --user <integer>       用户ID（可选，默认：-1 表示当前用户）");
+    CLI_LOG("  --help                 显示帮助信息");
+    CLI_LOG("");
+    CLI_LOG("Examples:");
+    CLI_LOG("  %s query-notification-stats --begin 1609459200000 "
+        "--end 1609545600000", g_programName);
+    CLI_LOG("  %s query-notification-stats --begin 1609459200000 "
+        "--end 1609545600000 --user 100", g_programName);
+}
+
+cJSON* PackageStatsToJson(const BundleActivePackageStats& stats)
  {
      cJSON* obj = cJSON_CreateObject();
      cJSON_AddStringToObject(obj, "bundleName", stats.bundleName_.c_str());
@@ -234,7 +329,7 @@
      ErrCode ret = BundleActiveClient::GetInstance().IsBundleIdle(isBundleIdle, bundleName, userId);
      
      if (ret != ERR_OK) {
-return OutputError("ERR_QUERY_FAILED", "查询应用空闲状态失败",
+        return OutputError("ERR_QUERY_FAILED", "查询应用空闲状态失败",
             "请检查：1. BundleActiveService是否正常运行；"
             "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
      }
@@ -291,147 +386,95 @@ return OutputError("ERR_QUERY_FAILED", "查询应用空闲状态失败",
      return OutputSuccess(data);
  }
  
- int CmdQueryStatsInterval(int argc, char** argv)
- {
-     if (CheckHelpFlag(argc, argv)) {
-         CLI_LOG("%s query-stats-interval - 按时间间隔查询应用使用统计。"
-            "用于分析应用在特定时间范围内的使用时长和启动次数。"
-            "仅支持有效的时间范围查询。", g_programName);
-         CLI_LOG("");
-         CLI_LOG("Usage:");
-         CLI_LOG("  %s query-stats-interval --interval <type> --begin <timestamp> "
-            "--end <timestamp> [--user <userId>]", g_programName);
-CLI_LOG("");
-    CLI_LOG("Parameters:");
-    CLI_LOG("  --interval <integer>   时间间隔类型（必需，范围：0-3，"
-            "0=按天，1=按周，2=按月，3=按年）");
-    CLI_LOG("  --begin <number>       开始时间戳（必需，单位：毫秒）");
-    CLI_LOG("  --end <number>         结束时间戳（必需，单位：毫秒）");
-    CLI_LOG("  --user <integer>       用户ID（可选，默认：-1 表示当前用户）");
-    CLI_LOG("  --help                 显示帮助信息");
-         CLI_LOG("");
-         CLI_LOG("Examples:");
-         CLI_LOG("  %s query-stats-interval --interval 0 --begin 1609459200000 --end 1609545600000", g_programName);
-         CLI_LOG("  %s query-stats-interval --interval 1 --begin 1609459200000 "
-            "--end 1610064000000 --user 100", g_programName);
-         return 0;
-     }
- 
-     int32_t intervalType = ParseArgInt(argc, argv, "interval", -1);
-     if (intervalType < 0 || intervalType > 3) {
-         return OutputError("ERR_INTERVAL_TYPE", "intervalType参数无效",
-             "请使用有效的 --interval 参数（0-3），0=按天，1=按周，2=按月，3=按年");
-     }
-     
-     int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
-     int64_t endTime = ParseArgLong(argc, argv, "end", 0);
-     
-     if (beginTime <= 0 || endTime <= 0) {
-return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
+int CmdQueryStatsInterval(int argc, char** argv)
+{
+    if (CheckHelpFlag(argc, argv)) {
+        ShowQueryStatsIntervalHelp();
+        return 0;
+    }
+    int32_t intervalType = ParseArgInt(argc, argv, "interval", -1);
+    if (intervalType < 0 || intervalType > 3) {
+        return OutputError("ERR_INTERVAL_TYPE", "intervalType参数无效",
+            "请使用有效的 --interval 参数（0-3），0=按天，1=按周，2=按月，3=按年");
+    }
+    int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
+    int64_t endTime = ParseArgLong(argc, argv, "end", 0);
+    if (beginTime <= 0 || endTime <= 0) {
+        return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
             "请提供有效的 --begin 和 --end 时间戳参数（单位：毫秒），"
             "例如：--begin 1609459200000 --end 1609545600000");
-     }
-     
-     if (endTime <= beginTime) {
-         return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
-             "结束时间必须大于开始时间，请调整时间范围");
-     }
-     
-     int32_t userId = ParseArgInt(argc, argv, "user", -1);
-     
-     std::vector<BundleActivePackageStats> packageStats;
-     ErrCode ret = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(
-         packageStats, intervalType, beginTime, endTime, userId);
-     
-     if (ret != ERR_OK) {
-return OutputError("ERR_QUERY_FAILED", "查询使用统计失败",
+    }
+    if (endTime <= beginTime) {
+        return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
+            "结束时间必须大于开始时间，请调整时间范围");
+    }
+    int32_t userId = ParseArgInt(argc, argv, "user", -1);
+    std::vector<BundleActivePackageStats> packageStats;
+    ErrCode ret = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(
+        packageStats, intervalType, beginTime, endTime, userId);
+    if (ret != ERR_OK) {
+        return OutputError("ERR_QUERY_FAILED", "查询使用统计失败",
             "请检查：1. BundleActiveService是否正常运行；"
             "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
-     }
-     
-     cJSON* data = cJSON_CreateObject();
-     cJSON_AddNumberToObject(data, "intervalType", intervalType);
-     cJSON_AddNumberToObject(data, "beginTime", beginTime);
-     cJSON_AddNumberToObject(data, "endTime", endTime);
-     cJSON_AddNumberToObject(data, "userId", userId);
-     cJSON* statsArray = cJSON_CreateArray();
-     for (const auto& stats : packageStats) {
-         cJSON_AddItemToArray(statsArray, PackageStatsToJson(stats));
-     }
-     cJSON_AddItemToObject(data, "packageStats", statsArray);
-     cJSON_AddNumberToObject(data, "count", packageStats.size());
-     return OutputSuccess(data);
- }
+    }
+    cJSON* data = cJSON_CreateObject();
+    cJSON_AddNumberToObject(data, "intervalType", intervalType);
+    cJSON_AddNumberToObject(data, "beginTime", beginTime);
+    cJSON_AddNumberToObject(data, "endTime", endTime);
+    cJSON_AddNumberToObject(data, "userId", userId);
+    cJSON* statsArray = cJSON_CreateArray();
+    for (const auto& stats : packageStats) {
+        cJSON_AddItemToArray(statsArray, PackageStatsToJson(stats));
+    }
+    cJSON_AddItemToObject(data, "packageStats", statsArray);
+    cJSON_AddNumberToObject(data, "count", packageStats.size());
+    return OutputSuccess(data);
+}
  
- int CmdQueryEvents(int argc, char** argv)
- {
-     if (CheckHelpFlag(argc, argv)) {
-         CLI_LOG("%s query-events - 查询应用事件记录。"
-            "用于获取应用在特定时间范围内的使用事件（如启动、切换等）。"
-            "仅支持有效的时间范围查询。", g_programName);
-         CLI_LOG("");
-         CLI_LOG("Usage:");
-         CLI_LOG("  %s query-events --begin <timestamp> --end <timestamp> "
-            "[--user <userId>] [--max <count>]", g_programName);
-CLI_LOG("");
-    CLI_LOG("Parameters:");
-    CLI_LOG("  --begin <number>       开始时间戳（必需，单位：毫秒）");
-    CLI_LOG("  --end <number>         结束时间戳（必需，单位：毫秒）");
-    CLI_LOG("  --user <integer>       用户ID（可选，默认：-1 表示当前用户）");
-    CLI_LOG("  --max <integer>        最大返回数量（可选，范围：1-1000，默认：1000）");
-    CLI_LOG("  --help                 显示帮助信息");
-         CLI_LOG("");
-         CLI_LOG("Examples:");
-         CLI_LOG("  %s query-events --begin 1609459200000 --end 1609545600000", g_programName);
-         CLI_LOG("  %s query-events --begin 1609459200000 --end 1609545600000 --max 500 --user 100", g_programName);
-         return 0;
-     }
- 
-     int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
-     int64_t endTime = ParseArgLong(argc, argv, "end", 0);
-     
-     if (beginTime <= 0 || endTime <= 0) {
-return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
+int CmdQueryEvents(int argc, char** argv)
+{
+    if (CheckHelpFlag(argc, argv)) {
+        ShowQueryEventsHelp();
+        return 0;
+    }
+    int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
+    int64_t endTime = ParseArgLong(argc, argv, "end", 0);
+    if (beginTime <= 0 || endTime <= 0) {
+        return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
             "请提供有效的 --begin 和 --end 时间戳参数（单位：毫秒），"
             "例如：--begin 1609459200000 --end 1609545600000");
-     }
-     
-     if (endTime <= beginTime) {
-         return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
-             "结束时间必须大于开始时间，请调整时间范围");
-     }
-     
-     int32_t userId = ParseArgInt(argc, argv, "user", -1);
-     int32_t maxNum = ParseArgInt(argc, argv, "max", 1000);
-     
-     if (maxNum < 1 || maxNum > 1000) {
-         return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
-             "请使用有效的 --max 参数（范围：1-1000），例如：--max 500");
-     }
-     
-     std::vector<BundleActiveEvent> events;
-     ErrCode ret = BundleActiveClient::GetInstance().QueryBundleEvents(
-         events, beginTime, endTime, userId, maxNum);
-     
-     if (ret != ERR_OK) {
-return OutputError("ERR_QUERY_FAILED", "查询应用事件失败",
+    }
+    if (endTime <= beginTime) {
+        return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
+            "结束时间必须大于开始时间，请调整时间范围");
+    }
+    int32_t userId = ParseArgInt(argc, argv, "user", -1);
+    int32_t maxNum = ParseArgInt(argc, argv, "max", 1000);
+    if (maxNum < 1 || maxNum > 1000) {
+        return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
+            "请使用有效的 --max 参数（范围：1-1000），例如：--max 500");
+    }
+    std::vector<BundleActiveEvent> events;
+    ErrCode ret = BundleActiveClient::GetInstance().QueryBundleEvents(
+        events, beginTime, endTime, userId, maxNum);
+    if (ret != ERR_OK) {
+        return OutputError("ERR_QUERY_FAILED", "查询应用事件失败",
             "请检查：1. BundleActiveService是否正常运行；"
             "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
-     }
-     
-     cJSON* data = cJSON_CreateObject();
-     cJSON_AddNumberToObject(data, "beginTime", beginTime);
-     cJSON_AddNumberToObject(data, "endTime", endTime);
-     cJSON_AddNumberToObject(data, "userId", userId);
-     cJSON_AddNumberToObject(data, "maxNum", maxNum);
-     cJSON* eventsArray = cJSON_CreateArray();
-     for (const auto& event : events) {
-         cJSON_AddItemToArray(eventsArray, EventToJson(event));
-     }
-     cJSON_AddItemToObject(data, "events", eventsArray);
-     cJSON_AddNumberToObject(data, "count", events.size());
-     return OutputSuccess(data);
- }
+    }
+    cJSON* data = cJSON_CreateObject();
+    cJSON_AddNumberToObject(data, "beginTime", beginTime);
+    cJSON_AddNumberToObject(data, "endTime", endTime);
+    cJSON_AddNumberToObject(data, "userId", userId);
+    cJSON_AddNumberToObject(data, "maxNum", maxNum);
+    cJSON* eventsArray = cJSON_CreateArray();
+    for (const auto& event : events) {
+        cJSON_AddItemToArray(eventsArray, EventToJson(event));
+    }
+    cJSON_AddItemToObject(data, "events", eventsArray);
+    cJSON_AddNumberToObject(data, "count", events.size());
+    return OutputSuccess(data);
+}
  
  int CmdQueryAppGroup(int argc, char** argv)
  {
@@ -465,7 +508,7 @@ return OutputError("ERR_QUERY_FAILED", "查询应用事件失败",
      ErrCode ret = BundleActiveClient::GetInstance().QueryAppGroup(appGroup, bundleName, userId);
      
      if (ret != ERR_OK) {
-return OutputError("ERR_QUERY_FAILED", "查询应用优先级分组失败",
+        return OutputError("ERR_QUERY_FAILED", "查询应用优先级分组失败",
             "请检查：1. BundleActiveService是否正常运行；"
             "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
      }
@@ -477,60 +520,39 @@ return OutputError("ERR_QUERY_FAILED", "查询应用优先级分组失败",
      return OutputSuccess(data);
  }
  
- int CmdQueryHighFreqBundle(int argc, char** argv)
- {
-     if (CheckHelpFlag(argc, argv)) {
-         CLI_LOG("%s query-high-freq-bundle - 查询高频使用应用列表。"
-            "用于获取最近一段时间内使用频率最高的应用。"
-            "仅支持有效的查询参数。", g_programName);
-         CLI_LOG("");
-         CLI_LOG("Usage:");
-         CLI_LOG("  %s query-high-freq-bundle [--user <userId>] [--max <count>] [--days <range>]", g_programName);
-         CLI_LOG("");
-         CLI_LOG("Parameters:");
-         CLI_LOG("  --user <integer>       用户ID（可选，默认：-1 表示当前用户）");
-         CLI_LOG("  --max <integer>        最大返回数量（可选，范围：1-1000，默认：20）");
-         CLI_LOG("  --days <integer>       查询天数范围（可选，默认：7）");
-         CLI_LOG("  --help                 显示帮助信息");
-         CLI_LOG("");
-         CLI_LOG("Examples:");
-         CLI_LOG("  %s query-high-freq-bundle", g_programName);
-         CLI_LOG("  %s query-high-freq-bundle --max 50 --days 14", g_programName);
-         CLI_LOG("  %s query-high-freq-bundle --user 100 --max 50 --days 14", g_programName);
-         return 0;
-     }
- 
-     int32_t userId = ParseArgInt(argc, argv, "user", -1);
-     int32_t maxNum = ParseArgInt(argc, argv, "max", 20);
-     int32_t queryDayRange = ParseArgInt(argc, argv, "days", 7);
-     
-     if (maxNum < 1 || maxNum > 1000) {
-         return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
-             "请使用有效的 --max 参数（范围：1-1000），例如：--max 50");
-     }
-     
-     std::vector<BundleActivePackageStats> packageStats;
-     ErrCode ret = BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(
-         packageStats, userId, maxNum, queryDayRange);
-     
-     if (ret != ERR_OK) {
-return OutputError("ERR_QUERY_FAILED", "查询高频使用应用失败",
+int CmdQueryHighFreqBundle(int argc, char** argv)
+{
+    if (CheckHelpFlag(argc, argv)) {
+        ShowQueryHighFreqBundleHelp();
+        return 0;
+    }
+    int32_t userId = ParseArgInt(argc, argv, "user", -1);
+    int32_t maxNum = ParseArgInt(argc, argv, "max", 20);
+    int32_t queryDayRange = ParseArgInt(argc, argv, "days", 7);
+    if (maxNum < 1 || maxNum > 1000) {
+        return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
+            "请使用有效的 --max 参数（范围：1-1000），例如：--max 50");
+    }
+    std::vector<BundleActivePackageStats> packageStats;
+    ErrCode ret = BundleActiveClient::GetInstance().QueryHighFrequencyUsageBundleInfos(
+        packageStats, userId, maxNum, queryDayRange);
+    if (ret != ERR_OK) {
+        return OutputError("ERR_QUERY_FAILED", "查询高频使用应用失败",
             "请检查：1. BundleActiveService是否正常运行；"
             "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
-     }
-     
-     cJSON* data = cJSON_CreateObject();
-     cJSON_AddNumberToObject(data, "userId", userId);
-     cJSON_AddNumberToObject(data, "maxNum", maxNum);
-     cJSON_AddNumberToObject(data, "queryDayRange", queryDayRange);
-     cJSON* statsArray = cJSON_CreateArray();
-     for (const auto& stats : packageStats) {
-         cJSON_AddItemToArray(statsArray, PackageStatsToJson(stats));
-     }
-     cJSON_AddItemToObject(data, "packageStats", statsArray);
-     cJSON_AddNumberToObject(data, "count", packageStats.size());
-     return OutputSuccess(data);
- }
+    }
+    cJSON* data = cJSON_CreateObject();
+    cJSON_AddNumberToObject(data, "userId", userId);
+    cJSON_AddNumberToObject(data, "maxNum", maxNum);
+    cJSON_AddNumberToObject(data, "queryDayRange", queryDayRange);
+    cJSON* statsArray = cJSON_CreateArray();
+    for (const auto& stats : packageStats) {
+        cJSON_AddItemToArray(statsArray, PackageStatsToJson(stats));
+    }
+    cJSON_AddItemToObject(data, "packageStats", statsArray);
+    cJSON_AddNumberToObject(data, "count", packageStats.size());
+    return OutputSuccess(data);
+}
  
  int CmdQueryModuleRecords(int argc, char** argv)
  {
@@ -566,7 +588,7 @@ return OutputError("ERR_QUERY_FAILED", "查询高频使用应用失败",
      ErrCode ret = BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, results, userId);
      
      if (ret != ERR_OK) {
-return OutputError("ERR_QUERY_FAILED", "查询模块使用记录失败",
+        return OutputError("ERR_QUERY_FAILED", "查询模块使用记录失败",
             "请检查：1. BundleActiveService是否正常运行；"
             "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
      }
@@ -583,67 +605,44 @@ return OutputError("ERR_QUERY_FAILED", "查询模块使用记录失败",
      return OutputSuccess(data);
  }
  
- int CmdQueryNotificationStats(int argc, char** argv)
- {
-     if (CheckHelpFlag(argc, argv)) {
-         CLI_LOG("%s query-notification-stats - 查询通知事件统计。"
-            "用于获取应用在特定时间范围内的通知使用情况。"
-            "仅支持有效的时间范围查询。", g_programName);
-         CLI_LOG("");
-         CLI_LOG("Usage:");
-         CLI_LOG("  %s query-notification-stats --begin <timestamp> --end <timestamp> "
-            "[--user <userId>]", g_programName);
-CLI_LOG("");
-    CLI_LOG("Parameters:");
-    CLI_LOG("  --begin <number>       开始时间戳（必需，单位：毫秒）");
-    CLI_LOG("  --end <number>         结束时间戳（必需，单位：毫秒）");
-    CLI_LOG("  --user <integer>       用户ID（可选，默认：-1 表示当前用户）");
-    CLI_LOG("  --help                 显示帮助信息");
-         CLI_LOG("");
-         CLI_LOG("Examples:");
-         CLI_LOG("  %s query-notification-stats --begin 1609459200000 --end 1609545600000", g_programName);
-         CLI_LOG("  %s query-notification-stats --begin 1609459200000 --end 1609545600000 --user 100", g_programName);
-         return 0;
-     }
- 
-     int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
-     int64_t endTime = ParseArgLong(argc, argv, "end", 0);
-     
-     if (beginTime <= 0 || endTime <= 0) {
-return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
+int CmdQueryNotificationStats(int argc, char** argv)
+{
+    if (CheckHelpFlag(argc, argv)) {
+        ShowQueryNotificationStatsHelp();
+        return 0;
+    }
+    int64_t beginTime = ParseArgLong(argc, argv, "begin", 0);
+    int64_t endTime = ParseArgLong(argc, argv, "end", 0);
+    if (beginTime <= 0 || endTime <= 0) {
+        return OutputError("ERR_TIME_INVALID", "时间参数缺失或无效",
             "请提供有效的 --begin 和 --end 时间戳参数（单位：毫秒），"
             "例如：--begin 1609459200000 --end 1609545600000");
-     }
-     
-     if (endTime <= beginTime) {
-         return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
-             "结束时间必须大于开始时间，请调整时间范围");
-     }
-     
-     int32_t userId = ParseArgInt(argc, argv, "user", -1);
-     
-     std::vector<BundleActiveEventStats> eventStats;
-     ErrCode ret = BundleActiveClient::GetInstance().QueryNotificationEventStats(
-         beginTime, endTime, eventStats, userId);
-     
-     if (ret != ERR_OK) {
-return OutputError("ERR_QUERY_FAILED", "查询通知事件统计失败",
+    }
+    if (endTime <= beginTime) {
+        return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
+            "结束时间必须大于开始时间，请调整时间范围");
+    }
+    int32_t userId = ParseArgInt(argc, argv, "user", -1);
+    std::vector<BundleActiveEventStats> eventStats;
+    ErrCode ret = BundleActiveClient::GetInstance().QueryNotificationEventStats(
+        beginTime, endTime, eventStats, userId);
+    if (ret != ERR_OK) {
+        return OutputError("ERR_QUERY_FAILED", "查询通知事件统计失败",
             "请检查：1. BundleActiveService是否正常运行；"
             "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
-     }
-     
-     cJSON* data = cJSON_CreateObject();
-     cJSON_AddNumberToObject(data, "beginTime", beginTime);
-     cJSON_AddNumberToObject(data, "endTime", endTime);
-     cJSON_AddNumberToObject(data, "userId", userId);
-     cJSON* statsArray = cJSON_CreateArray();
-     for (const auto& stats : eventStats) {
-         cJSON_AddItemToArray(statsArray, EventStatsToJson(stats));
-     }
-     cJSON_AddItemToObject(data, "eventStats", statsArray);
-     cJSON_AddNumberToObject(data, "count", eventStats.size());
-     return OutputSuccess(data);
- }
+    }
+    cJSON* data = cJSON_CreateObject();
+    cJSON_AddNumberToObject(data, "beginTime", beginTime);
+    cJSON_AddNumberToObject(data, "endTime", endTime);
+    cJSON_AddNumberToObject(data, "userId", userId);
+    cJSON* statsArray = cJSON_CreateArray();
+    for (const auto& stats : eventStats) {
+        cJSON_AddItemToArray(statsArray, EventStatsToJson(stats));
+    }
+    cJSON_AddItemToObject(data, "eventStats", statsArray);
+    cJSON_AddNumberToObject(data, "count", eventStats.size());
+    return OutputSuccess(data);
+}
  
  int CmdQueryHighFreqPeriod(int argc, char** argv)
  {
@@ -670,7 +669,7 @@ return OutputError("ERR_QUERY_FAILED", "查询通知事件统计失败",
      ErrCode ret = BundleActiveClient::GetInstance().QueryHighFrequencyPeriodBundle(appFreqHours, userId);
      
      if (ret != ERR_OK) {
-return OutputError("ERR_QUERY_FAILED", "查询高频使用时段失败",
+        return OutputError("ERR_QUERY_FAILED", "查询高频使用时段失败",
             "请检查：1. BundleActiveService是否正常运行；"
             "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
      }
@@ -720,7 +719,7 @@ return OutputError("ERR_QUERY_FAILED", "查询高频使用时段失败",
          latestUsedTime, bundleName, userId);
      
      if (ret != ERR_OK) {
-return OutputError("ERR_QUERY_FAILED", "查询应用今日最后使用时间失败",
+        return OutputError("ERR_QUERY_FAILED", "查询应用今日最后使用时间失败",
             "请检查：1. BundleActiveService是否正常运行；"
             "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
      }
@@ -782,105 +781,58 @@ return OutputError("ERR_QUERY_FAILED", "查询应用今日最后使用时间失�
      return it->second.handler(1, helpArgv);
  }
  
- void InitCommands()
- {
-     g_commands["check-bundle-idle"] = {
-         "check-bundle-idle",
-         "检查应用是否空闲",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdCheckBundleIdle
-     };
-     g_commands["check-bundle-period"] = {
-         "check-bundle-period",
-         "检查应用是否在使用时段（仅Native Token）",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdCheckBundlePeriod
-     };
-     g_commands["query-stats-interval"] = {
-         "query-stats-interval",
-         "按时间间隔查询使用统计",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdQueryStatsInterval
-     };
-     g_commands["query-events"] = {
-         "query-events",
-         "查询应用事件记录",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdQueryEvents
-     };
-     g_commands["query-app-group"] = {
-         "query-app-group",
-         "查询应用优先级分组",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdQueryAppGroup
-     };
-     g_commands["query-high-freq-bundle"] = {
-         "query-high-freq-bundle",
-         "查询高频使用应用",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdQueryHighFreqBundle
-     };
-     g_commands["query-module-records"] = {
-         "query-module-records",
-         "查询模块使用记录",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdQueryModuleRecords
-     };
-     g_commands["query-notification-stats"] = {
-         "query-notification-stats",
-         "查询通知事件统计",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdQueryNotificationStats
-     };
-     g_commands["query-high-freq-period"] = {
-         "query-high-freq-period",
-         "查询高频使用时段",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdQueryHighFreqPeriod
-     };
-     g_commands["query-latest-used-time"] = {
-         "query-latest-used-time",
-         "查询应用今日最后使用时间",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdQueryLatestUsedTime
-     };
-     g_commands["help"] = {
-         "help",
-         "显示帮助信息",
-         nullptr,
-         nullptr,
-         nullptr,
-         CmdHelp
-     };
- }
- 
- void PrintUsage(const char* prog)
- {
-     CLI_ERROR("用法：%s <command> [options]", prog);
-     CLI_ERROR("运行 %s --help 获取更多信息", prog);
- }
- 
- int main(int argc, char** argv)
+void InitCommands()
+{
+    g_commands["check-bundle-idle"] = {
+        "check-bundle-idle", "检查应用是否空闲", nullptr, nullptr, nullptr, CmdCheckBundleIdle
+    };
+    g_commands["check-bundle-period"] = {
+        "check-bundle-period", "检查应用是否在使用时段（仅Native Token）",
+        nullptr, nullptr, nullptr, CmdCheckBundlePeriod
+    };
+    g_commands["query-stats-interval"] = {
+        "query-stats-interval", "按时间间隔查询使用统计",
+        nullptr, nullptr, nullptr, CmdQueryStatsInterval
+    };
+    g_commands["query-events"] = {
+        "query-events", "查询应用事件记录", nullptr, nullptr, nullptr, CmdQueryEvents
+    };
+    g_commands["query-app-group"] = {
+        "query-app-group", "查询应用优先级分组",
+        nullptr, nullptr, nullptr, CmdQueryAppGroup
+    };
+    g_commands["query-high-freq-bundle"] = {
+        "query-high-freq-bundle", "查询高频使用应用",
+        nullptr, nullptr, nullptr, CmdQueryHighFreqBundle
+    };
+    g_commands["query-module-records"] = {
+        "query-module-records", "查询模块使用记录",
+        nullptr, nullptr, nullptr, CmdQueryModuleRecords
+    };
+    g_commands["query-notification-stats"] = {
+        "query-notification-stats", "查询通知事件统计",
+        nullptr, nullptr, nullptr, CmdQueryNotificationStats
+    };
+    g_commands["query-high-freq-period"] = {
+        "query-high-freq-period", "查询高频使用时段",
+        nullptr, nullptr, nullptr, CmdQueryHighFreqPeriod
+    };
+    g_commands["query-latest-used-time"] = {
+        "query-latest-used-time", "查询应用今日最后使用时间",
+        nullptr, nullptr, nullptr, CmdQueryLatestUsedTime
+    };
+    g_commands["help"] = {
+        "help", "显示帮助信息", nullptr, nullptr, nullptr, CmdHelp
+    };
+}
+
+void PrintUsage(const char* prog)
+{
+    CLI_ERROR("用法：%s <command> [options]", prog);
+    CLI_ERROR("运行 %s --help 获取更多信息", prog);
+}
+
+int main(int argc, char** argv)
  {
      if (argc >= 2 && strcmp(argv[1], "--help") == 0) {
          InitCommands();
