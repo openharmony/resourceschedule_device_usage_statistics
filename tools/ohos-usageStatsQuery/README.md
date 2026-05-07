@@ -1,6 +1,6 @@
 # ohos-usageStatsQuery
 
-Application usage statistics query tool for HarmonyOS/OpenHarmony system.
+Application usage statistics query tool for OpenHarmony system.
 
 ## Description
 

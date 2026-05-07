@@ -22,7 +22,7 @@
   "hasSubCommand": true,
   "subcommands": {
     "check-bundle-idle": {
-      "description": "Query whether an application is in idle state. Used for application activity analysis. Requires bundle name parameter.",
+      "description": "Query whether an application is in idle state. Used for application usage analysis. Requires bundle name parameter.",
       "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
@@ -234,7 +234,7 @@
       }
     },
     "query-events": {
-      "description": "Query application event records within a time range. Used for application activity history analysis. Requires valid time range.",
+      "description": "Query application event records within a time range. Used for application usage history analysis. Requires valid time range.",
       "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
@@ -698,7 +698,7 @@
       }
     },
     "query-latest-used-time": {
-      "description": "Query the latest usage time of an application today. Used for tracking recent application activity. Requires bundle name parameter.",
+      "description": "Query the latest usage time of an application today. Used for tracking recent application usage. Requires bundle name parameter.",
       "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",

@@ -35,6 +35,12 @@ using OHOS::ERR_OK;
 
 #define CLI_LOG(fmt, ...) fprintf(stderr, "[LOG] " fmt "\n", ##__VA_ARGS__)
 #define CLI_ERROR(fmt, ...) fprintf(stderr, "[ERROR] " fmt "\n", ##__VA_ARGS__)
+#define MAX_RETURN_COUNT 1000
+#define DEFAULT_USER_ID -1
+#define DEFAULT_INTERVAL_TYPE -1
+#define MAX_INTERVAL_TYPE 3
+#define DEFAULT_DAY_RANGE 7
+#define DEFAULT_HIGH_FREQ_COUNT 20
 
 typedef std::function<int(int, char**)> CommandHandler;
 
@@ -50,10 +56,10 @@ struct Command {
 static std::unordered_map<std::string, Command> g_commands;
 static const char* g_programName = "ohos-usageStatsQuery";
 static const char* g_toolDescription = 
-"Application usage statistics query tool，"
-"提供应用使用时长、事件记录、高频使用时段等查询功能。"
-"用于开发者或系统管理员分析应用使用情况。"
-"仅支持具有ohos.permission.BUNDLE_ACTIVE_INFO权限的系统应用调用。";
+    "Application usage statistics query tool，"
+    "提供应用使用时长、事件记录、高频使用时段等查询功能。"
+    "用于开发者或系统管理员分析应用使用情况。"
+    "仅支持具有ohos.permission.BUNDLE_ACTIVE_INFO权限的系统应用调用。";
 
 int OutputSuccess(cJSON* data)
 {
@@ -323,11 +329,10 @@ int CmdCheckBundleIdle(int argc, char** argv)
             "请使用 --bundle <应用包名> 提供应用包名参数，例如：--bundle com.example.app");
     }
     
-    int32_t userId = ParseArgInt(argc, argv, "user", -1);
+    int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
     
     bool isBundleIdle = false;
     ErrCode ret = BundleActiveClient::GetInstance().IsBundleIdle(isBundleIdle, bundleName, userId);
-    
     if (ret != ERR_OK) {
     return OutputError("ERR_QUERY_FAILED", "查询应用空闲状态失败",
         "请检查：1. BundleActiveService是否正常运行；"
@@ -368,12 +373,9 @@ int CmdCheckBundlePeriod(int argc, char** argv)
         return OutputError("ERR_BUNDLENAME_EMPTY", "bundleName参数缺失",
             "请使用 --bundle <应用包名> 提供应用包名参数，例如：--bundle com.example.app");
     }
-    
-    int32_t userId = ParseArgInt(argc, argv, "user", -1);
-    
+    int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
     bool isUsePeriod = false;
     ErrCode ret = BundleActiveClient::GetInstance().IsBundleUsePeriod(isUsePeriod, bundleName, userId);
-    
     if (ret != ERR_OK) {
         return OutputError("ERR_QUERY_FAILED", "查询应用使用时段失败",
             "请检查：1. BundleActiveService是否正常运行；2. 此命令仅支持Native Token调用");
@@ -392,8 +394,8 @@ if (CheckHelpFlag(argc, argv)) {
     ShowQueryStatsIntervalHelp();
     return 0;
 }
-int32_t intervalType = ParseArgInt(argc, argv, "interval", -1);
-if (intervalType < 0 || intervalType > 3) {
+int32_t intervalType = ParseArgInt(argc, argv, "interval", DEFAULT_INTERVAL_TYPE);
+if (intervalType < 0 || intervalType > MAX_INTERVAL_TYPE) {
     return OutputError("ERR_INTERVAL_TYPE", "intervalType参数无效",
         "请使用有效的 --interval 参数（0-3），0=按天，1=按周，2=按月，3=按年");
 }
@@ -408,7 +410,7 @@ if (endTime <= beginTime) {
     return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
         "结束时间必须大于开始时间，请调整时间范围");
 }
-int32_t userId = ParseArgInt(argc, argv, "user", -1);
+int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
 std::vector<BundleActivePackageStats> packageStats;
 ErrCode ret = BundleActiveClient::GetInstance().QueryBundleStatsInfoByInterval(
     packageStats, intervalType, beginTime, endTime, userId);
@@ -448,9 +450,9 @@ if (endTime <= beginTime) {
     return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
         "结束时间必须大于开始时间，请调整时间范围");
 }
-int32_t userId = ParseArgInt(argc, argv, "user", -1);
-int32_t maxNum = ParseArgInt(argc, argv, "max", 1000);
-if (maxNum < 1 || maxNum > 1000) {
+int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
+int32_t maxNum = ParseArgInt(argc, argv, "max", MAX_RETURN_COUNT);
+    if (maxNum < 1 || maxNum > MAX_RETURN_COUNT) {
     return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
         "请使用有效的 --max 参数（范围：1-1000），例如：--max 500");
 }
@@ -502,7 +504,7 @@ int CmdQueryAppGroup(int argc, char** argv)
             "请使用 --bundle <应用包名> 提供应用包名参数，例如：--bundle com.example.app");
     }
     
-    int32_t userId = ParseArgInt(argc, argv, "user", -1);
+    int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
     
     int32_t appGroup = 0;
     ErrCode ret = BundleActiveClient::GetInstance().QueryAppGroup(appGroup, bundleName, userId);
@@ -526,10 +528,10 @@ if (CheckHelpFlag(argc, argv)) {
     ShowQueryHighFreqBundleHelp();
     return 0;
 }
-int32_t userId = ParseArgInt(argc, argv, "user", -1);
-int32_t maxNum = ParseArgInt(argc, argv, "max", 20);
-int32_t queryDayRange = ParseArgInt(argc, argv, "days", 7);
-if (maxNum < 1 || maxNum > 1000) {
+int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
+int32_t maxNum = ParseArgInt(argc, argv, "max", DEFAULT_HIGH_FREQ_COUNT);
+int32_t queryDayRange = ParseArgInt(argc, argv, "days", DEFAULT_DAY_RANGE);
+if (maxNum < 1 || maxNum > MAX_RETURN_COUNT) {
     return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
         "请使用有效的 --max 参数（范围：1-1000），例如：--max 50");
 }
@@ -576,17 +578,16 @@ int CmdQueryModuleRecords(int argc, char** argv)
         return 0;
     }
 
-    int32_t maxNum = ParseArgInt(argc, argv, "max", 1000);
-    int32_t userId = ParseArgInt(argc, argv, "user", -1);
+    int32_t maxNum = ParseArgInt(argc, argv, "max", MAX_RETURN_COUNT);
+    int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
     
-    if (maxNum < 1 || maxNum > 1000) {
+    if (maxNum < 1 || maxNum > MAX_RETURN_COUNT) {
         return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
             "请使用有效的 --max 参数（范围：1-1000），例如：--max 500");
     }
     
     std::vector<BundleActiveModuleRecord> results;
     ErrCode ret = BundleActiveClient::GetInstance().QueryModuleUsageRecords(maxNum, results, userId);
-    
     if (ret != ERR_OK) {
     return OutputError("ERR_QUERY_FAILED", "查询模块使用记录失败",
         "请检查：1. BundleActiveService是否正常运行；"
@@ -622,7 +623,7 @@ if (endTime <= beginTime) {
     return OutputError("ERR_TIME_INTERVAL", "时间范围无效",
         "结束时间必须大于开始时间，请调整时间范围");
 }
-int32_t userId = ParseArgInt(argc, argv, "user", -1);
+int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
 std::vector<BundleActiveEventStats> eventStats;
 ErrCode ret = BundleActiveClient::GetInstance().QueryNotificationEventStats(
     beginTime, endTime, eventStats, userId);
@@ -663,17 +664,15 @@ int CmdQueryHighFreqPeriod(int argc, char** argv)
         return 0;
     }
 
-    int32_t userId = ParseArgInt(argc, argv, "user", -1);
+    int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
     
     std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
     ErrCode ret = BundleActiveClient::GetInstance().QueryHighFrequencyPeriodBundle(appFreqHours, userId);
-    
     if (ret != ERR_OK) {
     return OutputError("ERR_QUERY_FAILED", "查询高频使用时段失败",
         "请检查：1. BundleActiveService是否正常运行；"
         "2. 是否具有ohos.permission.BUNDLE_ACTIVE_INFO权限");
     }
-    
     cJSON* data = cJSON_CreateObject();
     cJSON_AddNumberToObject(data, "userId", userId);
     cJSON* periodsArray = cJSON_CreateArray();
@@ -712,12 +711,10 @@ int CmdQueryLatestUsedTime(int argc, char** argv)
             "请使用 --bundle <应用包名> 提供应用包名参数，例如：--bundle com.example.app");
     }
     
-    int32_t userId = ParseArgInt(argc, argv, "user", -1);
-    
+    int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
     int64_t latestUsedTime = 0;
     ErrCode ret = BundleActiveClient::GetInstance().QueryBundleTodayLatestUsedTime(
         latestUsedTime, bundleName, userId);
-    
     if (ret != ERR_OK) {
     return OutputError("ERR_QUERY_FAILED", "查询应用今日最后使用时间失败",
         "请检查：1. BundleActiveService是否正常运行；"
@@ -773,7 +770,7 @@ int CmdHelp(int argc, char** argv)
 
     auto it = g_commands.find(targetCmd);
     if (it == g_commands.end()) {
-        return OutputError("ERR_INVALID_COMMAND", "未知命令：" + targetCmd,
+        return OutputError("ERR_INVALID_COMMAND", std::string("未知命令：") + targetCmd,
             "请运行 " + std::string(g_programName) + " --help 查看可用命令列表");
     }
 
