@@ -774,6 +774,9 @@ napi_value QueryAppStatsInfos(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     std::unique_ptr<AsyncCallbackInfoAppStats> callbackPtr {asyncCallbackInfo};
+    if (callbackPtr == nullptr) {
+        return BundleStateCommon::NapiGetNull(env);
+    }
     callbackPtr->beginTime = params.beginTime;
     BUNDLE_ACTIVE_LOGD("QueryAppStatsInfos callbackPtr->beginTime: %{public}lld",
         (long long)callbackPtr->beginTime);
