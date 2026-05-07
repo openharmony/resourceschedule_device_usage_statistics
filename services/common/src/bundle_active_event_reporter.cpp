@@ -63,7 +63,7 @@ void BundleActiveEventReporter::ReportFileSizeDaily()
         if (lastReportTimeValue <= 0) {
             ReportFileSizeInner();
         } else {
-            int64_t nowTime = BundleActiveUtil::GetSteadyTime();
+            int64_t nowTime = BundleActiveUtil::GetNowMicroTime();
             if (nowTime - lastReportTimeValue < ONE_DAY_MICRO_SECOND) {
                 int64_t nextReportTime = ONE_DAY_MICRO_SECOND - (nowTime - lastReportTimeValue);
                 SubmitDelayTask(nextReportTime);

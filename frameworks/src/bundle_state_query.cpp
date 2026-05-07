@@ -255,7 +255,7 @@ napi_value ParseStatesParameters(const napi_env &env, const napi_callback_info &
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
         BUNDLE_ACTIVE_LOGE("ParseStatesParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
-            (long long)params.endTime, (long long)params.beginTime);
+            static_cast<long long>(params.endTime), static_cast<long long>(params.beginTime));
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
 
@@ -445,7 +445,7 @@ napi_value ParseAppUsageParametersByInterval(const napi_env &env, const napi_cal
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParametersByInterval endTime(%{public}lld) <= beginTime(%{public}lld)",
-            (long long)params.endTime, (long long)params.beginTime);
+            static_cast<long long>(params.endTime), static_cast<long long>(params.beginTime));
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
     // argv[THIRD_ARG]: callback
@@ -558,7 +558,7 @@ napi_value ParseAppUsageParameters(const napi_env &env, const napi_callback_info
     }
     if ((params.errorCode == ERR_OK) && (params.endTime <= params.beginTime)) {
         BUNDLE_ACTIVE_LOGE("ParseAppUsageParameters endTime(%{public}lld) <= beginTime(%{public}lld)",
-            (long long)params.endTime, (long long)params.beginTime);
+            static_cast<long long>(params.endTime), static_cast<long long>(params.beginTime));
         params.errorCode = ERR_USAGE_STATS_TIME_INTERVAL;
     }
 

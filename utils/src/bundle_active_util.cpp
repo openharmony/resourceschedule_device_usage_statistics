@@ -122,13 +122,6 @@ int64_t BundleActiveUtil::GetSystemTimeMs()
     return static_cast<int64_t>(tarDate);
 }
 
-int64_t BundleActiveUtil::GetSteadyTime()
-{
-    std::chrono::seconds secs = std::chrono::duration_cast<std::chrono::seconds>(
-        std::chrono::steady_clock::now().time_since_epoch());
-    return static_cast<int64_t>(secs.count());
-}
-
 int64_t BundleActiveUtil::GetNowMicroTime()
 {
     std::chrono::microseconds microSecs;
