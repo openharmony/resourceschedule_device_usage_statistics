@@ -59,7 +59,8 @@
           "//foundation/resourceschedule/device_usage_statistics/interfaces/kits/bundlestats/taihe/usage_statistics:usageStatistics_taihe"
         ],
         "service_group": [
-          "//foundation/resourceschedule/device_usage_statistics:service_group_all"
+          "//foundation/resourceschedule/device_usage_statistics:service_group_all",
+          "//foundation/resourceschedule/device_usage_statistics/tools/ohos-usageStatsQuery:ohos-usageStatsQuery"
         ]
       },
       "inner_kits": [
