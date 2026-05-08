@@ -19,6 +19,8 @@
 #include <functional>
 #include <vector>
 #include <cstring>
+#include <cerrno>
+#include <climits>
 
 #include "cJSON.h"
 #include "bundle_active_client.h"
@@ -47,6 +49,7 @@ using OHOS::ERR_OK;
 #define HELP_ARGC_WITH_CMD (3)
 #define HELP_CMD_ARG_START_INDEX (2)
 #define ARG_START_INDEX (1)
+#define DECIMAL_BASE (10)
 
 typedef std::function<int(int, char**)> CommandHandler;
 
@@ -117,13 +120,16 @@ int32_t ParseArgInt(int argc, char** argv, const std::string& key, int32_t defau
     if (value.empty()) {
         return defaultValue;
     }
-    try {
-        return std::stoi(value);
-    } catch (const std::invalid_argument&) {
-        return defaultValue;
-    } catch (const std::out_of_range&) {
+    char* endptr = nullptr;
+    errno = 0;
+    long result = strtol(value.c_str(), &endptr, DECIMAL_BASE);
+    if (errno == ERANGE || endptr == nullptr || *endptr != '\0') {
         return defaultValue;
     }
+    if (result < INT32_MIN || result > INT32_MAX) {
+        return defaultValue;
+    }
+    return static_cast<int32_t>(result);
 }
 
 int64_t ParseArgLong(int argc, char** argv, const std::string& key, int64_t defaultValue = 0)
@@ -132,13 +138,16 @@ int64_t ParseArgLong(int argc, char** argv, const std::string& key, int64_t defa
     if (value.empty()) {
         return defaultValue;
     }
-    try {
-        return std::stoll(value);
-    } catch (const std::invalid_argument&) {
-        return defaultValue;
-    } catch (const std::out_of_range&) {
+    char* endptr = nullptr;
+    errno = 0;
+    long long result = strtoll(value.c_str(), &endptr, DECIMAL_BASE);
+    if (errno == ERANGE || endptr == nullptr || *endptr != '\0') {
         return defaultValue;
     }
+    if (result < INT64_MIN || result > INT64_MAX) {
+        return defaultValue;
+    }
+    return static_cast<int64_t>(result);
 }
 
 bool CheckHelpFlag(int argc, char** argv)
