@@ -731,7 +731,11 @@ int CmdQueryLatestUsedTime(int argc, char** argv)
 int CmdHelp(int argc, char** argv)
 {
     std::string targetCmd;
-    for (int i = 1; i < argc; i++) {
+    int startIdx = 1;
+    if (argc > startIdx && strcmp(argv[startIdx], "help") == 0) {
+        startIdx = 2;
+    }
+    for (int i = startIdx; i < argc; i++) {
         if (argv[i][0] != '-') {
             targetCmd = argv[i];
             break;
@@ -774,8 +778,12 @@ int CmdHelp(int argc, char** argv)
             "请运行 " + std::string(PROGRAM_NAME) + " --help 查看可用命令列表");
     }
 
-    char* helpArgv[2] = {const_cast<char*>(PROGRAM_NAME), nullptr};
-    return it->second.handler(HELP_ARGC_MINIMAL, helpArgv);
+    char* helpArgv[HELP_ARGC_WITH_CMD] = {
+        const_cast<char*>(PROGRAM_NAME),
+        const_cast<char*>("--help"),
+        nullptr
+    };
+    return it->second.handler(HELP_ARGC_WITH_CMD, helpArgv);
 }
 
 void InitCommands()
@@ -833,8 +841,7 @@ int main(int argc, char** argv)
 {
     if (argc >= MIN_ARG_COUNT && strcmp(argv[1], "--help") == 0) {
         InitCommands();
-        char* helpArgv[2] = {const_cast<char*>(PROGRAM_NAME), nullptr};
-        CmdHelp(HELP_ARGC_MINIMAL, helpArgv);
+        CmdHelp(HELP_ARGC_MINIMAL, argv);
         return 0;
     }
 
@@ -851,9 +858,7 @@ int main(int argc, char** argv)
         if (strcmp(argv[i], "--help") == 0) {
             auto it = g_commands.find(cmdName);
             if (it != g_commands.end()) {
-                char* helpArgv[3] = {const_cast<char*>(PROGRAM_NAME),
-                    const_cast<char*>(cmdName.c_str()), nullptr};
-                return CmdHelp(HELP_ARGC_WITH_CMD, helpArgv);
+                return it->second.handler(argc, argv);
             }
         }
     }
