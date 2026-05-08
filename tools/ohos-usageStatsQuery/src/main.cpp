@@ -36,6 +36,7 @@ using OHOS::ERR_OK;
 #define CLI_LOG(fmt, ...) fprintf(stderr, "[LOG] " fmt "\n", ##__VA_ARGS__)
 #define CLI_ERROR(fmt, ...) fprintf(stderr, "[ERROR] " fmt "\n", ##__VA_ARGS__)
 #define MAX_RETURN_COUNT (1000)
+#define MIN_RETURN_COUNT (1)
 #define DEFAULT_USER_ID (-1)
 #define DEFAULT_INTERVAL_TYPE (-1)
 #define MAX_INTERVAL_TYPE (3)
@@ -44,6 +45,8 @@ using OHOS::ERR_OK;
 #define MIN_ARG_COUNT (2)
 #define HELP_ARGC_MINIMAL (2)
 #define HELP_ARGC_WITH_CMD (3)
+#define HELP_CMD_ARG_START_INDEX (2)
+#define ARG_START_INDEX (1)
 
 typedef std::function<int(int, char**)> CommandHandler;
 
@@ -114,7 +117,13 @@ int32_t ParseArgInt(int argc, char** argv, const std::string& key, int32_t defau
     if (value.empty()) {
         return defaultValue;
     }
-    return std::stoi(value);
+    try {
+        return std::stoi(value);
+    } catch (const std::invalid_argument&) {
+        return defaultValue;
+    } catch (const std::out_of_range&) {
+        return defaultValue;
+    }
 }
 
 int64_t ParseArgLong(int argc, char** argv, const std::string& key, int64_t defaultValue = 0)
@@ -123,7 +132,13 @@ int64_t ParseArgLong(int argc, char** argv, const std::string& key, int64_t defa
     if (value.empty()) {
         return defaultValue;
     }
-    return std::stoll(value);
+    try {
+        return std::stoll(value);
+    } catch (const std::invalid_argument&) {
+        return defaultValue;
+    } catch (const std::out_of_range&) {
+        return defaultValue;
+    }
 }
 
 bool CheckHelpFlag(int argc, char** argv)
@@ -455,7 +470,7 @@ int CmdQueryEvents(int argc, char** argv)
     }
     int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
     int32_t maxNum = ParseArgInt(argc, argv, "max", MAX_RETURN_COUNT);
-    if (maxNum < 1 || maxNum > MAX_RETURN_COUNT) {
+    if (maxNum < MIN_RETURN_COUNT || maxNum > MAX_RETURN_COUNT) {
         return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
             "请使用有效的 --max 参数（范围：1-1000），例如：--max 500");
     }
@@ -531,7 +546,7 @@ int CmdQueryHighFreqBundle(int argc, char** argv)
     int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
     int32_t maxNum = ParseArgInt(argc, argv, "max", DEFAULT_HIGH_FREQ_COUNT);
     int32_t queryDayRange = ParseArgInt(argc, argv, "days", DEFAULT_DAY_RANGE);
-    if (maxNum < 1 || maxNum > MAX_RETURN_COUNT) {
+    if (maxNum < MIN_RETURN_COUNT || maxNum > MAX_RETURN_COUNT) {
         return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
             "请使用有效的 --max 参数（范围：1-1000），例如：--max 50");
     }
@@ -581,7 +596,7 @@ int CmdQueryModuleRecords(int argc, char** argv)
     int32_t maxNum = ParseArgInt(argc, argv, "max", MAX_RETURN_COUNT);
     int32_t userId = ParseArgInt(argc, argv, "user", DEFAULT_USER_ID);
 
-    if (maxNum < 1 || maxNum > MAX_RETURN_COUNT) {
+    if (maxNum < MIN_RETURN_COUNT || maxNum > MAX_RETURN_COUNT) {
         return OutputError("ERR_MAXNUM_INVALID", "maxNum参数无效",
             "请使用有效的 --max 参数（范围：1-1000），例如：--max 500");
     }
@@ -728,12 +743,42 @@ int CmdQueryLatestUsedTime(int argc, char** argv)
     return OutputSuccess(data);
 }
 
+void ShowMainHelp()
+{
+    CLI_LOG("%s - %s", PROGRAM_NAME, TOOL_DESCRIPTION);
+    CLI_LOG("");
+    CLI_LOG("Usage:");
+    CLI_LOG("  %s <command> [options]", PROGRAM_NAME);
+    CLI_LOG("");
+    CLI_LOG("Parameters:");
+    CLI_LOG("  --help                 显示帮助信息");
+    CLI_LOG("");
+    CLI_LOG("SubCommands:");
+    CLI_LOG("  check-bundle-idle          检查应用是否空闲");
+    CLI_LOG("  check-bundle-period        检查应用是否在使用时段（仅Native Token）");
+    CLI_LOG("  query-stats-interval       按时间间隔查询使用统计");
+    CLI_LOG("  query-events               查询应用事件记录");
+    CLI_LOG("  query-app-group            查询应用优先级分组");
+    CLI_LOG("  query-high-freq-bundle     查询高频使用应用");
+    CLI_LOG("  query-module-records       查询模块使用记录");
+    CLI_LOG("  query-notification-stats   查询通知事件统计");
+    CLI_LOG("  query-high-freq-period     查询高频使用时段");
+    CLI_LOG("  query-latest-used-time     查询应用今日最后使用时间");
+    CLI_LOG("");
+    CLI_LOG("Examples:");
+    CLI_LOG("  %s --help", PROGRAM_NAME);
+    CLI_LOG("  %s check-bundle-idle --help", PROGRAM_NAME);
+    CLI_LOG("  %s check-bundle-idle --bundle com.example.app", PROGRAM_NAME);
+    CLI_LOG("");
+    CLI_LOG("注意：所有命令需要 ohos.permission.BUNDLE_ACTIVE_INFO 权限");
+}
+
 int CmdHelp(int argc, char** argv)
 {
     std::string targetCmd;
-    int startIdx = 1;
+    int startIdx = ARG_START_INDEX;
     if (argc > startIdx && strcmp(argv[startIdx], "help") == 0) {
-        startIdx = 2;
+        startIdx = HELP_CMD_ARG_START_INDEX;
     }
     for (int i = startIdx; i < argc; i++) {
         if (argv[i][0] != '-') {
@@ -743,32 +788,7 @@ int CmdHelp(int argc, char** argv)
     }
 
     if (targetCmd.empty()) {
-        CLI_LOG("%s - %s", PROGRAM_NAME, TOOL_DESCRIPTION);
-        CLI_LOG("");
-        CLI_LOG("Usage:");
-        CLI_LOG("  %s <command> [options]", PROGRAM_NAME);
-        CLI_LOG("");
-        CLI_LOG("Parameters:");
-        CLI_LOG("  --help                 显示帮助信息");
-        CLI_LOG("");
-        CLI_LOG("SubCommands:");
-        CLI_LOG("  check-bundle-idle          检查应用是否空闲");
-        CLI_LOG("  check-bundle-period        检查应用是否在使用时段（仅Native Token）");
-        CLI_LOG("  query-stats-interval       按时间间隔查询使用统计");
-        CLI_LOG("  query-events               查询应用事件记录");
-        CLI_LOG("  query-app-group            查询应用优先级分组");
-        CLI_LOG("  query-high-freq-bundle     查询高频使用应用");
-        CLI_LOG("  query-module-records       查询模块使用记录");
-        CLI_LOG("  query-notification-stats   查询通知事件统计");
-        CLI_LOG("  query-high-freq-period     查询高频使用时段");
-        CLI_LOG("  query-latest-used-time     查询应用今日最后使用时间");
-        CLI_LOG("");
-        CLI_LOG("Examples:");
-        CLI_LOG("  %s --help", PROGRAM_NAME);
-        CLI_LOG("  %s check-bundle-idle --help", PROGRAM_NAME);
-        CLI_LOG("  %s check-bundle-idle --bundle com.example.app", PROGRAM_NAME);
-        CLI_LOG("");
-        CLI_LOG("注意：所有命令需要 ohos.permission.BUNDLE_ACTIVE_INFO 权限");
+        ShowMainHelp();
         return 0;
     }
 
