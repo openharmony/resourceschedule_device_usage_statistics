@@ -339,9 +339,6 @@ ErrCode BundleActiveService::IsBundleUsePeriod(bool& IsUsePeriod, const std::str
 {
     int32_t callingUid = OHOS::IPCSkeleton::GetCallingUid();
     AccessToken::AccessTokenID tokenId = OHOS::IPCSkeleton::GetCallingTokenID();
-    if (AccessToken::AccessTokenKit::GetTokenType(tokenId) != AccessToken::ATokenTypeEnum::TOKEN_NATIVE) {
-        return ERR_PERMISSION_DENIED;
-    }
     auto ret = CheckNativePermission(tokenId);
 // LCOV_EXCL_START
     if (ret != ERR_OK) {
