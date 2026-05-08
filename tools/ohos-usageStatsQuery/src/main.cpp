@@ -820,8 +820,8 @@ int CmdHelp(int argc, char** argv)
 {
     std::string targetCmd;
     int startIdx = ARG_START_INDEX;
-    if (argc > startIdx && argv != nullptr && argv[startIdx] != nullptr 
-        && strcmp(argv[startIdx], "help") == 0) {
+    if (argc > startIdx && argv != nullptr && argv[startIdx] != nullptr &&
+        strcmp(argv[startIdx], "help") == 0) {
         startIdx = HELP_CMD_ARG_START_INDEX;
     }
     for (int i = startIdx; i < argc && argv != nullptr; i++) {
