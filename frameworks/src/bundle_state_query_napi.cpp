@@ -527,7 +527,7 @@ napi_value ParseQueryBundleStatsInfoByInterval(const napi_env &env, const napi_c
     }
     if (params.endTime <= params.beginTime) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfoByInterval endTime(%{public}lld) <= beginTime(%{public}lld)",
-            (long long)params.endTime, (long long)params.beginTime);
+            static_cast<long long>(params.endTime), static_cast<long long>(params.beginTime));
         params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
         return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_LESS_THEN_BEGIN_TIME, "");
     }
@@ -623,7 +623,7 @@ napi_value ParseQueryBundleStatsInfos(const napi_env &env, const napi_callback_i
     }
     if (params.endTime <= params.beginTime) {
         BUNDLE_ACTIVE_LOGE("ParseQueryBundleStatsInfos endTime(%{public}lld) <= beginTime(%{public}lld)",
-            (long long)params.endTime, (long long)params.beginTime);
+            static_cast<long long>(params.endTime), static_cast<long long>(params.beginTime));
         params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
     }
@@ -745,7 +745,7 @@ napi_value ParseAppStatsInfos(const napi_env &env, const napi_callback_info &inf
     }
     if (params.endTime <= params.beginTime) {
         BUNDLE_ACTIVE_LOGE("ParseAppStatsInfos endTime(%{public}lld) <= beginTime(%{public}lld)",
-            (long long)params.endTime, (long long)params.beginTime);
+            static_cast<long long>(params.endTime), static_cast<long long>(params.beginTime));
         params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
         return BundleStateCommon::HandleParamErr(env, ERR_BEGIN_TIME_LESS_THEN_ZERO, "");
     }
@@ -774,6 +774,9 @@ napi_value QueryAppStatsInfos(napi_env env, napi_callback_info info)
     }
     napi_value promise = nullptr;
     std::unique_ptr<AsyncCallbackInfoAppStats> callbackPtr {asyncCallbackInfo};
+    if (callbackPtr == nullptr) {
+        return BundleStateCommon::NapiGetNull(env);
+    }
     callbackPtr->beginTime = params.beginTime;
     BUNDLE_ACTIVE_LOGD("QueryAppStatsInfos callbackPtr->beginTime: %{public}lld",
         (long long)callbackPtr->beginTime);
@@ -917,7 +920,7 @@ napi_value ParseDeviceEventStates(const napi_env &env, const napi_callback_info 
     }
     if (params.endTime <= params.beginTime) {
         BUNDLE_ACTIVE_LOGE("ParseDeviceEventStates endTime(%{public}lld) <= beginTime(%{public}lld)",
-            (long long)params.endTime, (long long)params.beginTime);
+            static_cast<long long>(params.endTime), static_cast<long long>(params.beginTime));
         params.errorCode = ERR_END_TIME_LESS_THEN_BEGIN_TIME;
         return BundleStateCommon::HandleParamErr(env, ERR_END_TIME_LESS_THEN_BEGIN_TIME, "");
     }
