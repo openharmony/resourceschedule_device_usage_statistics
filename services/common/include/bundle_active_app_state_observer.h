@@ -54,7 +54,6 @@ private:
         return processData.uid > 0 && processData.pid >= 0
             && processData.bundleName.size() > 0;
     }
-
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
