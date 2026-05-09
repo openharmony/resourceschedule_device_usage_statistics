@@ -56,7 +56,7 @@ private:
     AppUsePeriodicallyConfig appUsePeriodicallyConfig_;
     AppHighFrequencyPeriodThresholdConfig appHighFreqPeriodThresholdConfig_;
     uint64_t maxDataSize_ = 0;
-    bool IsWindowVisibilityEnable_ {false};
+    bool isWindowVisibilityEnable_ {false};
 };
 
 }  // namespace DeviceUsageStats

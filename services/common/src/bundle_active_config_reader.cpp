@@ -252,12 +252,12 @@ void BundleActiveConfigReader::LoadWindowVisibilityEnable(cJSON* root)
         BUNDLE_ACTIVE_LOGE("Configuration parameter %{private}s error", WINDOW_VISIBILITY_ENABLE);
         return;
     }
-    IsWindowVisibilityEnable_ = (item->valueint == 1);
+    isWindowVisibilityEnable_ = (item->valueint == 1);
 }
 
 bool BundleActiveConfigReader::IsWindowVisibilityEnable()
 {
-    return IsWindowVisibilityEnable_;
+    return isWindowVisibilityEnable_;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
