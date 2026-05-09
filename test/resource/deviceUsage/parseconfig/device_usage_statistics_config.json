@@ -10,5 +10,6 @@
         "MinHourUseDays" : 5,
         "MaxHighFrequencyHourNum" : 3
     },
-    "MaxDataSize": 6
+    "MaxDataSize": 6,
+    "window_visibility_enable": 1
 }

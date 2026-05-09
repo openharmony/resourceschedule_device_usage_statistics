@@ -34,6 +34,7 @@ const static char* MIN_TOTAL_USE_DAYS = "MinTotalUseDays";
 const static char* MIN_TOP_USE_HOURS_LIMIT = "MinTopUseHoursLimit";
 const static char* MIN_HOUR_USE_DAYS = "MinHourUseDays";
 const static char* MAX_HIGH_FREQUENCY_HOUR_NUM = "MaxHighFrequencyHourNum";
+const static char* WINDOW_VISIBILITY_ENABLE = "window_visibility_enable";
 const int32_t DEFAULT_MIN_USE_TIMES = 1;
 const int32_t DEFAULT_MAX_USE_TIMES = 10;
 const int32_t DEFAULT_MIN_USE_DAYS = 3;
@@ -90,6 +91,7 @@ void BundleActiveConfigReader::LoadConfigFile(const char *filePath)
     LoadApplicationUsePeriodically(root);
     LoadAppHighFreqPeriodThresholdConfig(root);
     LoadMaxDataSize(root);
+    LoadWindowVisibilityEnable(root);
     cJSON_Delete(root);
 // LCOV_EXCL_STOP
 }
@@ -242,5 +244,20 @@ bool BundleActiveConfigReader::IsValidNumber(cJSON* item)
     return item != nullptr && cJSON_IsNumber(item);
 }
 // LCOV_EXCL_STOP
+
+void BundleActiveConfigReader::LoadWindowVisibilityEnable(cJSON* root)
+{
+    cJSON* item = cJSON_GetObjectItem(root, WINDOW_VISIBILITY_ENABLE);
+    if (!IsValidNumber(item)) {
+        BUNDLE_ACTIVE_LOGE("Configuration parameter %{private}s error", WINDOW_VISIBILITY_ENABLE);
+        return;
+    }
+    IsWindowVisibilityEnable_ = (item->valueint == 1);
+}
+
+bool BundleActiveConfigReader::IsWindowVisibilityEnable()
+{
+    return IsWindowVisibilityEnable_;
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

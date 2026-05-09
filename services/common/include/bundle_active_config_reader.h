@@ -39,11 +39,13 @@ public:
     AppUsePeriodicallyConfig GetApplicationUsePeriodicallyConfig();
     AppHighFrequencyPeriodThresholdConfig GetAppHighFrequencyPeriodThresholdConfig();
     uint64_t GetMaxDataSize();
+    bool IsWindowVisibilityEnable();
 private:
     void LoadConfigFile(const char* filePath);
     void LoadApplicationUsePeriodically(cJSON* root);
     void LoadAppHighFreqPeriodThresholdConfig(cJSON* root);
     void LoadMaxDataSize(cJSON* root);
+    void LoadWindowVisibilityEnable(cJSON* root);
     bool GetJsonFromFile(const char* filePath, cJSON*& root);
     bool ConvertFullPath(const std::string& partialPath, std::string& fullPath);
     int32_t GetIntValue(
@@ -54,6 +56,7 @@ private:
     AppUsePeriodicallyConfig appUsePeriodicallyConfig_;
     AppHighFrequencyPeriodThresholdConfig appHighFreqPeriodThresholdConfig_;
     uint64_t maxDataSize_ = 0;
+    bool IsWindowVisibilityEnable_ {false};
 };
 
 }  // namespace DeviceUsageStats
