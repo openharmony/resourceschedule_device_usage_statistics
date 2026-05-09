@@ -1177,6 +1177,11 @@ void BundleActiveCore::ProcessEvents(
         }
     }
 }
+
+bool BundleActiveCore::IsWindowVisibilityEnable()
+{
+    return bundleActiveConfigReader_->IsWindowVisibilityEnable();
+}
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
 

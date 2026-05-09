@@ -247,6 +247,7 @@ public:
     int32_t currentUsedUser_;
     void OnAppGroupChanged(const AppGroupCallbackInfo& callbackInfo);
     bool isUninstalledApp(const int32_t uid);
+    bool IsWindowVisibilityEnable();
     void OnBundleInstalled(const int32_t userId, const std::string& bundleName, const int32_t uid,
         const int32_t appIndex);
     void DeInit();

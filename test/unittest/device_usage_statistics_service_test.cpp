@@ -1952,6 +1952,27 @@ HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_GetM
 }
 
 /*
+ * @tc.name: DeviceUsageStatisticsServiceTest_LoadWindowVisibilityEnable_001
+ * @tc.desc: LoadWindowVisibilityEnable
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_LoadWindowVisibilityEnable_001,
+    Function | MediumTest | TestSize.Level0)
+{
+    auto bundleActiveConfigReader = std::make_shared<BundleActiveConfigReader>();
+    EXPECT_NE(bundleActiveConfigReader, nullptr);
+    cJSON* root = nullptr;
+    if (!bundleActiveConfigReader->GetJsonFromFile(CONFIG_PATH, root) || !root) {
+        cJSON_Delete(root);
+        FAIL() << "GetJsonFromFile failed";
+    }
+    bundleActiveConfigReader->LoadWindowVisibilityEnable(root);
+    cJSON_Delete(root);
+    EXPECT_EQ(bundleActiveConfigReader->IsWindowVisibilityEnable(), true);
+}
+
+/*
  * @tc.name: DeviceUsageStatisticsServiceTest_RestoreToDatabase_002
  * @tc.desc: RestoreToDatabase
  * @tc.type: FUNC
@@ -2391,6 +2412,21 @@ HWTEST_F(DeviceUsageStatisticsServiceTest,
     std::vector<BundleActivePackageStats> packageStats;
     ErrCode result = bundleActiveService->QueryHighFrequencyUsageBundleInfos(packageStats, 100, 20, 8);
     EXPECT_EQ(result, ERR_PARAM_ERROR);
+}
+
+/*
+ * @tc.name: DeviceUsageStatisticsServiceTest_IsWindowVisibilityEnable_001
+ * @tc.desc: IsWindowVisibilityEnable
+ * @tc.type: FUNC
+ * @tc.require: issuesIC2FBU
+ */
+HWTEST_F(DeviceUsageStatisticsServiceTest, DeviceUsageStatisticsServiceTest_IsWindowVisibilityEnable_001,
+    Function | MediumTest | TestSize.Level0)
+{
+    auto bundleActiveCore = std::make_shared<BundleActiveCore>();
+    bundleActiveCore->bundleActiveConfigReader_ = std::make_shared<BundleActiveConfigReader>();
+    bool result = bundleActiveCore->IsWindowVisibilityEnable();
+    EXPECT_EQ(result, false);
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

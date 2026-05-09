@@ -266,6 +266,7 @@ private:
     sptr<PowerMgr::IPowerStateCallback> powerStateCallback_;
 #endif
     bool ready_ {false};
+    bool IsWindowVisibilityEnable_ {false};
     int32_t ConvertIntervalType(const int32_t intervalType);
     void InitNecessaryState();
     void InitService();
