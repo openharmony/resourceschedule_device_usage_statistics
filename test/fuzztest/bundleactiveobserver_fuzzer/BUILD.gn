@@ -51,7 +51,7 @@ ohos_fuzztest("BundleActiveObserverFuzzTest") {
     "bundleactiveobserver_fuzzer.cpp",
   ]
 
-  public_deps = [
+  deps = [
     "${usage_statistics_path}:usagestatservice_static",
     "${usage_statistics_path}:usagestatsinner",
   ]
