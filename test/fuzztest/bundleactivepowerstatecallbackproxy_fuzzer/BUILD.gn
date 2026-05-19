@@ -48,11 +48,10 @@ ohos_fuzztest("BundleActivePowerstateCallbackproxyFuzzTest") {
     "bundleactivepowerstatecallbackproxy_fuzzer.cpp",
   ]
 
-  deps = [ "${usage_statistics_path}:usagestatistics" ]
-
-  public_deps = [
+  deps = [
     "${usage_statistics_path}:usagestatservice_static",
     "${usage_statistics_path}:usagestatsinner",
+    "${usage_statistics_path}:usagestatistics"
   ]
   external_deps = [
     "ability_runtime:app_manager",

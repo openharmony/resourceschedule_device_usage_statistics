@@ -47,7 +47,8 @@
         "init",
         "ffrt",
         "hisysevent",
-        "hitrace"
+        "hitrace",
+        "ets_frontend"
       ],
       "third_party": []
     },
