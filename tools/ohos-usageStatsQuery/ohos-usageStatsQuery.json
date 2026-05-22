@@ -4,7 +4,7 @@
   "description": "Application usage statistics query tool. Used for system administration and performance analysis scenarios. Does not support real-time monitoring or subscription operations.",
   "executablePath": "/system/bin/cli_tool/executable/ohos-usageStatsQuery",
   "requirePermissions": [
-    "ohos.permission.BUNDLE_ACTIVE_INFO"
+    "ohos.permission.cli.BUNDLE_ACTIVE_INFO"
   ],
   "inputSchema": {
     "type": "object",
@@ -23,7 +23,7 @@
   "subcommands": {
     "check-bundle-idle": {
       "description": "Query whether an application is in idle state. Used for application usage analysis. Requires bundle name parameter.",
-      "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
+      "requirePermissions": ["ohos.permission.cli.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -80,7 +80,7 @@
     },
     "check-bundle-period": {
       "description": "Query whether an application is in use period. Used for application usage pattern analysis. Only available for native processes.",
-      "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
+      "requirePermissions": ["ohos.permission.cli.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -137,7 +137,7 @@
     },
     "query-stats-interval": {
       "description": "Query application usage statistics within a time interval. Used for application usage frequency analysis. Requires valid time range and interval type.",
-      "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
+      "requirePermissions": ["ohos.permission.cli.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -235,7 +235,7 @@
     },
     "query-events": {
       "description": "Query application event records within a time range. Used for application usage history analysis. Requires valid time range.",
-      "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
+      "requirePermissions": ["ohos.permission.cli.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -331,7 +331,7 @@
     },
     "query-app-group": {
       "description": "Query application group information. Used for application priority analysis. Requires bundle name parameter.",
-      "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
+      "requirePermissions": ["ohos.permission.cli.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -388,7 +388,7 @@
     },
     "query-high-freq-bundle": {
       "description": "Query high-frequency usage application list. Used for identifying frequently used applications. Returns top N most used apps.",
-      "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
+      "requirePermissions": ["ohos.permission.cli.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -471,7 +471,7 @@
     },
     "query-module-records": {
       "description": "Query module usage records. Used for analyzing application module usage patterns. Returns module usage history.",
-      "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
+      "requirePermissions": ["ohos.permission.cli.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -550,7 +550,7 @@
     },
     "query-notification-stats": {
       "description": "Query notification event statistics. Used for analyzing application notification patterns. Requires valid time range.",
-      "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
+      "requirePermissions": ["ohos.permission.cli.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -636,7 +636,7 @@
     },
     "query-high-freq-period": {
       "description": "Query high-frequency usage period for applications. Used for analyzing application usage time patterns. Returns peak usage hours.",
-      "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
+      "requirePermissions": ["ohos.permission.cli.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -699,7 +699,7 @@
     },
     "query-latest-used-time": {
       "description": "Query the latest usage time of an application today. Used for tracking recent application usage. Requires bundle name parameter.",
-      "requirePermissions": ["ohos.permission.BUNDLE_ACTIVE_INFO"],
+      "requirePermissions": ["ohos.permission.cli.BUNDLE_ACTIVE_INFO"],
       "inputSchema": {
         "type": "object",
         "properties": {

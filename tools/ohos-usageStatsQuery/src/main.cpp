@@ -70,7 +70,7 @@ static const char* TOOL_DESCRIPTION =
     "Application usage statistics query tool. "
     "Provides query functions for application usage duration, event records, "
     "high-frequency usage periods, etc. Used by developers or system administrators "
-    "to analyze application usage. Requires ohos.permission.BUNDLE_ACTIVE_INFO permission.";
+    "to analyze application usage. Requires ohos.permission.cli.BUNDLE_ACTIVE_INFO permission.";
 
 int OutputSuccess(cJSON* data)
 {
@@ -390,7 +390,7 @@ int CmdCheckBundleIdle(int argc, char** argv)
     if (ret != ERR_OK) {
     return OutputError("ERR_QUERY_FAILED", "Failed to query application idle status",
         "Please check: 1. Whether BundleActiveService is running normally; "
-        "2. Whether ohos.permission.BUNDLE_ACTIVE_INFO permission is granted");
+        "2. Whether ohos.permission.cli.BUNDLE_ACTIVE_INFO permission is granted");
     }
 
     cJSON* data = cJSON_CreateObject();
@@ -474,7 +474,7 @@ int CmdQueryStatsInterval(int argc, char** argv)
     if (ret != ERR_OK) {
         return OutputError("ERR_QUERY_FAILED", "Failed to query usage statistics",
             "Please check: 1. Whether BundleActiveService is running normally; "
-            "2. Whether ohos.permission.BUNDLE_ACTIVE_INFO permission is granted");
+            "2. Whether ohos.permission.cli.BUNDLE_ACTIVE_INFO permission is granted");
     }
     cJSON* data = cJSON_CreateObject();
     cJSON_AddNumberToObject(data, "intervalType", intervalType);
@@ -519,7 +519,7 @@ int CmdQueryEvents(int argc, char** argv)
     if (ret != ERR_OK) {
         return OutputError("ERR_QUERY_FAILED", "Failed to query application events",
             "Please check: 1. Whether BundleActiveService is running normally; "
-            "2. Whether ohos.permission.BUNDLE_ACTIVE_INFO permission is granted");
+            "2. Whether ohos.permission.cli.BUNDLE_ACTIVE_INFO permission is granted");
     }
     cJSON* data = cJSON_CreateObject();
     cJSON_AddNumberToObject(data, "beginTime", beginTime);
@@ -568,7 +568,7 @@ int CmdQueryAppGroup(int argc, char** argv)
     if (ret != ERR_OK) {
     return OutputError("ERR_QUERY_FAILED", "Failed to query application priority group",
         "Please check: 1. Whether BundleActiveService is running normally; "
-        "2. Whether ohos.permission.BUNDLE_ACTIVE_INFO permission is granted");
+        "2. Whether ohos.permission.cli.BUNDLE_ACTIVE_INFO permission is granted");
     }
 
     cJSON* data = cJSON_CreateObject();
@@ -597,7 +597,7 @@ int CmdQueryHighFreqBundle(int argc, char** argv)
     if (ret != ERR_OK) {
         return OutputError("ERR_QUERY_FAILED", "Failed to query high-frequency usage applications",
             "Please check: 1. Whether BundleActiveService is running normally; "
-            "2. Whether ohos.permission.BUNDLE_ACTIVE_INFO permission is granted");
+            "2. Whether ohos.permission.cli.BUNDLE_ACTIVE_INFO permission is granted");
     }
     cJSON* data = cJSON_CreateObject();
     cJSON_AddNumberToObject(data, "userId", userId);
@@ -647,7 +647,7 @@ int CmdQueryModuleRecords(int argc, char** argv)
     if (ret != ERR_OK) {
     return OutputError("ERR_QUERY_FAILED", "Failed to query module usage records",
         "Please check: 1. Whether BundleActiveService is running normally; "
-        "2. Whether ohos.permission.BUNDLE_ACTIVE_INFO permission is granted");
+        "2. Whether ohos.permission.cli.BUNDLE_ACTIVE_INFO permission is granted");
     }
 
     cJSON* data = cJSON_CreateObject();
@@ -686,7 +686,7 @@ int CmdQueryNotificationStats(int argc, char** argv)
     if (ret != ERR_OK) {
         return OutputError("ERR_QUERY_FAILED", "Failed to query notification event statistics",
             "Please check: 1. Whether BundleActiveService is running normally; "
-            "2. Whether ohos.permission.BUNDLE_ACTIVE_INFO permission is granted");
+            "2. Whether ohos.permission.cli.BUNDLE_ACTIVE_INFO permission is granted");
     }
     cJSON* data = cJSON_CreateObject();
     cJSON_AddNumberToObject(data, "beginTime", beginTime);
@@ -728,7 +728,7 @@ int CmdQueryHighFreqPeriod(int argc, char** argv)
     if (ret != ERR_OK) {
     return OutputError("ERR_QUERY_FAILED", "Failed to query high-frequency usage periods",
         "Please check: 1. Whether BundleActiveService is running normally; "
-        "2. Whether ohos.permission.BUNDLE_ACTIVE_INFO permission is granted");
+        "2. Whether ohos.permission.cli.BUNDLE_ACTIVE_INFO permission is granted");
     }
     cJSON* data = cJSON_CreateObject();
     cJSON_AddNumberToObject(data, "userId", userId);
@@ -776,7 +776,7 @@ int CmdQueryLatestUsedTime(int argc, char** argv)
     if (ret != ERR_OK) {
     return OutputError("ERR_QUERY_FAILED", "Failed to query application latest usage time today",
         "Please check: 1. Whether BundleActiveService is running normally; "
-        "2. Whether ohos.permission.BUNDLE_ACTIVE_INFO permission is granted");
+        "2. Whether ohos.permission.cli.BUNDLE_ACTIVE_INFO permission is granted");
     }
 
     cJSON* data = cJSON_CreateObject();
@@ -813,7 +813,7 @@ void ShowMainHelp()
     CLI_LOG("  %s check-bundle-idle --help", PROGRAM_NAME);
     CLI_LOG("  %s check-bundle-idle --bundle com.example.app", PROGRAM_NAME);
     CLI_LOG("");
-    CLI_LOG("Note: All commands require ohos.permission.BUNDLE_ACTIVE_INFO permission");
+    CLI_LOG("Note: All commands require ohos.permission.cli.BUNDLE_ACTIVE_INFO permission");
 }
 
 int CmdHelp(int argc, char** argv)
