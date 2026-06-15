@@ -933,7 +933,7 @@ int32_t BundleActiveService::Dump(int32_t fd, const std::vector<std::u16string> 
         std::vector<std::string> infos;
         if (argsInStr[0] == "-h") {
             DumpUsage(result);
-        } else if (argsInStr[0] == "-A") {
+        } else if (argsInStr[0] == "-A" && argsInStr.size() > 1) {
             ret = ShellDump(argsInStr, infos);
         } else {
             infos.emplace_back("BundleActiveService Error params.\n");
