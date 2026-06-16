@@ -62,7 +62,6 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfo(const std::string &appName,
     if (!bundleMgr_) {
         return false;
     }
-    BUNDLE_ACTIVE_LOGI("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
     if (bundleMgr_ != nullptr && bundleMgr_->GetApplicationInfo(appName, flag, userId, appInfo)) {
         return true;
     }
@@ -78,7 +77,6 @@ bool BundleActiveBundleMgrHelper::GetApplicationInfos(const AppExecFwk::Applicat
     if (!Connect()) {
         return false;
     }
-    BUNDLE_ACTIVE_LOGI("bundleMgr is null: %{public}d ", bundleMgr_ == nullptr);
     std::vector<AppExecFwk::ApplicationInfo> appInfos;
     if (bundleMgr_ == nullptr || !bundleMgr_->GetApplicationInfos(flag, userId, appInfos)) {
         return false;
