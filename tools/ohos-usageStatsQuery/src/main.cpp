@@ -108,7 +108,7 @@ int OutputError(const std::string& code, const std::string& message, const std::
     cJSON_Delete(response);
     // 上报敏感权限使用记录
     AccessTokenID tokenID = OHOS::IPCSkeleton::GetSelfTokenID();
-    PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 1, 0);
+    PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 0, 1);
     return OUTPUT_ERROR_CODE;
 }
 
