@@ -30,6 +30,11 @@
 #include "bundle_active_module_record.h"
 #include "bundle_active_high_frequency_period.h"
 #include "bundle_state_inner_errors.h"
+#include "privacy_kit.h"
+#include "ipc_skeleton.h"
+#include "access_token.h"
+
+using namespace OHOS::Security::AccessToken;
 
 using namespace OHOS::DeviceUsageStats;
 using OHOS::ErrCode;
@@ -82,6 +87,9 @@ int OutputSuccess(cJSON* data)
     std::cout << jsonStr << std::endl;
     free(jsonStr);
     cJSON_Delete(response);
+    // 上报敏感权限使用记录
+    AccessTokenID tokenID = OHOS::IPCSkeleton::GetSelfTokenID();
+    PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 1, 0);
     return OUTPUT_SUCCESS_CODE;
 }
 
@@ -98,6 +106,9 @@ int OutputError(const std::string& code, const std::string& message, const std::
     std::cout << jsonStr << std::endl;
     free(jsonStr);
     cJSON_Delete(response);
+    // 上报敏感权限使用记录
+    AccessTokenID tokenID = OHOS::IPCSkeleton::GetSelfTokenID();
+    PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 1, 0);
     return OUTPUT_ERROR_CODE;
 }
 
