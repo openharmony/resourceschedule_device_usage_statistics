@@ -55,10 +55,15 @@ void BundleActiveEventReporterTest::TearDown(void)
  */
 HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeEvent_001, Function | MediumTest | TestSize.Level0)
 {
-    BundleActiveEventReporter::GetInstance().isTaskSubmit_ = false;
+    std::string recorderPath = "/data/service/el1/public/bundle_usage/file_size_report_time";
+    SaveStringToFile(recorderPath, "");
     BundleActiveEventReporter::GetInstance().ReportFileSizeEvent();
-    BundleActiveEventReporter::GetInstance().ReportFileSizeEvent();
-    EXPECT_TRUE(BundleActiveEventReporter::GetInstance().isTaskSubmit_);
+    BundleActiveEventReporter::GetInstance().ReportFileSizeInner();
+    std::string lastReportTime;
+    LoadStringFromFile(recorderPath, lastReportTime);
+    EXPECT_TRUE(!lastReportTime.empty());
+    int lastReportTimeValue = BundleActiveUtil::StringToInt64(lastReportTime);
+    EXPECT_GT(lastReportTimeValue, 0);
 }
 
 /*
@@ -69,19 +74,21 @@ HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeEvent_001, Function | Medi
  */
 HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeDaily_001, Function | MediumTest | TestSize.Level0)
 {
-    BundleActiveEventReporter::GetInstance().fileSizeRecorderName_ = "test";
+    std::string recorderPath = "/data/service/el1/public/bundle_usage/file_size_report_time";
+    SaveStringToFile(recorderPath, "");
     BundleActiveEventReporter::GetInstance().ReportFileSizeDaily();
-    BundleActiveEventReporter::GetInstance().fileSizeRecorderName_ =
-        "/data/service/el1/public/bundle_usage/file_size_report_time";
+
+    SaveStringToFile(recorderPath, std::to_string(-1));
     BundleActiveEventReporter::GetInstance().ReportFileSizeDaily();
+
+    SaveStringToFile(recorderPath, std::to_string(1));
     BundleActiveEventReporter::GetInstance().ReportFileSizeDaily();
-    SaveStringToFile(BundleActiveEventReporter::GetInstance().fileSizeRecorderName_, std::to_string(-1));
-    BundleActiveEventReporter::GetInstance().ReportFileSizeDaily();
-    SaveStringToFile(BundleActiveEventReporter::GetInstance().fileSizeRecorderName_, std::to_string(1));
-    BundleActiveEventReporter::GetInstance().ReportFileSizeDaily();
+
     std::string lastReportTime;
-    LoadStringFromFile(BundleActiveEventReporter::GetInstance().fileSizeRecorderName_, lastReportTime);
+    LoadStringFromFile(recorderPath, lastReportTime);
     EXPECT_TRUE(!lastReportTime.empty());
+    int lastReportTimeValue = BundleActiveUtil::StringToInt64(lastReportTime);
+    EXPECT_GT(lastReportTimeValue, 0);
 }
 
 /*
@@ -96,6 +103,8 @@ HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeDaily_002, Function | Medi
     std::string lastReportTime;
     LoadStringFromFile(BundleActiveEventReporter::GetInstance().fileSizeRecorderName_, lastReportTime);
     EXPECT_TRUE(!lastReportTime.empty());
+    int lastReportTimeValue = BundleActiveUtil::StringToInt64(lastReportTime);
+    EXPECT_GT(lastReportTimeValue, 0);
 }
 }
 }
