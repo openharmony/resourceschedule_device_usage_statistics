@@ -16,6 +16,7 @@
 #include <string>
 #include <gtest/gtest.h>
 #include "bundle_active_event_reporter.h"
+#include "bundle_active_util.h"
 #include "file_ex.h"
 
 using namespace testing::ext;
