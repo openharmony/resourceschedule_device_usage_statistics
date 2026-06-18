@@ -89,7 +89,12 @@ int OutputSuccess(cJSON* data)
     cJSON_Delete(response);
     // 上报敏感权限使用记录
     AccessTokenID tokenID = OHOS::IPCSkeleton::GetSelfTokenID();
-    PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 1, 0);
+    int res = PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 1, 0);
+    if (res != 0) {
+        /* Failed to add permission used record, not fatal */
+        CLI_LOG("Failed to add permission used record: permission=%s, tokenID=%u, err=%d",
+            "ohos.permission.cli.BUNDLE_ACTIVE_INFO", tokenID, res);
+    }
     return OUTPUT_SUCCESS_CODE;
 }
 
@@ -108,7 +113,12 @@ int OutputError(const std::string& code, const std::string& message, const std::
     cJSON_Delete(response);
     // 上报敏感权限使用记录
     AccessTokenID tokenID = OHOS::IPCSkeleton::GetSelfTokenID();
-    PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 0, 1);
+    int res = PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 0, 1);
+    if (res != 0) {
+        /* Failed to add permission used record, not fatal */
+        CLI_LOG("Failed to add permission used record: permission=%s, tokenID=%u, err=%d",
+            "ohos.permission.cli.BUNDLE_ACTIVE_INFO", tokenID, res);
+    }
     return OUTPUT_ERROR_CODE;
 }
 
