@@ -45,6 +45,7 @@ using OHOS::ERR_OK;
 #define DEFAULT_DAY_RANGE (7)
 #define DEFAULT_HIGH_FREQ_COUNT (20)
 #define MIN_ARG_COUNT (2)
+#define MAX_ARG_COUNT (20)
 #define HELP_ARGC_MINIMAL (2)
 #define HELP_ARGC_WITH_CMD (3)
 #define HELP_CMD_ARG_START_INDEX (2)
@@ -909,7 +910,7 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    if (argc < MIN_ARG_COUNT) {
+    if (argc < MIN_ARG_COUNT || argc > MAX_ARG_COUNT) {
         PrintUsage(argv[0]);
         return OUTPUT_ERROR_CODE;
     }
