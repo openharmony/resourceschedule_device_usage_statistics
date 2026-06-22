@@ -116,7 +116,7 @@ int OutputError(const std::string& code, const std::string& message, const std::
     int res = PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 0, 1);
     if (res != 0) {
         /* Failed to add permission used record, not fatal */
-        CLI_LOG("OutputSuccess failed to add permission used record: permission=%s, err=%d",
+        CLI_LOG("OutputError failed to add permission used record: permission=%s, err=%d",
             "ohos.permission.cli.BUNDLE_ACTIVE_INFO", res);
     }
     return OUTPUT_ERROR_CODE;
