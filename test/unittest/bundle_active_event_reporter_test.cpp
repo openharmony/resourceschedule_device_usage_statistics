@@ -16,10 +16,8 @@
 #include <string>
 #include <gtest/gtest.h>
 #include "bundle_active_event_reporter.h"
-#include "bundle_active_util.h"
 #include "file_ex.h"
-#include "bundle_active_util.h"
-
+#include <cstdlib>
 using namespace testing::ext;
 
 namespace OHOS {
@@ -64,7 +62,7 @@ HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeEvent_001, Function | Medi
     std::string lastReportTime;
     LoadStringFromFile(recorderPath, lastReportTime);
     EXPECT_TRUE(!lastReportTime.empty());
-    int lastReportTimeValue = BundleActiveUtil::StringToInt64(lastReportTime);
+    int64_t lastReportTimeValue = std::stoll(lastReportTime);
     EXPECT_GT(lastReportTimeValue, 0);
 }
 
@@ -89,7 +87,7 @@ HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeDaily_001, Function | Medi
     std::string lastReportTime;
     LoadStringFromFile(recorderPath, lastReportTime);
     EXPECT_TRUE(!lastReportTime.empty());
-    int lastReportTimeValue = BundleActiveUtil::StringToInt64(lastReportTime);
+    int64_t lastReportTimeValue = std::stoll(lastReportTime);
     EXPECT_GT(lastReportTimeValue, 0);
 }
 
@@ -105,7 +103,7 @@ HWTEST_F(BundleActiveEventReporterTest, ReportFileSizeDaily_002, Function | Medi
     std::string lastReportTime;
     LoadStringFromFile(BundleActiveEventReporter::GetInstance().fileSizeRecorderName_, lastReportTime);
     EXPECT_TRUE(!lastReportTime.empty());
-    int lastReportTimeValue = BundleActiveUtil::StringToInt64(lastReportTime);
+    int64_t lastReportTimeValue = std::stoll(lastReportTime);
     EXPECT_GT(lastReportTimeValue, 0);
 }
 }
