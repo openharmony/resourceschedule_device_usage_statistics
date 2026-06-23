@@ -18,6 +18,7 @@
 #include "bundle_active_event_reporter.h"
 #include "file_ex.h"
 #include <cstdlib>
+
 using namespace testing::ext;
 
 namespace OHOS {
