@@ -58,6 +58,9 @@ using OHOS::ERR_OK;
 #define OUTPUT_SUCCESS_CODE (0)
 #define OUTPUT_ERROR_CODE (1)
 
+constexpr int32_t PERMISSION_USAGE_COUNT_ONE = 1;
+constexpr int32_t PERMISSION_USAGE_COUNT_ZERO = 0;
+
 typedef std::function<int(int, char**)> CommandHandler;
 
 struct Command {
@@ -87,9 +90,10 @@ int OutputSuccess(cJSON* data)
     std::cout << jsonStr << std::endl;
     free(jsonStr);
     cJSON_Delete(response);
-    // 上报敏感权限使用记录
+    // 上报敏感权限使用记录, successCount: 权限使用成功次数, failCount: 权限使用失败次数
     AccessTokenID tokenID = OHOS::IPCSkeleton::GetSelfTokenID();
-    int res = PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 1, 0);
+    int res = PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO",
+        PERMISSION_USAGE_COUNT_ONE, PERMISSION_USAGE_COUNT_ZERO);
     if (res != 0) {
         /* Failed to add permission used record, not fatal */
         CLI_LOG("OutputSuccess failed to add permission used record: permission=%s, err=%d",
@@ -111,9 +115,10 @@ int OutputError(const std::string& code, const std::string& message, const std::
     std::cout << jsonStr << std::endl;
     free(jsonStr);
     cJSON_Delete(response);
-    // 上报敏感权限使用记录
+    // 上报敏感权限使用记录, successCount: 权限使用成功次数, failCount: 权限使用失败次数
     AccessTokenID tokenID = OHOS::IPCSkeleton::GetSelfTokenID();
-    int res = PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO", 0, 1);
+    int res = PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO",
+        PERMISSION_USAGE_COUNT_ZERO, PERMISSION_USAGE_COUNT_ONE);
     if (res != 0) {
         /* Failed to add permission used record, not fatal */
         CLI_LOG("OutputError failed to add permission used record: permission=%s, err=%d",
