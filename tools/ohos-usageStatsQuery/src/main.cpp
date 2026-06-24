@@ -30,6 +30,11 @@
 #include "bundle_active_module_record.h"
 #include "bundle_active_high_frequency_period.h"
 #include "bundle_state_inner_errors.h"
+#include "privacy_kit.h"
+#include "ipc_skeleton.h"
+#include "access_token.h"
+
+using namespace OHOS::Security::AccessToken;
 
 using namespace OHOS::DeviceUsageStats;
 using OHOS::ErrCode;
@@ -52,6 +57,9 @@ using OHOS::ERR_OK;
 #define DECIMAL_BASE (10)
 #define OUTPUT_SUCCESS_CODE (0)
 #define OUTPUT_ERROR_CODE (1)
+
+constexpr int32_t PERMISSION_USAGE_COUNT_ONE = 1;
+constexpr int32_t PERMISSION_USAGE_COUNT_ZERO = 0;
 
 typedef std::function<int(int, char**)> CommandHandler;
 
@@ -82,6 +90,15 @@ int OutputSuccess(cJSON* data)
     std::cout << jsonStr << std::endl;
     free(jsonStr);
     cJSON_Delete(response);
+    // 上报敏感权限使用记录, successCount: 权限使用成功次数, failCount: 权限使用失败次数
+    AccessTokenID tokenID = OHOS::IPCSkeleton::GetSelfTokenID();
+    int res = PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO",
+        PERMISSION_USAGE_COUNT_ONE, PERMISSION_USAGE_COUNT_ZERO);
+    if (res != 0) {
+        /* Failed to add permission used record, not fatal */
+        CLI_LOG("OutputSuccess failed to add permission used record: permission=%s, err=%d",
+            "ohos.permission.cli.BUNDLE_ACTIVE_INFO", res);
+    }
     return OUTPUT_SUCCESS_CODE;
 }
 
@@ -98,6 +115,15 @@ int OutputError(const std::string& code, const std::string& message, const std::
     std::cout << jsonStr << std::endl;
     free(jsonStr);
     cJSON_Delete(response);
+    // 上报敏感权限使用记录, successCount: 权限使用成功次数, failCount: 权限使用失败次数
+    AccessTokenID tokenID = OHOS::IPCSkeleton::GetSelfTokenID();
+    int res = PrivacyKit::AddPermissionUsedRecord(tokenID, "ohos.permission.cli.BUNDLE_ACTIVE_INFO",
+        PERMISSION_USAGE_COUNT_ZERO, PERMISSION_USAGE_COUNT_ONE);
+    if (res != 0) {
+        /* Failed to add permission used record, not fatal */
+        CLI_LOG("OutputError failed to add permission used record: permission=%s, err=%d",
+            "ohos.permission.cli.BUNDLE_ACTIVE_INFO", res);
+    }
     return OUTPUT_ERROR_CODE;
 }
 
