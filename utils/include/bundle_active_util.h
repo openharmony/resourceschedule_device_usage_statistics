@@ -34,7 +34,7 @@ public:
     static int64_t StringToInt64(const std::string& str);
     static int64_t GetSystemTimeMs();
     static int64_t GetNowMicroTime();
-    static uint64_t GetFolderOrFileSize(const std::string& path);
+    static uint64_t GetFolderOrFileSize(const std::string& path, const std::string& target = "");
     static double GetDeviceValidSize(const std::string& path);
     static std::string GetPartitionName(const std::string& path);
     static double GetPercentOfAvailableUserSpace(const std::string& path);

@@ -82,6 +82,10 @@ void BundleActiveEventReporter::ReportFileSizeInner()
     std::vector<uint64_t> filesPathSize;
     filesPath.emplace_back(BUNDLE_ACTIVE_DATABASE_DIR);
     filesPathSize.emplace_back(BundleActiveUtil::GetFolderOrFileSize(BUNDLE_ACTIVE_DATABASE_DIR));
+    for (uint32_t i = 0; i < sizeof(DATABASE_TYPE)/sizeof(DATABASE_TYPE[0]); i++) {
+        filesPath.emplace_back(BUNDLE_ACTIVE_DATABASE_DIR + DATABASE_TYPE[i]);
+        filesPathSize.emplace_back(BundleActiveUtil::GetFolderOrFileSize(BUNDLE_ACTIVE_DATABASE_DIR, DATABASE_TYPE[i]));
+    }
     double remainSize = BundleActiveUtil::GetDeviceValidSize(DATA_FILE_PATH);
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::FILEMANAGEMENT, "USER_DATA_SIZE",
         HiviewDFX::HiSysEvent::EventType::STATISTIC,
