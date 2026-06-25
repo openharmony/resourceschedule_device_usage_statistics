@@ -169,7 +169,7 @@ void BundleActiveUsageDatabase::InitDatabaseTableInfo(int64_t currentTime)
     InitEventTable(currentTime);
 }
 
-int32_t BundleActiveUsageDatabase::InitEventTable(const int64_t currentTime)
+void BundleActiveUsageDatabase::InitEventTable(const int64_t currentTime)
 {
 // LCOV_EXCL_START
     if (eventTableName_ != UNKNOWN_TABLE_NAME) {
@@ -179,7 +179,7 @@ int32_t BundleActiveUsageDatabase::InitEventTable(const int64_t currentTime)
     HandleAllTableName(EVENT_DATABASE_INDEX, allTableName);
     vector<string> eventTables = allTableName.at(EVENT_DATABASE_INDEX);
     std::sort(eventTables.begin(), eventTables.end());
-    for (int i = eventTables.size() - 1; i >= 0; --i) {
+    for (int32_t i = static_cast<int32_t>(eventTables.size()) - 1; i >= 0; --i) {
         int64_t eventTableTime = ParseStartTime(eventTables[i]);
         if (eventTableName_ == UNKNOWN_TABLE_NAME && currentTime >= eventTableTime) {
             eventTableName_ = eventTables[i];
@@ -188,7 +188,7 @@ int32_t BundleActiveUsageDatabase::InitEventTable(const int64_t currentTime)
         DeleteInvalidTable(EVENT_DATABASE_INDEX, eventTableTime);
     }
     if (eventTableName_ == UNKNOWN_TABLE_NAME) {
-        CreateEventLogTable(databaseType, currentTime);
+        CreateEventLogTable(EVENT_DATABASE_INDEX, currentTime);
     }
 // LCOV_EXCL_STOP
 }
@@ -1045,7 +1045,7 @@ void BundleActiveUsageDatabase::FlushEventInfo(uint32_t databaseType, BundleActi
         BUNDLE_ACTIVE_LOGE("flush event info fail, rdbStore is nullptr");
         return;
     }
-    InitEventTable(tats.beginTime_);
+    InitEventTable(stats.beginTime_);
     int64_t eventTableTime = ParseStartTime(eventTableName_);
     std::vector<NativeRdb::ValuesBucket> valuesBuckets;
     for (int32_t i = 0; i < stats.events_.Size(); i++) {
