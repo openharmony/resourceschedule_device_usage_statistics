@@ -1109,6 +1109,7 @@ void BundleActiveService::MergeSamePackageStats(BundleActivePackageStats& left, 
     left.totalInFrontTime_ += right.totalInFrontTime_;
     left.totalContiniousTaskUsedTime_ += right.totalContiniousTaskUsedTime_;
     left.bundleStartedCount_ += right.bundleStartedCount_;
+    left.startCount_ += right.startCount_;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

@@ -88,6 +88,7 @@ void BundleStateIDLCommon::MergePackageStats(BundleActivePackageStats& left, con
     left.totalInFrontTime_ += right.totalInFrontTime_;
     left.totalContiniousTaskUsedTime_ += right.totalContiniousTaskUsedTime_;
     left.bundleStartedCount_ += right.bundleStartedCount_;
+    left.startCount_ += right.startCount_;
 }
 
 void BundleStateIDLCommon::ParseQueryInfosMap(const taihe::map<taihe::string, taihe::array<int64_t>>& appInfos,

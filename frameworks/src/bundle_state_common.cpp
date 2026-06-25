@@ -715,6 +715,7 @@ void BundleStateCommon::MergePackageStats(BundleActivePackageStats &left, const 
     left.totalInFrontTime_ += right.totalInFrontTime_;
     left.totalContiniousTaskUsedTime_ += right.totalContiniousTaskUsedTime_;
     left.bundleStartedCount_ += right.bundleStartedCount_;
+    left.startCount_ += right.startCount_;
 }
 
 std::unique_ptr<AsyncCallbackInfoEventStats> BundleStateCommon::HandleEventStatsInfo(const napi_env &env,
