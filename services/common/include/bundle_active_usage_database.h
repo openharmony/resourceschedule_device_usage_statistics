@@ -149,6 +149,7 @@ private:
         const std::string& tableName, const int32_t userId);
     std::map<std::string, int64_t> GetAllBundleFirstUseTime(const int32_t userId);
     void CheckDatabaseFileAndTable();
+    void InitEventTable(const int64_t currentTime);
     std::vector<std::string> databaseFiles_;
     std::vector<std::vector<int64_t>> sortedTableArray_;
     std::map<std::string, std::shared_ptr<NativeRdb::RdbStore>> bundleActiveRdbStoreCache_;

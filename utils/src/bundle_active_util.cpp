@@ -131,7 +131,7 @@ int64_t BundleActiveUtil::GetNowMicroTime()
     return static_cast<int64_t>(microSecs.count());
 }
 
-uint64_t BundleActiveUtil::GetFolderOrFileSize(const std::string& path)
+uint64_t BundleActiveUtil::GetFolderOrFileSize(const std::string& path, const std::string& target)
 {
     struct stat st;
     if (stat(path.c_str(), &st) != 0) {
@@ -158,10 +158,11 @@ uint64_t BundleActiveUtil::GetFolderOrFileSize(const std::string& path)
         if (stat(entryPath.c_str(), &entryStat) != 0) {
             continue;
         }
+        std::string entryName(entry->d_name);
         if (S_ISDIR(entryStat.st_mode)) {
             uint64_t subDirSize = GetFolderOrFileSize(entryPath);
             totalSize += subDirSize;
-        } else {
+        } else if (target.empty() || entryName.find(target) != std::string::npos) {
             totalSize += static_cast<uint64_t>(entryStat.st_size);
         }
     }
