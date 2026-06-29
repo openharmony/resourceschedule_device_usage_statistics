@@ -327,7 +327,7 @@ HWTEST_F(BundleActiveUsageDatabaseTest, BundleActiveUsageDatabaseTest_DeleteExce
     database->DeleteExcessiveEventTableData(0);
     database->InitDatabaseTableInfo(100);
     database->DeleteExcessiveEventTableData(0);
-    EXPECT_EQ(database->eventTableName_, "a123");
+    EXPECT_EQ(database->eventTableName_, "DeviceEventLog100");
 }
 
 /*
