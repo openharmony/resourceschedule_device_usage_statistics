@@ -42,6 +42,7 @@ const int32_t DEFAULT_MIN_TOTAL_USE_DAYS = 4;
 const int32_t DEFAULT_TOP_USE_HOURS_LIMIT = 6;
 const int32_t DEFAULT_MIN_HOUR_USE_DAYS = 4;
 const int32_t DEFAULT_MAX_HIGH_FREQUENCY_HOUR_NUM = 3;
+const int32_t ENABLE = 1;
 const uint64_t DEFAULT_MAX_DATA_SIZE = 5 * 1024 * 1024;
 
 
@@ -252,7 +253,7 @@ void BundleActiveConfigReader::LoadWindowVisibilityEnable(cJSON* root)
         BUNDLE_ACTIVE_LOGE("Configuration parameter %{private}s error", WINDOW_VISIBILITY_ENABLE);
         return;
     }
-    isWindowVisibilityEnable_ = (item->valueint == 1);
+    isWindowVisibilityEnable_ = (item->valueint == ENABLE);
 }
 
 bool BundleActiveConfigReader::IsWindowVisibilityEnable()

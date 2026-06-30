@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +35,9 @@
 #include "bundle_active_util.h"
 #include "bundle_active_report_controller.h"
 #include "bundle_active_service.h"
+#include "bundle_active_visibility_changed_listener.h"
+#include "bundle_active_window_visibility_manager.h"
+#include "window_manager_lite.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
@@ -83,7 +86,7 @@ void BundleActiveService::InitNecessaryState()
 {
     std::set<int32_t> serviceIdSets{
         APP_MGR_SERVICE_ID, BUNDLE_MGR_SERVICE_SYS_ABILITY_ID, POWER_MANAGER_SERVICE_ID, COMMON_EVENT_SERVICE_ID,
-        BACKGROUND_TASK_MANAGER_SERVICE_ID, TIME_SERVICE_ID,
+        BACKGROUND_TASK_MANAGER_SERVICE_ID, TIME_SERVICE_ID, WINDOW_MANAGER_SERVICE_ID,
     };
     sptr<ISystemAbilityManager> systemAbilityManager
         = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -136,6 +139,7 @@ void BundleActiveService::InitService()
     }
     BundleActiveReportController::GetInstance().Init(bundleActiveCore_);
     auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
+    isWindowVisibilityEnable_ = bundleActiveCore_->IsWindowVisibilityEnable();
 // LCOV_EXCL_START
     if (bundleActiveReportHandler == nullptr || bundleActiveCore_ == nullptr) {
         return;
@@ -154,11 +158,13 @@ void BundleActiveService::InitService()
         powerManagerClient.RegisterPowerStateCallback(powerStateCallback_);
     }
 #endif
+    InitWindowVisibilitySubscriber();
     InitAppStateSubscriber();
     InitContinuousSubscriber();
     bundleActiveCore_->InitBundleGroupController();
     SubscribeAppState();
     SubscribeContinuousTask();
+    SubscribeWindowVisibility();
 }
 
 OHOS::sptr<OHOS::AppExecFwk::IAppMgr> BundleActiveService::GetAppManagerInstance()
@@ -184,6 +190,9 @@ void BundleActiveService::InitAppStateSubscriber()
             return;
         }
 // LCOV_EXCL_STOP
+        if (isWindowVisibilityEnable_) {
+            BundleActiveAppStateObserver::SetWindowVisibilityManager(windowVisibilityManager_);
+        }
     }
 }
 
@@ -231,6 +240,48 @@ bool BundleActiveService::SubscribeContinuousTask()
     }
 // LCOV_EXCL_STOP
 #endif
+    return true;
+}
+
+void BundleActiveService::InitWindowVisibilitySubscriber()
+{
+    if (!isWindowVisibilityEnable_) {
+        BUNDLE_ACTIVE_LOGI("window visibility feature is disabled");
+        return;
+    }
+    if (windowVisibilityManager_ == nullptr) {
+        windowVisibilityManager_ = std::make_shared<BundleActiveWindowVisibilityManager>();
+    }
+
+    if (visibilityChangedListener_ == nullptr) {
+        visibilityChangedListener_ = new (std::nothrow) BundleActiveVisibilityChangedListener();
+        if (visibilityChangedListener_ == nullptr) {
+            BUNDLE_ACTIVE_LOGE("malloc visibility changed listener failed");
+            return;
+        }
+        // 设置窗口可见性管理器到监听器
+        BundleActiveVisibilityChangedListener::SetWindowVisibilityManager(windowVisibilityManager_);
+    }
+}
+
+bool BundleActiveService::SubscribeWindowVisibility()
+{
+    if (!isWindowVisibilityEnable_) {
+        return false;
+    }
+    if (visibilityChangedListener_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("visibilityChangedListener is null, return");
+        return false;
+    }
+    
+    // 使用WindowManagerLite类注册窗口可见性监听器
+    OHOS::Rosen::WMError errCode =
+        OHOS::Rosen::WindowManagerLite::GetInstance().RegisterVisibilityChangedListener(visibilityChangedListener_);
+    if (errCode != OHOS::Rosen::WMError::WM_OK) {
+        BUNDLE_ACTIVE_LOGE("register visibility changed listener failed, errCode: %{public}d", errCode);
+        return false;
+    }
+    BUNDLE_ACTIVE_LOGI("RegisterVisibilityChangeListener success");
     return true;
 }
 
