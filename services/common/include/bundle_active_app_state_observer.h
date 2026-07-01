@@ -30,10 +30,19 @@ using OHOS::AppExecFwk::AppStateData;
 using OHOS::AppExecFwk::AbilityStateData;
 using OHOS::AppExecFwk::ProcessData;
 
+class BundleActiveWindowVisibilityManager;
+
 class BundleActiveAppStateObserver : public ApplicationStateObserverStub {
 public:
     void OnAbilityStateChanged(const AbilityStateData &abilityStateData) override;
     void Init();
+    
+    /**
+    * @brief 设置窗口可见性管理器
+    * @param manager 窗口可见性管理器
+    */
+    static void SetWindowVisibilityManager(std::shared_ptr<BundleActiveWindowVisibilityManager> manager);
+
 private:
     inline bool ValidateAppStateData(const AppStateData &appStateData) const
     {
@@ -54,6 +63,18 @@ private:
         return processData.uid > 0 && processData.pid >= 0
             && processData.bundleName.size() > 0;
     }
+
+    bool ValidateAbilityTypeData(const AbilityStateData &abilityStateData);
+
+    /**
+     * @brief 判断是否应该处理前台事件
+     * @param manager 窗口可见性管理器
+     * @param bundleName 应用包名
+     * @return true表示应该处理事件，false表示应该跳过事件
+     */
+    bool ShouldProcessForegroundEvent(
+        const std::shared_ptr<BundleActiveWindowVisibilityManager>& manager,
+        const std::string& bundleName) const;
 };
 }  // namespace DeviceUsageStats
 }  // namespace OHOS

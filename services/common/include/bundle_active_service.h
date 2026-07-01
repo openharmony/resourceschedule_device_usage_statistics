@@ -30,6 +30,8 @@
 #include "bundle_active_app_state_observer.h"
 #include "bundle_active_continuous_task_observer.h"
 #include "bundle_active_account_helper.h"
+#include "bundle_active_visibility_changed_listener.h"
+#include "bundle_active_window_visibility_manager.h"
 #include "bundle_active_high_frequency_period.h"
 #include "file_ex.h"
 #include "string_ex.h"
@@ -261,12 +263,14 @@ private:
 #ifdef BGTASKMGR_ENABLE
     std::shared_ptr<BundleActiveContinuousTaskObserver> continuousTaskObserver_;
 #endif
+    std::shared_ptr<BundleActiveWindowVisibilityManager> windowVisibilityManager_;
+    sptr<BundleActiveVisibilityChangedListener> visibilityChangedListener_;
 #ifdef DEVICE_USAGES_STATISTICS_POWERMANGER_ENABLE
     sptr<PowerMgr::IAsyncShutdownCallback> shutdownCallback_;
     sptr<PowerMgr::IPowerStateCallback> powerStateCallback_;
 #endif
     bool ready_ {false};
-    bool IsWindowVisibilityEnable_ {false};
+    bool isWindowVisibilityEnable_ {false};
     int32_t ConvertIntervalType(const int32_t intervalType);
     void InitNecessaryState();
     void InitService();
@@ -274,10 +278,12 @@ private:
         OHOS::Security::AccessToken::AccessTokenID tokenId);
     ErrCode CheckSystemAppOrNativePermission(const int32_t uid, OHOS::Security::AccessToken::AccessTokenID tokenId);
     ErrCode CheckNativePermission(OHOS::Security::AccessToken::AccessTokenID tokenId);
+    void InitWindowVisibilitySubscriber();
     void InitAppStateSubscriber();
     void InitContinuousSubscriber();
     bool SubscribeAppState();
     bool SubscribeContinuousTask();
+    bool SubscribeWindowVisibility();
     OHOS::sptr<OHOS::AppExecFwk::IAppMgr> GetAppManagerInstance();
     void QueryModuleRecordInfos(BundleActiveModuleRecord& moduleRecord);
     void SerModuleProperties(const HapModuleInfo& hapModuleInfo,

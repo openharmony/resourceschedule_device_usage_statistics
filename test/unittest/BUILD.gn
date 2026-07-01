@@ -233,6 +233,7 @@ ohos_unittest("DeviceUsageStatsServiceTest") {
     "samgr:samgr_proxy",
     "selinux_adapter:librestorecon",
     "time_service:time_client",
+    "window_manager:libwmutil",
   ]
   defines = []
   if (device_usage_statistics_with_powermgr_power_manager_enable) {
@@ -294,6 +295,7 @@ ohos_unittest("DeviceUsageStatsMockTest") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "time_service:time_client",
+    "window_manager:libwmutil",
   ]
   defines = []
   if (device_usage_statistics_with_powermgr_power_manager_enable) {

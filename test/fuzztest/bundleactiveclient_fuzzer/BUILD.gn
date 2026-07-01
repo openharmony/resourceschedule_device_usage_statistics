@@ -72,6 +72,7 @@ ohos_fuzztest("BundleActiveClientFuzzTest") {
     "samgr:samgr_proxy",
     "selinux_adapter:librestorecon",
     "time_service:time_client",
+    "window_manager:libwmutil",
   ]
 
   defines = []

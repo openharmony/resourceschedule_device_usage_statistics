@@ -243,6 +243,8 @@ ohos_shared_library("usagestatservice") {
     "services/common/src/bundle_active_shutdown_callback_service.cpp",
     "services/common/src/bundle_active_usage_database.cpp",
     "services/common/src/bundle_active_usage_database_upgrade.cpp",
+    "services/common/src/bundle_active_visibility_changed_listener.cpp",
+    "services/common/src/bundle_active_window_visibility_manager.cpp",
     "services/packagegroup/src/bundle_active_group_controller.cpp",
     "services/packagegroup/src/bundle_active_group_handler.cpp",
     "services/packagegroup/src/bundle_active_user_history.cpp",
@@ -280,6 +282,7 @@ ohos_shared_library("usagestatservice") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "time_service:time_client",
+    "window_manager:libwm_lite",
   ]
 
   if (os_account_part_enabled) {
@@ -326,6 +329,8 @@ ohos_static_library("usagestatservice_static") {
     "services/common/src/bundle_active_shutdown_callback_service.cpp",
     "services/common/src/bundle_active_usage_database.cpp",
     "services/common/src/bundle_active_usage_database_upgrade.cpp",
+    "services/common/src/bundle_active_visibility_changed_listener.cpp",
+    "services/common/src/bundle_active_window_visibility_manager.cpp",
     "services/packagegroup/src/bundle_active_group_controller.cpp",
     "services/packagegroup/src/bundle_active_group_handler.cpp",
     "services/packagegroup/src/bundle_active_user_history.cpp",
@@ -363,6 +368,7 @@ ohos_static_library("usagestatservice_static") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "time_service:time_client",
+    "window_manager:libwm_lite",
   ]
 
   if (os_account_part_enabled) {

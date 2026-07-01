@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,17 +21,22 @@
 #include "bundle_active_event.h"
 #include "bundle_active_account_helper.h"
 #include "bundle_active_report_controller.h"
+#include "bundle_active_window_visibility_manager.h"
 
 namespace OHOS {
 namespace DeviceUsageStats {
 
+static std::shared_ptr<BundleActiveWindowVisibilityManager> g_windowVisibilityManager = nullptr;
+
+void BundleActiveAppStateObserver::SetWindowVisibilityManager(
+    std::shared_ptr<BundleActiveWindowVisibilityManager> manager)
+{
+    g_windowVisibilityManager = manager;
+}
+
 void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData &abilityStateData)
 {
-    if (!ValidateAbilityStateData(abilityStateData)) {
-        BUNDLE_ACTIVE_LOGE("validate ability state data failed!");
-        return;
-    }
-    if (abilityStateData.abilityType != 1) {
+    if (!ValidateAbilityTypeData(abilityStateData)) {
         return;
     }
     int32_t userId = -1;
@@ -43,10 +48,13 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
         BundleActiveEvent event(abilityStateData.bundleName, abilityStateData.abilityName,
             abilityStateData.abilityName, abilityStateData.moduleName, abilityStateData.uid);
         tmpHandlerObject.event_ = event;
-        sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
-        tmpHandlerObject.event_.timeStamp_ = timer->GetBootTimeMs();
+        tmpHandlerObject.event_.timeStamp_ = MiscServices::TimeServiceClient::GetInstance()->GetBootTimeMs();
+        auto manager = g_windowVisibilityManager;
         switch (abilityStateData.abilityState) {
             case static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_FOREGROUND):
+                if (!ShouldProcessForegroundEvent(manager, abilityStateData.bundleName)) {
+                    return;
+                }
                 tmpHandlerObject.event_.eventId_ = BundleActiveEvent::ABILITY_FOREGROUND;
                 break;
             case static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_BACKGROUND):
@@ -54,22 +62,49 @@ void BundleActiveAppStateObserver::OnAbilityStateChanged(const AbilityStateData 
                 break;
             case static_cast<int32_t>(AppExecFwk::AbilityState::ABILITY_STATE_TERMINATED):
                 tmpHandlerObject.event_.eventId_ = BundleActiveEvent::ABILITY_STOP;
+                if (manager != nullptr) {
+                    manager->ClearAbilityWindowInfo(abilityStateData.bundleName, abilityStateData.abilityName,
+                        abilityStateData.moduleName, abilityStateData.uid);
+                }
                 break;
             default:
                 return;
         }
-        BUNDLE_ACTIVE_LOGI("OnAblityStateChanged %{public}s", tmpHandlerObject.ToString().c_str());
+        BUNDLE_ACTIVE_LOGI("OnAbilityStateChanged %{public}s", tmpHandlerObject.ToString().c_str());
         auto reportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();
         if (reportHandler != nullptr) {
-            std::shared_ptr<BundleActiveReportHandlerObject> handlerobjToPtr =
-                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject);
-            reportHandler->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT, handlerobjToPtr);
+            reportHandler->SendEvent(BundleActiveReportHandler::MSG_REPORT_EVENT,
+                std::make_shared<BundleActiveReportHandlerObject>(tmpHandlerObject));
         }
         return;
     }
     BUNDLE_ACTIVE_LOGI("GetUserId failed type:%{public}d,bunldeName:%{public}s,userid:%{public}d,ret:%{public}d",
         abilityStateData.abilityType, abilityStateData.bundleName.c_str(), userId, ret);
-    return;
+}
+
+bool BundleActiveAppStateObserver::ValidateAbilityTypeData(const AbilityStateData &abilityStateData)
+{
+    if (!ValidateAbilityStateData(abilityStateData)) {
+        BUNDLE_ACTIVE_LOGE("validate ability state data failed!");
+        return false;
+    }
+    if (abilityStateData.abilityType != 1) {
+        return false;
+    }
+    return true;
+}
+
+bool BundleActiveAppStateObserver::ShouldProcessForegroundEvent(
+    const std::shared_ptr<BundleActiveWindowVisibilityManager>& manager, const std::string& bundleName) const
+{
+    if (manager == nullptr) {
+        return true;
+    }
+    if (!manager->IsAllAbilitiesInvisible(bundleName)) {
+        return true;
+    }
+    BUNDLE_ACTIVE_LOGW("ShouldProcessForegroundEvent: no visibility window, skip event");
+    return false;
 }
 }  // namespace DeviceUsageStats
 }  // namespace OHOS
