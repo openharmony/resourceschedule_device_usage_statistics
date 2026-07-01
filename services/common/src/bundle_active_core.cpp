@@ -397,9 +397,7 @@ void BundleActiveCore::RestoreAllData()
         }
         BUNDLE_ACTIVE_LOGI("userid is %{public}d ", service->userId_);
         service->RestoreStats(true);
-        if (BundleActiveGroupController::GetInstance().bundleUserHistory_ != nullptr) {
-            BundleActiveGroupController::GetInstance().RestoreToDatabase(it.first);
-        }
+        BundleActiveGroupController::GetInstance().RestoreToDatabase(it.first);
     }
     BundleActiveGroupController::GetInstance().RestoreDurationToDatabase();
     auto bundleActiveReportHandler = BundleActiveReportController::GetInstance().GetBundleReportHandler();

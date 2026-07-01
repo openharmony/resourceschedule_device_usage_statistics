@@ -379,24 +379,6 @@ HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_getUserHis
 }
 
 /*
- * @tc.name: DeviceUsageStatisticsMockTest_calculationTimeOut_001
- * @tc.desc: test service calculationTimeOut boundary condition
- * @tc.type: FUNC
- * @tc.require: issuesI5SOZY
- */
-HWTEST_F(DeviceUsageStatisticsMockTest, DeviceUsageStatisticsMockTest_calculationTimeOut_001,
-    Function | MediumTest | TestSize.Level0)
-{
-    auto groupController = std::make_shared<BundleActiveGroupController>();
-
-    std::shared_ptr<BundleActivePackageHistory> history = nullptr;
-    groupController->calculationTimeOut(history, g_largeNum);
-    history = std::make_shared<BundleActivePackageHistory>();
-    groupController->calculationTimeOut(history, g_largeNum);
-    EXPECT_NE(groupController, nullptr);
-}
-
-/*
  * @tc.name: DeviceUsageStatisticsMockTest_QueryStatsInfoByStep_001
  * @tc.desc: test QueryStatsInfoByStep
  * @tc.type: FUNC

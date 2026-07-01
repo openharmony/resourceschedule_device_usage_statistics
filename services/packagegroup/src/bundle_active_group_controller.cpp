@@ -95,6 +95,10 @@ void BundleActiveGroupController::RestoreDurationToDatabase()
 void BundleActiveGroupController::RestoreToDatabase(const int32_t userId)
 {
     std::lock_guard<ffrt::mutex> lock(mutex_);
+    if (bundleUserHistory_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("RestoreToDatabase bundleUserHistory_ is null");
+        return;
+    }
     bundleUserHistory_->WriteBundleUsage(userId);
 }
 
@@ -136,20 +140,31 @@ void BundleActiveGroupController::OnScreenChanged(const bool& isScreenOn, const 
 {
     if (activeGroupHandler_ != nullptr) {
         activeGroupHandler_->PostTask([isScreenOn, bootFromTimeStamp]() {
-            std::lock_guard<ffrt::mutex> lock(BundleActiveGroupController::GetInstance().mutex_);
-            BundleActiveGroupController::GetInstance().bundleUserHistory_->UpdateBootBasedAndScreenTime(isScreenOn,
-                bootFromTimeStamp);
+            BundleActiveGroupController::GetInstance().UpdateBootBasedAndScreenTime(isScreenOn, bootFromTimeStamp);
         });
     }
+}
+
+void BundleActiveGroupController::UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t bootFromTimeStamp)
+{
+    std::lock_guard<ffrt::mutex> lock(mutex_);
+    if (bundleUserHistory_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("UpdateBootBasedAndScreenTime bundleUserHistory_ is null");
+        return;
+    }
+    bundleUserHistory_->UpdateBootBasedAndScreenTime(isScreenOn, bootFromTimeStamp);
 }
 
 void BundleActiveGroupController::CreateUserHistory(const int64_t bootFromTimeStamp,
     const std::shared_ptr<BundleActiveCore>& bundleActiveCore)
 {
-    if (bundleUserHistory_ == nullptr) {
-        BUNDLE_ACTIVE_LOGI("SetHandlerAndCreateUserHistory bundleUserHistory_ is null, "
-            "called constructor, bootstamp is %{public}lld", (long long)bootFromTimeStamp);
-        bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootFromTimeStamp, bundleActiveCore);
+    {
+        std::lock_guard<ffrt::mutex> lock(mutex_);
+        if (bundleUserHistory_ == nullptr) {
+            BUNDLE_ACTIVE_LOGI("SetHandlerAndCreateUserHistory bundleUserHistory_ is null, "
+                "called constructor, bootstamp is %{public}lld", (long long)bootFromTimeStamp);
+            bundleUserHistory_ = std::make_shared<BundleActiveUserHistory>(bootFromTimeStamp, bundleActiveCore);
+        }
     }
     OnScreenChanged(IsScreenOn(), bootFromTimeStamp);
 }
@@ -231,17 +246,6 @@ int32_t BundleActiveGroupController::GetNewGroup(const std::string& bundleName, 
         return -1;
     }
     return LEVEL_GROUP[groupIndex];
-}
-
-bool BundleActiveGroupController::calculationTimeOut(
-    const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory, const int64_t bootBasedTimeStamp)
-{
-    if (oneBundleHistory == nullptr) {
-        return false;
-    }
-    int64_t lastGroupCalculatedTimeStamp = oneBundleHistory->lastGroupCalculatedTimeStamp_;
-    return lastGroupCalculatedTimeStamp > 0 && bundleUserHistory_->GetBootBasedTimeStamp(bootBasedTimeStamp)
-        - lastGroupCalculatedTimeStamp > timeoutCalculated_;
 }
 
 void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp,
@@ -461,8 +465,15 @@ bool BundleActiveGroupController::IsBundleInstalled(const std::string& bundleNam
 void BundleActiveGroupController::ShutDown(const int64_t bootBasedTimeStamp, const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("ShutDown called");
-    CheckEachBundleState(userId);
-    bundleUserHistory_->UpdateBootBasedAndScreenTime(false, bootBasedTimeStamp, true);
+    CheckEachBundleState(userId);  // use mutex_
+    {
+        std::lock_guard<ffrt::mutex> lock(mutex_);
+        if (bundleUserHistory_ == nullptr) {
+            BUNDLE_ACTIVE_LOGE("ShutDown bundleUserHistory_ is null");
+            return;
+        }
+        bundleUserHistory_->UpdateBootBasedAndScreenTime(false, bootBasedTimeStamp, true);
+    }
 }
 
 bool BundleActiveGroupController::IsScreenOn()
