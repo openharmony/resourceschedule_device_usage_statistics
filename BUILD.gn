@@ -47,26 +47,6 @@ config("usagestatsutils_config") {
   include_dirs = [ "utils/include" ]
 }
 
-ohos_source_set("bundle_active_service_stub") {
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-  }
-  output_values = get_target_outputs(":bundle_active_interface")
-  sources = filter_include(output_values, [ "*_stub.cpp" ])
-  public_configs = []
-  deps = [ ":bundle_active_interface" ]
-  external_deps = [
-    "c_utils:utils",
-    "hilog:libhilog",
-    "ipc:ipc_single",
-    "samgr:samgr_proxy",
-  ]
-  subsystem_name = "resourceschedule"
-  part_name = "${device_usage_statistics_part_name}"
-}
-
 ohos_shared_library("usagestatsinner") {
   sources = [
     "interfaces/innerkits/src/app_group_callback_info.cpp",
