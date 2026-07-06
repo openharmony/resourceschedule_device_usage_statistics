@@ -57,7 +57,6 @@ public:
     };
     std::vector<int64_t> screenTimeLevel_ = {0, 0, 0, 0};
     std::vector<int64_t> bootTimeLevel_ = {0, 0, 0, 0};
-    std::shared_ptr<BundleActiveUserHistory> bundleUserHistory_;
     void CreateUserHistory(
         const int64_t bootFromTimeStamp, const std::shared_ptr<BundleActiveCore>& bundleActiveCore);
     void ReportEvent(const BundleActiveEvent& event, const int64_t bootBasedTimeStamp, const int32_t userId);
@@ -73,6 +72,7 @@ public:
         const std::shared_ptr<std::map<std::string, std::shared_ptr<BundleActivePackageHistory>>>& userHostory,
         const std::string& bundleName, const int32_t uid, const int32_t appIndex);
     void OnScreenChanged(const bool& isScreenOn, const int64_t bootFromTimeStamp);
+    void UpdateBootBasedAndScreenTime(const bool& isScreenOn, const int64_t bootFromTimeStamp);
     int32_t SetAppGroup(const std::string& bundleName, const int32_t userId, int32_t newGroup, uint32_t reason,
         const int64_t bootBasedTimeStamp, const bool isFlush);
     void RestoreToDatabase(const int32_t userId);
@@ -91,6 +91,7 @@ private:
     BundleActiveGroupController() = default;
     ~BundleActiveGroupController() = default;
     ffrt::mutex mutex_;
+    std::shared_ptr<BundleActiveUserHistory> bundleUserHistory_;
     ffrt::mutex initMutex_;
     std::shared_ptr<BundleActiveGroupHandler> activeGroupHandler_;
     int64_t timeoutForDirectlyUse_;
@@ -100,8 +101,6 @@ private:
     std::map<int32_t, uint32_t> eventIdMatchReason_;
     bool bundleGroupEnable_ = true;
     bool isInit_ = false;
-    bool calculationTimeOut(const std::shared_ptr<BundleActivePackageHistory>& oneBundleHistory,
-        const int64_t bootBasedTimeStamp);
     int32_t GetNewGroup(const std::string& bundleName, const int32_t userId, const int64_t bootBasedTimeStamp,
         const int32_t uid);
     void SendCheckBundleMsg(const BundleActiveEvent& event, const int32_t& userId,
