@@ -171,6 +171,10 @@ OHOS::sptr<OHOS::AppExecFwk::IAppMgr> BundleActiveService::GetAppManagerInstance
 {
     OHOS::sptr<OHOS::ISystemAbilityManager> systemAbilityManager =
         OHOS::SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityManager == nullptr) {
+        BUNDLE_ACTIVE_LOGE("failed to get samgr");
+        return nullptr;
+    }
     OHOS::sptr<OHOS::IRemoteObject> object = systemAbilityManager->GetSystemAbility(OHOS::APP_MGR_SERVICE_ID);
 // LCOV_EXCL_START
     if (!object) {
