@@ -46,7 +46,9 @@
         "hisysevent",
         "hitrace",
         "window_manager",
-        "ets_frontend"
+        "ets_frontend",
+        "node",
+        "libuv"
       ],
       "third_party": []
     },
