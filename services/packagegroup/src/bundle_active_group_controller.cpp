@@ -348,8 +348,8 @@ void BundleActiveGroupController::CheckAndUpdateGroup(const std::string& bundleN
     }
     if (oldGroup < newGroup || notTimeout) {
         BUNDLE_ACTIVE_LOGD("CheckAndUpdateGroup called SetAppGroup");
-        bundleUserHistory_->SetAppGroup(bundleName, userId, bootBasedTimeStamp, newGroup,
-            groupReason, false, uid);
+        bundleUserHistory_->SetAppGroup(bundleName, userId, uid, bootBasedTimeStamp, newGroup,
+            groupReason, false);
     }
 }
 
