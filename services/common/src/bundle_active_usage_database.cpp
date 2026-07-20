@@ -363,7 +363,7 @@ void BundleActiveUsageDatabase::DeleteExcessiveTableData(uint32_t databaseType)
         if (debugDatabase_) {
             deleteTimePoint = eventBeginTime_ - SIX_DAY_IN_MILLIS_MAX_DEBUG - eventTableTime;
         } else {
-            deleteTimePoint = eventBeginTime_ - SIX_DAY_IN_MILLIS_MAX - eventTableTime;
+            deleteTimePoint = eventBeginTime_ - SEVEN_DAY_IN_MILLIS_MAX - eventTableTime;
         }
         if (deleteTimePoint <= 0) {
             return;
@@ -1940,7 +1940,7 @@ void BundleActiveUsageDatabase::DeleteExcessiveEventTableData(int32_t deleteDays
         return;
     }
     int64_t eventTableTime = ParseStartTime(eventTableName_);
-    int64_t deleteTimePoint = eventBeginTime_ - (SIX_DAY_IN_MILLIS_MAX - deleteDays * ONE_DAY_TIME) - eventTableTime;
+    int64_t deleteTimePoint = eventBeginTime_ - (SEVEN_DAY_IN_MILLIS_MAX - deleteDays * ONE_DAY_TIME) - eventTableTime;
     if (deleteTimePoint <= 0) {
         return;
     }
