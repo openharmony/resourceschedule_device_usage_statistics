@@ -160,8 +160,13 @@ shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryI
         usageHistoryInserted->uid_ = uid;
         usageHistoryInserted->bundlefirstUseTimeStamp_ = INT64_MAX;
         (*oneUserHistory)[userHistoryKey] = usageHistoryInserted;
+        return usageHistoryInserted;
     }
-    return (*oneUserHistory)[userHistoryKey];
+    if (it == oneUserHistory->end()) {
+        return nullptr;
+    } else {
+        return it->second;
+    }
 }
 
 shared_ptr<BundleActivePackageHistory> BundleActiveUserHistory::GetUsageHistoryForBundle(
