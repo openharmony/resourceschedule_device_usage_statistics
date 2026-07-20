@@ -47,6 +47,7 @@
         "hitrace",
         "window_manager",
         "ets_frontend",
+        "taihe_ffi_gen",
         "node",
         "libuv"
       ],
