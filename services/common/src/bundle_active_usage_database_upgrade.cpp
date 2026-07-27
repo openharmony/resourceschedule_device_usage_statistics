@@ -51,8 +51,11 @@ void BundleActiveUsageDatabase::UpgradeDatabase(const int32_t oldVersion, const 
 void BundleActiveUsageDatabase::SupportAppTwin()
 {
     vector<vector<string>> allTableName = vector<vector<string>>(ALL_TABLE_ARRAY_NUMBER);
-    for (uint32_t i = 0; i <databaseFiles_.size(); i++) {
-        HandleAllTableName(i, allTableName);
+    {
+        lock_guard<ffrt::mutex> lock(databaseMutex_);
+        for (uint32_t i = 0; i <databaseFiles_.size(); i++) {
+            HandleAllTableName(i, allTableName);
+        }
     }
 
     map<string, int32_t> bundleNameUidMap;

@@ -623,8 +623,8 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
     std::string bundleName = "";
     BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
     ErrCode isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId);
-    if (!bundleName.empty() && isSystemAppAndHasPermission == ERR_OK) {
 // LCOV_EXCL_START
+    if (!bundleName.empty() && isSystemAppAndHasPermission == ERR_OK) {
         int32_t convertedIntervalType = ConvertIntervalType(intervalType);
         ret = bundleActiveCore_->QueryBundleStatsInfos(tempPackageStats, userId, convertedIntervalType,
             beginTime, endTime, bundleName);
@@ -637,7 +637,7 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
 ErrCode BundleActiveService::QueryHighFrequencyUsageBundleInfos(std::vector<BundleActivePackageStats>& packageStats,
     const int32_t userId, const int32_t maxNum, const int32_t queryDayRange)
 {
-    if (maxNum <= 0 || queryDayRange<= 0 || queryDayRange > TOPN_QUERY_MAX_DAY_RANGE) {
+    if (maxNum <= 0 || queryDayRange<= 0 || queryDayRange > TOPN_QUERY_MAX_DAY_RANGE || userId < 0) {
         return ERR_PARAM_ERROR;
     }
     // get uid
@@ -1103,7 +1103,7 @@ int32_t BundleActiveService::DumpHighFreqHourUsage(const std::vector<std::string
         return ret;
     }
 // LCOV_EXCL_START
-    int32_t userId = BundleActiveUtil::StringToInt64(dumpOption[2]);
+    int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[2]);
     std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
     ret = bundleActiveCore_->QueryHighFrequencyPeriodBundle(appFreqHours, userId);
     dumpInfo.emplace_back("appFreqHour size " + std::to_string(appFreqHours.size()) + "\n");

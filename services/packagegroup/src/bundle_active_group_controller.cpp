@@ -89,6 +89,10 @@ std::shared_ptr<BundleActiveGroupHandler> BundleActiveGroupController::GetBundle
 void BundleActiveGroupController::RestoreDurationToDatabase()
 {
     std::lock_guard<ffrt::mutex> lock(mutex_);
+    if (bundleUserHistory_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("RestoreDurationToDatabase bundleUserHistory_ is null");
+        return;
+    }
     bundleUserHistory_->WriteDeviceDuration();
 }
 
@@ -105,6 +109,10 @@ void BundleActiveGroupController::RestoreToDatabase(const int32_t userId)
 void BundleActiveGroupController::OnUserRemoved(const int32_t userId)
 {
     std::lock_guard<ffrt::mutex> lock(mutex_);
+    if (bundleUserHistory_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("OnUserRemoved bundleUserHistory_ is null");
+        return;
+    }
     bundleUserHistory_->userHistory_.erase(userId);
     if (activeGroupHandler_ != nullptr) {
         activeGroupHandler_->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
@@ -126,6 +134,10 @@ void BundleActiveGroupController::OnUserSwitched(const int32_t userId, const int
     BUNDLE_ACTIVE_LOGI("last time check for user %{public}d", currentUsedUser);
     CheckEachBundleState(currentUsedUser);
     std::lock_guard<ffrt::mutex> lock(mutex_);
+    if (bundleUserHistory_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("OnUserSwitched bundleUserHistory_ is null");
+        return;
+    }
     bundleUserHistory_->WriteBundleUsage(currentUsedUser);
     if (activeGroupHandler_ != nullptr) {
         activeGroupHandler_->RemoveEvent(BundleActiveGroupHandler::MSG_CHECK_IDLE_STATE);
@@ -173,6 +185,10 @@ void BundleActiveGroupController::OnBundleUninstalled(const int32_t userId, cons
     const int32_t uid, const int32_t appIndex)
 {
     std::lock_guard<ffrt::mutex> lock(mutex_);
+    if (bundleUserHistory_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("OnBundleUninstalled bundleUserHistory_ is null");
+        return;
+    }
     BUNDLE_ACTIVE_LOGI("OnBundleUninstalled called, userId is %{public}d, bundlename is %{public}s",
         userId, bundleName.c_str());
     auto oneUserHistory = bundleUserHistory_->GetUserHistory(userId, false);
@@ -192,7 +208,8 @@ void BundleActiveGroupController::DeleteUsageGroupCache(
         userHostory->erase(moduleKey);
     }
     for (auto it = userHostory->begin(); it != userHostory->end();) {
-        if (it->first.find(bundleName) != std::string::npos) {
+        if (it->first.compare(0, bundleName.size(), bundleName) == 0 && 
+            it->first.size() == bundleName.size() || it->first[bundleName.size()] == '_') {
             it = userHostory->erase(it);
         } else {
             it++;
@@ -217,8 +234,16 @@ bool BundleActiveGroupController::CheckEachBundleState(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("CheckEachBundleState called, userid is %{public}d", userId);
     std::vector<BundleActiveApplication> allBundlesForUser;
-    BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfos(flag, userId, allBundlesForUser);
+    bool getInfoSuccess = BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfos(flag, userId, allBundlesForUser);
+    if (!getInfoSuccess) {
+        BUNDLE_ACTIVE_LOGE("CheckEachBundleState GetApplicationInfos failed");
+        return false;
+    }
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
+    if (timer == nullptr) {
+        BUNDLE_ACTIVE_LOGE("CheckEachBundleState timer is null");
+        return false;
+    }
     int64_t bootBasedTimeStamp = timer->GetBootTimeMs();
     for (auto oneBundle : allBundlesForUser) {
         CheckAndUpdateGroup(oneBundle.bundleName, userId, oneBundle.uid, bootBasedTimeStamp);
@@ -240,6 +265,10 @@ void BundleActiveGroupController::CheckIdleStatsOneTime()
 int32_t BundleActiveGroupController::GetNewGroup(const std::string& bundleName, const int32_t userId,
     const int64_t bootBasedTimeStamp, const int32_t uid)
 {
+    if (bundleUserHistory_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("GetNewGroup bundleUserHistory_ is null");
+        return -1;
+    }
     int32_t groupIndex = bundleUserHistory_->GetLevelIndex(bundleName, userId, bootBasedTimeStamp, screenTimeLevel_,
         bootTimeLevel_, uid);
     if (groupIndex < 0) {
@@ -255,6 +284,10 @@ void BundleActiveGroupController::ReportEvent(const BundleActiveEvent& event, co
         return;
     }
     std::lock_guard<ffrt::mutex> lock(mutex_);
+    if (bundleUserHistory_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("ReportEvent bundleUserHistory_ is null");
+        return;
+    }
     if (IsBundleInstalled(event.bundleName_, userId) == false) {
         BUNDLE_ACTIVE_LOGE("Report an uninstalled package event, return!");
         return;
@@ -360,6 +393,10 @@ ErrCode BundleActiveGroupController::SetAppGroup(const std::string& bundleName, 
     if (!IsBundleInstalled(bundleName, userId)) {
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
     }
+    if (bundleUserHistory_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("SetAppGroup bundleUserHistory_ is null");
+        return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
+    }
     auto iter = bundleUserHistory_->userHistory_.find(userId);
     if (iter == bundleUserHistory_->userHistory_.end()) {
         return ERR_NO_APP_GROUP_INFO_IN_DATABASE;
@@ -388,6 +425,10 @@ ErrCode BundleActiveGroupController::SetAppGroup(const std::string& bundleName, 
 int32_t BundleActiveGroupController::IsBundleIdle(const std::string& bundleName, const int32_t userId)
 {
     std::lock_guard<ffrt::mutex> lock(mutex_);
+    if (bundleUserHistory_ == nullptr) {
+        BUNDLE_ACTIVE_LOGE("IsBundleIdle bundleUserHistory_ is null");
+        return -1;
+    }
     sptr<MiscServices::TimeServiceClient> timer = MiscServices::TimeServiceClient::GetInstance();
     if (IsBundleInstalled(bundleName, userId) == false) {
         return -1;

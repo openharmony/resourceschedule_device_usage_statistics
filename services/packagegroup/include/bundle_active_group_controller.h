@@ -94,9 +94,9 @@ private:
     std::shared_ptr<BundleActiveUserHistory> bundleUserHistory_;
     ffrt::mutex initMutex_;
     std::shared_ptr<BundleActiveGroupHandler> activeGroupHandler_;
-    int64_t timeoutForDirectlyUse_;
-    int64_t timeoutForNotifySeen_;
-    int64_t timeoutForSystemInteraction_;
+    int64_t timeoutForDirectlyUse_ = 0;
+    int64_t timeoutForNotifySeen_ = 0;
+    int64_t timeoutForSystemInteraction_ = 0;
     int64_t timeoutCalculated_ = 0;
     std::map<int32_t, uint32_t> eventIdMatchReason_;
     bool bundleGroupEnable_ = true;
