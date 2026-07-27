@@ -623,8 +623,8 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
     std::string bundleName = "";
     BundleActiveBundleMgrHelper::GetInstance()->GetNameForUid(callingUid, bundleName);
     ErrCode isSystemAppAndHasPermission = CheckBundleIsSystemAppAndHasPermission(callingUid, tokenId);
-// LCOV_EXCL_START
     if (!bundleName.empty() && isSystemAppAndHasPermission == ERR_OK) {
+// LCOV_EXCL_START
         int32_t convertedIntervalType = ConvertIntervalType(intervalType);
         ret = bundleActiveCore_->QueryBundleStatsInfos(tempPackageStats, userId, convertedIntervalType,
             beginTime, endTime, bundleName);

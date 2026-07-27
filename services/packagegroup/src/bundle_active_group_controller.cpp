@@ -209,7 +209,7 @@ void BundleActiveGroupController::DeleteUsageGroupCache(
     }
     for (auto it = userHostory->begin(); it != userHostory->end();) {
         if (it->first.compare(0, bundleName.size(), bundleName) == 0 && 
-            it->first.size() == bundleName.size() || it->first[bundleName.size()] == '_') {
+            (it->first.size() == bundleName.size() || it->first[bundleName.size()] == '_')) {
             it = userHostory->erase(it);
         } else {
             it++;
@@ -262,7 +262,7 @@ void BundleActiveGroupController::CheckIdleStatsOneTime()
     }
 }
 
-int32_t BundleActiveGroupController::GetNewGroup(const std::string& bundleName, const int32_t userId,
+int32_t BundleActiveGroupController::GetNewGgit roup(const std::string& bundleName, const int32_t userId,
     const int64_t bootBasedTimeStamp, const int32_t uid)
 {
     if (bundleUserHistory_ == nullptr) {
