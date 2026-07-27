@@ -262,7 +262,7 @@ void BundleActiveGroupController::CheckIdleStatsOneTime()
     }
 }
 
-int32_t BundleActiveGroupController::GetNewGgit roup(const std::string& bundleName, const int32_t userId,
+int32_t BundleActiveGroupController::GetNewGroup(const std::string& bundleName, const int32_t userId,
     const int64_t bootBasedTimeStamp, const int32_t uid)
 {
     if (bundleUserHistory_ == nullptr) {
