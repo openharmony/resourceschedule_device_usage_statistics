@@ -208,7 +208,7 @@ void BundleActiveGroupController::DeleteUsageGroupCache(
         userHostory->erase(moduleKey);
     }
     for (auto it = userHostory->begin(); it != userHostory->end();) {
-        if (it->first.compare(0, bundleName.size(), bundleName) == 0 && 
+        if (it->first.compare(0, bundleName.size(), bundleName) == 0 &&
             (it->first.size() == bundleName.size() || it->first[bundleName.size()] == '_')) {
             it = userHostory->erase(it);
         } else {
@@ -234,7 +234,8 @@ bool BundleActiveGroupController::CheckEachBundleState(const int32_t userId)
 {
     BUNDLE_ACTIVE_LOGI("CheckEachBundleState called, userid is %{public}d", userId);
     std::vector<BundleActiveApplication> allBundlesForUser;
-    bool getInfoSuccess = BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfos(flag, userId, allBundlesForUser);
+    bool getInfoSuccess =
+        BundleActiveBundleMgrHelper::GetInstance()->GetApplicationInfos(flag, userId, allBundlesForUser);
     if (!getInfoSuccess) {
         BUNDLE_ACTIVE_LOGE("CheckEachBundleState GetApplicationInfos failed");
         return false;
