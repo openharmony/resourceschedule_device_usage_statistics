@@ -209,7 +209,7 @@ void BundleActiveGroupController::DeleteUsageGroupCache(
     }
     for (auto it = userHostory->begin(); it != userHostory->end();) {
         if (it->first.compare(0, bundleName.size(), bundleName) == 0 &&
-            (it->first.size() == bundleName.size() || it->first[bundleName.size()] == '_')) {
+            (it->first.size() == bundleName.size() || it->first.find(bundleName) != std::string::npos)) {
             it = userHostory->erase(it);
         } else {
             it++;
