@@ -637,7 +637,7 @@ ErrCode BundleActiveService::QueryBundleStatsInfos(std::vector<BundleActivePacka
 ErrCode BundleActiveService::QueryHighFrequencyUsageBundleInfos(std::vector<BundleActivePackageStats>& packageStats,
     const int32_t userId, const int32_t maxNum, const int32_t queryDayRange)
 {
-    if (maxNum <= 0 || queryDayRange<= 0 || queryDayRange > TOPN_QUERY_MAX_DAY_RANGE || userId < 0) {
+    if (maxNum <= 0 || queryDayRange<= 0 || queryDayRange > TOPN_QUERY_MAX_DAY_RANGE) {
         return ERR_PARAM_ERROR;
     }
     // get uid
