@@ -208,8 +208,7 @@ void BundleActiveGroupController::DeleteUsageGroupCache(
         userHostory->erase(moduleKey);
     }
     for (auto it = userHostory->begin(); it != userHostory->end();) {
-        if (it->first.compare(0, bundleName.size(), bundleName) == 0 &&
-            (it->first.size() == bundleName.size() || it->first.find(bundleName) != std::string::npos)) {
+        if (it->first.compare(0, bundleName.size(), bundleName) == 0) {
             it = userHostory->erase(it);
         } else {
             it++;
