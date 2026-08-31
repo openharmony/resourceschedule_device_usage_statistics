@@ -36,6 +36,7 @@
 #include "hisysevent.h"
 #include "bundle_active_core.h"
 #include "bundle_active_util.h"
+#include "parse_version_int.h"
 namespace OHOS {
 namespace DeviceUsageStats {
 using namespace OHOS::NativeRdb;
@@ -502,14 +503,12 @@ int32_t BundleActiveUsageDatabase::GetVersionByFileInput(const std::string& File
     if (FileVersionInput.empty()) {
         return BUNDLE_ACTIVE_FAIL;
     }
-    string databaseVersion = FileVersionInput;
-    for (uint32_t i = 0; i < databaseVersion.length(); i++) {
-        if (databaseVersion[i] >= '0' && databaseVersion[i] <= '9') {
-            databaseVersion = databaseVersion.substr(i);
-            break;
-        }
+    int32_t version = 0;
+    if (!ParseVersionInt32(FileVersionInput, version)) {
+        BUNDLE_ACTIVE_LOGE("invalid database version %{public}s", FileVersionInput.c_str());
+        return BUNDLE_ACTIVE_FAIL;
     }
-    return atoi(databaseVersion.c_str());
+    return version;
 }
 
 shared_ptr<NativeRdb::RdbStore> WEAK_FUNC BundleActiveUsageDatabase::GetBundleActiveRdbStore(uint32_t databaseType)
