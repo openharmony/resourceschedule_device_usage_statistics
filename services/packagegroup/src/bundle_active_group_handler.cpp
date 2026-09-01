@@ -51,6 +51,7 @@ BundleActiveGroupHandler::BundleActiveGroupHandler(const bool debug)
 void BundleActiveGroupHandler::DeInit()
 {
     isInited_ = false;
+    std::lock_guard<ffrt::mutex> lock(taskHandlerMutex_);
     for (auto& iter : taskHandlerMap_) {
         auto& queue = iter.second;
         while (!queue.empty()) {

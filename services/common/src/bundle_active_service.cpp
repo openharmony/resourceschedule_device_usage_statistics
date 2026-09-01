@@ -1103,7 +1103,7 @@ int32_t BundleActiveService::DumpHighFreqHourUsage(const std::vector<std::string
         return ret;
     }
 // LCOV_EXCL_START
-    int32_t userId = BundleActiveUtil::StringToInt64(dumpOption[2]);
+    int32_t userId = BundleActiveUtil::StringToInt32(dumpOption[2]);
     std::vector<BundleActiveHighFrequencyPeriod> appFreqHours;
     ret = bundleActiveCore_->QueryHighFrequencyPeriodBundle(appFreqHours, userId);
     dumpInfo.emplace_back("appFreqHour size " + std::to_string(appFreqHours.size()) + "\n");
